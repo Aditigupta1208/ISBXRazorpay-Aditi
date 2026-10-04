@@ -1,0 +1,149 @@
+{
+  "note": "Human answer key for the kill test. Labels set by the builder from Visa's Dispute Management Guidelines, with an AI second reviewer used only to flag disagreements.",
+  "visa_rules": {
+    "13.1": "Services not provided / not received. Merchant wins with proof the customer received or used the service (delivery, check-in, usage logs, sign-off). Accept if it genuinely was not delivered.",
+    "13.2": "Cancelled recurring transaction. Merchant wins if the customer cancelled AFTER the charge, kept using the service after cancelling, or was already refunded. Accept if the customer cancelled BEFORE the charge and the merchant did not act on it.",
+    "13.3": "Not as described. Merchant wins with a contract, invoice or description showing what was delivered matches what was sold. Accept if the description promised something that was not delivered.",
+    "13.6": "Credit not processed. Merchant wins if the refund was already issued, or no refund was due under a policy the customer accepted. Accept if a refund was due and never processed.",
+    "13.7": "Cancelled merchandise/services. Merchant wins only if the cancellation policy was properly disclosed AND agreed to at the time of sale (e.g. click-to-accept) and the customer cancelled outside it. Accept if the policy was not properly disclosed or agreed.",
+    "10.4": "Fraud, card absent ('I did not make this purchase'). Out of scope for this agent: Razorpay's Chargeback Shield covers fraud reason codes on international payments."
+  },
+  "checklist_rules": {
+    "13.1": "Fight if any delivery or usage proof is attached; otherwise Accept.",
+    "13.2": "Fight if a terms/policy record AND a usage log are attached; otherwise Accept.",
+    "13.3": "Fight if a contract, scope of work, quote or product/description page is attached; otherwise Accept.",
+    "13.6": "Fight if Razorpay shows a refund record; otherwise Accept.",
+    "13.7": "Fight if a cancellation-policy document is attached; otherwise Accept.",
+    "10.4": "No rule (outside the five non-fraud reasons)."
+  },
+  "labels": [
+    {
+      "id": "C01",
+      "decision": "Fight",
+      "deciding_evidence": "E1 + E2",
+      "case_type": "Checklist-friendly",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A scope of work is attached."
+    },
+    {
+      "id": "C02",
+      "decision": "Escalate",
+      "deciding_evidence": "Missing: proof the client received or used the site",
+      "case_type": "Needs judgment",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A delivery email counts as delivery proof, so the checklist fights."
+    },
+    {
+      "id": "C03",
+      "decision": "Fight",
+      "deciding_evidence": "E2 + E4",
+      "case_type": "Checklist-friendly",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Delivery proof is attached."
+    },
+    {
+      "id": "C04",
+      "decision": "Fight",
+      "deciding_evidence": "E3 date vs charge date + E4",
+      "case_type": "Checklist-friendly",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Terms record and usage log are both attached."
+    },
+    {
+      "id": "C05",
+      "decision": "Accept",
+      "deciding_evidence": "E2 (dated before the charge) + E3",
+      "case_type": "Needs judgment",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Terms record and usage log are both attached; the checklist cannot see that the log shows no use."
+    },
+    {
+      "id": "C06",
+      "decision": "Fight",
+      "deciding_evidence": "E2 (ambiguous) + E4",
+      "case_type": "Needs judgment",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Terms record and usage log are both attached."
+    },
+    {
+      "id": "C07",
+      "decision": "Fight",
+      "deciding_evidence": "E1 + E2",
+      "case_type": "Checklist-friendly",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A product description page is attached."
+    },
+    {
+      "id": "C08",
+      "decision": "Accept",
+      "deciding_evidence": "E1 vs E2",
+      "case_type": "Needs judgment",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A description page is attached; the checklist cannot see that it contradicts delivery."
+    },
+    {
+      "id": "C09",
+      "decision": "Accept",
+      "deciding_evidence": "E1 vs E2 (4 of 10 well under the agreed length)",
+      "case_type": "Needs judgment",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A quote counts as a description, so the checklist fights."
+    },
+    {
+      "id": "C10",
+      "decision": "Fight",
+      "deciding_evidence": "Razorpay refund record + E1",
+      "case_type": "Checklist-friendly",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Razorpay shows a refund record."
+    },
+    {
+      "id": "C11",
+      "decision": "Accept",
+      "deciding_evidence": "E2 + E3 + no refund in Razorpay",
+      "case_type": "Checklist-friendly",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No refund record in Razorpay."
+    },
+    {
+      "id": "C12",
+      "decision": "Fight",
+      "deciding_evidence": "E1 + E2 date",
+      "case_type": "Needs judgment",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No refund record, so the checklist accepts."
+    },
+    {
+      "id": "C13",
+      "decision": "Fight",
+      "deciding_evidence": "E1 + E2 date",
+      "case_type": "Checklist-friendly",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A cancellation-policy document is attached."
+    },
+    {
+      "id": "C14",
+      "decision": "Accept",
+      "deciding_evidence": "E1 + E2 (policy only in the footer, never agreed)",
+      "case_type": "Needs judgment",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A cancellation-policy document is attached; the checklist cannot see it was never agreed."
+    },
+    {
+      "id": "C15",
+      "decision": "Escalate",
+      "deciding_evidence": "E1 (50% due if valid) + E2 (sender is not the booker)",
+      "case_type": "Needs judgment",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A cancellation-policy document is attached."
+    },
+    {
+      "id": "C16",
+      "decision": "Route to fraud cover",
+      "deciding_evidence": "Reason code 10.4",
+      "case_type": "Scope test",
+      "checklist_decision": "n/a",
+      "checklist_reason": "Outside the five non-fraud reasons; excluded from accuracy scoring."
+    }
+  ]
+}

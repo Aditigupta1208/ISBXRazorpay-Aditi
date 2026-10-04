@@ -1,0 +1,624 @@
+{
+  "cases": [
+    {
+      "id": "C01",
+      "dispute": {
+        "id": "disp_demoC01",
+        "entity": "dispute",
+        "payment_id": "pay_demoC01",
+        "amount": 120000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.3",
+        "reason_description": "Not as Described or Defective Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "1 Aug 2026",
+        "respond_by_hours_left": 52
+      },
+      "merchant": "PixelNorth Studio (Mumbai UX agency). Client: Brightline Health LLC, USA.",
+      "customer_claim": "Design work was not as described.",
+      "dispute_summary": "Amount: USD 1,200. Paid by card via Payment Link on 2 Jun 2026. Dispute raised 1 Aug 2026. Customer claim: 'Design work was not as described.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds; first payment from this customer; no earlier disputes.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Signed scope of work (30 May 2026): '12 mobile app screens in Figma, 2 revision rounds, final handoff as Figma file.' Signed by Mark Ellis, Brightline Health LLC."
+        },
+        {
+          "id": "E2",
+          "content": "Email from mark@brightlinehealth.com, 20 Jun 2026: 'Approved milestone 2. All 12 screens look great, go ahead with final handoff.'"
+        },
+        {
+          "id": "E3",
+          "content": "Figma access log: mark@brightlinehealth.com viewed 'Brightline App v3' on 22 Jun, 25 Jun and 14 Jul 2026; duplicated the file on 14 Jul 2026."
+        }
+      ],
+      "source": {
+        "pattern": "Karbon: 'Priya', Mumbai UX designer, $1,200 project disputed as 'not as described'; won with SOW, approvals, Figma logs",
+        "url": "https://www.karboncard.com/blog/chargebacks-for-indian-freelancers"
+      }
+    },
+    {
+      "id": "C02",
+      "dispute": {
+        "id": "disp_demoC02",
+        "entity": "dispute",
+        "payment_id": "pay_demoC02",
+        "amount": 495000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.1",
+        "reason_description": "Merchandise/Services Not Received",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "15 Jul 2026",
+        "respond_by_hours_left": 20
+      },
+      "merchant": "CodeKiln Tech (Jaipur web development). Client: Dana Ortiz, Ortiz Landscaping, USA.",
+      "customer_claim": "Services were never provided.",
+      "dispute_summary": "Amount: USD 4,950. Paid by card on 10 Apr 2026. Dispute raised 15 Jul 2026. Customer claim: 'Services were never provided.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds; no earlier payments or disputes.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Email from CodeKiln to dana@ortizlandscaping.com, 5 May 2026: 'Hi Dana, the website is complete and deployed to your hosting. Login details attached.' No reply in the thread."
+        },
+        {
+          "id": "E2",
+          "content": "Invoice INV-2026-041: 'Website development: 5-page site + CMS, USD 4,950.'"
+        }
+      ],
+      "source": {
+        "pattern": "Winvesta: project delivered and used, client disputed months later as 'service not received'; merchant lost about Rs 4.17 lakh",
+        "url": "https://www.winvesta.in/blog/businesses/chargeback-fraud-is-bleeding-indian-exporters-dry"
+      }
+    },
+    {
+      "id": "C03",
+      "dispute": {
+        "id": "disp_demoC03",
+        "entity": "dispute",
+        "payment_id": "pay_demoC03",
+        "amount": 190000,
+        "currency": "GBP",
+        "network": "Visa",
+        "reason_code": "13.1",
+        "reason_description": "Merchandise/Services Not Received",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "20 Apr 2026",
+        "respond_by_hours_left": 44
+      },
+      "merchant": "Marwar Trails (Jodhpur inbound tour operator). Guest: Helen Price, UK.",
+      "customer_claim": "Services not provided.",
+      "dispute_summary": "Amount: GBP 1,900. Paid by card on 14 Feb 2026 for a 7-night Rajasthan tour, 10 to 16 Mar 2026. Dispute raised 20 Apr 2026. Customer claim: 'Services not provided.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds; no earlier disputes.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Booking voucher: 'Helen Price + 1, 7-night Rajasthan tour, 10 to 16 Mar 2026, hotels in Jodhpur and Udaipur, guide Ravi Singh.'"
+        },
+        {
+          "id": "E2",
+          "content": "Hotel check-in register, Umaid Heritage Jodhpur: 'Helen Price, 2 guests, check-in 10 Mar 2026 14:20, UK passport, check-out 12 Mar.'"
+        },
+        {
+          "id": "E3",
+          "content": "WhatsApp from the guest's UK number, 14 Mar 2026: 'Loving Udaipur, thanks Ravi for the boat ride!'"
+        },
+        {
+          "id": "E4",
+          "content": "Tour completion sheet signed 'H. Price', 16 Mar 2026."
+        }
+      ],
+      "source": {
+        "pattern": "Razorpay travel chargeback guide: keep booking confirmations, guest messages, check-in records and policy acceptance",
+        "url": "https://razorpay.com/blog/travel-chargeback-prevention-guide/"
+      }
+    },
+    {
+      "id": "C04",
+      "dispute": {
+        "id": "disp_demoC04",
+        "entity": "dispute",
+        "payment_id": "pay_demoC04",
+        "amount": 120000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.2",
+        "reason_description": "Cancelled Recurring Transaction",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "10 Jun 2026",
+        "respond_by_hours_left": 30
+      },
+      "merchant": "Ledgerly (Pune accounting SaaS). Customer: Northfield Co, USA (tom@northfieldco.com).",
+      "customer_claim": "I cancelled this subscription.",
+      "dispute_summary": "Amount: USD 1,200 annual renewal charged 1 May 2026. Dispute raised 10 Jun 2026. Customer claim: 'I cancelled this subscription.'",
+      "razorpay_facts": "Subscription charge captured; two earlier annual payments (May 2024, May 2025) with no disputes; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Terms acceptance record: tom@northfieldco.com ticked 'I agree' to Terms v4 on 1 May 2024. Terms say: 'Renews annually. Cancel any time before the renewal date. No refunds after renewal.'"
+        },
+        {
+          "id": "E2",
+          "content": "Renewal reminder sent to tom@northfieldco.com on 17 Apr 2026: 'Your plan renews on 1 May for USD 1,200.'"
+        },
+        {
+          "id": "E3",
+          "content": "Email from tom@northfieldco.com, 4 May 2026: 'Please cancel our subscription.'"
+        },
+        {
+          "id": "E4",
+          "content": "Login log: tom@northfieldco.com logged in on 5, 9, 15 and 22 May 2026 and ran report exports."
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.2 remedy: customer continued using the service after the cancellation request; Razorpay intl guide (SaaS evidence: login logs)",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C05",
+      "dispute": {
+        "id": "disp_demoC05",
+        "entity": "dispute",
+        "payment_id": "pay_demoC05",
+        "amount": 58800,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.2",
+        "reason_description": "Cancelled Recurring Transaction",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "20 Jul 2026",
+        "respond_by_hours_left": 60
+      },
+      "merchant": "FormFlow (Bengaluru forms SaaS). Customer: Greta Lind, Sweden (greta@lindstudio.se).",
+      "customer_claim": "I cancelled before renewal.",
+      "dispute_summary": "Amount: USD 588 annual renewal charged 1 Jul 2026. Dispute raised 20 Jul 2026. Customer claim: 'I cancelled before renewal.'",
+      "razorpay_facts": "Subscription charge captured; one earlier annual payment (Jul 2025); no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Terms acceptance record: 'Renews annually; cancel any time before the renewal date' accepted 1 Jul 2025."
+        },
+        {
+          "id": "E2",
+          "content": "Email from greta@lindstudio.se, 26 Jun 2026: 'We are moving to another tool. Please cancel before the renewal.' No reply from FormFlow in the thread."
+        },
+        {
+          "id": "E3",
+          "content": "Login log: last login by greta@lindstudio.se on 24 Jun 2026. No logins after that."
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.2: merchant must act promptly on cancellation requests",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C06",
+      "dispute": {
+        "id": "disp_demoC06",
+        "entity": "dispute",
+        "payment_id": "pay_demoC06",
+        "amount": 48000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.2",
+        "reason_description": "Cancelled Recurring Transaction",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "25 Aug 2026",
+        "respond_by_hours_left": 14
+      },
+      "merchant": "Snapcast Studio (Kochi video-editing SaaS). Customer: Liam Byrne, Ireland.",
+      "customer_claim": "I cancelled this.",
+      "dispute_summary": "Amount: USD 480 annual renewal charged 3 Aug 2026. Dispute raised 25 Aug 2026. Customer claim: 'I cancelled this.'",
+      "razorpay_facts": "Subscription charge captured; one earlier annual payment (Aug 2025); no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Terms acceptance record: 'Renews annually; cancel in Settings > Billing before the renewal date' accepted 3 Aug 2025."
+        },
+        {
+          "id": "E2",
+          "content": "Support chat, 29 Jul 2026. Customer: 'Honestly I'm thinking of cancelling, not using it much.' Agent: 'Sorry to hear that! You can cancel from Settings > Billing any time.' No further messages."
+        },
+        {
+          "id": "E3",
+          "content": "Login log: last login 28 Jul 2026. None after."
+        },
+        {
+          "id": "E4",
+          "content": "Billing settings audit log: no cancellation action recorded."
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.2 (was there a valid cancellation request?)",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C07",
+      "dispute": {
+        "id": "disp_demoC07",
+        "entity": "dispute",
+        "payment_id": "pay_demoC07",
+        "amount": 180000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.3",
+        "reason_description": "Not as Described or Defective Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "28 Apr 2026",
+        "respond_by_hours_left": 66
+      },
+      "merchant": "QueryPilot (Hyderabad analytics SaaS). Customer: Harbor Freight Analytics Ltd, UK.",
+      "customer_claim": "Not as described: single sign-on (SSO) is missing.",
+      "dispute_summary": "Amount: USD 1,800 annual Starter plan, paid 15 Mar 2026. Dispute raised 28 Apr 2026. Customer claim: 'Not as described: single sign-on (SSO) is missing.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Archived pricing page (snapshot 14 Mar 2026): 'Starter USD 1,800/yr: dashboards, 5 users. Business USD 4,800/yr: everything in Starter + SSO + audit logs.'"
+        },
+        {
+          "id": "E2",
+          "content": "Order confirmation email, 15 Mar 2026: 'Plan: Starter.'"
+        },
+        {
+          "id": "E3",
+          "content": "Support ticket, 20 Apr 2026. Customer: 'We need SSO, it was advertised.' Agent: 'SSO is on the Business plan. Happy to upgrade you with a prorated credit.'"
+        }
+      ],
+      "source": {
+        "pattern": "Razorpay intl guide: for 'not as described', show the product description at checkout and timestamped T&C acceptance",
+        "url": "https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them"
+      }
+    },
+    {
+      "id": "C08",
+      "dispute": {
+        "id": "disp_demoC08",
+        "entity": "dispute",
+        "payment_id": "pay_demoC08",
+        "amount": 39900,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.3",
+        "reason_description": "Not as Described or Defective Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "20 Jun 2026",
+        "respond_by_hours_left": 38
+      },
+      "merchant": "LearnLoop Academy (Delhi online courses). Student: Aisha Rahman, Canada.",
+      "customer_claim": "Not as described: the live sessions never happened.",
+      "dispute_summary": "Amount: USD 399, paid 5 May 2026. Dispute raised 20 Jun 2026. Customer claim: 'Not as described: the live sessions never happened.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Course sales page snapshot: '8 weekly LIVE mentoring sessions with the instructor + recordings.'"
+        },
+        {
+          "id": "E2",
+          "content": "Course delivery record: 'Recordings uploaded for weeks 1 to 8. Live sessions held: 0 (instructor unavailable).'"
+        },
+        {
+          "id": "E3",
+          "content": "Email from the student, 10 Jun 2026: 'I paid for live sessions and none happened. Please refund.' No reply."
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.3: description promised something not delivered",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C09",
+      "dispute": {
+        "id": "disp_demoC09",
+        "entity": "dispute",
+        "payment_id": "pay_demoC09",
+        "amount": 75000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.3",
+        "reason_description": "Not as Described or Defective Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "10 Jul 2026",
+        "respond_by_hours_left": 26
+      },
+      "merchant": "Inkwell Content (Chandigarh content agency). Client: Peak Outdoors, Australia.",
+      "customer_claim": "Not as described: poor quality, shorter than agreed.",
+      "dispute_summary": "Amount: USD 750, paid 1 Jun 2026. Dispute raised 10 Jul 2026. Customer claim: 'Not as described: poor quality, shorter than agreed.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "WhatsApp quote, 28 May 2026: '10 blog posts, 1,500 words each, SEO optimised, USD 750.'"
+        },
+        {
+          "id": "E2",
+          "content": "Delivered files list: 10 documents. Word counts: 1,540 / 1,510 / 1,620 / 1,480 / 1,505 / 1,190 / 1,060 / 1,150 / 900 / 1,530."
+        },
+        {
+          "id": "E3",
+          "content": "Email from the client, 2 Jul 2026: 'Several articles are much shorter than agreed and read like AI output.'"
+        }
+      ],
+      "source": {
+        "pattern": "Razorpay intl guide: 'chat proof' as evidence for not-as-described disputes",
+        "url": "https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them"
+      }
+    },
+    {
+      "id": "C10",
+      "dispute": {
+        "id": "disp_demoC10",
+        "entity": "dispute",
+        "payment_id": "pay_demoC10",
+        "amount": 9600,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.6",
+        "reason_description": "Credit Not Processed",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "2 Jul 2026",
+        "respond_by_hours_left": 8
+      },
+      "merchant": "Taskbird (Chennai project-management SaaS). Customer: Omar Haddad, UAE.",
+      "customer_claim": "Refund promised but not received.",
+      "dispute_summary": "Amount: USD 96, paid 10 Jun 2026. Dispute raised 2 Jul 2026. Customer claim: 'Refund promised but not received.'",
+      "razorpay_facts": "Payment captured. Full refund of USD 96 processed on 18 Jun 2026 (refund status: processed, bank reference number available).",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Refund confirmation email to the customer, 18 Jun 2026: 'Your refund of USD 96 has been processed. It can take 5 to 10 working days to appear.'"
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.6 remedy: credit already processed",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C11",
+      "dispute": {
+        "id": "disp_demoC11",
+        "entity": "dispute",
+        "payment_id": "pay_demoC11",
+        "amount": 24000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.6",
+        "reason_description": "Credit Not Processed",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "5 Aug 2026",
+        "respond_by_hours_left": 48
+      },
+      "merchant": "SlideCraft (Indore presentation SaaS). Customer: Nina Kowalski, Poland.",
+      "customer_claim": "Refund not processed.",
+      "dispute_summary": "Amount: USD 240 annual plan, paid 1 Jul 2026. Dispute raised 5 Aug 2026. Customer claim: 'Refund not processed.'",
+      "razorpay_facts": "Payment captured. No refund recorded.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Policy on checkout page: '14-day money-back guarantee.'"
+        },
+        {
+          "id": "E2",
+          "content": "Email from the customer, 8 Jul 2026: 'Please refund under your 14-day guarantee.'"
+        },
+        {
+          "id": "E3",
+          "content": "Support reply, 9 Jul 2026: 'Refund initiated, you will see it in 5 to 7 days.'"
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.6: refund due and not processed",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C12",
+      "dispute": {
+        "id": "disp_demoC12",
+        "entity": "dispute",
+        "payment_id": "pay_demoC12",
+        "amount": 24000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.6",
+        "reason_description": "Credit Not Processed",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "15 Jun 2026",
+        "respond_by_hours_left": 34
+      },
+      "merchant": "SlideCraft (Indore presentation SaaS). Customer: Sam Turner, USA (sam@turnerdesign.co).",
+      "customer_claim": "Refund not processed.",
+      "dispute_summary": "Amount: USD 240 annual plan, paid 1 Mar 2026. Dispute raised 15 Jun 2026. Customer claim: 'Refund not processed.'",
+      "razorpay_facts": "Payment captured. No refund recorded.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Checkout record: sam@turnerdesign.co ticked 'I agree to the Terms, including the 14-day refund policy' on 1 Mar 2026."
+        },
+        {
+          "id": "E2",
+          "content": "Refund request email from sam@turnerdesign.co, 20 May 2026 (80 days after purchase)."
+        },
+        {
+          "id": "E3",
+          "content": "Support reply, 21 May 2026: 'This is outside our 14-day window, so we can't refund, but we can pause your plan.'"
+        },
+        {
+          "id": "E4",
+          "content": "Usage log: regular logins from March to May 2026."
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.6 remedy: no credit due under a policy the customer accepted",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C13",
+      "dispute": {
+        "id": "disp_demoC13",
+        "entity": "dispute",
+        "payment_id": "pay_demoC13",
+        "amount": 160000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.7",
+        "reason_description": "Cancelled Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "5 Jun 2026",
+        "respond_by_hours_left": 40
+      },
+      "merchant": "Himalaya Basecamp Treks (Manali trek operator). Guest: Jonas Weber, Germany.",
+      "customer_claim": "I cancelled and was not refunded.",
+      "dispute_summary": "Amount: USD 1,600, paid 1 Apr 2026 for a trek departing 20 May 2026. Customer cancelled 17 May. Dispute raised 5 Jun 2026. Customer claim: 'I cancelled and was not refunded.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Booking checkout record: guest ticked 'I accept: cancellations within 7 days of departure are non-refundable' on 1 Apr 2026."
+        },
+        {
+          "id": "E2",
+          "content": "Cancellation email from the guest, 17 May 2026 (3 days before departure)."
+        },
+        {
+          "id": "E3",
+          "content": "Merchant reply, 17 May 2026: 'As per the policy you accepted, cancellations within 7 days are non-refundable. We can move you to a later date at no cost.'"
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.7: cancellation policy disclosed and agreed via 'click to accept'",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C14",
+      "dispute": {
+        "id": "disp_demoC14",
+        "entity": "dispute",
+        "payment_id": "pay_demoC14",
+        "amount": 90000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.7",
+        "reason_description": "Cancelled Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "2 May 2026",
+        "respond_by_hours_left": 56
+      },
+      "merchant": "Coastal Kayak Co (Goa adventure tours). Guest: Emma Clarke, UK.",
+      "customer_claim": "I cancelled and was refused a refund.",
+      "dispute_summary": "Amount: USD 900, paid 3 Mar 2026 for a tour on 20 Apr 2026. Guest cancelled 16 Apr. Dispute raised 2 May 2026. Customer claim: 'I cancelled and was refused a refund.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Website 'Terms' page (linked in the site footer): 'Cancellations within 7 days of the tour are non-refundable.'"
+        },
+        {
+          "id": "E2",
+          "content": "Booking confirmation email: tour details and payment receipt. No mention of the cancellation policy. No acceptance checkbox at checkout."
+        },
+        {
+          "id": "E3",
+          "content": "Merchant reply to the cancellation: 'Sorry, our terms say no refunds within 7 days.'"
+        }
+      ],
+      "source": {
+        "pattern": "Visa 13.7: policy not properly disclosed or agreed",
+        "url": "https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf"
+      }
+    },
+    {
+      "id": "C15",
+      "dispute": {
+        "id": "disp_demoC15",
+        "entity": "dispute",
+        "payment_id": "pay_demoC15",
+        "amount": 320000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.7",
+        "reason_description": "Cancelled Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "25 Mar 2026",
+        "respond_by_hours_left": 18
+      },
+      "merchant": "Golden Triangle Journeys (Delhi tour operator). Booker: Acme Holdings Ltd travel desk, UK.",
+      "customer_claim": "Cancelled, not refunded.",
+      "dispute_summary": "Amount: USD 3,200, paid 10 Feb 2026 for a group tour starting 11 Mar 2026. Cancellation email 1 Mar (10 days before). Dispute raised 25 Mar 2026. Customer claim: 'Cancelled, not refunded.' Card name: J. Whitfield.",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; cardholder name J. Whitfield; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Booking checkout record: priya.s@acmeholdings.co.uk ticked 'I accept: cancellations 7 to 14 days before departure get a 50% refund; under 7 days no refund' on 10 Feb 2026."
+        },
+        {
+          "id": "E2",
+          "content": "Cancellation email from j.whitfield@gmail.com, 1 Mar 2026: 'Please cancel our tour.' (Not the address that booked.)"
+        },
+        {
+          "id": "E3",
+          "content": "Merchant reply to j.whitfield@gmail.com: 'We can only accept cancellations from the booker.' No further messages."
+        }
+      ],
+      "source": {
+        "pattern": "Razorpay travel guide (unclear who booked, who paid, who cancelled)",
+        "url": "https://razorpay.com/blog/travel-chargeback-prevention-guide/"
+      }
+    },
+    {
+      "id": "C16",
+      "dispute": {
+        "id": "disp_demoC16",
+        "entity": "dispute",
+        "payment_id": "pay_demoC16",
+        "amount": 120000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "10.4",
+        "reason_description": "Other Fraud - Card-Absent Environment",
+        "phase": "fraud",
+        "status": "open",
+        "raised_on": "2 Aug 2026",
+        "respond_by_hours_left": 28
+      },
+      "merchant": "Ledgerly (Pune accounting SaaS). Customer: account 'finance@brookvale.io', USA.",
+      "customer_claim": "I do not recognise this transaction.",
+      "dispute_summary": "Amount: USD 1,200, paid 12 Jul 2026. Dispute raised 2 Aug 2026. Reason: 10.4 Other fraud, card absent. Customer claim: 'I do not recognise this transaction.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; one earlier payment from the same card in 2025 with no dispute.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Login log: finance@brookvale.io logged in from the same IP range and device as the 2025 purchase on 12, 13 and 20 Jul 2026."
+        }
+      ],
+      "source": {
+        "pattern": "Razorpay Chargeback Shield terms: covers fraud reason codes only (scope test)",
+        "url": "https://razorpay.com/terms/chargeback-shield/"
+      }
+    }
+  ]
+}

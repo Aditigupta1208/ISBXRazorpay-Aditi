@@ -1,0 +1,72 @@
+{
+  "run": "kill-test-v1-claude",
+  "model": "Claude, chat inside the project (knew the test design; kept for comparison only)",
+  "prompt_version": "v1",
+  "date": "2026-10-04",
+  "results": [
+    {
+      "id": "C01",
+      "decision": "Fight"
+    },
+    {
+      "id": "C02",
+      "decision": "Escalate"
+    },
+    {
+      "id": "C03",
+      "decision": "Fight"
+    },
+    {
+      "id": "C04",
+      "decision": "Fight"
+    },
+    {
+      "id": "C05",
+      "decision": "Accept"
+    },
+    {
+      "id": "C06",
+      "decision": "Fight"
+    },
+    {
+      "id": "C07",
+      "decision": "Fight"
+    },
+    {
+      "id": "C08",
+      "decision": "Accept"
+    },
+    {
+      "id": "C09",
+      "decision": "Escalate"
+    },
+    {
+      "id": "C10",
+      "decision": "Fight"
+    },
+    {
+      "id": "C11",
+      "decision": "Accept"
+    },
+    {
+      "id": "C12",
+      "decision": "Fight"
+    },
+    {
+      "id": "C13",
+      "decision": "Fight"
+    },
+    {
+      "id": "C14",
+      "decision": "Accept"
+    },
+    {
+      "id": "C15",
+      "decision": "Escalate"
+    },
+    {
+      "id": "C16",
+      "decision": "Route to fraud cover"
+    }
+  ]
+}

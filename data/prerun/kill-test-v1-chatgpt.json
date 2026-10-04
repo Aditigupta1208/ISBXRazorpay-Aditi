@@ -1,0 +1,153 @@
+{
+  "run": "kill-test-v1",
+  "model": "ChatGPT 5.6 Terra (medium), fresh chat, run manually",
+  "prompt_version": "v1 (prompts/dispute-agent-v1.md)",
+  "date": "2026-10-04",
+  "note": "Real model outputs from the kill test, copied verbatim. Drafts are one sentence; prompt v2 asks for a full response.",
+  "results": [
+    {
+      "id": "C01",
+      "decision": "Fight",
+      "deciding_evidence": "E1, E2, E3",
+      "confidence": "High",
+      "draft_response": "The signed scope required 12 Figma screens and final Figma handoff; the client approved all 12 screens and later viewed and duplicated the delivered Figma file. [E1] [E2] [E3]",
+      "evidence_slots": "E1: term_and_conditions; E2: customer_communication; E3: access_activity_log",
+      "reason": "The agreed deliverables match the delivered and customer-approved work."
+    },
+    {
+      "id": "C02",
+      "decision": "Escalate",
+      "deciding_evidence": "missing: hosting deployment/access logs, website analytics, customer sign-off, or other proof Dana received or used the site",
+      "confidence": "Medium",
+      "draft_response": null,
+      "evidence_slots": "E1: customer_communication; E2: billing_proof",
+      "reason": "The completion email and invoice show the merchant's assertion and billing, but not receipt or use of the service."
+    },
+    {
+      "id": "C03",
+      "decision": "Fight",
+      "deciding_evidence": "E2, E3, E4",
+      "confidence": "High",
+      "draft_response": "The guest checked into the Jodhpur hotel during the booked tour, messaged that she was enjoying Udaipur with the guide, and signed the tour completion sheet. [E2] [E3] [E4]",
+      "evidence_slots": "E1: proof_of_service; E2: proof_of_service; E3: customer_communication; E4: proof_of_service",
+      "reason": "Independent check-in, contemporaneous customer communication, and signed completion prove the tour was received."
+    },
+    {
+      "id": "C04",
+      "decision": "Fight",
+      "deciding_evidence": "E3, E4",
+      "confidence": "High",
+      "draft_response": "The cancellation request was sent after the 1 May renewal charge, and the customer continued logging in and exporting reports after requesting cancellation. [E3] [E4]",
+      "evidence_slots": "E1: term_and_conditions; E2: customer_communication; E3: cancellation_proof; E4: access_activity_log",
+      "reason": "The customer cancelled after the charge and continued using the service."
+    },
+    {
+      "id": "C05",
+      "decision": "Accept",
+      "deciding_evidence": "E2, E3",
+      "confidence": "High",
+      "draft_response": null,
+      "evidence_slots": "E1: term_and_conditions; E2: cancellation_proof; E3: access_activity_log",
+      "reason": "The customer requested cancellation before renewal, the merchant did not act on it, and there is no later service use."
+    },
+    {
+      "id": "C06",
+      "decision": "Fight",
+      "deciding_evidence": "E1, E2, E4",
+      "confidence": "High",
+      "draft_response": "The customer was instructed to cancel through Settings > Billing before renewal, but only expressed that they were considering cancellation and no cancellation action was recorded. [E1] [E2] [E4]",
+      "evidence_slots": "E1: term_and_conditions; E2: customer_communication; E3: access_activity_log; E4: cancellation_proof",
+      "reason": "Considering cancellation is not a cancellation, and the audit log shows no completed request."
+    },
+    {
+      "id": "C07",
+      "decision": "Fight",
+      "deciding_evidence": "E1, E2",
+      "confidence": "High",
+      "draft_response": "The customer purchased the Starter plan, whose archived plan description includes dashboards and five users; SSO was listed only with the Business plan. [E1] [E2]",
+      "evidence_slots": "E1: term_and_conditions; E2: billing_proof; E3: customer_communication",
+      "reason": "The evidence shows SSO was not included in the plan sold."
+    },
+    {
+      "id": "C08",
+      "decision": "Accept",
+      "deciding_evidence": "E1, E2, E3",
+      "confidence": "High",
+      "draft_response": null,
+      "evidence_slots": "E1: term_and_conditions; E2: proof_of_service; E3: customer_communication",
+      "reason": "The course promised eight live mentoring sessions, but its own delivery record confirms that none occurred."
+    },
+    {
+      "id": "C09",
+      "decision": "Accept",
+      "deciding_evidence": "E1, E2, E3",
+      "confidence": "High",
+      "draft_response": null,
+      "evidence_slots": "E1: customer_communication; E2: proof_of_service; E3: customer_communication",
+      "reason": "Several delivered posts were materially below the agreed 1,500-word length."
+    },
+    {
+      "id": "C10",
+      "decision": "Fight",
+      "deciding_evidence": "E1, Razorpay refund record",
+      "confidence": "High",
+      "draft_response": "The full USD 96 refund was processed on 18 Jun 2026, and the customer was informed that it could take 5 to 10 working days to appear. [Razorpay] [E1]",
+      "evidence_slots": "E1: refund_confirmation",
+      "reason": "Razorpay confirms that the disputed amount was already fully refunded."
+    },
+    {
+      "id": "C11",
+      "decision": "Accept",
+      "deciding_evidence": "E1, E2, E3, Razorpay refund record",
+      "confidence": "High",
+      "draft_response": null,
+      "evidence_slots": "E1: refund_cancellation_policy; E2: customer_communication; E3: customer_communication",
+      "reason": "The customer requested a refund within the stated guarantee period, the merchant said it was initiated, and Razorpay shows no refund was processed."
+    },
+    {
+      "id": "C12",
+      "decision": "Fight",
+      "deciding_evidence": "E1, E2, E3",
+      "confidence": "High",
+      "draft_response": "The customer accepted the 14-day refund policy, but requested a refund 80 days after purchase; the request was therefore outside the agreed refund window. [E1] [E2] [E3]",
+      "evidence_slots": "E1: term_and_conditions; E2: customer_communication; E3: customer_communication; E4: access_activity_log",
+      "reason": "No refund was due under the customer-accepted 14-day policy."
+    },
+    {
+      "id": "C13",
+      "decision": "Fight",
+      "deciding_evidence": "E1, E2, E3",
+      "confidence": "High",
+      "draft_response": "The guest accepted that cancellations within seven days of departure are non-refundable and cancelled three days before departure. [E1] [E2]",
+      "evidence_slots": "E1: refund_cancellation_policy; E2: cancellation_proof; E3: customer_communication",
+      "reason": "The disclosed and accepted policy made this late cancellation non-refundable."
+    },
+    {
+      "id": "C14",
+      "decision": "Accept",
+      "deciding_evidence": "E1, E2, E3",
+      "confidence": "High",
+      "draft_response": null,
+      "evidence_slots": "E1: refund_cancellation_policy; E2: billing_proof; E3: customer_communication",
+      "reason": "The policy was only linked in the website footer and was neither disclosed in the booking confirmation nor agreed to at checkout."
+    },
+    {
+      "id": "C15",
+      "decision": "Escalate",
+      "deciding_evidence": "missing: confirmation that J. Whitfield was authorized to cancel for Acme Holdings Ltd, or a cancellation instruction from the original booker",
+      "confidence": "Medium",
+      "draft_response": null,
+      "evidence_slots": "E1: refund_cancellation_policy; E2: cancellation_proof; E3: customer_communication",
+      "reason": "The accepted policy indicates a 50% refund may be due for a cancellation ten days before departure, but the merchant needs proof that the non-booker's cancellation was authorized."
+    },
+    {
+      "id": "C16",
+      "decision": "Route to fraud cover",
+      "deciding_evidence": "E1",
+      "confidence": "High",
+      "draft_response": null,
+      "evidence_slots": "E1: access_activity_log",
+      "reason": "Reason code 10.4 is a card-absent fraud dispute and should be handled through Razorpay Chargeback Shield."
+    }
+  ]
+}
