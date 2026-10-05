@@ -21,16 +21,16 @@ No merchant interviews were possible. Personas are composites built from public 
 
 | Root cause | Evidence |
 |---|---|
-| **Disputes are rare, urgent and rule-heavy.** A small merchant sees a few a year, so never builds expertise, and each reason code has different winning proof. | Visa sets different remedies per reason code [V: Visa guidelines]; a few disputes a year per small merchant [A] |
-| **The deadline is short.** | 3 business days to represent [V: Razorpay chargeback guide]; no response is treated as accepted [V: Razorpay Curlec] |
-| **The winning evidence is outside Razorpay.** For service and subscription disputes it is a signed scope, login logs, terms acceptance, emails, vouchers. | [V: Razorpay international chargebacks blog, Aug 2026]; Razorpay's own data covers payments, refunds, 3-D Secure [V: Razorpay disputes API] |
-| **The economics are invisible.** A lost international dispute is clawed back at the current exchange rate; escalation can cost hundreds of dollars. | [V: Razorpay blog, Aug 2026]; Visa arbitration fee USD 600 [V: same]; Mastercard arbitration USD 675 [V: Razorpay chargeback guide] |
-| **Existing protection stops at fraud.** | Chargeback Shield covers fraud reason codes only and excludes "quality, delivery, or description" disputes [V: Shield terms]. Dispute Responder gathers evidence from Razorpay and connected platforms such as Shopify and Shiprocket [V: Razorpay guardrails blog]; nothing public says it reads merchant-uploaded documents or recommends accept vs fight [A]. |
+| **Disputes are rare, urgent and rule-heavy.** A small merchant sees a few a year, so never builds expertise, and each reason code has different winning proof. | Visa sets different remedies per reason code [V: [Visa Dispute Management Guidelines](https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf)]; a few disputes a year per small merchant [A] |
+| **The deadline is short.** | 3 business days to represent [V: [Razorpay chargeback guide](https://razorpay.com/blog/chargebacks/)]; no response is treated as accepted [V: [Razorpay Curlec help](https://curlec-help.freshdesk.com/support/solutions/articles/151000183117-what-are-disputes-chargebacks-and-how-to-respond-to-them-)] |
+| **The winning evidence is outside Razorpay.** For service and subscription disputes it is a signed scope, login logs, terms acceptance, emails, vouchers. | [V: [Razorpay international chargebacks guide, Aug 2026](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them)]; Razorpay's own data covers payments, refunds, 3-D Secure [V: [Razorpay disputes API](https://razorpay.com/docs/api/disputes/contest/)] |
+| **The economics are invisible.** A lost international dispute is clawed back at the current exchange rate; escalation can cost hundreds of dollars. | [V: [Razorpay international chargebacks guide, Aug 2026](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them)]; Visa arbitration fee USD 600 [V: same]; Mastercard arbitration USD 675 [V: [Razorpay chargeback guide](https://razorpay.com/blog/chargebacks/)] |
+| **Existing protection stops at fraud.** | Chargeback Shield covers fraud reason codes only and excludes "quality, delivery, or description" disputes [V: [Chargeback Shield terms](https://razorpay.com/terms/chargeback-shield/)]. Dispute Responder gathers evidence from Razorpay and connected platforms such as Shopify and Shiprocket [V: [Agent Studio guardrails blog](https://razorpay.com/blog/razorpay-agent-studio-principles-guardrails-and-merchant-control/)]; nothing public says it reads merchant-uploaded documents or recommends accept vs fight [A]. |
 
 ### What it costs
 
-- **Merchants:** nearly half of small-business merchants don't respond to chargebacks at all [V: Antom], so they lose winnable disputes outright. Others fight disputes they can't win and pay fees. Disputed money is deducted and held during the dispute [V: Razorpay chargeback guide]. Liability "solely rests with" the merchant, and network fines are passed on [V: Razorpay terms].
-- **Razorpay:** Razorpay can suspend merchants for "excessive disputes" [V: Razorpay terms]. Visa's monitoring programme counts every card-not-present dispute; the Asia Pacific merchant threshold is 1.5% from Apr 2026, with USD 8 per dispute for flagged merchants and acquirer thresholds from 0.5% [V: Ravelin on VAMP]. Cross-border payments see roughly twice the domestic dispute rate [V: Razorpay blog, Aug 2026]. International cards are Razorpay's higher-fee segment (up to 3%) [V: Razorpay international payments page].
+- **Merchants:** nearly half of small-business merchants don't respond to chargebacks at all [V: [Antom Copilot launch, Jul 2025](https://fintechnews.sg/114081/ai/ant-international-antom-copilot-ai-upgrade/)], so they lose winnable disputes outright. Others fight disputes they can't win and pay fees. Disputed money is deducted and held during the dispute [V: [Razorpay chargeback guide](https://razorpay.com/blog/chargebacks/)]. Liability "solely rests with" the merchant, and network fines are passed on [V: [Razorpay terms](https://razorpay.com/terms/)].
+- **Razorpay:** Razorpay can suspend merchants for "excessive disputes" [V: [Razorpay terms](https://razorpay.com/terms/)]. Visa's monitoring programme counts every card-not-present dispute; the Asia Pacific merchant threshold is 1.5% from Apr 2026, with USD 8 per dispute for flagged merchants and acquirer thresholds from 0.5% [V: [Ravelin on Visa VAMP](https://www.ravelin.com/blog/visa-vamp-changes-chargeback-disputes)]. Cross-border payments see roughly twice the domestic dispute rate [V: [Razorpay international chargebacks guide, Aug 2026](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them)]. International cards are Razorpay's higher-fee segment (up to 3%) [V: [Razorpay international payments page](https://razorpay.com/accept-international-payments/)].
 
 ### Job to be done
 
@@ -38,9 +38,9 @@ No merchant interviews were possible. Personas are composites built from public 
 
 ### What we are not solving
 
-- **Fraud disputes:** covered by Chargeback Shield.
+- **Fraud disputes:** covered by Chargeback Shield ([terms](https://razorpay.com/terms/chargeback-shield/)).
 - **Stopping disputes before they're filed:** needs card-network alert data Razorpay doesn't publicly offer; UPI has no equivalent stage.
-- **Domestic UPI disputes:** a different process (NPCI UDIR).
+- **Domestic UPI disputes:** a different process (NPCI UDIR; see [Razorpay's UDIR explainer](https://razorpay.com/blog/all-you-need-to-know-about-npci-led-udir/)).
 - **Physical-goods ecommerce:** Dispute Responder plus Shopify and Shiprocket fits better there.
 
 ---
