@@ -1,14 +1,16 @@
-# Dispute Decision Agent
+# Dispute Advisor
 
 Concept prototype for the **Razorpay x ISB AI PM Build Challenge** (Track 2: Recover and Grow with AI).
 Not an official Razorpay product.
 
-An Agent Studio-style agent that helps Indian businesses selling to international customers decide whether to fight or accept a **non-fraud** card dispute, and drafts a cited response from evidence that lives outside Razorpay.
+An Agent Studio-style agent for Indian businesses selling services, subscriptions, travel or digital goods to international card customers. For a **non-fraud** card dispute, the **Fight-or-Fold check** reads the merchant's own evidence, applies Visa's rule, recommends Fight, Fold (accept) or Escalate with the money maths, and drafts a response that cites a document in every sentence. The merchant always approves.
 
-- Product: [`docs/PRODUCT.md`](docs/PRODUCT.md)
+- Product thinking: [`docs/pm/`](docs/pm/) (discovery, features, PRD, screens, data and stack)
+- Look and feel: [`docs/design/DESIGN.md`](docs/design/DESIGN.md), mock in [`docs/design/mock/`](docs/design/mock/)
+- Product summary: [`docs/PRODUCT.md`](docs/PRODUCT.md)
 - Build plan: [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md)
 - Evaluation so far: [`eval/kill-test-v1.md`](eval/kill-test-v1.md)
-- Prompts: [`prompts/`](prompts/)
+- Prompts: [`prompts/`](prompts/) (current: v2.1)
 - Demo data: [`data/`](data/)
 
-Status: build in progress (target 13 Oct 2026). Live link and setup instructions will be added here.
+Status: build starts 6 Oct 2026, submission 13 Oct 2026. Live link and setup instructions will be added here.

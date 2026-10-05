@@ -1,11 +1,13 @@
-# Product: Dispute Decision Agent
+# Product: Dispute Advisor
+
+Short summary for the build. The full thinking is in `docs/pm/` (start with `03-prd.md`).
 
 ## The problem
 
 Indian businesses that sell to international customers (SaaS companies, agencies, consultants, inbound tour operators) get card disputes they rarely know how to handle.
 
 - A merchant gets **3 business days** to respond to a chargeback. If they don't, the dispute is treated as accepted. (Razorpay chargeback guide; Razorpay Curlec help article)
-- Cross-border payments carry **roughly twice the chargeback rate** of domestic payments, and a lost international dispute is clawed back **at the current exchange rate**, so a weaker rupee makes the loss larger than the original payment. (Razorpay blog, Aug 2026)
+- Cross-border payments carry **roughly twice the chargeback rate** of domestic payments, and a lost international dispute is taken back **at the exchange rate on the day the dispute was created**, so a weaker rupee can make the loss larger than the original payment. (Razorpay blog, Aug 2026)
 - **Nearly half** of small-business merchants don't respond to chargebacks at all. (Antom, Jul 2025)
 - Razorpay **Chargeback Shield** covers fraud-coded chargebacks on international payments, but its terms **exclude** disputes about "the quality, delivery, or description of goods or services". (Chargeback Shield terms)
 - For those non-fraud disputes, the evidence that wins lives **outside Razorpay**: signed scopes of work, login and usage logs, terms-acceptance records, emails, booking vouchers. (Razorpay blog, Aug 2026; Visa Dispute Management Guidelines)
@@ -23,37 +25,40 @@ When a non-fraud dispute arrives, the agent:
 1. Reads Razorpay's dispute record (reason code, amount, deadline) and payment facts (refunds, 3-D Secure, earlier payments).
 2. Reads the evidence the merchant has, from wherever it lives (uploaded or pasted documents).
 3. Applies Visa's rule for that reason code.
-4. Recommends **Fight**, **Accept** or **Escalate**, with confidence, the deciding evidence, any contradictions, and what is missing.
-5. Weighs whether fighting is worth it (amount, exchange-rate clawback, fees, chance of winning).
-6. Maps each document to Razorpay's evidence slots and drafts the response (max 1,000 characters, Razorpay's limit), with a citation on every sentence.
+4. Runs the **Fight-or-Fold check**: recommends **Fight**, **Fold** (accept) or **Escalate**, with confidence, the deciding evidence, any contradictions, and what is missing.
+5. Weighs whether fighting is worth it: `p × A > (1 − p) × F + E` (amount, rupee amount taken back, fees at risk, AI estimate of the odds, effort cost).
+6. Maps each document to Razorpay's evidence slots and drafts the response (max 1,000 characters, Razorpay's limit; can cover part of the amount), with a citation on every sentence.
 7. Waits for the merchant to approve, edit, accept or escalate.
-8. Records the outcome and suggests one prevention fix after a loss.
+8. Records the outcome, lists next steps (accountant, bank paperwork) and suggests one prevention fix after a loss.
 
 Fraud reason codes (10.x) are routed to Chargeback Shield.
 
 ## Screens
 
-1. **Disputes inbox**: open disputes with amount, reason (code plus plain name), time left to respond (red under 24 hours), and the agent's verdict chip. A summary strip: how many need a decision, total at stake, how many are due within 24 hours.
+Layout follows Razorpay's Agentic Dashboard: black top bar, white sub-tabs (Transactions, Settlements, Disputes, Refunds), white cards on a light grey page. See `docs/design/DESIGN.md` and `docs/pm/04-screens.md`.
+
+1. **Disputes inbox**: open disputes with amount, reason (code plus plain name), time left to respond (red under 24 hours), and the call chip (Fight, Fold, Escalate or Chargeback Shield). A summary strip: how many need a decision, total at stake, how many are due within 24 hours.
 2. **Dispute case view**:
    - Left: dispute facts, the customer's claim, what Razorpay knows.
    - Middle: evidence documents (E1, E2...) and an **Add evidence** box (paste text, give it a title). New documents get the next ID and the agent can re-run.
    - Right: the agent panel: decision chip, confidence, a plain-language reason, the Visa rule applied, deciding evidence (clicking an ID highlights the document), contradictions and missing evidence, economics note, evidence-slot mapping, the draft (editable, with a character counter out of 1,000), guardrail check results, and actions.
-   - **Actions**: Approve and submit, Accept dispute, Escalate / request a document, Re-run agent. Submitting or accepting is simulated, and shows the exact Razorpay API request it would send (`POST /v1/disputes/{id}/contest` with evidence slots and summary, or `POST /v1/disputes/{id}/accept`).
+   - **Actions**: Approve and submit, Fold (accept), Escalate / request a document, Re-run check. Submitting or folding is simulated and shows the exact Razorpay request (`PATCH /v1/disputes/{id}/contest` with `action`, optional `amount`, `summary` and evidence slots, or `POST /v1/disputes/{id}/accept`), labelled "Simulated: not sent to Razorpay".
    - **Under the hood** drawer: saved result or live call, model, prompt version, input and output tokens, response time, cost for this dispute (USD and INR), and the raw JSON.
-3. **Outcome**: mark the dispute Won or Lost (demo). Show what the agent learns ("reason 13.2 with cancellation_proof + access_activity_log: won") and one prevention tip.
-4. **Evals**: the kill-test results. AI vs a fixed checklist vs the human answer key, per case and in total, plus later automated runs of prompt v2. Highlight case C15 (see below). State the limits honestly.
+3. **Outcome and next steps**: mark the dispute Won or Lost (demo). Show what the agent learns ("reason 13.2 with cancellation_proof + access_activity_log: won"), 2 to 3 next steps ("ask your accountant about...", never tax advice as fact) and one prevention tip.
+4. **Evals** (includes 2 prompt-injection cases): the kill-test results. AI vs a fixed checklist vs the human answer key, per case and in total, plus later automated runs of prompt v2. Highlight case C15 (see below). State the limits honestly.
 5. **How it works**: a simple flow diagram, the brief's seven Track 2 questions answered, what is out of scope, and limitations.
 
 ## Guardrails (run in code after every model answer)
 
 1. **Schema check**: the answer must match the schema in `prompts/dispute-agent-v2.md` (zod). Invalid: retry once, then fall back to the saved result.
 2. **Citation check**: every sentence of the draft must end with at least one citation like `[E2]` or `[Razorpay]`, and every cited ID must exist in the case. Any failure is flagged in red and blocks "Approve and submit" until the merchant edits the draft.
-3. **Evidence check**: every ID in `deciding_evidence` must exist in the case.
-4. **Decision policy**: Fight with low confidence, or Fight while `missing_evidence` is not empty, is downgraded to Escalate and labelled "Downgraded by safety rule".
-5. **Scope rule**: any fraud reason code (10.x) is forced to "Route to fraud cover".
+3. **Evidence check**: every ID in `deciding_evidence` must exist in the case; otherwise the call becomes Escalate.
+4. **Decision policy**: Fight with low confidence, or Fight while `missing_evidence` is not empty, is downgraded to Escalate and labelled "Changed by safety rule".
+5. **Scope rule**: any fraud reason code (10.x) is forced to "Route to fraud cover" before any model call.
 6. **Length**: the draft must be 1,000 characters or less.
+7. **Card numbers**: a full card number (Luhn check) in pasted evidence is rejected.
 
-Show each check as a pass or fail line in the agent panel.
+Show each check as a pass, changed or blocked line in the check panel (rule numbers R1 to R7 match `docs/pm/05-data-and-stack.md`).
 
 ## Evidence that this needs AI (the kill test, 4 Oct 2026)
 
@@ -81,8 +86,8 @@ Fraud disputes (Chargeback Shield covers them), pre-dispute alerts, live Razorpa
 |---|---|
 | What data or signal | Razorpay dispute record and payment facts, plus merchant evidence |
 | Why AI over a fixed rule | Reads unstructured evidence, judges relevance, catches contradictions, knows when to escalate; kill test 15/15 vs 8/15 |
-| What action | Fight / Accept / Escalate / route, evidence-slot mapping, cited draft |
-| What the merchant controls | Edit, approve, accept, escalate; nothing is submitted without approval |
+| What action | Fight / Fold / Escalate / route, evidence-slot mapping, cited draft |
+| What the merchant controls | Edit, approve, fold, escalate; nothing is submitted without approval |
 | How it learns | Won and lost outcomes plus merchant edits, by reason code and evidence type |
 | Accuracy, trust, failure | Guardrails above, saved-result fallback, audit trail, personal data kept minimal |
 | Business outcome | INR recovered per INR disputed (after exchange-rate effects), share answered before the deadline, time to respond, win rate on contested disputes, repeat disputes after prevention fixes |
@@ -93,6 +98,7 @@ Fraud disputes (Chargeback Shield covers them), pre-dispute alerts, live Razorpa
 - Razorpay international chargebacks guide (Aug 2026): https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them
 - Chargeback Shield terms: https://razorpay.com/terms/chargeback-shield/
 - Razorpay disputes API (contest): https://razorpay.com/docs/api/disputes/contest/
+- Razorpay disputes API (accept): https://razorpay.com/docs/api/disputes/accept/
 - Razorpay terms: https://razorpay.com/terms/
 - Visa Dispute Management Guidelines: https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf
 - Antom Copilot chargeback assistant: https://fintechnews.sg/114081/ai/ant-international-antom-copilot-ai-upgrade/
