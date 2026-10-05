@@ -87,7 +87,7 @@ Segment C merchants (winning evidence lives in their own systems: contracts, log
 
 | # | Assumption | How to validate |
 |---|---|---|
-| A1 | Dispute Responder does not today read merchant-uploaded documents or recommend fold vs fight for Segment C | Confirm with the Agent Studio team |
+| A1 | Dispute Responder does not today read merchant-uploaded documents or recommend fold vs fight for Segment C. Note that Ray, in Razorpay's Agentic Dashboard demo, already reads an uploaded file in chat (a customer email screenshot), so reading uploads is not unique; our claim rests on the dispute-specific rule, the money maths and the Escalate call | Confirm with the Agent Studio team |
 | A2 | Segment C is a meaningful share of Razorpay's non-fraud international disputes | Razorpay dispute data by merchant category |
 | A3 | Small merchants handle a few disputes a year and lack dispute expertise | 3–5 merchant interviews; dispute counts per merchant |
 | A4 | Merchants will upload evidence if the product tells them exactly what's missing | Beta: share of Escalate calls that get evidence added within the deadline |

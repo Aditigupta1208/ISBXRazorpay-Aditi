@@ -1,0 +1,121 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dispute Advisor mock</title><style>*{box-sizing:border-box}body{margin:0;background:#F9F9F9;color:#000;font:15px/1.5 Inter,"Helvetica Neue",Arial,system-ui,sans-serif}
+a{color:inherit;text-decoration:none;cursor:pointer}
+.proto{background:#FFF4CC;color:#5C4400;text-align:center;font-size:12px;padding:6px 12px}
+.nav{background:#010101;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;color:#fff}
+.nav nav{display:flex;gap:34px}.nav a{font-size:15px;font-weight:500;color:#E8E8E8;padding:19px 0;position:relative}
+.nav a.sel{color:#fff}.nav a.sel:after{content:"";position:absolute;left:-18px;right:-18px;bottom:0;height:3px;background:linear-gradient(90deg,transparent,#4BA66F 30%,#9BE0B9 50%,#4BA66F 70%,transparent);filter:blur(.5px)}
+.search{background:#161616;border:1px solid #2a2a2a;border-radius:10px;padding:8px 16px;color:#8a8a8a;width:260px;font-size:14px}
+.subtabs{background:#fff;border-bottom:1px solid #EAEAEA;display:flex;gap:28px;padding:0 28px}.subtabs a{padding:13px 2px;font-weight:500;color:#555}
+.subtabs a.sel{color:#407AEA;border-bottom:2px solid #407AEA}
+main{max-width:1180px;margin:0 auto;padding:28px 24px 60px}
+h1{font-size:24px;line-height:32px;margin:0 0 16px;font-weight:600}h2{font-size:24px;line-height:31px;margin:14px 0 8px;font-weight:600;letter-spacing:-.2px}
+h3{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:#808180;margin:16px 0 6px;font-weight:600}h3:first-child{margin-top:0}h4{font-size:15px;margin:18px 0 4px;font-weight:600}
+.card{background:#fff;border:1px solid #EAEAEA;border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(0,0,0,.03);margin-bottom:16px}
+.view{display:none}#list:target,#detail:target{display:block}#list{display:block}#detail:target~#list,main:has(#detail:target) #list{display:none}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.stat span{display:block;color:#808180;font-size:13px}.stat b{font-size:26px;font-weight:600}.stat b.w{color:#B54708}
+.tablecard{padding:0;overflow:hidden}table{width:100%;border-collapse:collapse}th{text-align:left;font-size:12px;color:#808180;font-weight:600;padding:14px 18px;background:#FAFAFA;border-bottom:1px solid #EAEAEA}
+td{padding:16px 18px;border-bottom:1px solid #F1F1F1;vertical-align:middle}tr:hover td{background:#FAFCFF}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#555}.sub{color:#808180;font-size:13px}.sm{font-size:12px}
+.code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#F1F4FB;color:#344;border-radius:6px;padding:1px 6px}
+.det a{color:#407AEA;font-weight:600}.foot{padding:14px 18px;color:#808180;font-size:13px}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 11px;font-weight:600;font-size:13px}.chip i{font-style:normal}.chip.big{font-size:15px;padding:5px 14px}
+.chip.fight{background:#E3F5EC;color:#0F7B4F}.chip.fold{background:#FDF0DC;color:#8A4B08}.chip.escalate{background:#FDE8E6;color:#B42318}.chip.shield{background:#EEF2F6;color:#475569}
+.tl{font-weight:600}.tl.warn{color:#B54708}
+.crumb{margin-bottom:10px;color:#407AEA;font-weight:600}
+.head{display:flex;justify-content:space-between;align-items:flex-start}.head h1{margin:2px 0 4px}.rt{text-align:right}.tlbig{font-size:28px;font-weight:600;color:#B54708}
+.cols{display:grid;grid-template-columns:5fr 6fr;gap:16px;align-items:start}
+.quote{font-size:17px;margin:4px 0 0}p{margin:0 0 6px}
+.rowh{display:flex;justify-content:space-between;align-items:center}.link{color:#407AEA;font-weight:600;font-size:14px}
+.ev{display:grid;grid-template-columns:34px 1fr auto;gap:10px;padding:12px;border:1px solid #F1F1F1;border-radius:12px;margin-top:10px}.ev p{color:#555;font-size:14px;margin:2px 0 0}.ev.hl{border-color:#407AEA;background:#F4F8FF}
+.id{background:#EEF2F6;border-radius:8px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px}
+.slot{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:#F6F6F6;border-radius:6px;padding:2px 7px;color:#555;align-self:start;display:inline-block;margin:2px 4px 2px 0}
+.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.conf{color:#555;font-weight:500}.src{margin-left:auto;font-size:12px;color:#808180}.src a{color:#407AEA;margin-left:6px}
+.cite{background:#E8F0FE;color:#2B5BC8;border-radius:6px;padding:0 6px;font-size:12px;font-weight:600}
+.money{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 8px}.money>div{background:#FAFAFA;border:1px solid #F1F1F1;border-radius:12px;padding:10px 12px}.money span{display:block;font-size:12px;color:#808180}.money b{font-size:17px;font-weight:600;display:block}.money em{font-style:normal;font-size:12px;color:#808180}
+.worth{color:#3D6A51;font-weight:600;background:#E3F5EC;border-radius:10px;padding:8px 12px;display:inline-block}
+.fb{margin:14px 0;color:#808180;font-size:17px;letter-spacing:10px}
+.next{border-top:1px solid #EAEAEA;padding-top:14px}.nh{font-weight:600;margin-bottom:6px;color:#3D6A51}.n{padding:7px 10px;border-radius:8px;color:#222}.n.hi{background:#EAEAEA}
+.count{color:#808180;font-size:13px}.draft p{font-size:15.5px;line-height:1.7}.slots{margin:10px 0;color:#808180;font-size:13px}.checks{color:#3D6A51;font-weight:600;font-size:14px;margin:8px 0 14px}.checks a{color:#407AEA;margin-left:8px}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}button{font:600 14px Inter,system-ui,sans-serif;border-radius:10px;padding:11px 20px;cursor:pointer}
+.primary{background:#407AEA;color:#fff;border:0}.ghost{background:#fff;border:1px solid #D6D6D6;color:#111}.copy{background:#fff;border:1px solid #407AEA;color:#407AEA;margin-left:auto}.sim{color:#808180;font-size:12px;width:100%}
+@media(max-width:900px){.cols{grid-template-columns:1fr}.strip{grid-template-columns:1fr}.money{grid-template-columns:1fr 1fr}.search{display:none}table{font-size:13px}}
+@media(max-width:900px){
+.nav{padding:0 12px;overflow-x:auto}.nav nav{gap:20px;flex-wrap:nowrap}.nav a{white-space:nowrap;font-size:14px}
+.subtabs{overflow-x:auto;padding:0 12px;gap:18px}.subtabs a{white-space:nowrap}
+main{padding:16px 16px 40px}
+.head{flex-direction:column;gap:8px}.rt{text-align:left}.head h1{font-size:20px;line-height:26px}
+.ev{grid-template-columns:34px 1fr}.ev .slot{grid-column:2}
+.tablecard{overflow-x:auto}table{min-width:720px}
+.actions button{flex:1 1 40%}.copy{margin-left:0}
+.src{margin-left:0;width:100%}
+}
+.nav a{flex-shrink:0}
+</style></head><body>
+<div class="proto">Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.</div>
+<header class="nav"><nav><a>✦ Ray AI</a><a class="sel">▤ Payments</a><a>✕ Banking+</a><a>▣ Payroll</a><a>More ⌄</a></nav><div class="search">⌕ Search in payments</div></header>
+<div class="subtabs"><a>Transactions</a><a>Settlements</a><a class="sel">Disputes</a><a>Refunds</a></div>
+<main>
+<section id="list" class="view">
+<h1>Disputes</h1>
+<div class="strip"><div class="card stat"><span>Need a decision</span><b>8</b></div><div class="card stat"><span>At stake (demo rate ₹88/USD)</span><b>₹10,66,208</b></div><div class="card stat"><span>Due within 24 hours</span><b class="w">3</b></div></div>
+<div class="card tablecard"><table><thead><tr><th>Dispute</th><th>Merchant</th><th>Amount</th><th>Reason</th><th>Time left</th><th>Call</th><th></th></tr></thead><tbody><tr><td class="mono">disp_demoC10</td><td>Taskbird</td>
+<td><b>USD 96</b><div class="sub">₹8,448</div></td>
+<td><span class="code">13.6</span> Credit Not Processed</td>
+<td><span class="tl warn">⚠ 8h</span></td><td><span class="chip fight "><i>✓</i>Fight</span></td><td class="det"><a href="#detail">Details</a></td></tr><tr><td class="mono">disp_demoC06</td><td>Snapcast Studio</td>
+<td><b>USD 480</b><div class="sub">₹42,240</div></td>
+<td><span class="code">13.2</span> Cancelled subscription</td>
+<td><span class="tl warn">⚠ 14h</span></td><td><span class="chip fight "><i>✓</i>Fight</span></td><td class="det"><a href="#detail">Details</a></td></tr><tr><td class="mono">disp_demoC15</td><td>Golden Triangle Journeys</td>
+<td><b>USD 3,200</b><div class="sub">₹2,81,600</div></td>
+<td><span class="code">13.7</span> Cancelled Service</td>
+<td><span class="tl warn">⚠ 18h</span></td><td><span class="chip escalate "><i>⚠</i>Escalate</span></td><td class="det"><a href="#detail">Details</a></td></tr><tr><td class="mono">disp_demoC02</td><td>CodeKiln Tech</td>
+<td><b>USD 4,950</b><div class="sub">₹4,35,600</div></td>
+<td><span class="code">13.1</span> Service Not Received</td>
+<td><span class="tl warn">⚠ 20h</span></td><td><span class="chip escalate "><i>⚠</i>Escalate</span></td><td class="det"><a href="#detail">Details</a></td></tr><tr><td class="mono">disp_demoC09</td><td>Inkwell Content</td>
+<td><b>USD 750</b><div class="sub">₹66,000</div></td>
+<td><span class="code">13.3</span> Not as Described or Defective Service</td>
+<td><span class="tl ">26h</span></td><td><span class="chip fold "><i>↩</i>Fold</span></td><td class="det"><a href="#detail">Details</a></td></tr><tr><td class="mono">disp_demoC16</td><td>Ledgerly</td>
+<td><b>USD 1,200</b><div class="sub">₹1,05,600</div></td>
+<td><span class="code">10.4</span> Other Fraud - Card-Absent Environment</td>
+<td><span class="tl ">28h</span></td><td><span class="chip shield "><i>🛡</i>Shield</span></td><td class="det"><a href="#detail">Details</a></td></tr><tr><td class="mono">disp_demoC04</td><td>Ledgerly</td>
+<td><b>USD 1,200</b><div class="sub">₹1,05,600</div></td>
+<td><span class="code">13.2</span> Cancelled subscription</td>
+<td><span class="tl ">30h</span></td><td><span class="chip fight "><i>✓</i>Fight</span></td><td class="det"><a href="#detail">Details</a></td></tr><tr><td class="mono">disp_demoC12</td><td>SlideCraft</td>
+<td><b>USD 240</b><div class="sub">₹21,120</div></td>
+<td><span class="code">13.6</span> Credit Not Processed</td>
+<td><span class="tl ">34h</span></td><td><span class="chip fight "><i>✓</i>Fight</span></td><td class="det"><a href="#detail">Details</a></td></tr></tbody></table>
+<div class="foot">Showing 8 of 16 demo disputes · Calls are AI recommendations. You approve every action.</div></div>
+</section>
+<section id="detail" class="view">
+<div class="crumb"><a href="#list">‹ Disputes</a></div>
+<div class="card head"><div><div class="mono sm">disp_demoC04 · Visa</div><h1>USD 1,200 · 13.2 Cancelled subscription</h1><div class="sub">Ledgerly (Pune accounting SaaS) · Customer: Northfield Co, USA · raised 10 Jun 2026</div></div><div class="rt"><div class="sub">Time left</div><b class="tlbig">30h</b></div></div>
+<div class="cols">
+<div class="col left">
+<div class="card"><h3>What the customer says</h3><p class="quote">“I cancelled this subscription.”</p>
+<h3>What this means</h3><p>Visa sides with the customer if they cancelled before the renewal charge. It sides with you if they cancelled after, or kept using the service.</p>
+<h3>What Razorpay knows</h3><p>Renewal captured 1 May 2026. Two earlier annual payments (May 2024, May 2025), no disputes. No refunds.</p></div>
+<div class="card"><div class="rowh"><h3>Your evidence</h3><a class="link">+ Add evidence</a></div>
+<div class="ev"><b class="id">E1</b><div><b>Terms acceptance record</b><p>Ticked “I agree” to Terms v4 on 1 May 2024. Renews annually; cancel before renewal.</p></div><span class="slot">term_and_conditions</span></div>
+<div class="ev"><b class="id">E2</b><div><b>Renewal reminder</b><p>Sent 17 Apr 2026: plan renews 1 May for USD 1,200.</p></div><span class="slot">customer_communication</span></div>
+<div class="ev hl"><b class="id">E3</b><div><b>Cancellation email</b><p>4 May 2026: “Please cancel our subscription.”</p></div><span class="slot">cancellation_proof</span></div>
+<div class="ev hl"><b class="id">E4</b><div><b>Login log</b><p>Logged in 5, 9, 15 and 22 May 2026; ran report exports.</p></div><span class="slot">access_activity_log</span></div></div>
+</div>
+<div class="col right">
+<div class="card answer">
+<div class="meta"><span class="chip fight big"><i>✓</i>Fight</span><span class="conf">High confidence</span><span class="src">Saved result · ChatGPT 5.6 · prompt v1 <a>Under the hood ›</a></span></div>
+<h2>Fight this one. The customer kept using Ledgerly after asking to cancel.</h2>
+<p>The cancellation came on 4 May, after the 1 May charge. Logins and report exports on 5, 9, 15 and 22 May show continued use. Under Visa 13.2, that supports the merchant.</p>
+<h4>Deciding evidence</h4><p><span class="cite">E3</span> <span class="cite">E4</span> <span class="cite">E1</span></p>
+<div class="money"><div><span>At stake</span><b>USD 1,200</b><em>₹1,05,600</em></div><div><span>Taken back if lost</span><b>₹1,05,600</b><em>dispute-day demo rate</em></div><div><span>Fees if it escalates</span><b>USD 600</b><em>₹52,800</em></div><div><span>Odds of winning</span><b>80%</b><em>AI estimate</em></div></div>
+<div class="worth">✓ Fighting is worth it</div>
+<h4>My recommendation</h4><p>Review the response below and submit it. You have 30 hours.</p>
+<div class="fb">👍 👎 ⧉</div>
+<div class="next"><div class="nh">✦ How can I help you next?</div><div class="n hi">1. Review and submit the response</div><div class="n">2. What happens if I fold?</div><div class="n">3. Show all open disputes</div></div>
+</div>
+</div>
+</div>
+<div class="card draft"><div class="rowh"><h3>Response to the bank</h3><span class="count">640 / 1,000</span></div>
+<p>Ledgerly sold Northfield Co an annual plan that renewed on 1 May 2026 for USD 1,200. <span class="cite">E1</span> The customer accepted Terms v4 on 1 May 2024, which say the plan renews annually and must be cancelled before the renewal date. <span class="cite">E1</span> A renewal reminder was sent on 17 Apr 2026. <span class="cite">E2</span> The customer first asked to cancel on 4 May 2026, after the charge. <span class="cite">E3</span> The customer then logged in on 5, 9, 15 and 22 May 2026 and ran report exports. <span class="cite">E4</span> The two earlier annual renewals were paid without dispute. <span class="cite">Razorpay</span></p>
+<div class="slots">Documents attached: <span class="slot">term_and_conditions · E1</span><span class="slot">customer_communication · E2</span><span class="slot">cancellation_proof · E3</span><span class="slot">access_activity_log · E4</span></div>
+<div class="checks">✓ 7 of 7 safety checks passed <a>View</a></div>
+<div class="actions"><button class="primary">Approve and submit</button><button class="ghost">Fold</button><button class="ghost">Escalate</button><button class="copy">Copy</button><span class="sim">Simulated: nothing is sent to Razorpay</span></div></div>
+</section></main></body></html>
