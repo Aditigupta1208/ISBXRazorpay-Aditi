@@ -1,8 +1,10 @@
+import { PROMPT_VERSION } from "@/lib/prompt";
+
 export const metadata = { title: "How it works | Dispute Advisor (concept prototype)" };
 
 const FLOW = [
   ["1", "Dispute and evidence", "Razorpay's dispute record plus the documents you have."],
-  ["2", "The check", "Claude reads them with Visa's rule for the reason code (prompt v2.1)."],
+  ["2", "The check", "Claude reads them with Visa's rule for the reason code (prompt " + PROMPT_VERSION + ")."],
   ["3", "Safety rules", "Seven checks in code can change or block the answer."],
   ["4", "You decide", "Edit, approve, fold or ask for a document. Nothing goes without a click."],
   ["5", "Outcome", "Mark won or lost. Next steps and a prevention tip."],

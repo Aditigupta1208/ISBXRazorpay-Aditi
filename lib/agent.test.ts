@@ -7,7 +7,7 @@ import { SLOTS, decisionSchema } from "./schema.ts";
 import { allow, resetRateLimit } from "./ratelimit.ts";
 import type { CaseData, CheckView } from "./types.ts";
 
-const md = readFileSync("prompts/dispute-agent-v2.1.md", "utf8");
+const md = readFileSync("prompts/dispute-agent-v2.2.md", "utf8");
 const prompt = parsePrompt(md);
 
 const c: CaseData = {
@@ -177,11 +177,13 @@ test("defensible amount is converted to subunits and dropped when it is the full
   assert.equal(full.status === "live" && full.view.defensibleAmount, null);
 });
 
-test("a draft is only kept for a Fight", async () => {
+test("a draft is kept for Fight and Escalate, never for Fold", async () => {
   const f = await analyze(c, added, deps({ n: 0 }, [ok({ ...good, decision: "fight", draft_response: "Used the service after. [E2]" })]));
   assert.equal(f.status === "live" && f.view.draft, "Used the service after. [E2]");
   const e = await analyze(c, added, deps({ n: 0 }, [ok({ ...good, decision: "escalate", draft_response: "should be dropped. [E2]" })]));
-  assert.equal(e.status === "live" && e.view.draft, "");
+  assert.equal(e.status === "live" && e.view.draft, "should be dropped. [E2]");
+  const a = await analyze(c, added, deps({ n: 0 }, [ok({ ...good, decision: "accept", draft_response: "must not show. [E2]" })]));
+  assert.equal(a.status === "live" && a.view.draft, "");
 });
 
 test("the zod schema and the prompt's tool schema list the same fields, slots and decisions", () => {
@@ -230,4 +232,20 @@ test("terms over the cap or holding a card number are rejected before any call",
   const card = await analyze(c, [], d, { text: "my card 4111 1111 1111 1111", acceptance: "unsure" });
   assert.equal(card.status, "rejected");
   assert.equal(calls.n, 0);
+});
+
+test("prompt v2.2: Escalate keeps a draft, Fold has none, and the tool schema matches v2.1", async () => {
+  const esc = await analyze(c, [], deps({ n: 0 }, [async () => reply({ ...good, decision: "escalate", missing_evidence: "the signed terms", draft_response: "The customer was charged on 1 Jun. [E1]" })]));
+  assert.equal(esc.status, "live");
+  if (esc.status === "live") {
+    assert.equal(esc.view.call, "escalate");
+    assert.equal(esc.view.draft, "The customer was charged on 1 Jun. [E1]");
+    }
+  const fold = await analyze(c, [], deps({ n: 0 }, [async () => reply({ ...good, draft_response: "Should not show. [E1]" })]));
+  if (fold.status === "live") assert.equal(fold.view.draft, "");
+  const v21 = parsePrompt(readFileSync("prompts/dispute-agent-v2.1.md", "utf8"));
+  const v22 = parsePrompt(md); // fresh parse: other tests may reorder arrays in the shared one
+  assert.deepEqual(v22.toolSchema, v21.toolSchema);
+  assert.match(prompt.system, /When the decision is escalate, also write a draft/);
+  assert.equal(v21.system.includes("also write a draft"), false);
 });

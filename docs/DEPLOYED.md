@@ -83,7 +83,7 @@ Last updated: 5 Oct 2026, after milestone 3. Update this file at the end of ever
 
 ### 10. Server
 - [x] `POST /api/analyze`: rate limit (20 per IP per hour), 60 KB request cap, input validation, fraud routing before any model call, cache by request, forced tool call, zod validation, one retry, 45 s timeout, 2,000 output tokens
-- [x] Prompt read from `prompts/dispute-agent-v2.1.md` (single source); a test keeps the zod schema and the prompt's tool schema in step
+- [x] Prompt read from `prompts/dispute-agent-v2.2.md` (single source); a test keeps the zod schema and the prompt's tool schema in step
 - [x] Evidence wrapped and escaped against prompt injection
 - [x] Under the hood shows live tokens, response time, cost in USD and ₹, and cache hits
 - [x] API key read only on the server
@@ -94,7 +94,7 @@ Last updated: 5 Oct 2026, after milestone 3. Update this file at the end of ever
 
 ## Milestones 4 and 5 (built 6 Oct, not yet pushed at the time of writing)
 
-- `/evals`: checklist vs v1 vs v2.1 against the PRD bars, per-case table, limits. Reads `eval/results/`.
+- `/evals`: checklist vs v1 vs the latest prompt against the PRD bars, per-case table, limits. Reads `eval/results/`.
 - `npm run eval` and `lib/eval.ts`; eval cases C17 to C20 in `data/`.
 - `/agent-studio`: terms, how customers accept them, approvals, notify, scope, on/off. Terms flow into checks.
 - `/how-it-works`: flow, safety rules, the seven brief questions, assumption A1, out of scope, limits.
@@ -102,7 +102,7 @@ Last updated: 5 Oct 2026, after milestone 3. Update this file at the end of ever
 
 ## Not deployed yet
 - [ ] Real-model run of the C06 demo, a PDF and a screenshot (needs the API key)
-- [ ] A real v2.1 run of `npm run eval` (needs the API key)
+- [ ] A real v2.2 run of `npm run eval` (needs the API key)
 - [ ] M5: copy and accessibility pass
 - [ ] M6: product note, video, final public build log
 - Cut from the MVP: PDF and image upload; draft contest on Escalate; clear-win fast lane (F7) unless time allows

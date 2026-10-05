@@ -10,6 +10,7 @@ import { DRAFT_LIMIT, citedIds, containsCardNumber, evaluateGuardrails, sentence
 import { formatInrFull, formatOriginal, timeLeft } from "@/lib/format";
 import { DEMO_RATE_INR_PER_USD, VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor } from "@/lib/money";
 import type { CaseData, CheckView } from "@/lib/types";
+import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 
@@ -46,6 +47,9 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   const [newTitle, setNewTitle] = useState("");
   const [newText, setNewText] = useState("");
   const [addError, setAddError] = useState("");
+  const [reading, setReading] = useState(false);
+  const [readNote, setReadNote] = useState("");
+  const [autoTitle, setAutoTitle] = useState(""); // the last title we filled from a file; typing your own keeps it
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState(0);
   const [notice, setNotice] = useState<{ kind: "info" | "error"; text: string } | null>(null);
@@ -120,9 +124,41 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
     );
   const foldRequest = () => `POST /v1/disputes/${d.id}/accept`;
 
+  const readFile = async (file: File | undefined) => {
+    if (!file) return;
+    setAddError("");
+    setReadNote("");
+    if (!FILE_TYPES.includes(file.type as (typeof FILE_TYPES)[number])) return setAddError("Use a PDF, PNG, JPEG or WebP file.");
+    if (file.size > MAX_FILE_BYTES) return setAddError(`Keep the file under ${MAX_FILE_BYTES / 1024 / 1024} MB.`);
+    setReading(true);
+    try {
+      const data = await new Promise<string>((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(String(r.result).split(",")[1] ?? "");
+        r.onerror = () => reject(new Error("read"));
+        r.readAsDataURL(file);
+      });
+      const res = await fetch("/api/extract", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ name: file.name, mediaType: file.type, data }) });
+      const r = (await res.json()) as { status: string; title?: string; text?: string; truncated?: boolean; message?: string };
+      if (r.status === "ok") {
+        setNewTitle((t) => (!t.trim() || t === autoTitle ? (r.title ?? "") : t));
+        setAutoTitle(r.title ?? "");
+        setNewText(r.text ?? "");
+        setReadNote(`Read from ${file.name}.${r.truncated ? ` It was long, so only the first ${MAX_EVIDENCE_CHARS.toLocaleString()} characters are kept.` : ""} Check the text before you add it.`);
+      } else {
+        setAddError(r.message ?? "We couldn't read the file. Paste the text instead.");
+      }
+    } catch {
+      setAddError("We couldn't read the file. Paste the text instead.");
+    } finally {
+      setReading(false);
+    }
+  };
+
   const addEvidence = () => {
     const title = newTitle.trim();
     const content = newText.trim();
+    setReadNote("");
     if (!title || !content) return setAddError("Give the document a title and some text.");
     if (title.length > MAX_TITLE_CHARS || content.length > MAX_EVIDENCE_CHARS) return setAddError(`Keep the title under ${MAX_TITLE_CHARS} and the text under ${MAX_EVIDENCE_CHARS.toLocaleString()} characters.`);
     if (containsCardNumber(title) || containsCardNumber(content)) return setAddError("Remove the card number and try again.");
@@ -217,6 +253,16 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   const sentences = splitSentences(draft);
   const blockers = g.submitBlockers;
 
+  // Clear win (F7): a confident Fight whose response leans on Razorpay's own record, with nothing missing or contradicted.
+  const clearWin =
+    !acted &&
+    finalCall === "fight" &&
+    view.confidence.toLowerCase() === "high" &&
+    view.missingEvidence.length === 0 &&
+    view.contradictions.length === 0 &&
+    blockers.length === 0 &&
+    citedIds(draft).includes("Razorpay");
+
   // "How can I help you next?" Each option does something real on this dispute. Fewer than three is fine.
   const goTo = (id: string) => setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
   const openReview = () => {
@@ -246,8 +292,10 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
               ...(view.requestText ? [{ label: "Copy the message asking for the missing document", hint: "Paste it into an email or chat.", run: () => copy("request", view.requestText ?? "") }] : []),
               { label: "Add the document when I have it", hint: "Then re-run the check.", run: openAdd },
               view.defensibleAmount !== null
-                ? { label: `Contest only the part worth fighting (${formatInrFull(money.contestInr)})`, hint: "Opens the response with that amount.", run: openReview }
-                : { label: "Fold this dispute", hint: "Accepts it. You confirm first.", run: () => setDialog("fold") },
+                ? { label: `Contest only the part worth fighting (${formatInrFull(money.contestInr)})`, hint: view.draft ? "Opens the draft written for that part." : "Opens the response with that amount.", run: openReview }
+                : view.draft
+                  ? { label: "Review the draft contest", hint: "Written from the documents you have now.", run: openReview }
+                  : { label: "Fold this dispute", hint: "Accepts it. You confirm first.", run: () => setDialog("fold") },
             ].slice(0, 3);
 
   return (
@@ -354,7 +402,12 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
             )}
             {adding && (
               <div className="mt-3 rounded-xl border border-line p-3">
-                <label htmlFor="ev-title" className="text-sm font-semibold">
+                <label htmlFor="ev-file" className="text-sm font-semibold">
+                  Upload a PDF or image
+                </label>
+                <input id="ev-file" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" disabled={reading} onChange={(e) => { void readFile(e.target.files?.[0]); e.target.value = ""; }} className="mt-1 block w-full text-[14px] file:mr-3 file:rounded-lg file:border file:border-[#D6D6D6] file:bg-white file:px-3 file:py-1.5 file:font-medium" aria-describedby="ev-file-help" />
+                <p id="ev-file-help" className="mt-1 text-[13px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
+                <label htmlFor="ev-title" className="mt-3 block text-sm font-semibold">
                   Title
                 </label>
                 <input id="ev-title" value={newTitle} maxLength={MAX_TITLE_CHARS + 20} onChange={(e) => setNewTitle(e.target.value)} placeholder="e.g. Billing audit log" className="mt-1 w-full rounded-[10px] border border-line px-3 py-2 focus:border-brand-focus focus:outline-none" />
@@ -393,6 +446,17 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
         </div>
 
         <div className="order-1 md:order-none">
+          {clearWin && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-fight bg-fight-soft px-4 py-3" role="status">
+              <span>
+                <b className="block text-fight">✓ Clear win</b>
+                <span className="text-[14px] text-[#333]">Razorpay&apos;s own record backs this response and nothing is missing. You still approve it.</span>
+              </span>
+              <button className={primary} onClick={() => goTo("response")}>
+                Review and submit
+              </button>
+            </div>
+          )}
           {state.dirty && !acted && (
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-brand bg-[#F4F8FF] px-4 py-3" role="status">
               <span className="font-semibold">Evidence changed.</span>
@@ -575,6 +639,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
             <Card>
               <H3>Get this first</H3>
               <p className="text-[17px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
+              {view.draft && <p className="mt-2 text-[14px] text-[#555]">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
               <p className="mt-2 text-[15px]">
                 {d.respond_by_hours_left < 6
                   ? "No time to gather more: choose Fight or Fold."
@@ -617,6 +682,11 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
         <Card id="response">
           <h2 className="mb-1 text-lg font-semibold">Review your response</h2>
           <p className="mb-3 text-[13px] text-helper">Every sentence needs a source. You can edit anything. Nothing is sent until you approve.</p>
+          {finalCall === "escalate" && (
+            <p className="mb-3 rounded-xl bg-[#FFF8E6] px-3 py-2 text-[14px] text-fold">
+              {view.draft ? "This draft uses only the documents you have now. Add the missing one and re-run the check before you rely on it." : "No draft yet. Write your own from the documents you have, or add the missing one and re-run the check."}
+            </p>
+          )}
 
           <label htmlFor="draft" className="text-sm font-semibold">
             Explanation for the bank

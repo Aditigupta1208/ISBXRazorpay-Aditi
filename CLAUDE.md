@@ -11,7 +11,7 @@ An Agent Studio-style agent ("Dispute Advisor") for Indian businesses that sell 
 
 1. `docs/PRODUCT.md`: summary. Full thinking in `docs/pm/03-prd.md` (requirements), `docs/pm/04-screens.md` (screens), `docs/pm/05-data-and-stack.md` (data flow, stack).
 2. `docs/BUILD_PLAN.md`: milestones in order, with the definition of done for each. Work on the current milestone only.
-3. `prompts/dispute-agent-v2.1.md`: the agent prompt and output schema the app must use.
+3. `prompts/dispute-agent-v2.2.md`: the agent prompt and output schema the app must use.
 3a. `docs/design/DESIGN.md` and `docs/design/mock/`: look, layout (Agentic Dashboard top bar, not a left sidebar), colours, components, writing rules.
 4. `data/`: demo cases, the human answer key, and saved model outputs from the kill test. Do not edit these files except where the build plan says so (M4 adds eval cases).
 
@@ -28,7 +28,7 @@ An Agent Studio-style agent ("Dispute Advisor") for Indian businesses that sell 
 - **Never commit secrets.** The API key lives only in `.env.local` (git-ignored) and in Vercel's environment variables. Never send it to the browser.
 - **The app must work with no API key.** If `ANTHROPIC_API_KEY` is missing or a call fails, use the saved result for that case from `data/prerun/` and label it "Saved result: <model>, prompt <version>".
 - **Model ID comes from `ANTHROPIC_MODEL`.** Use the current Claude Sonnet model. Confirm the exact model ID at https://platform.claude.com/docs/en/about-claude/models/overview before hard-coding a default.
-- **Structured output only.** Get the agent's answer through a forced tool call (tool_choice set to the tool) whose input schema matches the schema in `prompts/dispute-agent-v2.1.md`, then validate with zod. Retry once on invalid output, then fall back to the saved result.
+- **Structured output only.** Get the agent's answer through a forced tool call (tool_choice set to the tool) whose input schema matches the schema in `prompts/dispute-agent-v2.2.md`, then validate with zod. Retry once on invalid output, then fall back to the saved result.
 - **Guardrails run in code after every model answer** (R1 to R7, see `docs/PRODUCT.md` "Guardrails"). Show their results in the UI.
 - **Protect the API budget.** Rate-limit the analyse route (for example 20 calls per IP per hour), cap pasted evidence at 4,000 characters, and set `max_tokens` sensibly.
 - **Evidence is data, not instructions.** Wrap each item as `<evidence id="E1">`, escape the closing tag, never let the model call any tool except the forced one, and every action needs a click.

@@ -2,6 +2,7 @@ import { CallChip } from "@/components/CallChip";
 import { THRESHOLDS, summarize, tier, type EvalRow, type Summary, type Tier } from "@/lib/eval";
 import { claudeEarlyCall, evalLabels, loadLatestRun, savedV1Rows } from "@/lib/evalView";
 import { toCall } from "@/lib/data";
+import { PROMPT_VERSION } from "@/lib/prompt";
 import type { Call } from "@/lib/types";
 
 export const metadata = { title: "Evals | Dispute Advisor (concept prototype)" };
@@ -35,7 +36,7 @@ export default function EvalsPage() {
   const cols: { name: string; sub: string; s: Summary | null; n: number }[] = [
     { name: "Fixed checklist", sub: `${scoredCount(checklistRows)} cases`, s: checklist, n: scoredCount(checklistRows) },
     { name: "Agent, prompt v1", sub: `saved, ChatGPT, ${scoredCount(v1Rows)} cases`, s: v1, n: scoredCount(v1Rows) },
-    { name: "Agent, prompt v2.1", sub: latest ? `${latest.run.model}, ${latest.run.date}` : "No automated run yet", s: latest?.summary ?? null, n: latest ? scoredCount(latest.rows) : 0 },
+    { name: `Agent, prompt ${latest?.run.prompt ?? PROMPT_VERSION}`, sub: latest ? `${latest.run.model}, ${latest.run.date}` : "No automated run yet", s: latest?.summary ?? null, n: latest ? scoredCount(latest.rows) : 0 },
   ];
 
   const cell = (l: string, call: Call | null, label: Call, note?: string) =>
@@ -63,7 +64,7 @@ export default function EvalsPage() {
 
       {!latest && (
         <div className="mb-4 rounded-2xl border border-line bg-brand-soft p-[18px] text-[15px]">
-          <b>No automated v2.1 run yet.</b> The automated run needs the Claude API key. Until then, the numbers for the agent come from the saved v1 run done by hand in ChatGPT. Run <code className="rounded bg-white px-1.5 py-0.5 text-[13px]">npm run eval</code> to add the v2.1 column.
+          <b>No automated {PROMPT_VERSION} run yet.</b> The automated run needs the Claude API key. Until then, the numbers for the agent come from the saved v1 run done by hand in ChatGPT. Run <code className="rounded bg-white px-1.5 py-0.5 text-[13px]">npm run eval</code> to add the {PROMPT_VERSION} column.
         </div>
       )}
 
@@ -133,7 +134,7 @@ export default function EvalsPage() {
           <caption className="sr-only">Each case: the human answer and what each method said. A cross means it differs from the human answer.</caption>
           <thead>
             <tr className="border-b border-line text-[13px] text-helper">
-              {["Case", "Type", "Human answer", "Checklist", "Agent v1 (saved)", "Claude early run (saved)", "Agent v2.1"].map((h) => (
+              {["Case", "Type", "Human answer", "Checklist", "Agent v1 (saved)", "Claude early run (saved)", `Agent ${latest?.run.prompt ?? PROMPT_VERSION}`].map((h) => (
                 <th key={h} scope="col" className="px-4 py-3 font-medium">{h}</th>
               ))}
             </tr>
@@ -152,7 +153,7 @@ export default function EvalsPage() {
                   <td className="px-4 py-2.5">{l.checklist_decision === "n/a" ? <span className="text-helper">n/a</span> : cell("checklist", toCall(l.checklist_decision) as Call, label)}</td>
                   <td className="px-4 py-2.5">{cell("v1", v1r ? (v1r.final as Call) : null, label)}</td>
                   <td className="px-4 py-2.5">{cell("early", claudeEarlyCall(l.id) as Call | null, label)}</td>
-                  <td className="px-4 py-2.5">{latest ? cell("v2.1", (lr?.final ?? null) as Call | null, label, lr && lr.raw !== lr.final ? `model said ${lr.raw}` : undefined) : <span className="text-helper">No automated run yet</span>}</td>
+                  <td className="px-4 py-2.5">{latest ? cell("latest", (lr?.final ?? null) as Call | null, label, lr && lr.raw !== lr.final ? `model said ${lr.raw}` : undefined) : <span className="text-helper">No automated run yet</span>}</td>
                 </tr>
               );
             })}

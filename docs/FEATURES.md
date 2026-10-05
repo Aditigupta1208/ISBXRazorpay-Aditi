@@ -7,16 +7,16 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | # | Feature | Status | Where |
 |---|---|---|---|
 | ⭐ | Fight-or-Fold check (the star feature) | ✅ (live call tested against a stand-in model only) | Dispute detail, right column |
-| F1 | Evidence locker | 🟡 paste works; file upload and extracted key facts not built | Dispute detail, left column |
+| F1 | Evidence locker | ✅ paste; 🟡 file upload built, proven on a stand-in model only | Dispute detail, left column |
 | F2 | Policy profile | ✅ (terms are sent as the merchant's claim, not proof; tested on a stand-in model) | `/agent-studio` |
 | F3 | Cited response draft | ✅ | Dispute detail, "Review your response" |
 | F4 | Merchant controls | ✅ | Dispute detail |
 | F5 | Safety checks (R1 to R7) | ✅ | Check panel, drawer, API route |
 | F6 | Priority inbox | ✅ | `/disputes` |
-| F7 | Clear-win fast lane | ⬜ (first to cut) | |
+| F7 | Clear-win fast lane | ✅ | Dispute detail, top of the right column |
 | F8 | Outcome, next steps and prevention tip | ✅ | Dispute detail, after an action |
 | F9 | Under the hood and audit trail | ✅ (audit trail is kept in the browser) | Drawer |
-| F10 | Evals page | ✅ (v2.1 column fills after the first real run) | `/evals` |
+| F10 | Evals page | ✅ (the latest-prompt column fills after the first real run) | `/evals` |
 | 🚀 | Service Dispute Shield (moonshot) | ⬜ by design: a concept, not in the MVP | |
 | — | Platform: no-key fallback, cache, rate limit, caps, labels | ✅ | Everywhere |
 
@@ -34,7 +34,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | **Chargeback Shield** | A fraud code (10.x). No check is run | Handled by Razorpay's existing product |
 
 **What the merchant sees (right column of the dispute page)**
-1. **The call** as a chip with icon and text (never colour alone), the confidence (High, Medium, Low) and the source label ("Live: claude-sonnet-5-5, prompt v2.1" or "Saved result: ChatGPT 5.6 Terra, prompt v1").
+1. **The call** as a chip with icon and text (never colour alone), the confidence (High, Medium, Low) and the source label ("Live: claude-sonnet-5-5, prompt v2.2" or "Saved result: ChatGPT 5.6 Terra, prompt v1").
 2. **A one-line reason** in plain words.
 3. **Deciding evidence:** chips (E3, E4). Clicking one scrolls to that document and highlights it.
 4. **Missing** and **Contradictions** lines.
@@ -53,7 +53,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 2. Validate input: at most 5 added documents, title up to 80 characters, text up to 4,000, no full card numbers.
 3. **Fraud codes are routed to Chargeback Shield before any model call.**
 4. Serve from the cache if the same case and evidence were checked in the last hour (no new cost).
-5. Call Claude with the prompt in `prompts/dispute-agent-v2.1.md` and a **forced tool call** (`record_dispute_decision`); the model can do nothing else. Model ID from `ANTHROPIC_MODEL` (default `claude-sonnet-5-5`), 45-second timeout, up to 2,000 output tokens.
+5. Call Claude with the prompt in `prompts/dispute-agent-v2.2.md` and a **forced tool call** (`record_dispute_decision`); the model can do nothing else. Model ID from `ANTHROPIC_MODEL` (default `claude-sonnet-5-5`), 45-second timeout, up to 2,000 output tokens.
 6. Validate the answer with zod. **Invalid or missing: retry once.** Still invalid: fall back.
 7. Return the answer; the browser then runs the safety rules and money maths on it.
 
@@ -84,8 +84,8 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 **Demo moment (C06).** Adding "Billing audit log: 30 Jul 2026, customer clicked Cancel subscription" and re-running flips the call from Fight to Fold, and the reason cites the new document. Verified in a browser against the stand-in model; to be repeated on the real model.
 
 **Not built**
-- ⬜ **PDF and image upload.** Cut for now: it needs a live test with real files, which needs the API key. If it works on the real model it is a small addition.
-- ⬜ **Extracted key facts** (2 to 3 lines per document). Cards show the original text instead.
+- 🟡 **PDF and image upload (built, not yet proven on the real model).** In the Add evidence form, pick a PDF, PNG, JPEG or WebP up to 3 MB. The server checks the type and the file's own first bytes, sends it to the model once with a forced tool (`record_document_text`), and fills the title and text for the merchant to check and edit. Then it is ordinary pasted evidence: same 4,000-character cap, card-number block, injection wrapper and re-run. Nothing is stored, so there is no file to leak. A full card number read from the file is refused. Over 4,000 characters is cut with a note. Reading a file costs one extra model call and has its own rate limit (10 an hour). With no key it says to paste the text.
+- ⬜ **Extracted key facts** (2 to 3 lines per document): not built. The slot tags and the cited draft already show how each document is used.
 
 ---
 
@@ -100,6 +100,8 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 ---
 
 ## F3 · Cited response draft ✅
+
+**Escalate drafts (prompt v2.2).** When the call is Escalate, the live check also writes a draft from the evidence on hand (for the defensible part only, if there is one), shown under **Fight anyway** or **Contest only the part worth fighting** with a warning to add the missing document and re-run before relying on it. The saved results have none, so it appears on live checks only, and it is not yet proven on the real model.
 
 **What it does.** For a Fight, writes the response to the card issuer and lets the merchant edit it, with every sentence tied to a document.
 
@@ -167,9 +169,11 @@ The server also caps input (4,000 characters, 5 documents, 60 KB request), rate-
 
 ---
 
-## F7 · Clear-win fast lane ⬜
+## F7 · Clear-win fast lane ✅
 
-**What it will do.** When Razorpay's own data alone settles a dispute (for example, the refund was already issued, as in C10), offer a one-click response built from that fact, still needing approval. First feature to cut if time runs short. Today C10 simply shows Fight with a one-sentence draft and the "Check the money" note.
+**What it does.** When the call is Fight with High confidence, nothing is missing or contradicted, no safety rule blocks the response, and the response cites Razorpay's own record, a green banner says "Clear win" and offers **Review and submit**, which jumps to the response. The merchant still approves; it only saves looking for the next step.
+
+**Today.** In the demo data only C10 (refund already processed, shown by Razorpay's record) qualifies. The test is in the browser and uses the draft as edited, so removing the Razorpay citation removes the banner.
 
 ---
 
@@ -201,7 +205,7 @@ A right-hand drawer on every dispute:
 
 **How it works.** `npm run eval` runs every case through the same code as the app (forced tool call, zod, safety rules) and writes `eval/results/<prompt>-<model>-<date>.json` and a summary. The page reads the newest file. It shows the model's own call and the call after the safety rules, so you can see what the rules fixed. Cases without a usable answer count as wrong.
 
-**Today.** Tested against a stand-in model only; the v2.1 column says "No automated run yet" until a real run is committed. Never cut.
+**Today.** Tested against a stand-in model only; the v2.2 column says "No automated run yet" until a real run is committed. Never cut.
 
 ---
 

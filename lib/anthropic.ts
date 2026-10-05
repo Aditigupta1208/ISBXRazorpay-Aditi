@@ -16,7 +16,7 @@ export function makeCallModel(apiKey: string | undefined): ((p: ModelParams) => 
       system: p.system,
       tools: [{ name: p.toolName, description: p.toolDescription, input_schema: p.toolSchema as Anthropic.Tool.InputSchema }],
       tool_choice: { type: "tool", name: p.toolName },
-      messages: [{ role: "user", content: p.user }],
+      messages: [{ role: "user", content: p.user as Anthropic.MessageParam["content"] }],
     });
     const block = res.content.find((b) => b.type === "tool_use");
     return {

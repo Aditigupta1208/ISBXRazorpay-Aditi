@@ -13,7 +13,7 @@ An Agent Studio-style agent for Indian businesses selling services, subscription
 - What is deployed so far: [`docs/DEPLOYED.md`](docs/DEPLOYED.md)
 - Live prototype: https://isbx-razorpay-aditi.vercel.app/disputes
 - Evaluation so far: [`eval/kill-test-v1.md`](eval/kill-test-v1.md)
-- Prompts: [`prompts/`](prompts/) (current: v2.1)
+- Prompts: [`prompts/`](prompts/) (current: v2.2; v2.1 is the baseline)
 - Demo data: [`data/`](data/)
 
 Status: M1 to M5 built (M3 and M4 live parts wait for an API key). Submission 13 Oct 2026.
@@ -33,7 +33,7 @@ With no API key the app shows the saved results and says so. The key is read onl
 
 ## How it is built
 
-Next.js (App Router) and TypeScript. The agent prompt and its tool schema live in `prompts/dispute-agent-v2.1.md` and are read from there. `lib/agent.ts` makes one forced tool call to Claude, validates the answer with zod, retries once, then falls back to the saved result. `lib/guardrails.ts` runs the seven safety rules in code after every answer. Evidence is wrapped as data and never followed as instructions.
+Next.js (App Router) and TypeScript. The agent prompt and its tool schema live in `prompts/dispute-agent-v2.2.md` and are read from there. `lib/agent.ts` makes one forced tool call to Claude, validates the answer with zod, retries once, then falls back to the saved result. `lib/guardrails.ts` runs the seven safety rules in code after every answer. Evidence is wrapped as data and never followed as instructions.
 
 ## Where the evaluation lives
 

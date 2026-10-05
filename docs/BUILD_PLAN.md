@@ -70,8 +70,10 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 ## M5b: Cuts brought back (6 Oct, decided by you)
 
 - [x] Numbered next-step prompts on each dispute, in the style of Ray's "How can I help you next?" (2 to 3 options that act on this dispute; no key needed)
-- [ ] Clear-win lane (F7): a banner on a high-confidence Fight whose draft rests on Razorpay's own record, offering a one-click review (no key needed)
-- [ ] PDF and image upload in Add evidence: size and type caps, sent to the model as a document or image block, wrapped as evidence. Built without the key; NOT counted as done until tested on a real PDF and a real screenshot with the key
+- [x] Clear-win lane (F7): a banner on a high-confidence Fight whose draft rests on Razorpay's own record, offering a one-click review (no key needed)
+- [x] (built, tested on a stand-in model only) PDF and image upload in Add evidence. Design: the file is read once into text by the model, the merchant checks and edits that text, then it is ordinary evidence (so every existing cap and the injection wrapper still apply and no file is stored). **NOT counted as proven until tested on a real PDF and a real screenshot with the key**
+
+- [x] (built, tested on a stand-in model only) Draft contest on Escalate (FR-23b): prompt v2.2 writes a draft from the evidence on hand when the call is Escalate (never claiming what the missing document would show). v2.1 is kept as the baseline. Saved results have no such draft, so it shows on live checks only. **Needs a real run to see whether the model stays within the evidence**
 
 ## M6: Note, video, submit (11 to 13 Oct)
 

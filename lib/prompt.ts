@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-export const PROMPT_VERSION = "v2.1";
-const FILE = "prompts/dispute-agent-v2.1.md";
+export const PROMPT_VERSION = "v2.2";
+const FILE = "prompts/dispute-agent-v2.2.md";
 
 export interface PromptParts {
   system: string;

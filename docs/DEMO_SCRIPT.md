@@ -11,7 +11,7 @@ Before recording: open the app in a fresh browser window (clean saved state) at 
 | 35 to 55 | C06 | "New evidence changes the call." | Add evidence: title "Billing audit log", text "30 Jul 2026: customer clicked Cancel subscription". Re-run check. Call flips to Fold; safety lines update. |
 | 55 to 70 | C15 | "Not everything is a fight. Here it says Escalate: USD 3,200 at stake, only half is owed, and one document is missing." | Show the Escalate card and what to get first. |
 | 70 to 80 | C16 | "Fraud goes to Chargeback Shield. The agent does not touch it." | Open C16, show the routing card. |
-| 80 to 90 | `/evals` | "On our test cases the agent matched the human answer where a fixed checklist missed. It also says what the numbers do not prove." | Show the table and the limits. Say the v2.1 result only if the real run is done; otherwise use the saved v1 numbers and say they are v1. |
+| 80 to 90 | `/evals` | "On our test cases the agent matched the human answer where a fixed checklist missed. It also says what the numbers do not prove." | Show the table and the limits. Say the v2.2 result only if the real run is done; otherwise use the saved v1 numbers and say they are v1. |
 
 Spare cases for live demos: C14 (Fold, policy only in the footer) and C10 (clear win). C17 to C20 are eval-only: they are not in the disputes list and show only on the Evals page.
 

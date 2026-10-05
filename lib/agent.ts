@@ -20,7 +20,8 @@ export interface AddedEvidence {
 export interface ModelParams {
   model: string;
   system: string;
-  user: string;
+  /** Plain text, or content blocks (a document or image plus text) for reading uploads. */
+  user: string | unknown[];
   toolName: string;
   toolDescription: string;
   toolSchema: Record<string, unknown>;
@@ -135,7 +136,7 @@ export function toCheckView(out: DecisionOutput, c: CaseData, meta: Meta): Check
     decidingEvidence: out.deciding_evidence,
     missingEvidence: missing,
     contradictions: [...out.contradictions, ...flagged],
-    draft: call === "fight" ? out.draft_response ?? "" : "",
+    draft: call === "fight" || call === "escalate" ? out.draft_response ?? "" : "",
     slots: out.evidence_slots.map((s) => ({ evidenceId: s.evidence_id, slot: s.slot })),
     ruleText: out.rule_applied,
     odds: out.win_probability_estimate,
