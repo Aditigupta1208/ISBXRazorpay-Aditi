@@ -125,6 +125,23 @@ Mapped to the dispute journey: **notice → understand → gather → decide →
 
 ●●● severe · ●● moderate · ● minor [A, from personas]
 
+### Is any of this already solved by Razorpay?
+
+Checked against what Razorpay has published. None of these pains is entirely new; what is new is the Segment C version of PP1, PP2, PP3 and PP7.
+
+| # | Pain point | What Razorpay offers today | Solved today? |
+|---|---|---|---|
+| PP1 | Don't know what wins | Generic guides on reason codes and evidence ([reason codes](https://razorpay.com/blog/chargeback-reason-codes/), [international chargebacks guide](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them)); nothing specific to the merchant's case | Partly |
+| PP2 | Don't know if it's worth fighting | Dispute Responder "scores win probability" ([Agent Studio guardrails blog](https://razorpay.com/blog/razorpay-agent-studio-principles-guardrails-and-merchant-control/)); nothing public on exchange-rate clawback or fee economics | Partly |
+| PP3 | Evidence scattered | Dispute Responder gathers evidence from Razorpay, Shopify and Shiprocket (same blog); manual uploads on the [disputes dashboard](https://razorpay.com/docs/payments/disputes/dashboard/?preferred-country=IN). Nothing reads evidence from the merchant's own systems | Solved for Segment B, not Segment C |
+| PP4 | Writing the response | Dispute Responder submits a response or a "ready-to-approve draft" (same blog) | Partly; likely weaker for Segment C without its evidence [A] |
+| PP5 | Missing the deadline | Email and webhook alerts on every dispute ([About disputes](https://razorpay.com/docs/payments/disputes/)); Dispute Responder acts "the moment they land" | Largely solved |
+| PP6 | Money taken at dispute start | Card-network rule | Not solvable |
+| PP7 | No learning, repeats | Shield risk dashboard tracks dispute ratio ([Shield blog](https://razorpay.com/blog/razorpay-upticks-success-rates-razorpay-shield/)); generic prevention advice; nothing on why a specific dispute was lost | Partly |
+| PP8 | Razorpay: tickets, thresholds, fees | Chargeback Shield takes liability for fraud disputes ([terms](https://razorpay.com/terms/chargeback-shield/)) and tracks dispute ratios | Partly (fraud only) |
+
+**Framing that follows:** this product is an extension of Dispute Responder into Segment C, plus a case-specific fight-or-accept decision and post-loss prevention, not a replacement.
+
 ---
 
 ## 4. Prioritising the pain points
@@ -134,7 +151,7 @@ Scored 1–5 on each criterion; higher means a stronger case to solve now.
 | # | Pain point | Frequency | Severity (₹) | Unsolved today | Razorpay can act | AI advantage | **Total /25** |
 |---|---|---|---|---|---|---|---|
 | PP1 | Don't know what wins | 5 | 4 | 4 | 5 | 5 | **23** |
-| PP2 | Don't know if it's worth fighting | 5 | 5 | 5 | 4 | 4 | **23** |
+| PP2 | Don't know if it's worth fighting | 5 | 5 | 4 | 4 | 4 | **22** |
 | PP3 | Evidence scattered | 4 | 5 | 4 | 3 | 5 | **21** |
 | PP4 | Writing the response | 4 | 3 | 3 | 5 | 5 | **20** |
 | PP5 | Missing the deadline | 3 | 5 | 2 | 5 | 1 | **16** |
@@ -142,6 +159,7 @@ Scored 1–5 on each criterion; higher means a stronger case to solve now.
 | PP6 | Money deducted upfront | 5 | 3 | 2 | 2 | 1 | **13** |
 
 Why some scores are low:
+- **PP2 "unsolved" is 4** because Dispute Responder already scores win probability [V], though not with exchange-rate and fee economics.
 - **PP4 "unsolved" is 3** because Dispute Responder already drafts responses [V].
 - **PP5 "unsolved" is 2** because Razorpay already sends email and webhook alerts [V: Razorpay disputes docs].
 - **PP6 is network policy;** Razorpay can't change when money is held.
