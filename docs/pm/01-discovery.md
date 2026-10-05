@@ -242,18 +242,24 @@ Feasibility key: ✅ yes · 🟡 partly or with conditions · ❌ no
 
 | # | Solution | Impact on top pains | Needs AI | Feasible for Razorpay | Differentiated | Low risk | **Total /25** | Call |
 |---|---|---|---|---|---|---|---|---|
-| S1 | Decision copilot | 5 | 5 | 5 | 5 | 4 | **24** | **Prioritise** |
-| S2 | Evidence from anywhere | 5 | 5 | 4 | 5 | 4 | **23** | **Prioritise** |
-| S3 | Cited drafter | 4 | 5 | 5 | 2 | 4 | **20** | **Prioritise** (part of core loop) |
+| S1 | Decision copilot | 5 | 5 | 5 | 4 | 4 | **23** | **Core** |
+| S2 | Evidence from anywhere | 5 | 5 | 4 | 5 | 4 | **23** | **Core** |
+| S13 | Policy profile | 4 | 3 | 5 | 4 | 5 | **21** | **Core** |
+| S3 | Cited drafter | 4 | 5 | 5 | 2 | 4 | **20** | **Core** |
 | S6 | Prevention advisor | 3 | 4 | 4 | 4 | 5 | **20** | Supporting |
-| S10 | Network learning | 4 | 4 | 3 | 5 | 4 | **20** | Supporting, light version |
+| S10 | Network learning | 4 | 4 | 3 | 4 | 4 | **19** | Supporting (simulated in prototype) |
 | S9 | Service-dispute cover | 5 | 3 | 2 | 5 | 2 | **17** | Moonshot |
-| S4 | Deadline triage | 3 | 1 | 5 | 2 | 5 | **16** | Supporting (needed for usability) |
-| S5 | Connectors | 4 | 3 | 2 | 4 | 3 | **16** | Later |
-| S12 | Static playbooks | 2 | 1 | 5 | 1 | 5 | **14** | Deprioritise; it's our baseline |
-| S8 | Fully autonomous | 3 | 3 | 4 | 2 | 1 | **13** | Deprioritise |
-| S11 | Human experts | 3 | 1 | 3 | 2 | 4 | **13** | Deprioritise |
-| S7 | Pre-dispute outreach | 3 | 3 | 1 | 3 | 2 | **12** | Deprioritise |
+| S4 | Deadline triage | 3 | 1 | 5 | 2 | 5 | **16** | Supporting |
+| S14 | Clear-win fast lane | 3 | 1 | 5 | 2 | 5 | **16** | Supporting |
+| S5 | Connectors | 4 | 3 | 2 | 4 | 3 | **16** | Later (v2) |
+| S12 | Static playbooks | 2 | 1 | 5 | 1 | 5 | **14** | Drop; it's our baseline |
+| S8 | Fully automatic filing | 3 | 3 | 4 | 2 | 1 | **13** | Drop |
+| S11 | Human expert service | 3 | 1 | 3 | 2 | 4 | **13** | Drop |
+| S7 | Pre-dispute outreach | 3 | 3 | 1 | 3 | 2 | **12** | Drop |
+
+**Changes after the competitor scan:** S1 and S10 "differentiated" lowered from 5 to 4 (Justt offers expected-return decisions and argument testing to large global merchants). S13 enters the core because many Segment C disputes turn on the policy (C12, C13, C14 in the kill test). S14 is supporting: useful, but a simple rule that adds little AI value.
+
+**Resulting shape:** core = S1 + S2 + S13 + S3; supporting = S4, S14, S6, S10 (simulated); moonshot = S9; later = S5; dropped = S7, S8, S11, S12.
 
 ### Why the deprioritised ones lose
 
@@ -271,6 +277,7 @@ Feasibility key: ✅ yes · 🟡 partly or with conditions · ❌ no
 | **Connectors vs speed** | Uploaded and pasted evidence in v1 | Automatic evidence pull | Works for every merchant on day one; connectors are v2 |
 | **Breadth vs depth** | Non-fraud disputes, international cards, services and subscriptions only | Fraud, UPI, physical goods | Each is covered elsewhere or needs a different process |
 | **Recommend vs guarantee** | Recommendation with confidence and citations | Taking on liability (S9) | Liability needs underwriting data Razorpay would only have after the product runs |
+| **Extend vs replace** | Extend Dispute Responder into Segment C | A standalone product | Razorpay already has the dispute flow and agent platform; reuse it |
 
 ---
 
