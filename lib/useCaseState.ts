@@ -1,5 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
+import type { Meta } from "./agent";
+import type { CheckView } from "./types";
 
 export interface AuditEntry {
   at: string;
@@ -18,6 +20,11 @@ export interface CaseState {
   action?: ActionRecord;
   outcome?: "won" | "lost";
   thumbs?: "up" | "down";
+  added?: { id: string; title: string; content: string }[];
+  /** The latest live check; absent while the saved result is showing. */
+  check?: { view: CheckView; meta: Meta };
+  /** Evidence changed since the last check. */
+  dirty?: boolean;
   audit: AuditEntry[];
 }
 

@@ -1,0 +1,24 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
+export const PROMPT_VERSION = "v2.1";
+const FILE = "prompts/dispute-agent-v2.1.md";
+
+export interface PromptParts {
+  system: string;
+  toolSchema: Record<string, unknown>;
+}
+
+/** The prompt file is the single source of truth: the system prompt and the tool schema are read from it. */
+export function parsePrompt(md: string): PromptParts {
+  const sys = md.split("## System prompt")[1]?.match(/```text\n([\s\S]*?)\n```/);
+  const tool = md.split("## Tool: record_dispute_decision")[1]?.match(/```json\n([\s\S]*?)\n```/);
+  if (!sys || !tool) throw new Error("Prompt file is missing the system prompt or the tool schema");
+  return { system: sys[1], toolSchema: JSON.parse(tool[1]) };
+}
+
+let cached: PromptParts | undefined;
+export function loadPrompt(): PromptParts {
+  if (!cached) cached = parsePrompt(readFileSync(path.join(process.cwd(), FILE), "utf8"));
+  return cached;
+}

@@ -62,6 +62,8 @@ export interface CheckView {
   getFirst?: string;
   requestText?: string;
   tip: string;
+  economicsNote?: string;
+  evidenceFlags?: { evidenceId: string; flag: string }[];
   source: { label: string; model: string; promptVersion: string; date: string; live: boolean };
   raw: Record<string, unknown>;
 }

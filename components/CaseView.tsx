@@ -4,7 +4,9 @@ import { useMemo, useState, type ReactNode } from "react";
 import { CallChip } from "@/components/CallChip";
 import { Dialog } from "@/components/Dialog";
 import { Drawer } from "@/components/Drawer";
-import { DRAFT_LIMIT, citedIds, evaluateGuardrails, sentenceHasSource, splitSentences, type Status } from "@/lib/guardrails";
+import type { AnalyzeResult } from "@/lib/agent";
+import { MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS } from "@/lib/limits";
+import { DRAFT_LIMIT, citedIds, containsCardNumber, evaluateGuardrails, sentenceHasSource, splitSentences, type Status } from "@/lib/guardrails";
 import { formatInrFull, formatOriginal, timeLeft } from "@/lib/format";
 import { DEMO_RATE_INR_PER_USD, VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor } from "@/lib/money";
 import type { CaseData, CheckView } from "@/lib/types";
@@ -31,7 +33,7 @@ const STATUS_CLS: Record<Status, string> = {
 };
 const STATUS_WORD: Record<Status, string> = { pass: "Passed", changed: "Changed the call", blocked: "Blocked", na: "Not needed" };
 
-export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
+export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView }) {
   const d = c.dispute;
   const { state, update, reset } = useCaseState(c.id);
   const [highlight, setHighlight] = useState<string[]>([]);
@@ -39,8 +41,18 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
   const [why, setWhy] = useState("");
   const [drawer, setDrawer] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newText, setNewText] = useState("");
+  const [addError, setAddError] = useState("");
+  const [running, setRunning] = useState(false);
+  const [step, setStep] = useState(0);
+  const [notice, setNotice] = useState<{ kind: "info" | "error"; text: string } | null>(null);
 
-  const evidenceIds = c.evidence.map((e) => e.id);
+  const view = state.check?.view ?? savedView;
+  const allEvidence = [...c.evidence, ...(state.added ?? [])];
+
+  const evidenceIds = allEvidence.map((e) => e.id);
   const draft = state.draft ?? view.draft;
   const contestSubunits = Math.min(state.contestAmount ?? view.defensibleAmount ?? d.amount, d.amount);
   const documentCount = view.slots.filter((s) => evidenceIds.includes(s.evidenceId)).length;
@@ -54,7 +66,7 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
         decidingEvidence: view.decidingEvidence,
         missingEvidence: view.missingEvidence,
         evidenceIds,
-        evidenceTexts: c.evidence.map((e) => e.content),
+        evidenceTexts: allEvidence.map((e) => `${"title" in e ? e.title : ""} ${e.content}`),
         draft,
         documentCount,
         schemaOk: true,
@@ -106,6 +118,76 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
       2,
     );
   const foldRequest = () => `POST /v1/disputes/${d.id}/accept`;
+
+  const addEvidence = () => {
+    const title = newTitle.trim();
+    const content = newText.trim();
+    if (!title || !content) return setAddError("Give the document a title and some text.");
+    if (title.length > MAX_TITLE_CHARS || content.length > MAX_EVIDENCE_CHARS) return setAddError(`Keep the title under ${MAX_TITLE_CHARS} and the text under ${MAX_EVIDENCE_CHARS.toLocaleString()} characters.`);
+    if (containsCardNumber(title) || containsCardNumber(content)) return setAddError("Remove the card number and try again.");
+    if ((state.added ?? []).length >= 5) return setAddError("Add at most 5 documents.");
+    const id = `E${allEvidence.length + 1}`;
+    update((s) => ({
+      ...s,
+      added: [...(s.added ?? []), { id, title, content }],
+      dirty: true,
+      audit: [...s.audit, { at: now(), actor: "You", text: `Added evidence ${id}: ${title}` }],
+    }));
+    setNewTitle("");
+    setNewText("");
+    setAddError("");
+    setAdding(false);
+  };
+  const removeEvidence = (id: string) =>
+    update((s) => ({
+      ...s,
+      // Re-number so IDs stay E1...En in order; the server numbers them the same way.
+      added: (s.added ?? []).filter((a) => a.id !== id).map((a, i) => ({ ...a, id: `E${c.evidence.length + i + 1}` })),
+      dirty: true,
+      audit: [...s.audit, { at: now(), actor: "You", text: `Removed evidence ${id}` }],
+    }));
+
+  const steps = [`Reading ${allEvidence.length} documents…`, `Applying Visa rule ${d.reason_code}…`, "Writing the response…"];
+  const rerun = async () => {
+    setRunning(true);
+    setStep(0);
+    setNotice(null);
+    const timer = setInterval(() => setStep((n) => Math.min(n + 1, 2)), 3500);
+    try {
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ caseId: c.id, added: (state.added ?? []).map((a) => ({ title: a.title, content: a.content })) }),
+      });
+      const r = (await res.json()) as AnalyzeResult;
+      if (r.status === "live") {
+        update((s) => ({
+          ...s,
+          check: { view: r.view, meta: r.meta },
+          dirty: false,
+          draft: undefined,
+          contestAmount: undefined,
+          reviewOpen: false,
+          audit: [...s.audit, { at: now(), actor: "Advisor", text: `Live check: ${r.view.call}${r.meta.cached ? " (from cache)" : ""}` }],
+        }));
+      } else if (r.status === "saved") {
+        update((s) => ({ ...s, dirty: false, audit: [...s.audit, { at: now(), actor: "Advisor", text: `Live check not available (${r.reason}); showing the saved result` }] }));
+        setNotice({ kind: "info", text: r.message });
+      } else if (r.status === "unavailable") {
+        setNotice({ kind: "error", text: r.message });
+        update((s) => ({ ...s, audit: [...s.audit, { at: now(), actor: "Advisor", text: `Check unavailable (${r.reason})` }] }));
+      } else if (r.status === "rejected") {
+        setNotice({ kind: "error", text: r.message });
+      } else {
+        update((s) => ({ ...s, dirty: false }));
+      }
+    } catch {
+      setNotice({ kind: "error", text: "We couldn't run the check. Decide manually." });
+    } finally {
+      clearInterval(timer);
+      setRunning(false);
+    }
+  };
 
   const confirmAction = () => {
     const type = dialog;
@@ -189,11 +271,13 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
           <Card>
             <div className="flex items-center justify-between">
               <H3>Your evidence</H3>
-              <span className="text-[13px] text-helper">{c.evidence.length} documents</span>
+              <span className="text-[13px] text-helper">{allEvidence.length} documents</span>
             </div>
-            {c.evidence.map((e) => {
+            {allEvidence.map((e) => {
               const on = highlight.includes(e.id);
               const slots = view.slots.filter((s) => s.evidenceId === e.id);
+              const flags = (view.evidenceFlags ?? []).filter((f) => f.evidenceId === e.id);
+              const addedItem = "title" in e;
               return (
                 <div
                   key={e.id}
@@ -202,21 +286,88 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
                 >
                   <div className="flex h-[26px] items-center justify-center rounded-lg bg-shield-soft text-xs font-semibold">{e.id}</div>
                   <div>
+                    {addedItem && <p className="text-xs font-semibold text-helper">Added by you · {(e as { title: string }).title}</p>}
                     <p className="text-sm text-[#555]">{e.content}</p>
                     {slots.map((s) => (
                       <span key={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[11.5px] text-[#555]">
                         {s.slot}
                       </span>
                     ))}
+                    {flags.map((f) => (
+                      <span key={f.flag} className="mt-1.5 mr-1 inline-block rounded-md bg-fold-soft px-[7px] py-0.5 text-[11.5px] font-semibold text-fold">
+                        {f.flag === "instruction_like" ? "⚠ Looks like instructions" : f.flag === "unreadable" ? "⚠ Couldn't read" : "⚠ Contradiction"}
+                      </span>
+                    ))}
+                    {addedItem && !acted && (
+                      <button onClick={() => removeEvidence(e.id)} className="mt-1.5 block min-h-6 text-[13px] font-semibold text-escalate underline">
+                        Remove
+                      </button>
+                    )}
                   </div>
                 </div>
               );
             })}
+
+            {!acted && !adding && finalCall !== "shield" && (
+              <button className={`${ghost} mt-3 !border-brand !text-brand`} onClick={() => setAdding(true)}>
+                + Add evidence
+              </button>
+            )}
+            {adding && (
+              <div className="mt-3 rounded-xl border border-line p-3">
+                <label htmlFor="ev-title" className="text-sm font-semibold">
+                  Title
+                </label>
+                <input id="ev-title" value={newTitle} maxLength={MAX_TITLE_CHARS + 20} onChange={(e) => setNewTitle(e.target.value)} placeholder="e.g. Billing audit log" className="mt-1 w-full rounded-[10px] border border-line px-3 py-2 focus:border-brand-focus focus:outline-none" />
+                <label htmlFor="ev-text" className="mt-3 block text-sm font-semibold">
+                  What it says
+                </label>
+                <textarea id="ev-text" rows={4} value={newText} onChange={(e) => setNewText(e.target.value)} placeholder="Paste the text of the document." className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] focus:border-brand-focus focus:outline-none" aria-describedby="ev-help" />
+                <div id="ev-help" className="mt-1 flex justify-between text-[13px]">
+                  <span className="text-helper">Don&apos;t paste full card numbers.</span>
+                  <span className={newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-escalate" : "text-helper"}>
+                    {newText.length} / {MAX_EVIDENCE_CHARS.toLocaleString()}
+                  </span>
+                </div>
+                {addError && (
+                  <p role="alert" className="mt-2 text-[14px] font-semibold text-escalate">
+                    {addError}
+                  </p>
+                )}
+                <div className="mt-3 flex gap-2.5">
+                  <button className={primary} onClick={addEvidence}>
+                    Add evidence
+                  </button>
+                  <button
+                    className={ghost}
+                    onClick={() => {
+                      setAdding(false);
+                      setAddError("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
 
         <div className="order-1 md:order-none">
-          <Card>
+          {state.dirty && !acted && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-brand bg-[#F4F8FF] px-4 py-3" role="status">
+              <span className="font-semibold">Evidence changed.</span>
+              <button className={primary} onClick={rerun} disabled={running}>
+                Re-run check
+              </button>
+            </div>
+          )}
+          {notice && (
+            <p role="status" className={`mb-4 rounded-2xl px-4 py-3 font-semibold ${notice.kind === "error" ? "bg-escalate-soft text-escalate" : "bg-shield-soft text-shield"}`}>
+              {notice.text}
+            </p>
+          )}
+          <Card className={running ? "opacity-60" : ""}>
             <div className="flex flex-wrap items-center gap-3">
               <CallChip call={finalCall} size="lg" />
               {finalCall !== "shield" && <span className="font-medium text-[#555]">{view.confidence} confidence</span>}
@@ -268,12 +419,22 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
                   </p>
                 )}
                 <p className="mt-2 text-xs text-helper">{view.oddsNote}</p>
+                {view.economicsNote && <p className="mt-2 text-[14px] text-[#333]">{view.economicsNote}</p>}
                 {finalCall === "fight" || finalCall === "fold" ? (
-                  <p className={`mt-2 inline-block rounded-[10px] px-3 py-2 font-semibold ${money.worthFighting ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>
-                    {money.worthFighting ? "✓ Fighting is worth it" : "⚠ Check the money: the fees at risk are high for this amount"}
-                  </p>
+                  (() => {
+                    const agrees = finalCall === "fight" ? money.worthFighting : !money.worthFighting;
+                    const text =
+                      finalCall === "fight"
+                        ? money.worthFighting
+                          ? "✓ Fighting is worth it"
+                          : "⚠ Check the money: the fees at risk are high for this amount"
+                        : money.worthFighting
+                          ? "⚠ Check the money: the numbers say fighting could pay"
+                          : "✓ The numbers agree: fighting is not worth it here";
+                    return <p className={`mt-2 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
+                  })()
                 ) : null}
-                {checkTheMoney && <p className="mt-1 text-[13px] text-helper">The call is still Fight. This is a note, not a change.</p>}
+                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.</p>}
               </>
             )}
 
@@ -331,6 +492,11 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
               </div>
             )}
 
+            {running && (
+              <p className="mt-3 text-[14px] font-semibold text-brand" role="status" aria-live="polite">
+                {steps[step]}
+              </p>
+            )}
             <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-3">
               <span className="text-[13px] text-helper">Was this call useful?</span>
               <button
@@ -355,6 +521,11 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
               >
                 👎
               </button>
+              {finalCall !== "shield" && !acted && (
+                <button className={ghost} onClick={rerun} disabled={running}>
+                  Re-run check
+                </button>
+              )}
               <button onClick={() => setDrawer(true)} className="ml-auto text-[14px] font-semibold text-brand">
                 Under the hood ›
               </button>
@@ -582,11 +753,36 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
 
       <Drawer open={drawer} onClose={() => setDrawer(false)} title="Under the hood">
         <H3>Result</H3>
-        <p>
-          <b>Saved result</b>, not a live call. {view.source.model}, prompt {view.source.promptVersion}, run on {view.source.date}.
-        </p>
-        <p className="mt-1 text-[13px] text-helper">Tokens, response time and cost appear here once the live check is on.</p>
-        <p className="mt-1 text-[13px] text-helper">Demo rate ₹{DEMO_RATE_INR_PER_USD} per USD is a placeholder. Odds, the defensible amount, the request text and the prevention tip come from the builder&apos;s supplement file, not the model.</p>
+        {state.check ? (
+          <>
+            <p>
+              <b>Live</b> check. {state.check.meta.model}, prompt {state.check.meta.promptVersion}
+              {state.check.meta.cached ? ", served from the cache (no new cost)" : ""}.
+            </p>
+            <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[14px]">
+              <dt className="text-helper">Tokens in / out</dt>
+              <dd>
+                {state.check.meta.tokensIn.toLocaleString()} / {state.check.meta.tokensOut.toLocaleString()}
+              </dd>
+              <dt className="text-helper">Response time</dt>
+              <dd>{(state.check.meta.ms / 1000).toFixed(1)} s</dd>
+              <dt className="text-helper">Cost</dt>
+              <dd>
+                ${state.check.meta.costUsd.toFixed(4)} · ₹{state.check.meta.costInr.toFixed(2)}
+              </dd>
+            </dl>
+            <p className="mt-1 text-[13px] text-helper">Cost uses the token prices in the repo and the demo rate.</p>
+          </>
+        ) : (
+          <>
+            <p>
+              <b>Saved result</b>, not a live call. {view.source.model}, prompt {view.source.promptVersion}, run on {view.source.date}.
+            </p>
+            <p className="mt-1 text-[13px] text-helper">Tokens, response time and cost appear here after a live check.</p>
+            <p className="mt-1 text-[13px] text-helper">Odds, the defensible amount, the request text and the prevention tip on saved results come from the builder&apos;s supplement file, not the model.</p>
+          </>
+        )}
+        <p className="mt-1 text-[13px] text-helper">Demo rate ₹{DEMO_RATE_INR_PER_USD} per USD is a placeholder.</p>
 
         <H3>Safety checks</H3>
         <ul className="space-y-1.5">
@@ -607,7 +803,7 @@ export function CaseView({ c, view }: { c: CaseData; view: CheckView }) {
         <H3>Audit trail</H3>
         <ol className="space-y-1 text-[14px]">
           <li>
-            <span className="text-helper">Advisor ·</span> Loaded the saved check ({view.call})
+            <span className="text-helper">Advisor ·</span> Loaded the saved check ({savedView.call})
           </li>
           {state.audit.map((a, i) => (
             <li key={i}>

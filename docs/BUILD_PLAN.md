@@ -35,11 +35,15 @@ Done when (checked in a browser test): C04 (Fight), C14 (Fold), C15 (Escalate) a
 
 Before starting: create the API key in the Claude Console, set a spend limit, add `ANTHROPIC_API_KEY` and `ANTHROPIC_MODEL` to `.env.local` and to Vercel. Confirm the model ID on the models page. Day-1 test: a real PDF and a screenshot as evidence.
 
-- [ ] `lib/schema.ts` (zod) and `lib/agent.ts`: builds the request from `prompts/dispute-agent-v2.1.md`, wraps each item as `<evidence id="E1">` with the closing tag escaped, forced tool call `record_dispute_decision`, validates with zod, retries once, falls back to the saved result
-- [ ] `POST /api/analyze` (server only): per-IP rate limit, 4,000-character cap per pasted item, ~4 MB file cap, Luhn block, fraud codes routed before any model call, 45 s timeout, result cache by request hash
-- [ ] "Re-run check" and "Add evidence" trigger a live call; the panel, money block and safety lines update; progress text under the button
-- [ ] Under the hood shows live tokens, time and cost (`lib/pricing.ts`, source URL and date in a comment)
-- [ ] Works with no key (saved results, labelled "Saved result: <model>, prompt <version>")
+- [x] `lib/schema.ts` (zod) and `lib/agent.ts`: builds the request from `prompts/dispute-agent-v2.1.md`, wraps each item as `<evidence id="E1">` with the closing tag escaped, forced tool call `record_dispute_decision`, validates with zod, retries once, falls back to the saved result
+- [x] `POST /api/analyze` (server only): per-IP rate limit, 4,000-character cap per pasted item, ~4 MB file cap, Luhn block, fraud codes routed before any model call, 45 s timeout, result cache by request hash
+- [x] "Re-run check" and "Add evidence" trigger a live call; the panel, money block and safety lines update; progress text under the button
+- [x] Under the hood shows live tokens, time and cost (`lib/pricing.ts`, source URL and date in a comment)
+- [x] Works with no key (saved results, labelled "Saved result: <model>, prompt <version>")
+
+- [ ] Run the C06 demo, a PDF and a screenshot on the REAL model (needs your API key). Tested so far against a stand-in server that mimics the API
+- [ ] Confirm Vercel `maxDuration` and the forced tool call on Sonnet 5.5
+- Cut from the MVP: PDF and image upload (needs the real-model test); draft contest on Escalate (the prompt writes drafts only for Fight)
 
 Done when: on C06, pasting "Billing audit log, 30 Jul 2026: customer clicked Cancel subscription" as new evidence changes the call and the safety lines update.
 
