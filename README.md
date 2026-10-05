@@ -9,8 +9,10 @@ An Agent Studio-style agent for Indian businesses selling services, subscription
 - Look and feel: [`docs/design/DESIGN.md`](docs/design/DESIGN.md), mock in [`docs/design/mock/`](docs/design/mock/)
 - Product summary: [`docs/PRODUCT.md`](docs/PRODUCT.md)
 - Build plan: [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md)
+- What is deployed so far: [`docs/DEPLOYED.md`](docs/DEPLOYED.md)
+- Live prototype: https://isbx-razorpay-aditi.vercel.app/disputes
 - Evaluation so far: [`eval/kill-test-v1.md`](eval/kill-test-v1.md)
 - Prompts: [`prompts/`](prompts/) (current: v2.1)
 - Demo data: [`data/`](data/)
 
-Status: build starts 6 Oct 2026, submission 13 Oct 2026. Live link and setup instructions will be added here.
+Status: build starts 6 Oct 2026, submission 13 Oct 2026. Setup instructions will be added here.
