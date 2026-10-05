@@ -77,7 +77,9 @@ Within Segment C, we start with businesses **without a dedicated dispute team** 
 
 ### Personas (composites, to be validated)
 
-**P1. Ananya, the founder-operator**
+All three merchant personas sit in Segment C, one per business type (SaaS, services, travel). **Ananya is the primary persona** for the pitch and demo: SaaS evidence (login logs, terms acceptance) is the clearest to show, and SaaS is a cross-border segment Razorpay names. Meera represents Razorpay's own side of the problem.
+
+**P1. Ananya, the founder-operator (primary persona)**
 - Co-founder of a 12-person B2B SaaS company in Pune; most customers in the US and UK; annual plans billed by card.
 - Handles finance herself. Gets a few disputes a year, mostly "I cancelled" or "not as described".
 - Today: sees an email, Googles the reason code, isn't sure what to send, and often lets small ones go.
