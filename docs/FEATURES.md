@@ -103,6 +103,8 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 ## F3 · Cited response draft ✅
 
+**Deep dive 2 (6 Oct).** After a submit or fold, a plain confirmation comes first ("You contested $1,200 of $1,200 with 4 documents. In the real app this goes to Razorpay and the bank decides.") and the request sits behind a "What would be sent" toggle. "Documents by slot" now names each document ("E1 Terms acceptance record") and clicking one highlights it. The submit and fold dialogs say "Simulated: nothing leaves this demo", and "Copy" reads "Copy response".
+
 **Escalate drafts (prompt v2.2).** When the call is Escalate, the live check also writes a draft from the evidence on hand (for the defensible part only, if there is one), shown under **Fight anyway** or **Contest only the part worth fighting** with a warning to add the missing document and re-run before relying on it. The saved results have none, so it appears on live checks only, and it is not yet proven on the real model.
 
 **What it does.** For a Fight, writes the response to the card issuer and lets the merchant edit it, with every sentence tied to a document.

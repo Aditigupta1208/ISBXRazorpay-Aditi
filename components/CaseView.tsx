@@ -90,6 +90,15 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   const log = (actor: "You" | "Advisor", text: string) =>
     update((s) => ({ ...s, audit: [...s.audit, { at: now(), actor, text }] }));
 
+  /** A short name for a document: the added title, or the first phrase of its text. */
+  const docName = (id: string) => {
+    const e = allEvidence.find((x) => x.id === id);
+    if (!e) return "";
+    const title = "title" in e ? (e as { title: string }).title : "";
+    const first = e.content.split(/[:.]/)[0].trim();
+    const name = title || first;
+    return name.length > 48 ? name.slice(0, 45).trimEnd() + "…" : name;
+  };
   const focusEvidence = (ids: string[]) => {
     setHighlight(ids);
     document.getElementById(`ev-${ids[0]}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -771,8 +780,14 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
           ) : (
             <ul className="text-[14px]">
               {[...documentsBySlot].map(([slot, ids]) => (
-                <li key={slot}>
-                  <span className="rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[12px]">{slot}</span> {ids.join(", ")}
+                <li key={slot} className="mb-1.5">
+                  <span className="rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[12px]">{slot}</span>
+                  {ids.map((id) => (
+                    <button key={id} onClick={() => focusEvidence([id])} className="ml-2 inline-flex min-h-6 items-center gap-1.5 rounded-md text-left hover:underline">
+                      <span className="rounded bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]">{id}</span>
+                      <span className="text-[#333]">{docName(id)}</span>
+                    </button>
+                  ))}
                 </li>
               ))}
             </ul>
@@ -818,7 +833,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
               Close
             </button>
             <button className={`${ghost} !border-brand !text-brand ml-auto`} onClick={() => copy("draft", draft)}>
-              {copied === "draft" ? "Copied" : "Copy"}
+              {copied === "draft" ? "Copied" : "Copy response"}
             </button>
             <p className="w-full text-xs text-helper">Simulated: nothing is sent to Razorpay.</p>
           </div>
@@ -828,8 +843,16 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
       {acted && (
         <Card>
           <h2 className="mb-1 text-lg font-semibold">{acted.type === "submit" ? "Response submitted (simulated)" : "Dispute folded (simulated)"}</h2>
-          <p className="mb-2 text-[13px] font-semibold text-helper">Simulated: not sent to Razorpay. This is the request the real app would send.</p>
-          <pre className="overflow-x-auto rounded-xl bg-[#0F172A] p-4 text-[12.5px] leading-[1.6] text-[#E2E8F0]">{acted.request}</pre>
+          <p className="mb-2 text-[13px] font-semibold text-helper">Simulated: nothing was sent to Razorpay.</p>
+          <p className="text-[15px]">
+            {acted.type === "submit"
+              ? `You contested ${formatOriginal(contestSubunits, d.currency)} of ${formatOriginal(d.amount, d.currency)} with ${[...documentsBySlot.values()].flat().length} documents. In the real app this goes to Razorpay and the bank decides. The status below then moves from Under review to Won or Lost.`
+              : `You accepted the dispute. ${formatInrFull(money.atStakeInr)} would be taken from your balance (${formatOriginal(d.amount, d.currency)} at the demo rate of ₹${rateFor(d.currency)}).`}
+          </p>
+          <details className="mt-3">
+            <summary className="cursor-pointer text-[14px] font-semibold text-brand">What would be sent</summary>
+            <pre className="mt-2 overflow-x-auto rounded-xl bg-[#0F172A] p-4 text-[12.5px] leading-[1.6] break-words whitespace-pre-wrap text-[#E2E8F0]">{acted.request}</pre>
+          </details>
 
           <H3>Status</H3>
           <ol className="flex flex-wrap items-center gap-2 text-[14px]">
@@ -893,11 +916,13 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
           {formatInrFull(money.atStakeInr)} will be taken from your balance ({formatOriginal(d.amount, d.currency)} at the demo rate of ₹{rateFor(d.currency)}; the real rate is the one on the day the dispute was created). You can&apos;t undo this.
         </p>
         <p className="mt-2 text-[14px] text-helper">Why the advisor says {finalCall}: {view.reason}</p>
+        <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[13px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
         {finalCall === "fight" && <OverrideWhy why={why} setWhy={setWhy} />}
         <DialogButtons onCancel={() => setDialog(null)} onYes={confirmAction} yes="Yes, fold" />
       </Dialog>
       <Dialog open={dialog === "submit"} onClose={() => setDialog(null)} title="Submit your response?">
-        <p className="text-[15px]">This sends your response to the customer&apos;s bank. You can&apos;t edit it afterwards.</p>
+        <p className="text-[15px]">In the real app, this sends your response to the customer&apos;s bank and you can&apos;t edit it afterwards.</p>
+        <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[13px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
         <p className="mt-2 text-[14px] text-helper">
           Contesting {formatOriginal(contestSubunits, d.currency)} of {formatOriginal(d.amount, d.currency)}.
         </p>
