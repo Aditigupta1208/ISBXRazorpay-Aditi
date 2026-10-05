@@ -217,6 +217,39 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   const sentences = splitSentences(draft);
   const blockers = g.submitBlockers;
 
+  // "How can I help you next?" Each option does something real on this dispute. Fewer than three is fine.
+  const goTo = (id: string) => setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+  const openReview = () => {
+    update((s) => ({ ...s, reviewOpen: true }));
+    goTo("response");
+  };
+  const openAdd = () => {
+    setAdding(true);
+    goTo("ev-title");
+  };
+  const nextSteps: { label: string; hint: string; run: () => void }[] =
+    acted || finalCall === "shield"
+      ? []
+      : finalCall === "fight"
+        ? [
+            { label: "Review and edit the response", hint: "Every sentence cites a document.", run: openReview },
+            { label: "Show me the documents that decide this", hint: "Highlights them on the left.", run: () => focusEvidence(view.decidingEvidence) },
+            { label: "Add another document", hint: "Then re-run the check.", run: openAdd },
+          ]
+        : finalCall === "fold"
+          ? [
+              { label: "Fold this dispute", hint: "Accepts it. You confirm first.", run: () => setDialog("fold") },
+              { label: "Show me the money", hint: "What you could win and what you could lose.", run: () => goTo("money") },
+              { label: "Fight anyway", hint: "Your call. We'll note that you overrode the advice.", run: openReview },
+            ]
+          : [
+              ...(view.requestText ? [{ label: "Copy the message asking for the missing document", hint: "Paste it into an email or chat.", run: () => copy("request", view.requestText ?? "") }] : []),
+              { label: "Add the document when I have it", hint: "Then re-run the check.", run: openAdd },
+              view.defensibleAmount !== null
+                ? { label: `Contest only the part worth fighting (${formatInrFull(money.contestInr)})`, hint: "Opens the response with that amount.", run: openReview }
+                : { label: "Fold this dispute", hint: "Accepts it. You confirm first.", run: () => setDialog("fold") },
+            ].slice(0, 3);
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -412,7 +445,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                   {view.contradictions.length ? view.contradictions.join("; ") : "none"}
                 </p>
 
-                <H3>Money</H3>
+                <div id="money"><H3>Money</H3></div>
                 <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
                   <Stat label="At stake" value={formatInrFull(money.atStakeInr)} sub={`${formatOriginal(d.amount, d.currency)} · demo rate ₹${rateFor(d.currency)}`} />
                   <Stat label="Taken back if you lose" value={formatInrFull(money.atStakeInr)} sub="rate on dispute day" />
@@ -556,6 +589,25 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                   </button>
                 </>
               )}
+            </Card>
+          )}
+          {nextSteps.length > 0 && (
+            <Card>
+              <H3>How can I help you next?</H3>
+              <ol className="mt-2 space-y-2">
+                {nextSteps.map((n, i) => (
+                  <li key={n.label}>
+                    <button onClick={n.run} className="flex min-h-11 w-full items-start gap-3 rounded-xl border border-line px-3 py-2.5 text-left hover:border-brand hover:bg-[#F4F8FF] focus-visible:outline-2 focus-visible:outline-brand">
+                      <span aria-hidden className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[13px] font-semibold text-brand">{i + 1}</span>
+                      <span>
+                        <b className="block text-[15px]">{n.label}</b>
+                        <span className="text-[13px] text-helper">{n.hint}</span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
+              {copied === "request" && <p role="status" className="mt-2 text-[13px] font-semibold text-fight">Copied</p>}
             </Card>
           )}
         </div>

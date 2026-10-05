@@ -57,6 +57,10 @@ for (const r of (chatgpt as { results: RawRun[] }).results) {
 export function getCases(): CaseData[] {
   return cases;
 }
+/** Cases that have a saved result: these are the demo disputes. C17 to C20 exist only for the evals. */
+export function getDemoCases(): CaseData[] {
+  return cases.filter((c) => saved.has(c.id));
+}
 export function getCase(id: string): CaseData | undefined {
   return cases.find((c) => c.id === id);
 }

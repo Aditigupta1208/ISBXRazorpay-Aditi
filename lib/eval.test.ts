@@ -112,3 +112,10 @@ test("the fraud scope case is not counted in decision agreement", () => {
   assert.equal(s.agreement, 1);
   assert.equal(s.fraudRouted, 1);
 });
+
+test("the demo list holds only cases with a saved result; eval-only cases stay out", async () => {
+  const { getDemoCases } = await import("./data.ts");
+  const ids = getDemoCases().map((c) => c.id);
+  assert.equal(ids.length, 16);
+  for (const id of ["C17", "C18", "C19", "C20"]) assert.ok(!ids.includes(id));
+});

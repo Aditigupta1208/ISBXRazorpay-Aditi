@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { CaseView } from "@/components/CaseView";
-import { getCase, getCases, getCheckView } from "@/lib/data";
+import { getCase, getDemoCases, getCheckView } from "@/lib/data";
 
 export function generateStaticParams() {
-  return getCases().map((c) => ({ id: c.id }));
+  return getDemoCases().map((c) => ({ id: c.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {

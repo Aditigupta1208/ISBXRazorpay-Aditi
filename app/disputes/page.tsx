@@ -1,11 +1,11 @@
 import { DisputeTable, type Row } from "@/components/DisputeTable";
-import { getCases, getSavedResult } from "@/lib/data";
+import { getDemoCases, getSavedResult } from "@/lib/data";
 import { formatInr, formatOriginal, merchantShort, timeLeft, toInr } from "@/lib/format";
 
 export const metadata = { title: "Disputes | Dispute Advisor (concept prototype)" };
 
 export default function DisputesPage() {
-  const rows = getCases()
+  const rows = getDemoCases()
     .map((c) => {
       const inr = toInr(c.dispute.amount / 100, c.dispute.currency);
       return { c, inr, saved: getSavedResult(c.id), score: inr / (c.dispute.respond_by_hours_left + 12) };
