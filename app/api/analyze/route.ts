@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { analyze, MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS, type AddedEvidence, type Deps } from "@/lib/agent";
+import { ACCEPTANCE_OPTIONS, MAX_POLICY_CHARS, type Policy } from "@/lib/limits";
 import { DEFAULT_MODEL, makeCallModel } from "@/lib/anthropic";
 import { getCase, getCheckView } from "@/lib/data";
 import { loadPrompt } from "@/lib/prompt";
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: "rejected", code: "empty", message: "That request was not valid." }, { status: 400 });
   }
 
-  const b = body as { caseId?: unknown; added?: unknown };
+  const b = body as { caseId?: unknown; added?: unknown; policy?: { text?: unknown; acceptance?: unknown } };
   const c = typeof b.caseId === "string" ? getCase(b.caseId) : undefined;
   if (!c || !Array.isArray(b.added) || b.added.length > MAX_ADDED) {
     return NextResponse.json({ status: "rejected", code: "empty", message: "That request was not valid." }, { status: 400 });
@@ -42,6 +43,13 @@ export async function POST(req: Request) {
     const title = typeof a?.title === "string" ? a.title.slice(0, MAX_TITLE_CHARS + 1) : "";
     const content = typeof a?.content === "string" ? a.content.slice(0, MAX_EVIDENCE_CHARS + 1) : "";
     added.push({ id: `E${c.evidence.length + i + 1}`, title, content });
+  }
+
+  // Optional merchant terms from Agent setup. Same caps as evidence; treated as data downstream.
+  let policy: Policy | undefined;
+  if (b.policy && typeof b.policy.text === "string" && b.policy.text.trim()) {
+    const acc = ACCEPTANCE_OPTIONS.find((o) => o.value === b.policy?.acceptance)?.value ?? "unsure";
+    policy = { text: b.policy.text.slice(0, MAX_POLICY_CHARS + 1), acceptance: acc };
   }
 
   let deps: Deps;
@@ -59,6 +67,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: "saved", reason: "prompt_missing", message: "The live check is off in this demo, so you are seeing the saved result." });
   }
 
-  const result = await analyze(c, added, deps);
+  const result = await analyze(c, added, deps, policy);
   return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });
 }

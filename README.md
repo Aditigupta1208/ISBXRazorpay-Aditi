@@ -16,4 +16,28 @@ An Agent Studio-style agent for Indian businesses selling services, subscription
 - Prompts: [`prompts/`](prompts/) (current: v2.1)
 - Demo data: [`data/`](data/)
 
-Status: build starts 6 Oct 2026, submission 13 Oct 2026. Setup instructions will be added here.
+Status: M1 to M5 built (M3 and M4 live parts wait for an API key). Submission 13 Oct 2026.
+
+## Run it locally
+
+```bash
+npm install
+cp .env.example .env.local   # optional: add ANTHROPIC_API_KEY to turn on the live check
+npm run dev                  # http://localhost:3000
+npm test                     # unit tests
+npm run build                # production build
+npm run eval                 # runs every case through the live agent; needs the API key
+```
+
+With no API key the app shows the saved results and says so. The key is read only on the server and is never sent to the browser.
+
+## How it is built
+
+Next.js (App Router) and TypeScript. The agent prompt and its tool schema live in `prompts/dispute-agent-v2.1.md` and are read from there. `lib/agent.ts` makes one forced tool call to Claude, validates the answer with zod, retries once, then falls back to the saved result. `lib/guardrails.ts` runs the seven safety rules in code after every answer. Evidence is wrapped as data and never followed as instructions.
+
+## Where the evaluation lives
+
+- `data/cases.json`, `data/labels.json`: 20 cases and the human answer key (C17 to C20 are messy and prompt-injection cases)
+- `data/prerun/`: saved v1 runs
+- `eval/results/`: automated runs from `npm run eval` (none yet until the key exists)
+- `/evals` in the app shows all of it side by side

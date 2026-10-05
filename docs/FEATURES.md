@@ -1,6 +1,6 @@
 # Feature guide: Dispute Advisor
 
-Every feature from `docs/pm/02-features.md`, with what it does, how it works, its limits and where it stands after milestone 3 (6 Oct 2026).
+Every feature from `docs/pm/02-features.md`, with what it does, how it works, its limits and where it stands after milestone 5 (6 Oct 2026).
 
 Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Simulated" means the app shows the request it would send and sends nothing.
 
@@ -8,7 +8,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 |---|---|---|---|
 | ⭐ | Fight-or-Fold check (the star feature) | ✅ (live call tested against a stand-in model only) | Dispute detail, right column |
 | F1 | Evidence locker | 🟡 paste works; file upload and extracted key facts not built | Dispute detail, left column |
-| F2 | Policy profile | ⬜ | Agent setup page (M5) |
+| F2 | Policy profile | ✅ (terms are sent as the merchant's claim, not proof; tested on a stand-in model) | `/agent-studio` |
 | F3 | Cited response draft | ✅ | Dispute detail, "Review your response" |
 | F4 | Merchant controls | ✅ | Dispute detail |
 | F5 | Safety checks (R1 to R7) | ✅ | Check panel, drawer, API route |
@@ -16,7 +16,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | F7 | Clear-win fast lane | ⬜ (first to cut) | |
 | F8 | Outcome, next steps and prevention tip | ✅ | Dispute detail, after an action |
 | F9 | Under the hood and audit trail | ✅ (audit trail is kept in the browser) | Drawer |
-| F10 | Evals page | ⬜ (M4, never cut) | `/evals` |
+| F10 | Evals page | ✅ (v2.1 column fills after the first real run) | `/evals` |
 | 🚀 | Service Dispute Shield (moonshot) | ⬜ by design: a concept, not in the MVP | |
 | — | Platform: no-key fallback, cache, rate limit, caps, labels | ✅ | Everywhere |
 
@@ -89,13 +89,13 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 ---
 
-## F2 · Policy profile ⬜
+## F2 · Policy profile ✅
 
-**What it will do.** The merchant records their refund, cancellation and renewal terms once, and how customers accept them (checkout tick box, email, footer link). That text is added to every check, so the advisor can tell, for example, a disclosed policy from a footer-only one (the C14 case).
+**What it does.** On the Agent setup page the merchant writes their refund, cancellation and renewal terms once (up to 1,000 characters) and says how customers accept them: checkbox at checkout, email, footer link only, or not sure. Every new check (Re-run check, Add evidence) sends that text to the model.
 
-**Planned form.** A section of the Agent setup page (milestone 5), pre-filled for each demo merchant, editable.
+**How it works.** The text goes into the request as `<merchant_policy accepted_by="...">`, with a line saying it is what the merchant says, not proof. Only evidence documents can prove what a customer saw or agreed to, so a footer-only policy does not turn a 13.7 dispute into a Fight (the C14 case). The text is capped and escaped like evidence, card numbers are rejected, and the cache key includes it. Setup is stored in this browser only.
 
-**Today.** Not built. The advisor only sees what is in each dispute's evidence.
+**Limits.** The saved results shown on first load do not use it; only live checks do. Also on this page: approvals (locked on), notify choices (saved, nothing is sent), the reasons covered, and an on/off switch that pauses new checks.
 
 ---
 
@@ -195,9 +195,13 @@ A right-hand drawer on every dispute:
 
 ---
 
-## F10 · Evals page ⬜
+## F10 · Evals page ✅
 
-**What it will do** (milestone 4). Show the kill-test evidence that this needs AI: the human answer key, the fixed checklist (8 of 15), the saved ChatGPT run (15 of 15), the saved Claude run, and the latest automated run of the current prompt across all cases, including messy cases and two prompt-injection cases. C15 is highlighted (the case where a rules-only prompt would have over-refunded USD 1,600). It states the limits plainly: short, clean cases and 15 scored cases do not prove real-world win rates. `npm run eval` produces the numbers. **Never cut.**
+**What it does.** `/evals` compares the human answer key, the fixed checklist, the saved v1 ChatGPT run, the earlier Claude run and the latest automated run, case by case and against the PRD bars (launch, target, stretch). It covers 20 cases, including two messy ones (C17, C18) and two with instructions hidden in the evidence (C19, C20). C15 is highlighted. Every number is computed from the data files, and the limits are stated on the page.
+
+**How it works.** `npm run eval` runs every case through the same code as the app (forced tool call, zod, safety rules) and writes `eval/results/<prompt>-<model>-<date>.json` and a summary. The page reads the newest file. It shows the model's own call and the call after the safety rules, so you can see what the rules fixed. Cases without a usable answer count as wrong.
+
+**Today.** Tested against a stand-in model only; the v2.1 column says "No automated run yet" until a real run is committed. Never cut.
 
 ---
 

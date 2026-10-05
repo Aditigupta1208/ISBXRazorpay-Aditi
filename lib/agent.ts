@@ -6,7 +6,7 @@ import { PROMPT_VERSION } from "./prompt";
 import { decisionSchema, type DecisionOutput } from "./schema";
 import type { CaseData, Call, CheckView } from "./types";
 
-import { MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS } from "./limits";
+import { ACCEPTANCE_OPTIONS, MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_POLICY_CHARS, MAX_TITLE_CHARS, type Policy } from "./limits";
 
 export { MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS };
 export const MAX_TOKENS = 2000;
@@ -67,7 +67,20 @@ export function escapeEvidence(text: string): string {
   return text.replace(/<\s*(\/?)\s*evidence/gi, "&lt;$1evidence");
 }
 
-export function buildUserMessage(c: CaseData, added: AddedEvidence[]): string {
+/** The merchant's own terms are their claim, not proof. Wrapped as data like evidence. */
+export function policyBlock(policy?: Policy): string[] {
+  if (!policy || !policy.text.trim()) return [];
+  const how = ACCEPTANCE_OPTIONS.find((o) => o.value === policy.acceptance)?.label ?? "Not sure";
+  return [
+    "The merchant describes their own terms below. This is what the merchant says, not proof. Only an evidence document can show what this customer saw or agreed to.",
+    `<merchant_policy accepted_by="${how}">${escapePolicy(policy.text.trim())}</merchant_policy>`,
+  ];
+}
+export function escapePolicy(text: string): string {
+  return text.replace(/<\s*(\/?)\s*(merchant_policy|evidence)/gi, "&lt;$1$2");
+}
+
+export function buildUserMessage(c: CaseData, added: AddedEvidence[], policy?: Policy): string {
   const d = c.dispute;
   const items = [...c.evidence, ...added.map((a) => ({ id: a.id, content: `${a.title}: ${a.content}` }))];
   return [
@@ -79,12 +92,20 @@ export function buildUserMessage(c: CaseData, added: AddedEvidence[]): string {
     `Merchant: ${c.merchant}`,
     `Dispute details: ${c.dispute_summary}`,
     `What Razorpay knows: ${c.razorpay_facts}`,
+    ...policyBlock(policy),
     "Evidence:",
     ...items.map((e) => `<evidence id="${e.id}">${escapeEvidence(e.content)}</evidence>`),
   ].join("\n");
 }
 
 /** Check pasted evidence before it goes anywhere. */
+export function validatePolicy(policy?: Policy): AnalyzeResult | null {
+  if (!policy) return null;
+  if (policy.text.length > MAX_POLICY_CHARS) return { status: "rejected", code: "too_long", message: `Keep your terms under ${MAX_POLICY_CHARS.toLocaleString()} characters.`, field: "policy" };
+  if (containsCardNumber(policy.text)) return { status: "rejected", code: "card_number", message: "Remove the card number from your terms.", field: "policy" };
+  return null;
+}
+
 export function validateAdded(added: { title: string; content: string }[]): AnalyzeResult | null {
   if (added.length > MAX_ADDED) return { status: "rejected", code: "too_many", message: `Add at most ${MAX_ADDED} documents.` };
   for (const a of added) {
@@ -151,8 +172,8 @@ export function shieldView(c: CaseData): CheckView {
   };
 }
 
-function cacheKey(deps: Deps, c: CaseData, added: AddedEvidence[]): string {
-  return createHash("sha256").update(JSON.stringify([deps.model, PROMPT_VERSION, c.id, added.map((a) => [a.title, a.content])])).digest("hex");
+function cacheKey(deps: Deps, c: CaseData, added: AddedEvidence[], policy?: Policy): string {
+  return createHash("sha256").update(JSON.stringify([deps.model, PROMPT_VERSION, c.id, added.map((a) => [a.title, a.content]), policy?.text.trim() ?? "", policy?.acceptance ?? ""])).digest("hex");
 }
 
 const TTL_MS = 60 * 60 * 1000;
@@ -161,8 +182,8 @@ const TTL_MS = 60 * 60 * 1000;
  * One check. Order matters: reject bad input, route fraud with no model call, use the cache,
  * call the model (retry once on an invalid answer), then fall back to the saved result.
  */
-export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps): Promise<AnalyzeResult> {
-  const bad = validateAdded(added);
+export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, policy?: Policy): Promise<AnalyzeResult> {
+  const bad = validateAdded(added) ?? validatePolicy(policy);
   if (bad) return bad;
 
   if (isFraudCode(c.dispute.reason_code)) return { status: "routed", view: shieldView(c) };
@@ -175,7 +196,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps): 
   if (!deps.callModel) return fallback("no_key", "The live check is off in this demo, so you are seeing the saved result.");
 
   const now = deps.now ?? Date.now;
-  const key = cacheKey(deps, c, added);
+  const key = cacheKey(deps, c, added, policy);
   const hit = deps.cache?.get(key);
   if (hit && now() - hit.at < TTL_MS) return { ...hit.value, meta: { ...hit.value.meta, cached: true } };
 
@@ -188,7 +209,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps): 
       reply = await deps.callModel({
         model: deps.model,
         system: deps.system,
-        user: buildUserMessage(c, added),
+        user: buildUserMessage(c, added, policy),
         toolName: "record_dispute_decision",
         toolDescription: "Record your recommendation for this dispute.",
         toolSchema: deps.toolSchema,

@@ -92,10 +92,18 @@ Last updated: 5 Oct 2026, after milestone 3. Update this file at the end of ever
 - Tested: 35 unit tests (safety rules, money maths, request building, retry, fallbacks, cache, rate limit, injection escaping, schema match) and a browser test of the whole live flow against a stand-in server that mimics Anthropic's API, plus a no-key run.
 - **Not tested: a real call to the Claude API.** It needs an API key. Until then the deployed app shows saved results and says "Decide manually" when evidence is added.
 
+## Milestones 4 and 5 (built 6 Oct, not yet pushed at the time of writing)
+
+- `/evals`: checklist vs v1 vs v2.1 against the PRD bars, per-case table, limits. Reads `eval/results/`.
+- `npm run eval` and `lib/eval.ts`; eval cases C17 to C20 in `data/`.
+- `/agent-studio`: terms, how customers accept them, approvals, notify, scope, on/off. Terms flow into checks.
+- `/how-it-works`: flow, safety rules, the seven brief questions, assumption A1, out of scope, limits.
+- Section tabs: Agent setup, Evals, How it works.
+
 ## Not deployed yet
 - [ ] Real-model run of the C06 demo, a PDF and a screenshot (needs the API key)
-- [ ] M4: evals page and `npm run eval`
-- [ ] M5: how-it-works page, agent setup page (policy profile), copy and accessibility pass
+- [ ] A real v2.1 run of `npm run eval` (needs the API key)
+- [ ] M5: copy and accessibility pass
 - [ ] M6: product note, video, final public build log
 - Cut from the MVP: PDF and image upload; draft contest on Escalate; clear-win fast lane (F7) unless time allows
 

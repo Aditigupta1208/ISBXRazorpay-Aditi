@@ -61,11 +61,11 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 
 ## M5: Explain and polish (10 Oct)
 
-- [ ] `/how-it-works` page: flow (dispute record + evidence → prompt v2.1 → Claude API → safety rules → merchant approval → outcome), the seven Track 2 answers, assumption A1 (overlap with Dispute Responder), out of scope, limitations
-- [ ] `/agent-studio` setup page as in `docs/pm/04-screens.md`
-- [ ] README: what it is, live link, how to run locally, architecture, where the eval data lives, disclaimer
-- [ ] Copy pass on every screen; check at 360px; keyboard and focus check; fix rough edges
-- [ ] Update `docs/DEMO_SCRIPT.md`: the 90-second path from `docs/pm/04-screens.md` (C04, C06, C15, C16, evals)
+- [x] `/how-it-works` page: flow (dispute record + evidence → prompt v2.1 → Claude API → safety rules → merchant approval → outcome), the seven Track 2 answers, assumption A1 (overlap with Dispute Responder), out of scope, limitations
+- [x] `/agent-studio` setup page (terms and how customers accept them are sent into each check as data; approvals locked on; on/off switch) as in `docs/pm/04-screens.md`
+- [x] README: what it is, live link, how to run locally, architecture, where the eval data lives, disclaimer
+- [ ] Copy pass on every screen; keyboard and focus check; fix rough edges (360px checked on the new pages; the rest comes with the feature deep dive)
+- [x] Update `docs/DEMO_SCRIPT.md`: the 90-second path from `docs/pm/04-screens.md` (C04, C06, C15, C16, evals)
 
 ## M6: Note, video, submit (11 to 13 Oct)
 

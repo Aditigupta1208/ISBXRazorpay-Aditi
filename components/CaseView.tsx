@@ -10,6 +10,7 @@ import { DRAFT_LIMIT, citedIds, containsCardNumber, evaluateGuardrails, sentence
 import { formatInrFull, formatOriginal, timeLeft } from "@/lib/format";
 import { DEMO_RATE_INR_PER_USD, VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor } from "@/lib/money";
 import type { CaseData, CheckView } from "@/lib/types";
+import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 
 const Card = ({ children, className = "", id }: { children: ReactNode; className?: string; id?: string }) => (
@@ -149,6 +150,11 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
 
   const steps = [`Reading ${allEvidence.length} documents…`, `Applying Visa rule ${d.reason_code}…`, "Writing the response…"];
   const rerun = async () => {
+    const profile = readProfile();
+    if (!profile.enabled) {
+      setNotice({ kind: "info", text: "Dispute Advisor is off in Agent setup. Turn it on to run a new check." });
+      return;
+    }
     setRunning(true);
     setStep(0);
     setNotice(null);
@@ -157,7 +163,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ caseId: c.id, added: (state.added ?? []).map((a) => ({ title: a.title, content: a.content })) }),
+        body: JSON.stringify({ caseId: c.id, added: (state.added ?? []).map((a) => ({ title: a.title, content: a.content })), policy: profile.policy.trim() ? { text: profile.policy, acceptance: profile.acceptance } : undefined }),
       });
       const r = (await res.json()) as AnalyzeResult;
       if (r.status === "live") {
