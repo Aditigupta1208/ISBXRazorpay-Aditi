@@ -176,20 +176,63 @@ Why some scores are low:
 
 ## 5. Possible solutions
 
-| # | Solution | Pains addressed |
+### Competitor scan: what others do (dispute features only)
+
+| Company | Region | What's relevant | Source |
+|---|---|---|---|
+| **Justt** | Global, enterprise | Fight-or-accept based on expected return (amount, fees, odds); reads the merchant's refund policy and terms; unique argument per case, A/B-tested; measures **Net Dollar Recovery** instead of win rate | [Platform](https://justt.ai/platform/), [Dispute Optimization, Jun 2025](https://www.streetinsider.com/PRNewswire/Justt+Announces+Dispute+Optimization+to+Help+Merchants+Maximize+Chargeback+Recovery/24939425.html), [win-rate blog](https://justt.ai/blog/chargeback-win-rates-kpi/) |
+| **Stripe Smart Disputes** | Global | Builds evidence packets automatically; shows which evidence is missing per reason code ("requires evidence"); merchant can add documents | [Stripe docs](https://docs.stripe.com/disputes/get-started/smart-disputes) |
+| **Adyen** | Global | Auto-defends obvious cases (already refunded, 3-D Secure liability shift, technically invalid); refuses documents with sensitive data (passports, full card numbers) | [Adyen docs](https://docs.adyen.com/risk-management/manage-disputes) |
+| **Chargeflow** | Global, Shopify-first | Predicts win odds; charges 25% of what it recovers; pre-dispute alerts (Visa RDR, Ethoca); does not support Razorpay | [Chargeflow AI info](https://www.chargeflow.io/ai-info), [integrations](https://www.chargeflow.io/integrations) |
+| **Checkout.com** | Global | Dispute automation and analytics; pre-dispute resolution via Visa RDR | [Product page](https://www.checkout.com/products/disputes) |
+| **Fini and others** | Global | Evidence from helpdesk and CRM tools (Zendesk, Salesforce); hand-off to humans on complex cases (vendor listicle, directional) | [Fini guide](https://www.usefini.com/guides/ai-agents-charge-dispute-automation) |
+| **Antom Copilot** | Asia | Defence strategy, documentation help, merchant review on every case | [Fintech News SG](https://fintechnews.sg/114081/ai/ant-international-antom-copilot-ai-upgrade/) |
+| **Cashfree Relay** | India | Dispute Responder drafts responses and asks the customer for missing proof | [Cashfree blog](https://www.cashfree.com/blog/ai-superagent-that-runs-smb-payment-operations/) |
+| **PayU Fraud Liability Protect** | India, Sep 2026 | Covers fraud chargebacks only, international cards | [MediaNama](https://www.medianama.com/2026/09/223-payu-ai-fraud-protection-cross-border-card-payments/) |
+
+**What this means**
+- **Expected-return fight-or-accept is proven elsewhere** (Justt, for large global merchants). Our difference is who and where: Indian small businesses on Razorpay, service disputes, and exchange-rate clawback in the maths. We say this openly rather than claim novelty.
+- **Indian competition is about fraud.** PayU and Razorpay's Chargeback Shield both cover fraud only; service disputes remain open in India.
+- **Our North Star matches industry practice:** Justt's Net Dollar Recovery is close to our net ₹ recovered per ₹ disputed.
+- **Not borrowing:** pre-dispute alerts (Razorpay doesn't publicly offer them) and fully automatic filing.
+
+### Solution list
+
+Feasibility key: ✅ yes · 🟡 partly or with conditions · ❌ no
+
+| # | Solution | Pains | Inspired by | Feasible for Razorpay | Feasible in our prototype |
+|---|---|---|---|---|---|
+| S1 | **Decision copilot:** explains the claim in plain words, names the winning proof for that reason code, and recommends Fight / Accept / Escalate with economics (amount, exchange-rate clawback, fees, odds) | PP1, PP2 | Justt | ✅ | ✅ Odds are an AI estimate until Razorpay outcome data exists (S10); FX and fee maths is arithmetic |
+| S2 | **Evidence from anywhere:** merchant uploads, pastes or forwards documents; AI extracts facts, checks them against the claim and payment, flags contradictions, and shows **what's missing** for this reason code; maps each document to Razorpay's evidence slots | PP3 | Stripe ("requires evidence") | ✅ | ✅ Pasted text tested; PDF and image upload untested (check on build day 1) |
+| S3 | **Cited response drafter:** reason-specific response, every sentence citing a document, within 1,000 characters | PP4 | — | ✅ | ✅ Tested; code checks every citation |
+| S13 | **Policy profile:** merchant uploads refund and cancellation policy and terms once; reused on every dispute | PP1, PP2 | Justt | ✅ | ✅ |
+| S14 | **Clear-win fast lane:** cases decided by Razorpay's own data (e.g. refund already issued) get a one-click response, still merchant-approved | PP2, PP4 | Adyen auto-defend | ✅ Razorpay holds refund records | ✅ With demo data |
+| S4 | **Deadline triage inbox:** ranked by money at stake and time left, with WhatsApp nudges | PP5 | — | ✅ Alerts already exist | ✅ |
+| S5 | **Connectors:** pull evidence from helpdesk (Zendesk, Freshdesk), Gmail and product analytics | PP3 | Fini | 🟡 Integration work | ❌ Not in prototype |
+| S6 | **Prevention advisor:** after a loss, names the likely cause and one fix (click-to-accept terms, renewal reminders, clearer billing name on statements) | PP7, PP8 | Antom | ✅ | ✅ Tip quality untested |
+| S7 | **Pre-dispute outreach:** contact the customer before they dispute | PP5 | Chargeflow, Checkout.com (via network alerts) | ❌ No public pre-dispute signal | ❌ |
+| S8 | **Fully automatic filing:** agent files without merchant approval | PP4, PP5 | — | 🟡 Possible, against Agent Studio's approval-gate design | ❌ By choice |
+| S9 | **Service-dispute cover:** extend Chargeback Shield so Razorpay takes liability for non-fraud disputes it judges winnable | PP2, PP6 | Shield, PayU (fraud only) | 🟡 Needs underwriting data and risk appetite | ❌ Moonshot |
+| S10 | **Network learning:** win odds by reason code × evidence type, learned across Razorpay merchants | PP2, PP7 | Justt (A/B testing) | 🟡 Needs outcome data | 🟡 Simulated only, labelled |
+| S11 | **Human expert service:** Razorpay dispute experts on call | PP1, PP4 | — | 🟡 Costly to scale | ❌ |
+| S12 | **Static playbooks:** a checklist per reason code (no AI) | PP1 | Razorpay blog guides | ✅ Exists | ✅ It is our baseline |
+
+**New guardrail (from Adyen):** block sensitive data in uploads. Full card numbers can be caught by a pattern check; passport and ID detection is rough in the prototype.
+
+**Business model note (from Chargeflow, Justt):** an outcome-based fee, a share of the amount recovered, ties Razorpay's revenue to merchant success.
+
+### What is validated and what is not
+
+| Building block | Status | Basis |
 |---|---|---|
-| S1 | **Decision copilot:** explains the claim in plain words, names the winning proof for that reason code, and recommends Fight / Accept / Escalate with economics (amount, exchange-rate clawback, fees, odds) | PP1, PP2 |
-| S2 | **Evidence from anywhere:** merchant uploads, pastes or forwards documents; AI extracts facts, checks them against the claim and payment, flags contradictions and gaps, maps each to Razorpay's evidence slots | PP3 |
-| S3 | **Cited response drafter:** reason-specific response, every sentence citing a document, within 1,000 characters | PP4 |
-| S4 | **Deadline triage inbox:** ranked by money at stake and time left, with WhatsApp nudges | PP5 |
-| S5 | **Connectors:** pull evidence automatically from product logs, Gmail, booking or CRM systems | PP3 |
-| S6 | **Prevention advisor:** after a loss, names the root cause and one fix (click-to-accept terms, renewal reminder, clearer statement descriptor) | PP7, PP8 |
-| S7 | **Pre-dispute outreach:** contact the customer before they dispute | PP5 |
-| S8 | **Fully autonomous submission:** agent files without merchant approval | PP4, PP5 |
-| S9 | **Service-dispute cover:** extend Chargeback Shield so Razorpay takes liability for non-fraud disputes it judges winnable | PP2, PP6 |
-| S10 | **Network learning:** win odds by reason code × evidence type, learned across Razorpay merchants | PP2, PP7 |
-| S11 | **Human expert service:** Razorpay dispute experts on call | PP1, PP4 |
-| S12 | **Static playbooks:** a checklist per reason code (no AI) | PP1 |
+| Razorpay dispute API: alerts, reason code, deadline, amount; accept or contest; 11 evidence slots + 1,000-character summary | Verified | [Disputes API](https://razorpay.com/docs/api/disputes/contest/), [dispute entity](https://razorpay.com/docs/api/disputes/entity/?preferred-country=IN) |
+| Agent Studio connectors, approval gates, audit trails | Verified | [Launch](https://newsroom.razorpay.in/newsroom/razorpay-launches-the-worlds-first-ai-native-agent-studio-for-payments-at-ftx26-powered-by-anthropics-claude/), [Agent Studio terms](https://razorpay.com/tnc/agent-studio/) |
+| AI reads written evidence and decides fight / accept / escalate correctly | Tested by us | Kill test: 15/15 vs checklist 8/15 |
+| AI writes cited drafts without inventing facts | Tested by us, small sample | 0 invented facts in 8 drafts |
+| AI reads PDFs and screenshots | Not tested | Supported by the Claude API; test on build day 1 |
+| Messy real-world evidence (long threads, irrelevant attachments) | Not tested | Add 2–3 messy cases to the eval set |
+| "Odds of winning" | Estimate only | Label as AI estimate; real odds need Razorpay outcome data |
+| What Dispute Responder already does | Cannot verify | Public descriptions only; stated as an assumption |
 
 ---
 
