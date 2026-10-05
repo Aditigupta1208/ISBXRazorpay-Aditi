@@ -7,13 +7,14 @@ Plan: PM work finished 5 Oct. Build 6 to 10 Oct. Note, video and submission 11 t
 
 ## M1: Skeleton, data and list (6 Oct)
 
-- [ ] Next.js (App Router, TypeScript) + Tailwind project, `.gitignore` covering `node_modules`, `.next`, `.env*`
-- [ ] Tailwind colour tokens and Inter font from `docs/design/DESIGN.md`
-- [ ] `lib/data.ts` loads `data/cases.json`, `data/labels.json` and the saved runs in `data/prerun/`, with TypeScript types
-- [ ] Layout: prototype banner "Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.", black top bar (Ray AI, Payments, Banking+, Payroll, More, search), white sub-tabs (Transactions, Settlements, Disputes, Refunds). Only Disputes works; other tabs are inert. Works at 390px width.
-- [ ] `/disputes` list as in `docs/pm/04-screens.md`: three summary cards, table with call chips from the saved Claude run, time left
-- [ ] `/disputes/[id]` showing dispute facts, Razorpay facts and evidence cards (check panel can be a placeholder)
-- [ ] `npm run build` passes; deployed to Vercel with a public URL
+- [x] Next.js (App Router, TypeScript) + Tailwind project, `.gitignore` covering `node_modules`, `.next`, `.env*`
+- [x] Tailwind colour tokens and Inter font from `docs/design/DESIGN.md`
+- [x] `lib/data.ts` loads `data/cases.json`, `data/labels.json` and the saved runs in `data/prerun/`, with TypeScript types
+- [x] Layout: prototype banner "Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.", black top bar (Ray AI, Payments, Banking+, Payroll, More, search), white sub-tabs (Transactions, Settlements, Disputes, Refunds). Only Disputes works; other tabs are inert. Works at 390px width.
+- [x] `/disputes` list as in `docs/pm/04-screens.md`: three summary cards, table with call chips from the saved Claude run, time left
+- [x] `/disputes/[id]` showing dispute facts, Razorpay facts and evidence cards (check panel can be a placeholder)
+- [x] `npm run build` passes
+- [ ] Deployed to Vercel with a public URL (needs your Vercel account linked to the repo)
 
 Done when: a stranger can open the public URL and click through all 16 disputes.
 
