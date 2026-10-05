@@ -148,15 +148,15 @@ Checked against what Razorpay has published. None of these pains is entirely new
 
 Scored 1–5 on each criterion; higher means a stronger case to solve now.
 
-| # | Pain point | Frequency | Severity (₹) | Unsolved today | Razorpay can act | AI advantage | **Total /25** |
-|---|---|---|---|---|---|---|---|
-| PP1 | Don't know what wins | 5 | 4 | 4 | 5 | 5 | **23** |
-| PP2 | Don't know if it's worth fighting | 5 | 5 | 4 | 4 | 4 | **22** |
-| PP3 | Evidence scattered | 4 | 5 | 4 | 3 | 5 | **21** |
-| PP4 | Writing the response | 4 | 3 | 3 | 5 | 5 | **20** |
-| PP5 | Missing the deadline | 3 | 5 | 2 | 5 | 1 | **16** |
-| PP7 | No learning, repeats | 2 | 3 | 4 | 4 | 3 | **16** |
-| PP6 | Money deducted upfront | 5 | 3 | 2 | 2 | 1 | **13** |
+| # | Pain point | Frequency | Severity (₹) | Unsolved today | Razorpay can act | AI advantage | **Total /25** | Shared across personas |
+|---|---|---|---|---|---|---|---|---|
+| PP1 | Don't know what wins | 5 | 4 | 4 | 5 | 5 | **23** | All three |
+| PP2 | Don't know if it's worth fighting | 5 | 5 | 4 | 4 | 4 | **22** | All three, severe for all |
+| PP3 | Evidence scattered | 4 | 5 | 4 | 3 | 5 | **21** | All three |
+| PP4 | Writing the response | 4 | 3 | 3 | 5 | 5 | **20** | All three |
+| PP5 | Missing the deadline | 3 | 5 | 2 | 5 | 1 | **16** | All three |
+| PP7 | No learning, repeats | 2 | 3 | 4 | 4 | 3 | **16** | Mostly Rohit |
+| PP6 | Money deducted upfront | 5 | 3 | 2 | 2 | 1 | **13** | All three |
 
 Why some scores are low:
 - **PP2 "unsolved" is 4** because Dispute Responder already scores win probability [V], though not with exchange-rate and fee economics.
@@ -165,9 +165,11 @@ Why some scores are low:
 - **PP6 is network policy;** Razorpay can't change when money is held.
 
 **Decision**
+- **Principle:** the core solves the pains all three merchant personas share; persona-specific pains are supporting. "Shared across personas" is used as a tie-breaker, not a sixth score.
+- **Headline pain: PP2** (is it worth fighting?), the only pain that is severe for all three personas.
 - **Solve now:** PP1 + PP2 (the decision) and PP3 (the evidence). This is the core.
 - **Include because it's cheap once the core exists:** PP4 (the draft).
-- **Supporting:** PP5 (deadline triage), PP7 (learning and prevention).
+- **Supporting:** PP5 (deadline triage; shared but largely solved by Razorpay), PP7 (learning and prevention; mainly a high-volume pain, Rohit).
 - **Out:** PP6. Mention it as context only.
 
 ---
