@@ -23,6 +23,7 @@ const H3 = ({ children }: { children: ReactNode }) => (
   <h3 className="mt-4 mb-1.5 text-xs font-semibold tracking-[.6px] text-helper uppercase first:mt-0">{children}</h3>
 );
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
+const CALL_NAME = { fight: "Fight", fold: "Fold", escalate: "Escalate", shield: "Chargeback Shield" } as const;
 const primary = `${btn} bg-brand text-white`;
 const ghost = `${btn} border border-[#D6D6D6] bg-white text-[#111]`;
 
@@ -206,6 +207,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
         update((s) => ({
           ...s,
           check: { view: r.view, meta: r.meta },
+          prevCall: finalCall,
           dirty: false,
           draft: undefined,
           contestAmount: undefined,
@@ -446,6 +448,30 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
         </div>
 
         <div className="order-1 md:order-none">
+          {state.prevCall && state.prevCall !== finalCall && state.check && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand bg-[#F4F8FF] px-4 py-3" role="status">
+              <span>
+                <b className="block">The call changed: {CALL_NAME[state.prevCall]} → {CALL_NAME[finalCall]}</b>
+                <span className="text-[14px] text-[#333]">
+                  {(() => {
+                    const addedIds = (state.added ?? []).map((a) => a.id);
+                    const decided = view.decidingEvidence.filter((id) => addedIds.includes(id));
+                    return decided.length > 0 ? `The new document ${decided.join(", ")} decided it.` : "Your new evidence changed the answer.";
+                  })()}
+                </span>
+              </span>
+              <span className="flex gap-2">
+                {view.decidingEvidence.some((id) => (state.added ?? []).some((a) => a.id === id)) && (
+                  <button className={ghost} onClick={() => focusEvidence(view.decidingEvidence.filter((id) => (state.added ?? []).some((a) => a.id === id)))}>
+                    Show the document
+                  </button>
+                )}
+                <button className={ghost} onClick={() => update((s) => ({ ...s, prevCall: undefined }))}>
+                  Dismiss
+                </button>
+              </span>
+            </div>
+          )}
           {clearWin && (
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-fight bg-fight-soft px-4 py-3" role="status">
               <span>
@@ -513,7 +539,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                 <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
                   <Stat label="At stake" value={formatInrFull(money.atStakeInr)} sub={`${formatOriginal(d.amount, d.currency)} · demo rate ₹${rateFor(d.currency)}`} />
                   <Stat label="Taken back if you lose" value={formatInrFull(money.atStakeInr)} sub="rate on dispute day" />
-                  <Stat label="Fees at risk" value={formatInrFull(money.feesAtRiskInr)} sub={`Visa arbitration USD ${VISA_ARBITRATION_FEE_USD}`} />
+                  <Stat label="Possible fee if you fight and lose" value={formatInrFull(money.feesAtRiskInr)} sub={`Visa arbitration, USD ${VISA_ARBITRATION_FEE_USD}. Only if the bank escalates.`} />
                   <Stat label="AI estimate of odds" value={`${Math.round(view.odds * 100)}%`} sub="estimate, not a promise" />
                 </div>
                 {view.defensibleAmount !== null && (

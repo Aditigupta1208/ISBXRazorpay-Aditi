@@ -23,6 +23,8 @@ export interface CaseState {
   added?: { id: string; title: string; content: string }[];
   /** The latest live check; absent while the saved result is showing. */
   check?: { view: CheckView; meta: Meta };
+  /** The call shown before the last live re-run, kept so the screen can say what changed. Cleared on dismiss. */
+  prevCall?: "fight" | "fold" | "escalate" | "shield";
   /** Evidence changed since the last check. */
   dirty?: boolean;
   audit: AuditEntry[];

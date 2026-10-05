@@ -24,6 +24,8 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 ## ⭐ Fight-or-Fold check
 
+**Deep dive 1 (6 Oct).** After a re-run that changes the call, a blue banner says "The call changed: Fight → Fold" and names the new document that decided it, with a "Show the document" button; it survives a reload until dismissed. The fee tile is now "Possible fee if you fight and lose" (Visa arbitration, only if the bank escalates), because "Fees at risk" looked larger than the dispute itself on small amounts.
+
 **What it is.** For one non-fraud dispute, the advisor reads the dispute record and the merchant's evidence, applies Visa's rule for the reason code, and gives one of three calls with reasons and money maths.
 
 | Call | Meaning | Razorpay action behind it |
