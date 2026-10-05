@@ -57,24 +57,23 @@ No merchant interviews were possible. Personas are composites built from public 
 | **Decider** | The card issuer | Clear evidence that matches the reason code |
 | **Counterparty** | The cardholder | A fair outcome |
 
-### Axes of segmentation
+### Segmentation: one axis
 
-| Axis | Segments |
-|---|---|
-| **What they sell** | SaaS subscriptions · services and agencies · travel and experiences · digital goods and courses · physical goods |
-| **Dispute volume** | Occasional (under 5 a year) · regular (5–50 a year) · high (50+ a month) |
-| **Who handles disputes** | Founder · a finance or ops generalist · a dedicated risk team |
-| **Where the evidence lives** | Only in Razorpay · in a connected commerce platform · in their own systems (product logs, email, WhatsApp, documents) |
-| **How they collect** | Checkout integration · Payment Links or invoices |
+**Axis: where the evidence that wins the dispute lives.**
 
-### Target segment
+We chose this axis because it decides whether anyone already solves the problem, and whether AI is needed.
 
-| | Physical-goods ecommerce | Services, SaaS, travel, digital |
-|---|---|---|
-| **No dispute team, occasional or regular volume** | Served by Dispute Responder (Shopify, Shiprocket) | **Our target.** Evidence outside Razorpay, no expertise. |
-| **Dedicated team, high volume** | Served, or uses global tools | Has in-house processes. Global tools like Chargeflow don't list Razorpay [V: Chargeflow integrations], so a later expansion. |
+| Segment | Where the winning evidence lives | Typical merchants | Who helps today |
+|---|---|---|---|
+| **A. Payment-proof disputes** | Inside Razorpay (payment, refund record, 3-D Secure) | Any merchant whose dispute is "refund not received" and the refund is on record | Razorpay's own data is enough |
+| **B. Delivery-proof disputes** | In a connected store or shipping app (order, tracking, delivery confirmation) | D2C and ecommerce brands on Shopify, Shiprocket | Razorpay Dispute Responder ([Agent Studio guardrails blog](https://razorpay.com/blog/razorpay-agent-studio-principles-guardrails-and-merchant-control/)) |
+| **C. Service-proof disputes** | In the merchant's own systems: contracts, login and usage logs, terms acceptance, emails, WhatsApp, vouchers | SaaS, agencies and consultants, inbound travel, online courses and digital products | **No one.** Chargeback Shield excludes these ([terms](https://razorpay.com/terms/chargeback-shield/)); global tools like Chargeflow don't support Razorpay ([integrations](https://www.chargeflow.io/integrations)) |
 
-**Target:** Indian businesses taking international card payments through Razorpay, selling services, subscriptions, travel or digital products, with no dedicated dispute team. Razorpay serves 50,000+ cross-border businesses [V: Razorpay Shield blog]; the share in this segment is unknown [A].
+**Target: Segment C**, for international card payments. The evidence is unstructured and lives outside Razorpay, so this is where an agent that reads documents adds the most.
+
+Within Segment C, we start with businesses **without a dedicated dispute team** (founder or a finance/ops generalist handles disputes), because they lack the expertise and time. This is a prioritisation within the segment, not a second axis.
+
+**Size:** Razorpay serves 50,000+ cross-border businesses ([Razorpay Shield blog](https://razorpay.com/blog/razorpay-upticks-success-rates-razorpay-shield/)); the share in Segment C is unknown [A].
 
 ### Personas (composites, to be validated)
 
