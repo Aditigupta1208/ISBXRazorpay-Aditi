@@ -67,6 +67,12 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 - [ ] Copy pass on every screen; keyboard and focus check; fix rough edges (360px checked on the new pages; the rest comes with the feature deep dive)
 - [x] Update `docs/DEMO_SCRIPT.md`: the 90-second path from `docs/pm/04-screens.md` (C04, C06, C15, C16, evals)
 
+## M5b: Cuts brought back (6 Oct, decided by you)
+
+- [ ] Numbered next-step prompts on each dispute, in the style of Ray's "How can I help you next?" (2 to 3 options that act on this dispute; no key needed)
+- [ ] Clear-win lane (F7): a banner on a high-confidence Fight whose draft rests on Razorpay's own record, offering a one-click review (no key needed)
+- [ ] PDF and image upload in Add evidence: size and type caps, sent to the model as a document or image block, wrapped as evidence. Built without the key; NOT counted as done until tested on a real PDF and a real screenshot with the key
+
 ## M6: Note, video, submit (11 to 13 Oct)
 
 - [ ] 11 Oct: one-page product note (problem, merchant, what was left out, how AI was used, Track 2 answers, metrics)
