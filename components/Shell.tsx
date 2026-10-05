@@ -1,8 +1,7 @@
-import Link from "next/link";
+import { SubTabs } from "./SubTabs";
 import type { ReactNode } from "react";
 
 const TOP = ["Ray AI", "Payments", "Banking+", "Payroll", "More"];
-const SUB = ["Transactions", "Settlements", "Disputes", "Refunds"];
 
 export function Shell({ children }: { children: ReactNode }) {
   return (
@@ -33,19 +32,7 @@ export function Shell({ children }: { children: ReactNode }) {
           Search in payments
         </div>
       </header>
-      <div className="flex gap-[18px] overflow-x-auto border-b border-line bg-white px-3 md:gap-7 md:px-7" role="tablist">
-        {SUB.map((t) =>
-          t === "Disputes" ? (
-            <Link key={t} href="/disputes" className="shrink-0 border-b-2 border-brand px-0.5 py-[13px] font-medium text-brand">
-              {t}
-            </Link>
-          ) : (
-            <span key={t} className="shrink-0 px-0.5 py-[13px] font-medium text-[#555]">
-              {t}
-            </span>
-          ),
-        )}
-      </div>
+      <SubTabs />
       <main className="mx-auto max-w-[1180px] px-4 pt-4 pb-10 md:px-6 md:pt-7 md:pb-[60px]">{children}</main>
     </>
   );

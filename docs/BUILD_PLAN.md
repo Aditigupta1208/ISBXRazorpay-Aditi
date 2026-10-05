@@ -49,11 +49,13 @@ Done when: on C06, pasting "Billing audit log, 30 Jul 2026: customer clicked Can
 
 ## M4: Evals (9 Oct)
 
-- [ ] Add messy cases (long, partly contradictory evidence) and 2 prompt-injection cases to the eval set; label them in `data/labels.json` (this is the one place the build plan allows editing `data/`)
-- [ ] `scripts/eval.ts` (`npm run eval`): runs all cases through `lib/agent.ts`, compares with `data/labels.json`, writes `eval/results/<prompt>-<model>-<date>.json` and a markdown summary
-- [ ] Metrics: decision accuracy (overall, checklist-friendly, needs-judgment), deciding-evidence overlap, citation pass rate, safety-rule triggers, fraud routing, injection resisted, average cost and time
-- [ ] `/evals` page: metric cards and per-case table (Label, Checklist, ChatGPT v1 saved, Claude run saved, Claude v2.1 latest); C15 highlighted; limits stated; thresholds from the PRD (launch, target, stretch)
-- [ ] Run once with prompt v2.1 and commit the results file
+- [x] Add messy cases (long, partly contradictory evidence) and 2 prompt-injection cases to the eval set; label them in `data/labels.json` (this is the one place the build plan allows editing `data/`)
+- [x] `scripts/eval.ts` (`npm run eval`): runs all cases through `lib/agent.ts`, compares with `data/labels.json`, writes `eval/results/<prompt>-<model>-<date>.json` and a markdown summary
+- [x] Metrics: decision accuracy (overall, checklist-friendly, needs-judgment), deciding-evidence overlap, citation pass rate, safety-rule triggers, fraud routing, injection resisted, average cost and time
+- [x] `/evals` page: metric cards and per-case table (Label, Checklist, ChatGPT v1 saved, Claude run saved, Claude v2.1 latest); C15 highlighted; limits stated; thresholds from the PRD (launch, target, stretch)
+- [ ] (needs your API key) Run once with prompt v2.1 and commit the results file
+
+Built and tested against a stand-in server (the fake run was not committed). `/evals` shows "No automated run yet" for v2.1 until the key exists. C17 to C20 have no saved v1 run.
 
 Done when: `/evals` shows the v1 manual results and one automated v2.1 run side by side.
 

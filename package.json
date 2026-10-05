@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx --test lib/*.test.ts"
+    "test": "tsx --test lib/*.test.ts",
+    "eval": "tsx --env-file-if-exists=.env.local scripts/eval.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
