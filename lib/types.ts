@@ -41,3 +41,27 @@ export interface SavedResult {
   /** Shown to the merchant, e.g. "Saved result: ChatGPT 5.6 Terra, prompt v1" */
   sourceLabel: string;
 }
+
+/** Everything the check panel needs, serialisable so it can cross from server to browser. */
+export interface CheckView {
+  caseId: string;
+  call: Call;
+  confidence: string;
+  reason: string;
+  decidingEvidence: string[];
+  missingEvidence: string[];
+  contradictions: string[];
+  draft: string;
+  slots: { evidenceId: string; slot: string }[];
+  ruleText: string;
+  /** 0 to 1. Saved v1 results have no estimate, so it is derived from confidence and labelled. */
+  odds: number;
+  oddsNote: string;
+  /** Subunits; null when the full amount is defensible. */
+  defensibleAmount: number | null;
+  getFirst?: string;
+  requestText?: string;
+  tip: string;
+  source: { label: string; model: string; promptVersion: string; date: string; live: boolean };
+  raw: Record<string, unknown>;
+}

@@ -20,13 +20,16 @@ Done when: a stranger can open the public URL and click through all 16 disputes.
 
 ## M2: Check panel, safety rules and actions on saved results (7 Oct)
 
-- [ ] Check panel built from the saved result: call card, confidence, reason, Visa rule, deciding evidence (click highlights the card), slot mapping, money block, editable draft with a 1,000-character counter and citation chips
-- [ ] `lib/guardrails.ts` with R1 to R7 (see `docs/pm/05-data-and-stack.md`) and `lib/money.ts` (formula, one fixed demo rate labelled "demo rate", fees with source URL and date); both run on saved results and are unit-tested
-- [ ] Actions: Approve and submit, Fold, Escalate, each with a confirm dialog and the simulated request panel ("Simulated: not sent to Razorpay"); partial contest when `defensible_amount` is set; draft contest on Escalate
-- [ ] Outcome and next steps: Won/Lost toggle, "what the agent learns" line, 2 to 3 next steps, prevention tip
-- [ ] "Under the hood" drawer: result source, model, prompt version, safety checks, raw JSON
+- [x] Check panel built from the saved result: call card, confidence, reason, Visa rule, deciding evidence (click highlights the card), slot mapping, money block, editable draft with a 1,000-character counter and citation chips
+- [x] `lib/guardrails.ts` with R1 to R7 (see `docs/pm/05-data-and-stack.md`) and `lib/money.ts` (formula, one fixed demo rate labelled "demo rate", fees with source URL and date); both run on saved results and are unit-tested
+- [x] Actions: Approve and submit, Fold, Escalate, each with a confirm dialog and the simulated request panel ("Simulated: not sent to Razorpay"); partial contest when `defensible_amount` is set
+- [ ] Draft contest on Escalate (FR-23b): moved to M3, because the saved v1 Escalate results have no draft to save
+- [x] Outcome and next steps: Won/Lost toggle, "what the agent learns" line, 2 to 3 next steps, prevention tip
+- [x] "Under the hood" drawer: result source, model, prompt version, safety checks, raw JSON
 
-Done when: C04 (Fight), C14 (Fold), C15 (Escalate) and C16 (Chargeback Shield) each work end to end.
+- [x] Also done: clickable list rows, call filter, CSV download, status column (from the M1 gap list)
+
+Done when (checked in a browser test): C04 (Fight), C14 (Fold), C15 (Escalate) and C16 (Chargeback Shield) each work end to end.
 
 ## M3: Live check (8 Oct; needs the API key)
 

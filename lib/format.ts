@@ -1,11 +1,9 @@
-/** One fixed demo rate, labelled "demo rate" wherever it is shown. Placeholder: confirm before launch. */
-export const DEMO_RATE_INR_PER_USD = 88;
-/** Rough demo rates for other currencies, same label. */
-const OTHER: Record<string, number> = { GBP: 115, EUR: 100 };
+import { DEMO_RATE_INR_PER_USD, rateFor } from "./money";
+
+export { DEMO_RATE_INR_PER_USD };
 
 export function toInr(amountMajor: number, currency: string): number {
-  const rate = currency === "USD" ? DEMO_RATE_INR_PER_USD : OTHER[currency] ?? DEMO_RATE_INR_PER_USD;
-  return amountMajor * rate;
+  return amountMajor * rateFor(currency);
 }
 
 const SYMBOL: Record<string, string> = { USD: "$", GBP: "£", EUR: "€" };

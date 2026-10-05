@@ -1,0 +1,43 @@
+{
+  "note": "Builder-authored supplements for the saved v1 results, which have no odds, defensible amount, prevention tip or request text. This is NOT model output. A live check (milestone 3) returns these fields itself and replaces them. Missing evidence is read from the saved result itself.",
+  "odds_from_confidence": {
+    "High": 0.8,
+    "Medium": 0.55,
+    "Low": 0.35
+  },
+  "reason_code_tips": {
+    "13.1": "Get a signed handover or a first-use record for every delivery.",
+    "13.2": "Add a click-to-accept checkbox for renewal terms at checkout and send a reminder before each renewal.",
+    "13.3": "Write down what is included at checkout and get a sign-off at each milestone.",
+    "13.6": "Send the customer a refund confirmation the day you refund.",
+    "13.7": "Show cancellation terms at checkout with a tick box and repeat them in the confirmation email."
+  },
+  "cases": {
+    "C02": {
+      "get_first": "Proof the customer received or used the website, such as a sign-off email, a CMS login or a launch confirmation.",
+      "request_text": "We have a card dispute on website project INV-2026-041 (USD 4,950). Can you send any proof that the client received or used the site: a sign-off email, CMS login records or a launch confirmation?",
+      "tip": "Get written sign-off or a first-login record when you hand over a project."
+    },
+    "C15": {
+      "get_first": "Proof that the person who cancelled was allowed to cancel for the booker, or the booker's own written confirmation.",
+      "request_text": "We have a card dispute on the group tour booked by Acme Holdings (USD 3,200). Can the booker confirm in writing that J. Whitfield was allowed to cancel on their behalf?",
+      "defensible_amount": 160000,
+      "tip": "Record who may cancel a group booking and ask the booker to confirm cancellations in writing."
+    },
+    "C05": {
+      "tip": "Reply to cancellation emails within a day and stop the renewal, or send a reminder before it renews."
+    },
+    "C08": {
+      "tip": "Do not sell live sessions you cannot deliver. Refund or reschedule before the customer disputes."
+    },
+    "C09": {
+      "tip": "Check word counts before you deliver and agree changes in writing."
+    },
+    "C11": {
+      "tip": "Process refunds promised under your guarantee within the days you state and send a receipt."
+    },
+    "C14": {
+      "tip": "Show cancellation terms at checkout with a tick box and repeat them in the booking email."
+    }
+  }
+}

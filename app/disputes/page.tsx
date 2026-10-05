@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { CallChip } from "@/components/CallChip";
+import { DisputeTable, type Row } from "@/components/DisputeTable";
 import { getCases, getSavedResult } from "@/lib/data";
 import { formatInr, formatOriginal, merchantShort, timeLeft, toInr } from "@/lib/format";
 
@@ -13,6 +12,24 @@ export default function DisputesPage() {
     })
     .sort((a, b) => b.score - a.score);
 
+  const tableRows: Row[] = rows.map(({ c, inr, saved }) => {
+    const tl = timeLeft(c.dispute.respond_by_hours_left);
+    return {
+      id: c.id,
+      disputeId: c.dispute.id,
+      merchant: merchantShort(c.merchant),
+      amount: formatOriginal(c.dispute.amount, c.dispute.currency),
+      inr: formatInr(inr),
+      inrNumber: inr,
+      reasonCode: c.dispute.reason_code,
+      reason: c.dispute.reason_description,
+      timeText: tl.text,
+      warn: tl.warn,
+      hours: c.dispute.respond_by_hours_left,
+      call: saved?.call ?? null,
+    };
+  });
+
   const needDecision = rows.filter((r) => r.saved?.call !== "shield");
   const atStake = needDecision.reduce((s, r) => s + r.inr, 0);
   const due24 = needDecision.filter((r) => r.c.dispute.respond_by_hours_left < 24).length;
@@ -25,58 +42,7 @@ export default function DisputesPage() {
         <Stat label="At stake (demo rate)" value={formatInr(atStake)} />
         <Stat label="Due within 24 hours" value={String(due24)} warn />
       </div>
-      <div className="relative overflow-x-auto rounded-2xl border border-line bg-white">
-        <table className="w-full min-w-[720px] border-collapse text-[15px]">
-          <thead>
-            <tr className="border-b border-line bg-[#FAFAFA] text-left text-xs font-semibold text-helper">
-              <th className="px-[18px] py-3.5">Dispute</th>
-              <th className="px-[18px] py-3.5">Amount</th>
-              <th className="px-[18px] py-3.5">Reason</th>
-              <th className="px-[18px] py-3.5 whitespace-nowrap">Time left</th>
-              <th className="px-[18px] py-3.5">Call</th>
-              <th className="px-[18px] py-3.5">
-                <span className="sr-only">Open</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(({ c, inr, saved }) => {
-              const t = timeLeft(c.dispute.respond_by_hours_left);
-              return (
-                <tr key={c.id} className="border-b border-[#F1F1F1] hover:bg-[#FAFCFF]">
-                  <td className="px-[18px] py-4">
-                    <div className="font-mono text-[13px] text-[#555]">{c.dispute.id}</div>
-                    <div className="text-[13px] text-helper">{merchantShort(c.merchant)}</div>
-                  </td>
-                  <td className="px-[18px] py-4 font-semibold whitespace-nowrap">
-                    {formatOriginal(c.dispute.amount, c.dispute.currency)}
-                    <span className="font-normal text-helper"> · {formatInr(inr)}</span>
-                  </td>
-                  <td className="px-[18px] py-4">
-                    <span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-xs text-[#344]">
-                      {c.dispute.reason_code}
-                    </span>{" "}
-                    {c.dispute.reason_description}
-                  </td>
-                  <td className={`px-[18px] py-4 font-semibold ${t.warn ? "text-warn" : ""}`}>
-                    {t.warn && <span aria-hidden>⚠ </span>}
-                    {t.text}
-                  </td>
-                  <td className="px-[18px] py-4">{saved ? <CallChip call={saved.call} /> : <span className="text-helper">Not checked</span>}</td>
-                  <td className="px-[18px] py-4">
-                    <Link href={`/disputes/${c.id}`} className="font-semibold text-brand">
-                      Details
-                    </Link>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <p className="px-[18px] py-3.5 text-[13px] text-helper">
-          Calls are saved results from the kill test. Amounts in ₹ use a fixed demo rate.
-        </p>
-      </div>
+      <DisputeTable rows={tableRows} />
     </>
   );
 }
