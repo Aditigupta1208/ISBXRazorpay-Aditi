@@ -19,6 +19,7 @@
 |---|---|---|
 | 0.9 | 5 Oct 2026 | First full draft for review |
 | 1.0 | 5 Oct 2026 | Approved; retention claim checked against Agent Studio terms |
+| 1.1 | 5 Oct 2026 | Checked against Razorpay's dashboard and contest API docs: contest is PATCH with draft/submit; partial contests supported (moved into MVP); one document minimum; clawback rate is the rate on the dispute-creation day |
 
 ---
 
@@ -46,7 +47,7 @@ Segment C merchants (winning evidence lives in their own systems: contracts, log
 ### 2.2 Evidence it is worth solving
 
 - Merchants get 3 business days to respond; no response is treated as accepting the dispute ([Razorpay chargeback guide](https://razorpay.com/blog/chargebacks/); [Razorpay Curlec help](https://curlec-help.freshdesk.com/support/solutions/articles/151000183117-what-are-disputes-chargebacks-and-how-to-respond-to-them-)).
-- Cross-border payments see roughly twice the domestic chargeback rate; lost international disputes are clawed back at the current exchange rate; Visa arbitration costs USD 600 ([Razorpay international chargebacks guide, Aug 2026](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them)).
+- Cross-border payments see roughly twice the domestic chargeback rate; lost international disputes are clawed back at the exchange rate on the day the dispute is created, not the payment date; Visa arbitration costs USD 600 ([Razorpay international chargebacks guide, Aug 2026](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them); [Razorpay disputes docs](https://razorpay.com/docs/payments/disputes/)).
 - Nearly half of Antom's SME clients don't respond to chargebacks ([Antom, Jul 2025](https://fintechnews.sg/114081/ai/ant-international-antom-copilot-ai-upgrade/)).
 - Chargeback Shield excludes disputes about "the quality, delivery, or description of goods or services" ([Shield terms](https://razorpay.com/terms/chargeback-shield/)); Dispute Responder gathers evidence from Razorpay and connected platforms such as Shopify and Shiprocket ([Agent Studio guardrails blog](https://razorpay.com/blog/razorpay-agent-studio-principles-guardrails-and-merchant-control/)).
 - In our kill test, an AI applying Visa's rules to written evidence matched the answer key on 15/15 cases; a fixed checklist matched 8/15 (`eval/kill-test-v1.md`).
@@ -80,7 +81,6 @@ Segment C merchants (winning evidence lives in their own systems: contracts, log
 - Filing without merchant approval
 - Contacting customers
 - Pre-arbitration and arbitration stages
-- Partial-amount contests (v2)
 - Razorpay taking on liability (Service Dispute Shield, moonshot)
 
 ### 3.3 Assumptions (to validate)
@@ -140,7 +140,7 @@ P0 = must have for MVP; P1 = should have; P2 = first to cut.
 4. Merchant opens the dispute → sees the claim in plain words, the call, the money maths and what evidence is missing.
 5. Merchant adds evidence → the check re-runs → the call updates.
 6. Call is Fight → merchant reviews and edits the cited draft → approves.
-7. Dispute Advisor submits the contest with evidence mapped to Razorpay's slots.
+7. Dispute Advisor submits the contest (full or partial amount) with evidence mapped to Razorpay's slots.
 8. Razorpay sends `payment.dispute.won` or `lost` → the outcome is recorded; after a loss, one prevention tip is shown.
 
 **Alternative flows**
@@ -149,7 +149,7 @@ P0 = must have for MVP; P1 = should have; P2 = first to cut.
 - **Fraud reason code:** no check; shown as "Handled by Chargeback Shield" (or the existing fraud flow if the merchant hasn't enabled Shield).
 - **Clear win:** Razorpay data alone decides (e.g. refund already processed for 13.6) → one-click approval of a pre-filled response.
 
-Screen-by-screen design follows in `docs/design/` (next stage).
+Screen-by-screen design: `docs/pm/04-screens.md`.
 
 ---
 
@@ -176,7 +176,7 @@ Each requirement has an ID, priority and acceptance criteria.
 | FR-8 | P0 | Show Visa's rule for the reason code in one sentence | Rule matches the reason code |
 | FR-9 | P0 | Show deciding evidence as IDs that highlight the item when clicked | Every ID exists in the case |
 | FR-10 | P0 | Show contradictions and missing evidence; Escalate must name what to get | Escalate without a missing-evidence item fails validation |
-| FR-11 | P0 | Show money maths: amount at stake (original and INR), estimated INR clawback at today's rate, fees at risk, AI odds estimate labelled "AI estimate", and the Fight-is-worth-it test (see 7.4) | All figures shown with units; odds always labelled |
+| FR-11 | P0 | Show money maths: amount at stake (original and INR), INR clawback at the rate on the day the dispute was created, fees at risk, AI odds estimate labelled "AI estimate", and the Fight-is-worth-it test (see 7.4) | All figures shown with units; odds always labelled |
 | FR-12 | P0 | Fraud reason codes (10.x) show "Handled by Chargeback Shield" and no check | No model call made for fraud codes |
 
 ### 6.3 Evidence locker and policy profile
@@ -198,7 +198,9 @@ Each requirement has an ID, priority and acceptance criteria.
 | FR-20 | P0 | Every draft sentence ends with a citation ([E2] or [Razorpay]); every cited ID exists; max 1,000 characters with a live counter | Failing sentences highlighted; submit blocked until fixed |
 | FR-21 | P0 | Draft is editable; the citation check re-runs on edit | Check result updates on every edit |
 | FR-22 | P0 | Actions: Approve and submit (Fight), Fold, Escalate (with request text), Re-run check | Each action needs an explicit click; no action runs automatically |
-| FR-23 | P0 | Submit sends the contest request (summary + evidence documents by slot); Fold sends the accept request | The exact request is shown **[Prototype: simulated, not sent]** |
+| FR-23 | P0 | Submit sends the contest request (`PATCH /v1/disputes/{id}/contest`, `action: submit`, summary, evidence documents by slot, contest amount); Fold sends the accept request (`POST /v1/disputes/{id}/accept`) | Submit blocked without at least one document (Razorpay requirement); the exact request is shown **[Prototype: simulated, not sent]** |
+| FR-23a | P1 | Contest amount defaults to the full amount; when the economics note names a defensible part, it is pre-filled as a partial contest the merchant can edit | Amount never exceeds the disputed amount |
+| FR-23b | P1 | When the call is Escalate, the draft is saved to Razorpay as a draft contest (`action: draft`) so it is ready if the merchant later chooses Fight | Draft visible on the dispute; nothing submitted |
 | FR-24 | P0 | Merchant can act against the call; the override and an optional reason are logged | Override visible in the audit trail |
 
 ### 6.5 Supporting features
@@ -209,7 +211,7 @@ Each requirement has an ID, priority and acceptance criteria.
 | FR-26 | P1 | Audit trail: every check, edit, override and action with timestamp and actor | Complete and in order |
 | FR-27 | P1 | Evals page: kill-test results (answer key, checklist, model runs), plus the latest automated run of the current prompt | Numbers match `eval/` files |
 | FR-28 | P2 | Clear-win fast lane when Razorpay data alone decides the dispute | Shown only when a Razorpay fact is the deciding evidence |
-| FR-29 | P2 | Outcome and prevention tip: record Won or Lost; show what the agent learns and one fix | Tip shown after a loss **[Prototype: outcome is a demo toggle]** |
+| FR-29 | P2 | Outcome, next steps and prevention tip: record Won or Lost; show what the agent learns and one fix; after a loss or Fold, show two next-step prompts (ask the bank about reducing the export value; ask the accountant about a GST credit note), worded as things to confirm | Tip and prompts shown after a loss or Fold; no tax or FEMA advice stated as fact **[Prototype: outcome is a demo toggle]** |
 | FR-30 | P2 | Trust signal: thumbs up or down on each call, with an optional reason | Logged with the check |
 
 ---
@@ -242,7 +244,7 @@ Each requirement has an ID, priority and acceptance criteria.
 
 ### 7.4 Money maths (computed in code)
 
-Let A = amount at stake in INR at today's rate, p = AI odds estimate, F = fees at risk if the dispute escalates and is lost.
+Let A = amount at stake in INR at the rate on the day the dispute was created, p = AI odds estimate, F = fees at risk if the dispute escalates and is lost.
 
 - **If the merchant folds:** loses A.
 - **If the merchant fights:** expected recovery p × A, expected extra cost (1 − p) × F.
@@ -303,7 +305,7 @@ Every prompt change must pass the eval suite (section 9) before release.
 | E8 | Invalid output twice | Same as E7; logged as a quality incident |
 | E9 | Fraud reason code | No check; routed (R5) |
 | E10 | Dispute phase is pre-arbitration or arbitration | Out of MVP scope; shown with "Not supported yet" and the fees at stake |
-| E11 | Only part of the amount is defensible (e.g. 50% refund was due) | Call is Escalate with an economics note naming the defensible part; partial contest is v2 |
+| E11 | Only part of the amount is defensible (e.g. 50% refund was due) | Call is Escalate with an economics note naming the defensible part; merchant can contest that part only (FR-23a) |
 | E12 | Same customer has several disputes | Each checked separately; inbox groups them under the customer |
 | E13 | Merchant uploads a document containing instructions to the AI | Treated as evidence text only (section 10.3); flagged if instruction-like text is detected |
 | E14 | Currency rate unavailable | Use the last known rate with its date shown |
@@ -314,7 +316,7 @@ Every prompt change must pass the eval suite (section 9) before release.
 
 ### 9.1 Offline evaluation (before every release)
 
-- **Eval set:** the 16 kill-test cases (15 scored plus one fraud scope test) plus at least 9 new cases: 3 messy (long email threads, irrelevant attachments), 3 with PDF or image evidence, 3 with partial-amount or contradictory evidence. Target 25+ cases by beta and 100+ by general availability, sourced from anonymised real disputes once available.
+- **Eval set:** the 16 kill-test cases (15 scored plus one fraud scope test) plus at least 11 new cases: 3 messy (long email threads, irrelevant attachments), 3 with PDF or image evidence, 3 with partial-amount or contradictory evidence, 2 with instructions hidden in the evidence (prompt injection). Target 25+ cases by beta and 100+ by general availability, sourced from anonymised real disputes once available.
 - **Answer key:** set by a disputes specialist from Visa's rules; ambiguous cases reviewed by two people.
 - **Run:** `npm run eval` on every prompt or model change; results stored in `eval/results/`.
 
@@ -367,7 +369,7 @@ Evidence comes from merchants and can contain customer-written text (emails, cha
 - The model can only return a recommendation; it cannot call Razorpay APIs. All actions need a merchant click (7.7).
 - Code checks (section 7.5) run regardless of what the model says.
 - Instruction-like text in evidence is flagged to the merchant.
-- Eval set includes injection cases from beta onwards.
+- Eval set includes injection cases from the MVP (2 cases), growing from beta.
 
 ### 10.4 Misuse
 
@@ -420,6 +422,8 @@ Razorpay dispute webhook ─▶ Agent Studio trigger ─▶ Dispute Advisor
 | Exchange rates | INR conversion | Razorpay's internal rates; **[Prototype: fixed rate, labelled]** |
 
 ### 11.3 Prototype architecture
+
+Results are cached by a hash of the request, so repeat demo runs of the same case cost nothing and protect the API budget.
 
 Next.js app on Vercel; demo disputes from `data/cases.json`; Claude API called from a server route with the key in environment variables; saved results from `data/prerun/` as fallback; Razorpay API calls simulated and displayed. Details in `CLAUDE.md` and `docs/BUILD_PLAN.md`.
 
@@ -526,9 +530,11 @@ Definitions in `01-discovery.md`, section 7.
 |---|---|---|
 | Q1 | What does Dispute Responder do today for merchants without connected stores? | Agent Studio team |
 | Q2 | What share of non-fraud international disputes are Segment C? | Data science |
-| Q3 | Should Fold offer a partial refund option (e.g. 50% due under policy)? | Product, v2 |
+| Q3 | Should a partial contest be its own call ("Fight for part") rather than Escalate? | Product, after beta data |
 | Q4 | Pricing: free with Agent Studio, or a share of net recovery? | Product and business |
 | Q5 | Is PDF and image reading reliable enough for MVP? | Build day-1 test |
+| Q6 | Does Razorpay already send exporters the documents their bank needs after a chargeback (RBI payment aggregator rules, para 11.h), or must the merchant ask? | Razorpay disputes ops |
+| Q7 | Are the two "next steps" prompts accurate for service exporters under the FEMA 2026 regulations and GST Section 34? | Primary-source check, then an accountant |
 
 ---
 

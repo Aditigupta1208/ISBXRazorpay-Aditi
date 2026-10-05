@@ -39,7 +39,7 @@ For any non-fraud dispute, Dispute Advisor reads the evidence the merchant actua
 | F5 | **Safety checks** | Schema check, citation check, no Fight on low confidence or missing evidence, fraud codes routed to Chargeback Shield, sensitive-data block | Trust | Yes |
 | F6 | **Priority inbox** | Disputes ranked by money at stake × time left, with a Fight/Fold/Escalate chip on each | PP5 | Yes |
 | F7 | **Clear-win fast lane** | Disputes settled by Razorpay's own data (e.g. refund already issued) get a one-click response, still approved | PP2, PP4 | Yes (first to cut) |
-| F8 | **Outcome and prevention tip** | After a result: what the agent learned, plus one fix (e.g. click-to-accept on renewal terms) | PP7 | Yes (second to cut) |
+| F8 | **Outcome, next steps and prevention tip** | After a result: what the agent learned, one fix (e.g. click-to-accept on renewal terms), and two "next steps" lines for a lost or accepted international dispute: ask your bank about reducing the export value (Razorpay must supply the documents under RBI's payment aggregator rules), and ask your accountant whether a GST credit note applies. Worded as questions to confirm, not advice | PP7 | Yes (second to cut) |
 | F9 | **Under the hood / audit trail** | Model, prompt version, cost per dispute, raw output; every action logged | Trust | Yes |
 | F10 | **Evals page** | Kill-test results (AI vs checklist vs answer key) plus automated reruns | Proves "why AI" | Yes (never cut) |
 

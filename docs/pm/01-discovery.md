@@ -24,7 +24,7 @@ No merchant interviews were possible. Personas are composites built from public 
 | **Disputes are rare, urgent and rule-heavy.** A small merchant sees a few a year, so never builds expertise, and each reason code has different winning proof. | Visa sets different remedies per reason code [V: [Visa Dispute Management Guidelines](https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf)]; a few disputes a year per small merchant [A] |
 | **The deadline is short.** | 3 business days to represent [V: [Razorpay chargeback guide](https://razorpay.com/blog/chargebacks/)]; no response is treated as accepted [V: [Razorpay Curlec help](https://curlec-help.freshdesk.com/support/solutions/articles/151000183117-what-are-disputes-chargebacks-and-how-to-respond-to-them-)] |
 | **The winning evidence is outside Razorpay.** For service and subscription disputes it is a signed scope, login logs, terms acceptance, emails, vouchers. | [V: [Razorpay international chargebacks guide, Aug 2026](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them)]; Razorpay's own data covers payments, refunds, 3-D Secure [V: [Razorpay disputes API](https://razorpay.com/docs/api/disputes/contest/)] |
-| **The economics are invisible.** A lost international dispute is clawed back at the current exchange rate; escalation can cost hundreds of dollars. | [V: [Razorpay international chargebacks guide, Aug 2026](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them)]; Visa arbitration fee USD 600 [V: same]; Mastercard arbitration USD 675 [V: [Razorpay chargeback guide](https://razorpay.com/blog/chargebacks/)] |
+| **The economics are invisible.** A lost international dispute is clawed back at the exchange rate on the day the dispute is created, not the payment date [V: [Razorpay disputes docs](https://razorpay.com/docs/payments/disputes/)]; escalation can cost hundreds of dollars. | [V: [Razorpay international chargebacks guide, Aug 2026](https://razorpay.com/blog/international-payment-chargebacks-for-indian-businesses-how-to-win-prevent-and-handle-them)]; Visa arbitration fee USD 600 [V: same]; Mastercard arbitration USD 675 [V: [Razorpay chargeback guide](https://razorpay.com/blog/chargebacks/)] |
 | **Existing protection stops at fraud.** | Chargeback Shield covers fraud reason codes only and excludes "quality, delivery, or description" disputes [V: [Chargeback Shield terms](https://razorpay.com/terms/chargeback-shield/)]. Dispute Responder gathers evidence from Razorpay and connected platforms such as Shopify and Shiprocket [V: [Agent Studio guardrails blog](https://razorpay.com/blog/razorpay-agent-studio-principles-guardrails-and-merchant-control/)]; nothing public says it reads merchant-uploaded documents or recommends accept vs fight [A]. |
 
 ### What it costs
@@ -54,6 +54,7 @@ No merchant interviews were possible. Personas are composites built from public 
 | **User** | The merchant, or whoever handles disputes for them | Keep their money, spend little time |
 | **Buyer and owner** | Razorpay (Agent Studio, risk and disputes teams) | Protect the international segment, lower dispute ratios, fewer support tickets |
 | **Internal user** | Razorpay disputes and risk operations | Cleaner submissions, fewer escalations |
+| **Helpers** | The merchant's accountant (CA) and their bank (the authorised dealer bank that handles export entries) | Correct records after a dispute is lost or accepted |
 | **Decider** | The card issuer | Clear evidence that matches the reason code |
 | **Counterparty** | The cardholder | A fair outcome |
 
@@ -115,12 +116,12 @@ Mapped to the dispute journey: **notice → understand → gather → decide →
 | # | Pain point | Stage | P1 Ananya | P2 Rohit | P3 Priya | P4 Razorpay |
 |---|---|---|---|---|---|---|
 | PP1 | "I don't understand what the customer is claiming, or what proof wins this kind of dispute." | Understand | ●●● | ●● | ●●● | Tickets |
-| PP2 | "I can't tell whether fighting is worth it": unknown odds, exchange-rate clawback, fees. Leads to fighting losers or abandoning winners. | Decide | ●●● | ●●● | ●●● | Arbitration exposure |
+| PP2 | "I can't tell whether fighting is worth it": unknown odds, exchange-rate clawback (taken at the rate on the day the dispute is created), fees up to USD 600 if it escalates. Leads to fighting losers or abandoning winners. | Decide | ●●● | ●●● | ●●● | Arbitration exposure |
 | PP3 | "The proof is scattered (logs, emails, WhatsApp, hotel records), and I don't know which pieces matter." | Gather | ●● | ●●● | ●● | Weak submissions |
 | PP4 | "Writing a response the bank accepts, in the right format and under 1,000 characters, is hard." | Respond | ●● | ●● | ●●● | Weak submissions |
-| PP5 | "The dispute arrives as one email among many, and three business days go fast." | Notice | ●● | ●●● | ●● | Non-responses |
+| PP5 | "The dispute arrives as one email among many, and three business days go fast." (International disputes get 3 business days; domestic get 7 [V: Razorpay international chargebacks guide].) | Notice | ●● | ●●● | ●● | Non-responses |
 | PP6 | "The money is deducted the moment the dispute starts." | All | ●● | ●● | ●●● | Merchant frustration |
-| PP7 | "I never learn why I lost, so the same dispute happens again." | After | ● | ●●● | ● | Dispute ratios rise |
+| PP7 | "I never learn why I lost, so the same dispute happens again, and I'm not sure what to tell my accountant or bank afterwards." | After | ● | ●●● | ● | Dispute ratios rise |
 | PP8 | Razorpay: support load, merchants drifting toward network thresholds, fee exposure. | All | | | | ●●● |
 
 ●●● severe · ●● moderate · ● minor [A, from personas]
