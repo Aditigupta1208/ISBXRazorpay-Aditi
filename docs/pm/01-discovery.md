@@ -287,18 +287,21 @@ Feasibility key: ✅ yes · 🟡 partly or with conditions · ❌ no
 
 **Net ₹ recovered per ₹ disputed** on non-fraud international disputes handled through the agent. "Net" means after exchange-rate effects and dispute fees.
 
-It captures both halves of good advice: winning what's winnable, and not throwing fees at what isn't.
+It captures both halves of good advice: winning what's winnable, and not throwing fees at what isn't. A plain win rate can be inflated by fighting only easy cases; Justt makes the same argument and measures Net Dollar Recovery ([Justt](https://justt.ai/blog/chargeback-win-rates-kpi/)).
+
+**Headline metric for the pitch: on-time response rate.** It is easy to grasp, moves within one dispute cycle, and has a public reference point. Net ₹ recovered stays the North Star because outcomes take 30–45 days to arrive.
 
 ### Input metrics (what drives the North Star)
 
 | Metric | Definition | Why |
 |---|---|---|
-| **On-time response rate** | Share of disputes with a decision (fight or accept) before the deadline | Non-response is an automatic loss; baseline for small merchants is around half not responding [V: Antom] |
+| **On-time response rate** | Share of disputes with a decision (fight or accept) before the deadline | Non-response is an automatic loss. Reference point: nearly half of Antom's SME clients don't respond [V: [Antom](https://fintechnews.sg/114081/ai/ant-international-antom-copilot-ai-upgrade/)]; this is Antom's global client base, not Razorpay's, so Razorpay should measure its own baseline |
 | **Win rate on contested disputes** | Won ÷ fought | Quality of fight decisions and drafts |
 | **Avoided-loss rate** | Share of accepted or escalated disputes that would have lost if fought (judged later, or by reviewer sample) | Rewards honest "accept" advice |
 | **Time to respond** | Dispute opened → merchant submits | Effort saved |
 | **Evidence completeness** | Share of fought disputes where the deciding evidence for that reason code is attached | Leading indicator of win rate |
 | **Draft acceptance** | Share of drafts approved with only minor edits | Usefulness of the AI output |
+| **Merchant trust signal** | Thumbs up/down on each recommendation, with an optional reason | Cheap feedback that also feeds the learning loop |
 
 ### Guardrail metrics (must not get worse)
 
@@ -315,7 +318,7 @@ It captures both halves of good advice: winning what's winnable, and not throwin
 - Share of international merchants above Visa's early-warning dispute ratio
 - Retention and international volume of merchants who had a dispute
 - Agent adoption: share of eligible disputes opened in the agent
-- Revenue, if priced on outcome: fee per dispute won [A: outcome pricing is being explored by Indian fintechs, Business Standard Sep 2026]
+- Revenue, if priced on outcome: fee per dispute won [A: outcome pricing is being explored by Indian fintechs, [Business Standard, Sep 2026](https://www.business-standard.com/companies/start-ups/india-fintech-startups-agentic-ai-payments-paytm-pine-labs-razorpay-126090201458_1.html); Chargeflow charges 25% of amounts recovered, [Chargeflow](https://www.chargeflow.io/ai-info)]
 
 ### AI quality metrics (offline, before every prompt change)
 
@@ -325,12 +328,12 @@ It captures both halves of good advice: winning what's winnable, and not throwin
 | Correct deciding evidence | 15/15 |
 | Unsupported claims in drafts | 0 of 8 |
 | Fraud cases routed correctly | 1/1 |
-| Cost and response time per dispute | To be measured in the live build |
+| Cost and response time per dispute | To be measured in the live build (estimate about 1–1.5 US cents per dispute at [Claude API prices](https://platform.claude.com/docs/en/about-claude/pricing)) |
 
 ### Targets for a pilot
 
 These are hypotheses to test with a pilot group, not promises:
-- On-time response rate from about 50% to 90%+
+- On-time response rate from about 50% (external reference point, see above) to 90%+
 - Time to respond under 15 minutes of merchant effort
 - Zero unsupported claims submitted
 - Win rate on contested disputes at or above the pre-pilot rate, while the fight rate drops
@@ -359,3 +362,20 @@ These are hypotheses to test with a pilot group, not promises:
 - Winvesta, chargebacks and Indian exporters: https://www.winvesta.in/blog/businesses/chargeback-fraud-is-bleeding-indian-exporters-dry
 - Chargeflow integrations: https://www.chargeflow.io/integrations
 - Business Standard, fintechs and agentic AI (Sep 2026): https://www.business-standard.com/companies/start-ups/india-fintech-startups-agentic-ai-payments-paytm-pine-labs-razorpay-126090201458_1.html
+- Razorpay About disputes: https://razorpay.com/docs/payments/disputes/
+- Razorpay disputes dashboard: https://razorpay.com/docs/payments/disputes/dashboard/?preferred-country=IN
+- Razorpay dispute entity: https://razorpay.com/docs/api/disputes/entity/?preferred-country=IN
+- Razorpay chargeback reason codes: https://razorpay.com/blog/chargeback-reason-codes/
+- Razorpay UDIR explainer: https://razorpay.com/blog/all-you-need-to-know-about-npci-led-udir/
+- Agent Studio launch (newsroom): https://newsroom.razorpay.in/newsroom/razorpay-launches-the-worlds-first-ai-native-agent-studio-for-payments-at-ftx26-powered-by-anthropics-claude/
+- Justt platform: https://justt.ai/platform/
+- Justt Dispute Optimization (Jun 2025): https://www.streetinsider.com/PRNewswire/Justt+Announces+Dispute+Optimization+to+Help+Merchants+Maximize+Chargeback+Recovery/24939425.html
+- Justt on win rates: https://justt.ai/blog/chargeback-win-rates-kpi/
+- Stripe Smart Disputes: https://docs.stripe.com/disputes/get-started/smart-disputes
+- Adyen manage disputes: https://docs.adyen.com/risk-management/manage-disputes
+- Chargeflow products and pricing: https://www.chargeflow.io/ai-info
+- Checkout.com Disputes: https://www.checkout.com/products/disputes
+- Fini, AI dispute tools (vendor listicle): https://www.usefini.com/guides/ai-agents-charge-dispute-automation
+- Cashfree Relay: https://www.cashfree.com/blog/ai-superagent-that-runs-smb-payment-operations/
+- PayU Fraud Liability Protect (Sep 2026): https://www.medianama.com/2026/09/223-payu-ai-fraud-protection-cross-border-card-payments/
+- Claude API pricing: https://platform.claude.com/docs/en/about-claude/pricing
