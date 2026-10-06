@@ -18,50 +18,66 @@ test("dispute_opened needs a known demo case ID", () => {
   assert.equal(fieldFor("dispute_opened", undefined, ids), null);
 });
 
-test("the backend is optional and accepts both Upstash and Vercel KV names", () => {
+test("the backend is optional and needs both a Supabase URL and a server key", () => {
   assert.equal(backendFrom({}), null);
-  assert.equal(backendFrom({ UPSTASH_REDIS_REST_URL: "https://x.upstash.io" }), null);
-  assert.deepEqual(backendFrom({ UPSTASH_REDIS_REST_URL: "https://x.upstash.io/", UPSTASH_REDIS_REST_TOKEN: "t" }), { url: "https://x.upstash.io", token: "t" });
-  assert.deepEqual(backendFrom({ KV_REST_API_URL: "https://k.io", KV_REST_API_TOKEN: "k" }), { url: "https://k.io", token: "k" });
-  assert.equal(backendFrom({ UPSTASH_REDIS_REST_URL: "javascript:1", UPSTASH_REDIS_REST_TOKEN: "t" }), null);
+  assert.equal(backendFrom({ SUPABASE_URL: "https://x.supabase.co" }), null);
+  assert.deepEqual(backendFrom({ SUPABASE_URL: "https://x.supabase.co/", SUPABASE_SERVICE_ROLE_KEY: "k" }), { url: "https://x.supabase.co", key: "k" });
+  assert.deepEqual(backendFrom({ SUPABASE_URL: "https://x.supabase.co", SUPABASE_SECRET_KEY: "s" }), { url: "https://x.supabase.co", key: "s" });
+  assert.equal(backendFrom({ SUPABASE_URL: "javascript:1", SUPABASE_SERVICE_ROLE_KEY: "k" }), null);
+  assert.equal(backendFrom({ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "p", SUPABASE_URL: "https://x.supabase.co" }), null, "the public key must never be used as the server key");
 });
+
+const B = { url: "https://x.supabase.co", key: "secret" };
 
 function fake() {
   const calls: { url: string; init: RequestInit }[] = [];
   const f = (async (url: string, init: RequestInit) => {
     calls.push({ url, init });
-    const cmds = JSON.parse(init.body as string) as (string | number)[][];
-    const out = cmds.map((c) => (c[0] === "HGETALL" ? { result: ["new_visitor", "3", "dispute_opened:C06", "2"] } : { result: 1 }));
-    return new Response(JSON.stringify(out), { status: 200 });
+    if (url.includes("/rpc/incr_usage")) return new Response(null, { status: 204 });
+    return new Response(
+      JSON.stringify([
+        { day: "2026-10-06", event: "new_visitor", count: 3 },
+        { day: "2026-10-05", event: "new_visitor", count: 1 },
+        { day: "2026-10-06", event: "dispute_opened:C06", count: 2 },
+        { day: "2026-09-01", event: "new_visitor", count: 7 },
+      ]),
+      { status: 200 },
+    );
   }) as unknown as typeof fetch;
   return { f, calls };
 }
 
-test("record increments the total and today's counter and sets an expiry, with the token in a header", async () => {
+test("record calls the increment function with only the event name, key in headers", async () => {
   const { f, calls } = fake();
-  const ok = await record(f, { url: "https://x.io", token: "secret" }, "submit", new Date("2026-10-06T10:00:00Z"));
-  assert.equal(ok, true);
-  assert.equal(calls[0].url, "https://x.io/pipeline");
-  assert.equal((calls[0].init.headers as Record<string, string>).Authorization, "Bearer secret");
-  const cmds = JSON.parse(calls[0].init.body as string);
-  assert.deepEqual(cmds[0], ["HINCRBY", "da:usage:total", "submit", 1]);
-  assert.deepEqual(cmds[1], ["HINCRBY", "da:usage:day:2026-10-06", "submit", 1]);
-  assert.equal(cmds[2][0], "EXPIRE");
-  assert.ok(!calls[0].init.body!.toString().includes("secret"), "token must not be in the body");
+  assert.equal(await record(f, B, "submit"), true);
+  assert.equal(calls[0].url, "https://x.supabase.co/rest/v1/rpc/incr_usage");
+  const h = calls[0].init.headers as Record<string, string>;
+  assert.equal(h.apikey, "secret");
+  assert.equal(h.Authorization, "Bearer secret");
+  assert.deepEqual(JSON.parse(calls[0].init.body as string), { p_event: "submit" });
+  assert.ok(!String(calls[0].init.body).includes("secret"), "key must not be in the body");
 });
 
 test("record never throws: network error or HTTP error gives false", async () => {
   const boom = (async () => { throw new Error("offline"); }) as unknown as typeof fetch;
-  assert.equal(await record(boom, { url: "https://x.io", token: "t" }, "fold"), false);
-  const bad = (async () => new Response("no", { status: 500 })) as unknown as typeof fetch;
-  assert.equal(await record(bad, { url: "https://x.io", token: "t" }, "fold"), false);
+  assert.equal(await record(boom, B, "fold"), false);
+  const bad = (async () => new Response("no", { status: 401 })) as unknown as typeof fetch;
+  assert.equal(await record(bad, B, "fold"), false);
 });
 
-test("readUsage turns Redis hashes into numbers by day", async () => {
+test("readUsage totals every row and keeps only the last N days by day", async () => {
   const { f } = fake();
-  const r = await readUsage(f, { url: "https://x.io", token: "t" }, 2, new Date("2026-10-06T10:00:00Z"));
-  assert.deepEqual(r!.total, { new_visitor: 3, "dispute_opened:C06": 2 });
+  const r = await readUsage(f, B, 2, new Date("2026-10-06T10:00:00Z"));
+  assert.deepEqual(r!.total, { new_visitor: 11, "dispute_opened:C06": 2 });
   assert.deepEqual(Object.keys(r!.days).sort(), ["2026-10-05", "2026-10-06"]);
+  assert.equal(r!.days["2026-10-06"].new_visitor, 3);
+});
+
+test("readUsage gives null on failure", async () => {
+  const bad = (async () => new Response("no", { status: 500 })) as unknown as typeof fetch;
+  assert.equal(await readUsage(bad, B), null);
+  const boom = (async () => { throw new Error("x"); }) as unknown as typeof fetch;
+  assert.equal(await readUsage(boom, B), null);
 });
 
 test("headline sums disputes opened and ranks the top ones", () => {

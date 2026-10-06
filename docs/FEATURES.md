@@ -273,9 +273,9 @@ A concept for Razorpay, not part of the build. Extend Chargeback Shield to non-f
 **Why.** To see how reviewers used the demo (for the pitch), with no accounts and no personal data. A shared database of outcomes was rejected because anonymous judges would see each other's data; this stores counts only.
 
 **What it does** (`lib/usage.ts`, `lib/track.ts`, `app/api/event`, `app/api/usage`, `/usage`).
-- The browser sends one of 11 fixed event names (first visit, dispute opened with its demo ID, re-run, upload, submit, fold, outcome won or lost, and views of Results, Evals and How it works). The server only accepts names and IDs on its allowlist, rate-limits per IP, and caps the body at 200 characters. It adds one to a total and to today's count in Upstash Redis (REST), and always answers 204 so the page never notices a failure.
+- The browser sends one of 11 fixed event names (first visit, dispute opened with its demo ID, re-run, upload, submit, fold, outcome won or lost, and views of Results, Evals and How it works). The server only accepts names and IDs on its allowlist, rate-limits per IP, and caps the body at 200 characters. It adds one to today's count for that event in a Supabase table (`usage_counts`: day, event, count; set up with `docs/supabase-usage.sql`) through a database function, using the server-only service-role key, with row-level security on and no public access. It always answers 204 so the page never notices a failure.
 - Nothing is stored about the person: no IP, cookie, name, email or evidence text. First visits are counted using a flag in the visitor's own browser. Nothing is sent when the browser says Do Not Track.
 - With no database configured every call is a no-op and the app is unchanged.
 - `/usage` asks for `USAGE_ADMIN_TOKEN`, keeps it in memory, and shows visitors, disputes opened, submits, folds, outcomes, the most opened disputes and the last 14 days. It is not linked from the tabs and is marked noindex. The API returns 404 when the token is not set.
 
-**Tests.** `lib/usage.test.ts` (8 tests) and `e2e_usage.py` against a stand-in Redis.
+**Tests.** `lib/usage.test.ts` (11 tests) and `e2e_usage.py` against a stand-in Supabase server (also checked: wrong key leaves the app working, no config is a no-op).

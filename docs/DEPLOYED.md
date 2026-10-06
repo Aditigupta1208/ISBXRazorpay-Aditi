@@ -107,7 +107,7 @@ Last updated: 6 Oct 2026, after the deep dives and the extra features below. Upd
 |---|---|
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Turns on the live check, upload and Escalate drafts. Without them the saved results show |
 | `FX_RATE_INR_PER_USD` | Pins the USD rate (labelled "fixed rate") so the video, note and demo agree |
-| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Anonymous usage counts. Create a free Upstash Redis database from the Vercel Marketplace and copy both values into Vercel |
+| `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Anonymous usage counts. Added automatically by the Vercel Supabase integration. Run `docs/supabase-usage.sql` once in the Supabase SQL Editor to create the table. Server-only; never use a `NEXT_PUBLIC_` name |
 | `USAGE_ADMIN_TOKEN` | A long random string. Lets you read the counts at `/usage` (not linked anywhere, not indexed) |
 
 The counter stores only counts per fixed event name and per demo dispute ID, no names, emails, IPs, cookies or evidence text, and counts nothing if the browser sends Do Not Track. How it works says so to visitors.
@@ -123,7 +123,7 @@ The counter stores only counts per fixed event name and per demo dispute ID, no 
 - Saved results are from the ChatGPT v1 kill test; odds on them come from confidence. After the real run they should be regenerated from Claude with prompt v2.2
 - Only the first dispute stage is modelled (no pre-arbitration or arbitration)
 - Not proven on the real model: the live check, upload, Escalate drafts, the forced tool call on Sonnet 5.5, `maxDuration`, and the first real `npm run eval`
-- The live rate fetch and the usage counter were tested against stand-in servers only
+- The live rate fetch and the usage counter were tested against stand-in servers only (the real Supabase table needs the SQL run once)
 - The Results sample history is made up and labelled so
 
 Full feature descriptions: `docs/FEATURES.md`.

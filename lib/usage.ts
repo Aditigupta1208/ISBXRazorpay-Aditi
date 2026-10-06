@@ -1,8 +1,9 @@
 /**
  * Anonymous usage counters, so the builder can see how reviewers used the demo.
- * Stores only counts per fixed event name (and per demo dispute ID). No names, emails, IPs, cookies or evidence text.
+ * Stores only counts per fixed event name (and per demo dispute ID), per day. No names, emails, IPs, cookies or evidence text.
  * Optional: with no database configured every call is a no-op and the app is unchanged.
- * Backend: Upstash Redis over its REST API (free tier, from the Vercel Marketplace).
+ * Backend: Supabase (Postgres) over its REST API, called only from server code with the service-role key.
+ * Setup SQL: docs/supabase-usage.sql
  */
 export const EVENTS = [
   "new_visitor",
@@ -21,14 +22,14 @@ export type UsageEvent = (typeof EVENTS)[number];
 
 export interface Backend {
   url: string;
-  token: string;
+  key: string;
 }
 
 export function backendFrom(env: Record<string, string | undefined>): Backend | null {
-  const url = env.UPSTASH_REDIS_REST_URL || env.KV_REST_API_URL;
-  const token = env.UPSTASH_REDIS_REST_TOKEN || env.KV_REST_API_TOKEN;
-  if (!url || !token || !/^https?:\/\//.test(url)) return null;
-  return { url: url.replace(/\/$/, ""), token };
+  const url = env.SUPABASE_URL;
+  const key = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SECRET_KEY;
+  if (!url || !key || !/^https?:\/\//.test(url)) return null;
+  return { url: url.replace(/\/$/, ""), key };
 }
 
 /** The counter field for an event, or null if the event or ID is not on the allowlist. */
@@ -40,35 +41,24 @@ export function fieldFor(event: unknown, id: unknown, validCaseIds: string[]): s
   return event;
 }
 
-const TOTAL = "da:usage:total";
-const dayKey = (d: Date) => `da:usage:day:${d.toISOString().slice(0, 10)}`;
+function headers(b: Backend): Record<string, string> {
+  return { apikey: b.key, Authorization: `Bearer ${b.key}`, "Content-Type": "application/json" };
+}
 
-async function pipeline(fetchFn: typeof fetch, b: Backend, commands: (string | number)[][]): Promise<unknown[] | null> {
+/** Add one to today's count for this field (the database function stamps the UTC date). Never throws. */
+export async function record(fetchFn: typeof fetch, b: Backend, field: string): Promise<boolean> {
   try {
-    const res = await fetchFn(`${b.url}/pipeline`, {
+    const res = await fetchFn(`${b.url}/rest/v1/rpc/incr_usage`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${b.token}`, "Content-Type": "application/json" },
-      body: JSON.stringify(commands),
+      headers: headers(b),
+      body: JSON.stringify({ p_event: field }),
       signal: AbortSignal.timeout(2500),
       cache: "no-store",
     });
-    if (!res.ok) return null;
-    const out = (await res.json()) as { result?: unknown; error?: string }[];
-    return Array.isArray(out) ? out.map((o) => o.result) : null;
+    return res.ok;
   } catch {
-    return null;
+    return false;
   }
-}
-
-/** Add one to the total and to today's count. Never throws. */
-export async function record(fetchFn: typeof fetch, b: Backend, field: string, now = new Date()): Promise<boolean> {
-  const day = dayKey(now);
-  const r = await pipeline(fetchFn, b, [
-    ["HINCRBY", TOTAL, field, 1],
-    ["HINCRBY", day, field, 1],
-    ["EXPIRE", day, 60 * 60 * 24 * 400],
-  ]);
-  return r !== null;
 }
 
 export interface UsageReport {
@@ -76,23 +66,28 @@ export interface UsageReport {
   days: Record<string, Record<string, number>>;
 }
 
-function toMap(flat: unknown): Record<string, number> {
-  const out: Record<string, number> = {};
-  if (!Array.isArray(flat)) return out;
-  for (let i = 0; i + 1 < flat.length; i += 2) out[String(flat[i])] = Number(flat[i + 1]) || 0;
-  return out;
-}
-
 export async function readUsage(fetchFn: typeof fetch, b: Backend, days = 14, now = new Date()): Promise<UsageReport | null> {
-  const dates = Array.from({ length: days }, (_, i) => new Date(now.getTime() - i * 86_400_000));
-  const r = await pipeline(fetchFn, b, [["HGETALL", TOTAL], ...dates.map((d) => ["HGETALL", dayKey(d)])]);
-  if (!r) return null;
-  const report: UsageReport = { total: toMap(r[0]), days: {} };
-  dates.forEach((d, i) => {
-    const m = toMap(r[i + 1]);
-    if (Object.keys(m).length) report.days[d.toISOString().slice(0, 10)] = m;
-  });
-  return report;
+  try {
+    const res = await fetchFn(`${b.url}/rest/v1/usage_counts?select=day,event,count&limit=10000`, {
+      headers: headers(b),
+      signal: AbortSignal.timeout(2500),
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const rows = (await res.json()) as { day?: string; event?: string; count?: number | string }[];
+    if (!Array.isArray(rows)) return null;
+    const since = new Date(now.getTime() - (days - 1) * 86_400_000).toISOString().slice(0, 10);
+    const report: UsageReport = { total: {}, days: {} };
+    for (const r of rows) {
+      if (typeof r.day !== "string" || typeof r.event !== "string") continue;
+      const n = Number(r.count) || 0;
+      report.total[r.event] = (report.total[r.event] ?? 0) + n;
+      if (r.day >= since) (report.days[r.day] ??= {})[r.event] = n;
+    }
+    return report;
+  } catch {
+    return null;
+  }
 }
 
 /** Headline numbers for the report page. */
