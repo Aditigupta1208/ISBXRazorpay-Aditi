@@ -18,3 +18,9 @@ test("a Shield dispute with little time left still goes last", () => {
   const rows = [{ id: "s", hours: 2, inr: 999999, shield: true }, { id: "n", hours: 90, inr: 1, shield: false }];
   assert.deepEqual(rows.sort(byUrgency).map((r) => r.id), ["n", "s"]);
 });
+
+test("each in-scope reason code has an evidence hint; fraud codes have none", async () => {
+  const { evidenceHint } = await import("./evidenceHints.ts");
+  for (const c of ["13.1", "13.2", "13.3", "13.6", "13.7"]) assert.ok(evidenceHint(c), c);
+  assert.equal(evidenceHint("10.4"), null);
+});

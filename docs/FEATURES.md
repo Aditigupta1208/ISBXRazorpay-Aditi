@@ -73,6 +73,8 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 ## F1 · Evidence locker 🟡
 
+**Deep dive 4 (6 Oct).** After you add or remove a document, a note right under the evidence card says "Your evidence changed" with a Re-run button (before, the only prompt was at the top of the right column, a full screen away on a phone, and that bar is gone). The old call is tagged "Out of date: re-run the check" and dimmed, and the review box warns before you submit on a stale check. The form now says what helps for the reason code (13.1 to 13.7), and on an Escalate call shows "The advisor asked for: <missing document>". The upload control is a styled button instead of the browser's file widget.
+
 **What it does.** Holds the merchant's proof for a dispute, shows what each document proves, and lets them add more.
 
 **Built**

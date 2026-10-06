@@ -11,6 +11,7 @@ import { formatInrFull, formatOriginal, timeLeft } from "@/lib/format";
 import { DEMO_RATE_INR_PER_USD, VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor } from "@/lib/money";
 import type { CaseData, CheckView } from "@/lib/types";
 import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
+import { evidenceHint } from "@/lib/evidenceHints";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 
@@ -411,12 +412,35 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                 + Add evidence
               </button>
             )}
+            {state.dirty && !acted && !adding && (
+              <div className="mt-3 rounded-xl border border-brand bg-[#F4F8FF] p-3" role="status">
+                <p className="text-[14px] font-semibold">Your evidence changed.</p>
+                <p className="text-[13px] text-[#555]">Re-run the check to see if it changes the call.</p>
+                <button className={`${primary} mt-2`} onClick={rerun} disabled={running}>
+                  {running ? "Checking…" : "Re-run check"}
+                </button>
+              </div>
+            )}
             {adding && (
               <div className="mt-3 rounded-xl border border-line p-3">
-                <label htmlFor="ev-file" className="text-sm font-semibold">
-                  Upload a PDF or image
+                {(evidenceHint(d.reason_code) || view.missingEvidence.length > 0) && (
+                  <div className="mb-3 rounded-xl bg-[#F4F8FF] px-3 py-2 text-[13px] text-[#333]">
+                    {view.missingEvidence.length > 0 && finalCall === "escalate" && (
+                      <p>
+                        <b>The advisor asked for:</b> {view.getFirst ?? view.missingEvidence.join("; ")}
+                      </p>
+                    )}
+                    {evidenceHint(d.reason_code) && (
+                      <p>
+                        <b>What helps for {d.reason_code}:</b> {evidenceHint(d.reason_code)}
+                      </p>
+                    )}
+                  </div>
+                )}
+                <input id="ev-file" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" disabled={reading} onChange={(e) => { void readFile(e.target.files?.[0]); e.target.value = ""; }} className="peer sr-only" aria-describedby="ev-file-help" />
+                <label htmlFor="ev-file" className={`${ghost} cursor-pointer !border-brand !text-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand peer-disabled:opacity-50`}>
+                  {reading ? "Reading…" : "Upload a PDF or image"}
                 </label>
-                <input id="ev-file" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" disabled={reading} onChange={(e) => { void readFile(e.target.files?.[0]); e.target.value = ""; }} className="mt-1 block w-full text-[14px] file:mr-3 file:rounded-lg file:border file:border-[#D6D6D6] file:bg-white file:px-3 file:py-1.5 file:font-medium" aria-describedby="ev-file-help" />
                 <p id="ev-file-help" className="mt-1 text-[13px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
                 <label htmlFor="ev-title" className="mt-3 block text-sm font-semibold">
                   Title
@@ -492,23 +516,16 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
               </button>
             </div>
           )}
-          {state.dirty && !acted && (
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-brand bg-[#F4F8FF] px-4 py-3" role="status">
-              <span className="font-semibold">Evidence changed.</span>
-              <button className={primary} onClick={rerun} disabled={running}>
-                Re-run check
-              </button>
-            </div>
-          )}
           {notice && (
             <p role="status" className={`mb-4 rounded-2xl px-4 py-3 font-semibold ${notice.kind === "error" ? "bg-escalate-soft text-escalate" : "bg-shield-soft text-shield"}`}>
               {notice.text}
             </p>
           )}
-          <Card className={running ? "opacity-60" : ""}>
+          <Card className={running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}>
             <div className="flex flex-wrap items-center gap-3">
               <CallChip call={finalCall} size="lg" />
               {finalCall !== "shield" && <span className="font-medium text-[#555]">{view.confidence} confidence</span>}
+              {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[13px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
               <span className="ml-auto text-xs text-helper">{view.source.label}</span>
             </div>
             {g.changedReason && finalCall !== "shield" && (
@@ -717,6 +734,9 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
         <Card id="response">
           <h2 className="mb-1 text-lg font-semibold">Review your response</h2>
           <p className="mb-3 text-[13px] text-helper">Every sentence needs a source. You can edit anything. Nothing is sent until you approve.</p>
+          {state.dirty && (
+            <p className="mb-3 rounded-xl bg-fold-soft px-3 py-2 text-[14px] font-semibold text-fold">You added or removed evidence after the last check. Re-run it before you submit.</p>
+          )}
           {finalCall === "escalate" && (
             <p className="mb-3 rounded-xl bg-[#FFF8E6] px-3 py-2 text-[14px] text-fold">
               {view.draft ? "This draft uses only the documents you have now. Add the missing one and re-run the check before you rely on it." : "No draft yet. Write your own from the documents you have, or add the missing one and re-run the check."}
