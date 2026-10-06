@@ -1,0 +1,269 @@
+{
+ "note": "SAMPLE HISTORY. 24 made-up past disputes for the Results page, so it is not empty on a first visit. Not real data and not Razorpay data. Each row: the advisor's call and confidence at the time, what the merchant did, and what happened. amount_usd is the disputed amount.",
+ "records": [
+  {
+   "id": "H01",
+   "month": "2025-10",
+   "reason_code": "13.1",
+   "amount_usd": 1800,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H02",
+   "month": "2025-10",
+   "reason_code": "13.1",
+   "amount_usd": 950,
+   "advisor_call": "fight",
+   "confidence": "Medium",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H03",
+   "month": "2025-11",
+   "reason_code": "13.1",
+   "amount_usd": 2400,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H04",
+   "month": "2025-11",
+   "reason_code": "13.1",
+   "amount_usd": 600,
+   "advisor_call": "fold",
+   "confidence": "High",
+   "merchant_action": "fold",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H05",
+   "month": "2025-12",
+   "reason_code": "13.1",
+   "amount_usd": 3100,
+   "advisor_call": "escalate",
+   "confidence": "Medium",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H06",
+   "month": "2025-12",
+   "reason_code": "13.2",
+   "amount_usd": 480,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H07",
+   "month": "2026-01",
+   "reason_code": "13.2",
+   "amount_usd": 1200,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H08",
+   "month": "2026-01",
+   "reason_code": "13.2",
+   "amount_usd": 588,
+   "advisor_call": "fold",
+   "confidence": "High",
+   "merchant_action": "fold",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H09",
+   "month": "2026-02",
+   "reason_code": "13.2",
+   "amount_usd": 900,
+   "advisor_call": "fight",
+   "confidence": "Medium",
+   "merchant_action": "fight",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H10",
+   "month": "2026-02",
+   "reason_code": "13.2",
+   "amount_usd": 1500,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H11",
+   "month": "2026-03",
+   "reason_code": "13.2",
+   "amount_usd": 300,
+   "advisor_call": "fold",
+   "confidence": "Medium",
+   "merchant_action": "fold",
+   "outcome": "lost",
+   "on_time": false
+  },
+  {
+   "id": "H12",
+   "month": "2026-03",
+   "reason_code": "13.2",
+   "amount_usd": 720,
+   "advisor_call": "fold",
+   "confidence": "Medium",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H13",
+   "month": "2026-04",
+   "reason_code": "13.3",
+   "amount_usd": 1800,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H14",
+   "month": "2026-04",
+   "reason_code": "13.3",
+   "amount_usd": 750,
+   "advisor_call": "fold",
+   "confidence": "High",
+   "merchant_action": "fold",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H15",
+   "month": "2026-05",
+   "reason_code": "13.3",
+   "amount_usd": 1100,
+   "advisor_call": "fight",
+   "confidence": "Medium",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H16",
+   "month": "2026-05",
+   "reason_code": "13.3",
+   "amount_usd": 400,
+   "advisor_call": "fold",
+   "confidence": "Medium",
+   "merchant_action": "fold",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H17",
+   "month": "2026-06",
+   "reason_code": "13.3",
+   "amount_usd": 2000,
+   "advisor_call": "fight",
+   "confidence": "Medium",
+   "merchant_action": "fight",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H18",
+   "month": "2026-06",
+   "reason_code": "13.6",
+   "amount_usd": 240,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H19",
+   "month": "2026-07",
+   "reason_code": "13.6",
+   "amount_usd": 96,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H20",
+   "month": "2026-07",
+   "reason_code": "13.6",
+   "amount_usd": 240,
+   "advisor_call": "fold",
+   "confidence": "High",
+   "merchant_action": "fold",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H21",
+   "month": "2026-08",
+   "reason_code": "13.6",
+   "amount_usd": 510,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H22",
+   "month": "2026-08",
+   "reason_code": "13.7",
+   "amount_usd": 1600,
+   "advisor_call": "fight",
+   "confidence": "High",
+   "merchant_action": "fight",
+   "outcome": "won",
+   "on_time": true
+  },
+  {
+   "id": "H23",
+   "month": "2026-09",
+   "reason_code": "13.7",
+   "amount_usd": 900,
+   "advisor_call": "fold",
+   "confidence": "Medium",
+   "merchant_action": "fold",
+   "outcome": "lost",
+   "on_time": true
+  },
+  {
+   "id": "H24",
+   "month": "2026-09",
+   "reason_code": "13.7",
+   "amount_usd": 3200,
+   "advisor_call": "escalate",
+   "confidence": "Medium",
+   "merchant_action": "fight",
+   "outcome": "lost",
+   "on_time": true
+  }
+ ]
+}

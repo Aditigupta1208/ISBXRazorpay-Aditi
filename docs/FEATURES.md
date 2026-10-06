@@ -16,6 +16,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | F7 | Clear-win fast lane | ✅ | Dispute detail, top of the right column |
 | F8 | Outcome, next steps and prevention tip | ✅ | Dispute detail, after an action |
 | F9 | Under the hood and audit trail | ✅ (audit trail is kept in the browser) | Drawer |
+| F11 | Results (learning loop and measurement) | ✅ | `/results`, and a line on each check |
 | F10 | Evals page | ✅ (the latest-prompt column fills after the first real run) | `/evals` |
 | 🚀 | Service Dispute Shield (moonshot) | ⬜ by design: a concept, not in the MVP | |
 | — | Platform: no-key fallback, cache, rate limit, caps, labels | ✅ | Everywhere |
@@ -242,3 +243,22 @@ A concept for Razorpay, not part of the build. Extend Chargeback Shield to non-f
 - **Secrets:** the API key lives only in `.env.local` and Vercel's environment variables, is read only in the server route, and is never in a response.
 - **Look and feel:** Razorpay's Agentic Dashboard layout (black top bar, white sub-tabs, white cards), self-hosted Inter font, accessible chips with icon and text, keyboard-reachable actions, no sideways scroll at 390px.
 - **Not built, by design:** the other top-bar tabs, live Razorpay API calls, login, a database, connectors, fraud disputes, arbitration, mobile app.
+
+---
+
+## F11 · Results: how the product learns and how it is measured ✅
+
+**Why it exists.** The brief asks "how does the system learn from the outcome" and "what business outcome would you measure". Before this, the answer was one sentence after Won or Lost. Now it is computed.
+
+**What it does** (`/results`, `lib/results.ts`, `lib/ledger.ts`, `components/ResultsView.tsx`).
+- Every Fold, and every Submit once you mark Won or Lost, is written to a small list in the browser (the "ledger"). Reset this demo on a dispute removes its entry.
+- The page shows three numbers from the PRD: recovered per ₹ disputed (the North Star; fees are not included in the demo), win rate when fought, and answered on time.
+- **By reason:** disputes, fights, wins, win-rate bar and ₹ recovered per reason code, with the weakest one named and its fix.
+- **Was the advisor right?** Fight calls split by confidence, with the AI estimate (High 80%, Medium 55%) next to what actually happened; Fold calls that would have won (the merchant fought anyway); Escalate calls that were fought later.
+- On each dispute's check panel, the line "Your record on 13.2: fought 6, won 5 (83%)" sits under the AI estimate.
+
+**Sample history.** A first-time visitor has no outcomes, so `data/sample-history.json` holds 24 made-up past disputes, labelled "sample" and "not real data" on the page, with a checkbox to turn them off. The figures (76% won when fought, Medium-confidence Fight calls won 2 of 4) are authored, not measured. They show the mechanism, not a result.
+
+**What it does not do.** Nothing is trained and the AI estimate is not changed by this history. In the real product the results would calibrate the estimate and set the launch thresholds; the page says so. Arbitration fees are not in the recovered figure.
+
+**Tests.** `lib/results.test.ts` (11 tests) and `e2e_results.py`.

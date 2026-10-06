@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { CallChip } from "@/components/CallChip";
 import { Dialog } from "@/components/Dialog";
 import { Drawer } from "@/components/Drawer";
@@ -16,6 +16,8 @@ import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
 import { evidenceHint } from "@/lib/evidenceHints";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
+import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
+import { fromAction, historyFor, sampleRecords } from "@/lib/results";
 
 const Card = ({ children, className = "", id }: { children: ReactNode; className?: string; id?: string }) => (
   <section id={id} className={`mb-4 rounded-2xl border border-line bg-white p-[22px] shadow-[0_1px_2px_rgba(0,0,0,.03)] ${className}`}>
@@ -41,7 +43,7 @@ const STATUS_WORD: Record<Status, string> = { pass: "Passed", changed: "Changed 
 
 export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView }) {
   const d = c.dispute;
-  const { state, update, reset } = useCaseState(c.id);
+  const { state, update, reset, ready } = useCaseState(c.id);
   const [highlight, setHighlight] = useState<string[]>([]);
   const [dialog, setDialog] = useState<"submit" | "fold" | null>(null);
   const [why, setWhy] = useState("");
@@ -90,6 +92,32 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   const showResponse = finalCall !== "shield" && !state.action && (finalCall === "fight" || state.reviewOpen);
   const acted = state.action;
   const checkTheMoney = finalCall === "fight" && !money.worthFighting;
+
+  // Keep the Results page in step with what the merchant did here (Fold is final; a submit waits for Won or Lost).
+  useEffect(() => {
+    if (!ready) return;
+    const a = state.action;
+    if (!a || finalCall === "shield") {
+      removeLedger(c.id);
+      return;
+    }
+    upsertLedger(
+      fromAction({
+        id: c.id,
+        code: d.reason_code,
+        atStakeInr: money.atStakeInr,
+        contestInr: money.contestInr,
+        call: finalCall,
+        confidence: view.confidence,
+        actionType: a.type,
+        outcome: state.outcome ?? null,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, state.action, state.outcome]);
+
+  const { recs: myRecs } = useLedger();
+  const record = useMemo(() => historyFor([...sampleRecords(rates), ...myRecs.filter((r) => r.id !== c.id)], d.reason_code), [rates, myRecs, c.id, d.reason_code]);
 
   const log = (actor: "You" | "Advisor", text: string) =>
     update((s) => ({ ...s, audit: [...s.audit, { at: now(), actor, text }] }));
@@ -577,6 +605,11 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                   </p>
                 )}
                 <p className="mt-2 text-xs text-helper">{view.oddsNote}</p>
+                {record.fights > 0 && (
+                  <p className="mt-2 text-[14px]" data-testid="own-record">
+                    <b>Your record on {d.reason_code}:</b> fought {record.fights}, won {record.won} ({Math.round((record.won / record.fights) * 100)}%). <Link href="/results" className="relative font-medium text-brand after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] hover:underline">See Results</Link>
+                  </p>
+                )}
                 {view.economicsNote && <p className="mt-2 text-[14px] text-[#333]">{view.economicsNote}</p>}
                 {finalCall === "fight" || finalCall === "fold" ? (
                   (() => {

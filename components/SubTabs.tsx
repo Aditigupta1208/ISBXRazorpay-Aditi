@@ -7,6 +7,7 @@ const TABS = [
   { label: "Settlements", href: null },
   { label: "Disputes", href: "/disputes" },
   { label: "Refunds", href: null },
+  { label: "Results", href: "/results" },
   { label: "Agent setup", href: "/agent-studio" },
   { label: "Evals", href: "/evals" },
   { label: "How it works", href: "/how-it-works" },
