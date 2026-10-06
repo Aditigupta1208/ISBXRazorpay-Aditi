@@ -1,14 +1,17 @@
 import { DisputeTable, type Row } from "@/components/DisputeTable";
 import { getDemoCases, getSavedResult } from "@/lib/data";
 import { byUrgency } from "@/lib/list";
+import { getRates } from "@/lib/fx";
+import { rateNote, rateWord } from "@/lib/rates";
 import { formatInr, formatOriginal, merchantShort, timeLeft, toInr } from "@/lib/format";
 
 export const metadata = { title: "Disputes | Dispute Advisor (concept prototype)" };
 
-export default function DisputesPage() {
+export default async function DisputesPage() {
+  const rates = await getRates();
   const rows = getDemoCases()
     .map((c) => {
-      const inr = toInr(c.dispute.amount / 100, c.dispute.currency);
+      const inr = toInr(c.dispute.amount / 100, c.dispute.currency, rates);
       return { c, inr, saved: getSavedResult(c.id) };
     })
     .sort((a, b) => byUrgency({ hours: a.c.dispute.respond_by_hours_left, inr: a.inr, shield: a.saved?.call === "shield" }, { hours: b.c.dispute.respond_by_hours_left, inr: b.inr, shield: b.saved?.call === "shield" }));
@@ -40,11 +43,11 @@ export default function DisputesPage() {
       <h1 className="mb-4 text-2xl leading-8 font-semibold">Disputes</h1>
       <div className="mb-4 grid grid-cols-3 gap-2 md:gap-4">
         <Stat label="Need a decision" value={String(needDecision.length)} />
-        <Stat label="At stake (demo rate)" value={formatInr(atStake)} />
+        <Stat label={`At stake (${rateWord(rates)})`} value={formatInr(atStake)} />
         <Stat label="Due within 24 hours" value={String(due24)} warn />
       </div>
       <p className="mb-2 text-[13px] text-helper">Demo data: 16 disputes from 16 different businesses, so the names change from row to row. Due within 24 hours comes first.</p>
-      <DisputeTable rows={tableRows} />
+      <DisputeTable rows={tableRows} rateNote={rateNote(rates)} />
     </>
   );
 }

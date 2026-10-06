@@ -42,6 +42,7 @@ export interface Deps {
   getSaved: (caseId: string) => CheckView | undefined;
   now?: () => number;
   cache?: Map<string, { at: number; value: LiveOk }>;
+  inrPerUsd?: number; // for the cost shown in Under the hood; defaults to the demo rate
 }
 
 export interface Meta {
@@ -224,7 +225,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
     const parsed = decisionSchema.safeParse(reply.input);
     if (parsed.success) {
       const usd = costUsd(tokensIn, tokensOut);
-      const meta: Meta = { live: true, model: deps.model, promptVersion: PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * DEMO_RATE_INR_PER_USD, cached: false };
+      const meta: Meta = { live: true, model: deps.model, promptVersion: PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
       const value: LiveOk = { status: "live", view: toCheckView(parsed.data, c, meta), meta };
       deps.cache?.set(key, { at: now(), value });
       if (deps.cache && deps.cache.size > 200) deps.cache.delete(deps.cache.keys().next().value as string);

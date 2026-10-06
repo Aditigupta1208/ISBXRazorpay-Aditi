@@ -48,7 +48,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 - Fighting is worth it when **p × A > (1 − p) × F + E**.
 - If the call is Fight and the test fails, the screen says "Check the money" and explains the fees are high for the amount. If the call is Fold and the test says fighting could pay, it says so. **The call is never silently changed**; it is a note.
 - Example: C10 (USD 96 already refunded) says Fight, but the fees at risk exceed the amount, so it shows "Check the money".
-- The ₹ rate is a placeholder (₹88 per USD), labelled "demo rate" everywhere. The real clawback uses the rate on the day the dispute is created, which the prototype cannot know.
+- **Live rate (6 Oct).** The ₹ rate is the ECB reference rate from frankfurter.dev (no key), fetched on the server, cached 12 hours, 3 second timeout (`lib/fx.ts`, `lib/rates.ts`). Labels say "live rate" with the date, and "Indicative only; Razorpay converts at its own rate". If the fetch fails or returns an odd value (outside ₹40 to 200) the app falls back to the old ₹88 demo values and says "demo rate". `FX_RATE_INR_PER_USD` pins the USD rate ("fixed rate"), so the video, the note and the live demo can show the same numbers. The Visa arbitration fee (USD 600) stays a cited, labelled value because Visa publishes no API. The real clawback uses the rate on the day the dispute is created, which the prototype cannot know. On 5 Oct the real rate was ₹96.30, about 9% above the old placeholder.
 
 **How a live check runs** (`POST /api/analyze`, server only)
 1. Rate limit by IP (20 per hour, best effort).

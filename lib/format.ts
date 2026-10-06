@@ -1,9 +1,10 @@
 import { DEMO_RATE_INR_PER_USD, rateFor } from "./money";
+import type { Rates } from "./rates";
 
 export { DEMO_RATE_INR_PER_USD };
 
-export function toInr(amountMajor: number, currency: string): number {
-  return amountMajor * rateFor(currency);
+export function toInr(amountMajor: number, currency: string, rates?: Rates): number {
+  return amountMajor * rateFor(currency, rates);
 }
 
 const SYMBOL: Record<string, string> = { USD: "$", GBP: "£", EUR: "€" };

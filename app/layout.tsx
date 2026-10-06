@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { RatesProvider } from "@/components/RatesProvider";
 import { Shell } from "@/components/Shell";
+import { getRates } from "@/lib/fx";
 import "./globals.css";
 
 const inter = localFont({
@@ -16,11 +18,14 @@ export const metadata: Metadata = {
     "Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const rates = await getRates();
   return (
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased">
-        <Shell>{children}</Shell>
+        <RatesProvider rates={rates}>
+          <Shell>{children}</Shell>
+        </RatesProvider>
       </body>
     </html>
   );

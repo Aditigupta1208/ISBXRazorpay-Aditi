@@ -32,7 +32,7 @@ Last updated: 5 Oct 2026, after milestone 3. Update this file at the end of ever
 
 ### 4. Data and engineering
 - [x] 16 demo cases and saved results loaded from `data/`; calls come from the clean ChatGPT run, not the Claude run that knew the test design
-- [x] Fixed demo exchange rate (₹88 per USD placeholder), labelled "demo rate"
+- [x] Live USD/INR rate (ECB via frankfurter.dev, cached 12 h), labelled "live rate" with the date; falls back to ₹88 "demo rate"; optional pin with `FX_RATE_INR_PER_USD`
 - [x] All 20 pages prerendered; no server calls, no API key, no secrets
 - [x] Deployed on Vercel from the public repo
 

@@ -28,7 +28,7 @@ const FILTERS: { key: "all" | Call; label: string }[] = [
   { key: "shield", label: "Chargeback Shield" },
 ];
 
-export function DisputeTable({ rows }: { rows: Row[] }) {
+export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string }) {
   const [filter, setFilter] = useState<"all" | Call>("all");
   const [actions, setActions] = useState<Record<string, string>>({});
 
@@ -44,7 +44,7 @@ export function DisputeTable({ rows }: { rows: Row[] }) {
   const shown = rows.filter((r) => filter === "all" || r.call === filter);
 
   const download = () => {
-    const head = ["dispute_id", "merchant", "amount", "amount_inr_demo_rate", "reason_code", "reason", "hours_left", "call", "status"];
+    const head = ["dispute_id", "merchant", "amount", "amount_inr", "reason_code", "reason", "hours_left", "call", "status"];
     const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
     const lines = shown.map((r) => [r.disputeId, r.merchant, r.amount, Math.round(r.inrNumber), r.reasonCode, r.reason, r.hours, r.call ?? "", actions[r.id] ?? "Open"].map(esc).join(","));
     const blob = new Blob([[head.join(","), ...lines].join("\n")], { type: "text/csv" });
@@ -151,7 +151,7 @@ export function DisputeTable({ rows }: { rows: Row[] }) {
           </tbody>
         </table>
       </div>
-      <p className="px-[18px] py-3.5 text-[13px] text-helper">Calls are saved results from an earlier test run, so this list works without an API key. Amounts in ₹ use a fixed demo rate.</p>
+      <p className="px-[18px] py-3.5 text-[13px] text-helper">Calls are saved results from an earlier test run, so this list works without an API key. {rateNote}</p>
     </div>
   );
 }

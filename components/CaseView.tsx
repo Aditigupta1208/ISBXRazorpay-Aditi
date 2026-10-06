@@ -8,7 +8,9 @@ import type { AnalyzeResult } from "@/lib/agent";
 import { MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS } from "@/lib/limits";
 import { DRAFT_LIMIT, citedIds, containsCardNumber, evaluateGuardrails, sentenceHasSource, splitSentences, type Status } from "@/lib/guardrails";
 import { formatInrFull, formatOriginal, timeLeft } from "@/lib/format";
-import { DEMO_RATE_INR_PER_USD, VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor } from "@/lib/money";
+import { VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor } from "@/lib/money";
+import { rateNote, rateWord } from "@/lib/rates";
+import { useRates } from "@/components/RatesProvider";
 import type { CaseData, CheckView } from "@/lib/types";
 import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
 import { evidenceHint } from "@/lib/evidenceHints";
@@ -82,7 +84,8 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
     [draft, view, d.reason_code, documentCount],
   );
   const finalCall = g.finalCall;
-  const money = moneyCheck({ amountSubunits: d.amount, currency: d.currency, contestSubunits, odds: view.odds });
+  const rates = useRates();
+  const money = moneyCheck({ amountSubunits: d.amount, currency: d.currency, contestSubunits, odds: view.odds }, rates);
   const t = timeLeft(d.respond_by_hours_left);
   const showResponse = finalCall !== "shield" && !state.action && (finalCall === "fight" || state.reviewOpen);
   const acted = state.action;
@@ -331,7 +334,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
               {formatOriginal(d.amount, d.currency)} · {d.network} {d.reason_code} {d.reason_description}
             </h1>
             <p className="text-[13px] text-helper">
-              {c.merchant} Raised {d.raised_on}. {formatInrFull(money.atStakeInr)} at the demo rate.
+              {c.merchant} Raised {d.raised_on}. {formatInrFull(money.atStakeInr)} at ₹{rateFor(d.currency, rates).toFixed(2)} per {d.currency}.
             </p>
           </div>
           <div className="md:text-right">
@@ -563,8 +566,8 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
 
                 <div id="money"><H3>Money</H3></div>
                 <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
-                  <Stat label="At stake" value={formatInrFull(money.atStakeInr)} sub={`${formatOriginal(d.amount, d.currency)} · demo rate ₹${rateFor(d.currency)}`} />
-                  <Stat label="Taken back if you lose" value={formatInrFull(money.atStakeInr)} sub="rate on dispute day" />
+                  <Stat label="At stake" value={formatInrFull(money.atStakeInr)} sub={`${formatOriginal(d.amount, d.currency)} · ${rateWord(rates)} ₹${rateFor(d.currency, rates).toFixed(2)}`} />
+                  <Stat label="Taken back if you lose" value={formatInrFull(money.atStakeInr)} sub={`at today's ${rateWord(rates)}`} />
                   <Stat label="Possible fee if you fight and lose" value={formatInrFull(money.feesAtRiskInr)} sub={`Visa arbitration, USD ${VISA_ARBITRATION_FEE_USD}. Only if the bank escalates.`} />
                   <Stat label="AI estimate of odds" value={`${Math.round(view.odds * 100)}%`} sub="estimate, not a promise" />
                 </div>
@@ -867,7 +870,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
           <p className="text-[15px]">
             {acted.type === "submit"
               ? `You contested ${formatOriginal(contestSubunits, d.currency)} of ${formatOriginal(d.amount, d.currency)} with ${[...documentsBySlot.values()].flat().length} documents. In the real app this goes to Razorpay and the bank decides. The status below then moves from Under review to Won or Lost.`
-              : `You accepted the dispute. ${formatInrFull(money.atStakeInr)} would be taken from your balance (${formatOriginal(d.amount, d.currency)} at the demo rate of ₹${rateFor(d.currency)}).`}
+              : `You accepted the dispute. ${formatInrFull(money.atStakeInr)} would be taken from your balance (${formatOriginal(d.amount, d.currency)} at the ${rateWord(rates)} of ₹${rateFor(d.currency, rates).toFixed(2)}).`}
           </p>
           <details className="mt-3">
             <summary className="cursor-pointer text-[14px] font-semibold text-brand">What would be sent</summary>
@@ -933,7 +936,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
 
       <Dialog open={dialog === "fold"} onClose={() => setDialog(null)} title="Fold this dispute?">
         <p className="text-[15px]">
-          {formatInrFull(money.atStakeInr)} will be taken from your balance ({formatOriginal(d.amount, d.currency)} at the demo rate of ₹{rateFor(d.currency)}; the real rate is the one on the day the dispute was created). You can&apos;t undo this.
+          {formatInrFull(money.atStakeInr)} will be taken from your balance ({formatOriginal(d.amount, d.currency)} at the {rateWord(rates)} of ₹{rateFor(d.currency, rates).toFixed(2)}; the real rate is the one on the day the dispute was created). You can&apos;t undo this.
         </p>
         <p className="mt-2 text-[14px] text-helper">Why the advisor says {finalCall}: {view.reason}</p>
         <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[13px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
@@ -970,7 +973,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                 ${state.check.meta.costUsd.toFixed(4)} · ₹{state.check.meta.costInr.toFixed(2)}
               </dd>
             </dl>
-            <p className="mt-1 text-[13px] text-helper">Cost uses the token prices in the repo and the demo rate.</p>
+            <p className="mt-1 text-[13px] text-helper">Cost uses the token prices in the repo and the rate below.</p>
           </>
         ) : (
           <>
@@ -981,7 +984,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
             <p className="mt-1 text-[13px] text-helper">Odds, the defensible amount, the request text and the prevention tip on saved results come from the builder&apos;s supplement file, not the model.</p>
           </>
         )}
-        <p className="mt-1 text-[13px] text-helper">Demo rate ₹{DEMO_RATE_INR_PER_USD} per USD is a placeholder.</p>
+        <p className="mt-1 text-[13px] text-helper">{rateNote(rates)}</p>
 
         <H3>Safety checks</H3>
         <ul className="space-y-1.5">

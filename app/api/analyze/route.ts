@@ -5,6 +5,7 @@ import { DEFAULT_MODEL, makeCallModel } from "@/lib/anthropic";
 import { getCase, getCheckView } from "@/lib/data";
 import { loadPrompt } from "@/lib/prompt";
 import { allow } from "@/lib/ratelimit";
+import { getRates } from "@/lib/fx";
 
 export const runtime = "nodejs";
 export const maxDuration = 60; // confirm Vercel's current limit for the plan
@@ -62,6 +63,7 @@ export async function POST(req: Request) {
       toolSchema: prompt.toolSchema,
       getSaved: getCheckView,
       cache,
+      inrPerUsd: (await getRates()).usd,
     };
   } catch {
     return NextResponse.json({ status: "saved", reason: "prompt_missing", message: "The live check is off in this demo, so you are seeing the saved result." });
