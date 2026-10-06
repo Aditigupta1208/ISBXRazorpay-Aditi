@@ -51,7 +51,7 @@ export default async function DisputesPage() {
         <Stat label={`At stake (${rateWord(rates)})`} value={formatInr(atStake)} />
         <Stat label="Due within 24 hours" value={String(due24)} warn />
       </div>
-      <p className="mb-2 text-[13px] text-helper">Demo data: 16 disputes from 16 different businesses, so the names change from row to row. Due within 24 hours comes first.</p>
+      <p className="mb-2 hidden text-[13px] text-helper md:block">Demo data: 16 disputes from 16 different businesses, so the names change from row to row. Due within 24 hours comes first.</p>
       <DisputeTable rows={tableRows} rateNote={rateNote(rates)} />
       <Patterns
         patterns={patterns}

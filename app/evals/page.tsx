@@ -79,14 +79,25 @@ export default function EvalsPage() {
 
   return (
     <>
-      <h1 className="mb-2 text-2xl leading-8 font-semibold">Evals</h1>
-      <p className="mb-4 max-w-[760px] text-[15px] text-ink-soft">
-        Does the agent make the same call as a person who knows Visa&apos;s rules, and does it beat a fixed checklist? Every score below is computed from the files in this repo.
-      </p>
+      <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">For reviewers</p>
+      <h1 className="mb-2 text-2xl leading-8 font-semibold">Evals: can you trust the advisor?</h1>
+      <section id="why-evals" aria-labelledby="why-evals-h" className="mb-5 scroll-mt-4 rounded-2xl border border-line bg-white p-5">
+        <h2 id="why-evals-h" className="text-[17px] font-semibold">Why this page exists</h2>
+        <p className="mt-1 max-w-[760px] text-[15px] text-ink-soft">
+          The advisor recommends whether to fight or give up money. Before anyone relies on that, we test it the way you would test a new hire: give it practice disputes where a person already knows the right answer, and count how often it agrees.
+        </p>
+        <ol className="mt-3 hidden gap-3 text-[14px] md:grid md:grid-cols-3">
+          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">1. The test</b>{labels.length} practice disputes, each with an answer written by a person.</li>
+          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">2. The comparison</b>A plain fixed checklist, so you can see what the AI adds beyond ticking off documents.</li>
+          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">3. The result so far</b>The saved run matched the person on {agreeCount(v1Rows)} of {n(v1Rows)}; the checklist on {agreeCount(only(v1Ids))}. {latest ? "A newer run is below." : "The new Claude run is not done yet."}</li>
+        </ol>
+        <p className="mt-3 hidden text-[13px] text-helper md:block">How to read the tables: a green call matches the person. A red cross means it differs. The page ends with what these numbers cannot show.</p>
+      </section>
+
 
       <nav aria-label="On this page" className="mb-4 flex flex-wrap gap-2 text-[13px] font-semibold">
         {[["#c15", "The case that matters"], ["#cases", "Each case"], ["#rules", "Rules vs unseen cases"], ["#limits", "What the numbers do not show"]].map(([href, label]) => (
-          <a key={href} href={href} className="rounded-full border border-line bg-white px-3 py-1.5 text-brand hover:border-brand">{label}</a>
+          <a key={href} href={href} className="inline-flex min-h-10 items-center rounded-full border border-line bg-white px-3.5 text-brand hover:border-brand">{label}</a>
         ))}
       </nav>
 
@@ -186,6 +197,8 @@ export default function EvalsPage() {
       )}
 
       <h2 id="cases" className="mt-6 mb-2 scroll-mt-4 text-lg font-semibold">Case by case</h2>
+      <details className="mb-4" data-testid="cases-detail">
+        <summary className="mb-2 inline-flex min-h-10 cursor-pointer items-center text-[14px] font-semibold text-brand">Show all {labels.length} cases</summary>
       <div className="relative mb-2 overflow-x-auto rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgba(0,0,0,.03)]">
         <table className="w-full text-left text-[14px]">
           <caption className="sr-only">Each case: the human answer and what each method said. A cross means it differs from the human answer.</caption>
@@ -224,6 +237,7 @@ export default function EvalsPage() {
       <p className="mb-6 max-w-[760px] text-[13px] text-helper">
         A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C30 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run yet (needs the API key)`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
       </p>
+      </details>
 
       <RulesVsUnseen s={rules} agentKnown={{ agree: agreeCount(v1Rows), n: n(v1Rows) }} />
 

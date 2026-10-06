@@ -324,3 +324,11 @@ The dispute page now answers the merchant's question first. One column: the call
 - Escalate shows "Get this first" and a copy-the-message button inside the call card.
 - Fixed a bug found while testing: a Fold call's odds were being "adjusted" with the merchant's won Fight calls (15% showed as 53%). Only Fight calls are adjusted now (`oddsForCall`, tested).
 - Measured before: 949 words, 29 boxes, 9 font sizes, main button 1,085px down. Aim: main button on the first screen.
+
+## F16 · Rebuilt shell, welcome, tour and reviewer pages (7 Oct, on branch wip/decision-first-redesign)
+- Top bar: wordmark and two reviewer links (Evals, How it works). The fake Ray AI, Payments, Banking+ and search items are gone. Merchant tabs are only Disputes, Results, Agent setup.
+- First visit shows a welcome card on Disputes ("Should you fight this dispute?", tour button, three example disputes). It can be hidden and brought back.
+- Tour is 9 stops: 7 for merchants, then 2 labelled "For reviewers" (Evals, How it works). Every stop points at something visible, and the target is scrolled clear of the tour card.
+- Agent setup explains what it is for, and shows live what the advisor is told (built by the same code the live check uses).
+- Evals opens with why it exists in three lines; the case table is folded. How it works opens with one worked dispute in five steps.
+- Phone: welcome and Evals intro are shorter; the list note is hidden.

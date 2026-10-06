@@ -106,7 +106,7 @@ export function Tour() {
       className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-[460px] rounded-2xl border border-brand bg-white p-4 shadow-[0_8px_30px_rgba(0,0,0,.18)] print:hidden"
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-semibold tracking-[.6px] text-helper uppercase">Tour · {step + 1} of {TOUR_STEPS.length}</p>
+        <p className="text-xs font-semibold tracking-[.6px] text-helper uppercase">{s.audience === "reviewers" ? "For reviewers" : "Tour"} · {step + 1} of {TOUR_STEPS.length}</p>
         <button type="button" onClick={() => go(null)} className="-mt-1 -mr-1 min-h-10 min-w-10 text-[13px] font-semibold text-helper underline">
           Close
         </button>

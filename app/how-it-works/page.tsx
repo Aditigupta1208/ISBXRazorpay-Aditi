@@ -8,11 +8,11 @@ import { getCases } from "@/lib/data";
 export const metadata = { title: "How it works | Dispute Advisor (concept prototype)" };
 
 const FLOW = [
-  ["1", "Dispute and evidence", "Razorpay's dispute record plus the documents you have.", "/disputes", "Open the list"],
-  ["2", "The check", "Claude reads them with Visa's rule for the reason code (prompt " + PROMPT_VERSION + ").", "/disputes/C06", "See a check"],
-  ["3", "Safety rules", "Seven checks in code can change or block the answer.", "#rules", "See the rules"],
-  ["4", "You decide", "Edit, approve, fold or ask for a document. Nothing goes without a click.", "/disputes/C04", "Try a decision"],
-  ["5", "Outcome", "Mark won or lost. Next steps and a prevention tip.", "/disputes", "Open the list"],
+  ["1", "The dispute arrives", "Razorpay's record: $480, reason 13.2 (cancelled recurring transaction), 14 hours left.", "/disputes/C06", "Open it"],
+  ["2", "It reads your documents", "Four of them, against Visa's rule for that reason: a customer who cancelled but kept using the service loses.", "/disputes/C06", "See the documents"],
+  ["3", "It makes the call", "The login log shows use after the claimed cancellation and the billing log shows no cancel. Fight, with high confidence.", "/disputes/C06", "See the reason"],
+  ["4", "Seven rules check it", "Code, not the AI, can downgrade a Fight to Escalate if a document is missing or a sentence has no source.", "#rules", "See the rules"],
+  ["5", "You decide, then it learns", "Review the draft and approve. Mark Won or Lost and the next estimate moves.", "/results", "See Results"],
 ];
 
 const RULES = [
@@ -46,21 +46,26 @@ const ANSWERS = [
 export default function HowItWorksPage() {
   return (
     <>
+      <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">For reviewers</p>
       <h1 className="mb-1 text-2xl leading-8 font-semibold">How it works</h1>
-      <p className="mb-6 max-w-[760px] text-[15px] text-ink-soft">
-        Dispute Advisor helps Indian businesses that sell services, subscriptions, travel or digital goods to international customers. When a card dispute is not about fraud, it reads your evidence, applies Visa&apos;s rule, and tells you whether to fight, fold or escalate, with the money maths and a draft that cites every source.
+      <p className="mb-5 max-w-[760px] text-[15px] text-ink-soft">
+        For businesses that sell services, subscriptions, travel or digital goods abroad. When a customer disputes a card payment and it is not fraud, Dispute Advisor tells you whether to fight, fold or escalate, and why.
       </p>
 
-      <ol className="mb-8 grid gap-3 md:grid-cols-5" aria-label="Flow">
-        {FLOW.map(([n, t, d, href, cta]) => (
-          <li key={n} className="relative rounded-2xl border border-line bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,.03)] focus-within:ring-2 focus-within:ring-brand-soft hover:border-brand">
-            <span aria-hidden className="mb-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-[13px] font-semibold text-brand">{n}</span>
-            <b className="block text-[15px]">{t}</b>
-            <span className="block text-[13px] text-ink-soft">{d}</span>
-            <Link href={href} className="mt-2 inline-block text-[13px] font-medium text-brand after:absolute after:inset-0 after:content-[''] hover:underline">{cta} →</Link>
-          </li>
-        ))}
-      </ol>
+      <section id="one-minute" aria-labelledby="one-minute-h" className="mb-8 scroll-mt-4">
+        <h2 id="one-minute-h" className="text-lg font-semibold">One dispute, start to finish</h2>
+        <p className="mb-3 text-[14px] text-ink-soft">A customer in Ireland disputes a $480 subscription charge. They say: &ldquo;I cancelled this.&rdquo;</p>
+        <ol className="grid gap-3 md:grid-cols-5" aria-label="Flow">
+          {FLOW.map(([n, t, d, href, cta]) => (
+            <li key={n} className="relative rounded-2xl border border-line bg-white p-4 focus-within:ring-2 focus-within:ring-brand-soft hover:border-brand">
+              <span aria-hidden className="mb-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-[13px] font-semibold text-brand">{n}</span>
+              <b className="block text-[15px]">{t}</b>
+              <span className="block text-[13px] text-ink-soft">{d}</span>
+              <Link href={href} className="mt-2 inline-block text-[13px] font-medium text-brand after:absolute after:inset-0 after:content-[''] hover:underline">{cta} →</Link>
+            </li>
+          ))}
+        </ol>
+      </section>
 
       <Section id="rules" title="The seven safety rules" note="They run in code after every answer. You can see each result on the dispute page.">
         <ul className="grid gap-x-10 gap-y-2 md:grid-cols-2">
@@ -152,7 +157,7 @@ export default function HowItWorksPage() {
 
         <Section title="Limits you should know">
           <ul className="list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft md:columns-2 md:gap-10">
-            <li>All 20 test cases are written by us from public patterns. The documents inside them are made up.</li>
+            <li>All {getCases().length} test cases are written by us from public patterns. The documents inside them are made up.</li>
             <li>The answer key is our reading of Visa&apos;s rules. It is not a real win rate.</li>
             <li>Exchange rates and fees in the money maths are demo values and are labelled that way.</li>
             <li>Without an API key this demo shows saved results. A new check on added evidence needs the live model.</li>

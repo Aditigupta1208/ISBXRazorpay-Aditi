@@ -1,9 +1,8 @@
-import { SubTabs } from "./SubTabs";
+import Link from "next/link";
+import { ReviewerNav, SubTabs } from "./SubTabs";
 import { Tour } from "./Tour";
 import { TourLink } from "./TourLink";
 import type { ReactNode } from "react";
-
-const TOP = ["Ray AI", "Payments", "Banking+", "Payroll", "More"];
 
 export function Shell({ children }: { children: ReactNode }) {
   return (
@@ -18,28 +17,12 @@ export function Shell({ children }: { children: ReactNode }) {
         Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.{" "}
         <TourLink className="-my-3 inline-block py-3 font-semibold underline" />
       </div>
-      <header className="flex h-[60px] items-center justify-between bg-nav px-3 text-white md:px-7">
-        <nav aria-label="Main" className="scroll-fade flex gap-5 overflow-x-auto md:gap-[34px]">
-          {TOP.map((t) => (
-            <span
-              key={t}
-              className={`relative shrink-0 py-[19px] text-sm font-medium md:text-[15px] ${
-                t === "Payments" ? "text-white" : "text-[#E8E8E8]"
-              }`}
-            >
-              {t}
-              {t === "Payments" && (
-                <span
-                  aria-hidden
-                  className="absolute -right-4 -bottom-0 -left-4 h-[3px] bg-gradient-to-r from-transparent via-green to-transparent"
-                />
-              )}
-            </span>
-          ))}
-        </nav>
-        <div className="hidden w-[260px] rounded-[10px] border border-[#2a2a2a] bg-[#161616] px-4 py-2 text-sm text-[#8a8a8a] md:block">
-          Search in payments
-        </div>
+      <header className="flex h-[60px] items-center justify-between bg-nav px-3 text-white md:px-7 print:hidden">
+        <Link href="/disputes" className="flex min-h-10 items-center gap-3">
+          <span className="text-[17px] font-semibold">Dispute Advisor</span>
+          <span className="hidden text-xs text-[#9a9a9a] md:inline">Payments · Disputes</span>
+        </Link>
+        <ReviewerNav />
       </header>
       <SubTabs />
       <Tour />

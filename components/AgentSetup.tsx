@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ACCEPTANCE_OPTIONS, MAX_POLICY_CHARS, type Acceptance } from "@/lib/limits";
 import { containsCardNumber } from "@/lib/guardrails";
 import { useProfile } from "@/lib/useProfile";
+import { policyBlock } from "@/lib/policyBlock";
 
 const CODES = [
   ["13.1", "Services not provided or merchandise not received"],
@@ -30,7 +31,17 @@ export function AgentSetup() {
   };
 
   return (
-    <div className={`grid gap-4 md:grid-cols-[1fr_340px] ${ready ? "" : "opacity-60"}`} aria-busy={!ready}>
+    <div className={ready ? "" : "opacity-60"} aria-busy={!ready}>
+      <section id="purpose" aria-labelledby="purpose-h" className="mb-4 rounded-2xl border border-line bg-white p-5">
+        <h2 id="purpose-h" className="text-[17px] font-semibold">What this screen is for</h2>
+        <ol className="mt-3 grid gap-3 text-[14px] md:grid-cols-3">
+          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">1. You write your terms once</b>Your refund, cancellation and renewal rules, in your own words.</li>
+          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">2. The advisor reads them</b>On every live check it reads them next to the evidence for that dispute. The panel on the right shows exactly what it is told.</li>
+          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">3. They never count as proof</b>Only a document the customer actually saw or agreed to does. Your terms are your claim.</li>
+        </ol>
+        <p className="mt-3 text-[13px] text-helper">Without an API key this demo shows saved results, so your terms take effect on a live check. This is our own design of the setup screen, based on how Razorpay describes Agent Studio.</p>
+      </section>
+      <div className="grid gap-4 md:grid-cols-[1fr_340px]">
       <div className="space-y-4">
         <Card title="Your terms" help="Your refund, cancellation and renewal terms. The check reads them with every dispute. They are your own words, so they never count as proof. A document the customer actually saw or agreed to does that.">
           <label htmlFor="policy" className="mb-1 block text-sm font-medium">Refund, cancellation and renewal terms</label>
@@ -91,6 +102,21 @@ export function AgentSetup() {
       </div>
 
       <div className="space-y-4">
+        <section id="advisor-told" aria-labelledby="told-h" className="rounded-2xl border border-brand bg-[#F4F8FF] p-[22px]">
+          <h2 id="told-h" className="text-[17px] font-semibold">What the advisor is told</h2>
+          <p className="mt-1 mb-3 text-[13px] text-helper">Added to every live check, beside the dispute record and the documents.</p>
+          {policyBlock({ text: profile.policy, acceptance: profile.acceptance }).length === 0 ? (
+            <p className="rounded-xl bg-white p-3 text-[14px] text-ink-soft">No terms yet. The advisor will rely on the documents alone.</p>
+          ) : (
+            <div className="rounded-xl bg-white p-3 text-[13px] leading-5 text-[#333]">
+              <p className="font-semibold">Your terms (your claim, not proof)</p>
+              <p className="mt-1 break-words whitespace-pre-wrap">{profile.policy.trim()}</p>
+              <p className="mt-2 font-semibold">How customers accept them</p>
+              <p className="mt-1">{ACCEPTANCE_OPTIONS.find((o) => o.value === profile.acceptance)?.label ?? "Not sure"}</p>
+            </div>
+          )}
+          <p className="mt-3 text-[12px] text-helper">The advisor is also told that these terms are what you say, and that only a document can show what the customer saw or agreed to.</p>
+        </section>
         <Card title="Agent status">
           <label className="flex cursor-pointer items-center justify-between gap-3">
             <span>
@@ -111,6 +137,7 @@ export function AgentSetup() {
             ))}
           </ul>
         </Card>
+      </div>
       </div>
     </div>
   );

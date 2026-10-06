@@ -1,4 +1,4 @@
-/** The guided tour: one stop per screen a reviewer should see, in order. Plain words, no jargon. */
+/** The guided tour. Seven stops in the order a merchant asks questions, then two for reviewers. Plain words, no jargon. */
 export interface TourStep {
   href: string;
   title: string;
@@ -7,68 +7,66 @@ export interface TourStep {
   target?: string;
   /** Open the folded row the target points at, so the reviewer sees what the step talks about. */
   reveal?: boolean;
+  /** Stops for judges and curious readers rather than for a merchant. */
+  audience?: "reviewers";
 }
 
 export const TOUR_STEPS: TourStep[] = [
   {
     href: "/disputes",
-    title: "1. Your disputes, in order of urgency",
-    text: "Each row is a card dispute for a service, subscription or digital sale. The advisor has already made a call on each one: Fight, Fold or Escalate. Fraud goes to Chargeback Shield. What is due soonest is first.",
+    title: "1. Your disputes, most urgent first",
+    text: "Each row is a card dispute. The advisor has already made a call on each: Fight, Fold or Escalate. Fraud disputes go to Chargeback Shield instead.",
     target: "table",
   },
   {
     href: "/disputes/C06",
-    title: "2. A Fight call you can check",
-    text: "The advisor says Fight, how sure it is, and which documents decide it. Open the safety checks to see seven rules run in code on the answer.",
+    title: "2. The answer comes first",
+    text: "The call, the reason in one sentence, the money at stake, your chance of winning and the time you have. This one says Fight.",
     target: "#decision",
   },
   {
     href: "/disputes/C06",
-    title: "3. Why AI, not a fixed checklist",
-    text: "This box shows what a plain checklist would say on the same dispute. The money check below it shows what you could win, what you could lose and the fee.",
-    target: '[data-row="checklist"]',
+    title: "3. Why you can believe it",
+    text: "Every point traces to a document you gave it. Open your evidence to check the advisor's reasoning yourself.",
+    target: '[data-row="evidence"]',
     reveal: true,
   },
   {
     href: "/disputes/C06",
-    title: "4. Dates from your own documents",
-    text: "For a cancelled subscription, the order of dates decides the case. Click E1, E2 or E3 to jump to the document behind a date.",
-    target: '[data-row="timeline"]',
-    reveal: true,
-  },
-  {
-    href: "/disputes/C06",
-    title: "5. You approve everything",
-    text: "Press Review response to see a draft where every sentence cites a document. Nothing is sent until you approve, and in this prototype nothing is sent at all.",
-    target: "#decision",
+    title: "4. You decide, not the advisor",
+    text: "Review response opens a draft where every sentence cites a document. Nothing is sent until you approve, and in this prototype nothing is sent at all.",
+    target: "#primary-action",
   },
   {
     href: "/disputes/C15",
-    title: "6. When the advisor stops and asks",
-    text: "This group tour is only half owed. The advisor does not guess: it says Escalate, names the one document it needs and writes the message to ask for it.",
+    title: "5. When it is not sure, it says so",
+    text: "Only half of this one is owed and a document is missing. The advisor does not guess: it names the one document to get and writes the message to ask for it.",
     target: "#get-first",
   },
   {
     href: "/results",
-    title: "7. Did the advisor turn out right?",
-    text: "Results show what happened to disputes you acted on. The AI's odds are checked against real outcomes, and your own record moves them. The past disputes here are made up.",
+    title: "6. Did the advice turn out right?",
+    text: "After you act, mark the dispute Won or Lost. Results compare the advisor's odds with what really happened, and your record shifts the next estimate. The past disputes here are made up.",
     target: "#advisor-right",
   },
   {
-    href: "/evals",
-    title: "8. The proof, and its limits",
-    text: "30 cases scored against an answer key, against a fixed checklist, and against hand-written rules on cases they had not seen. The page also lists what these numbers do not show.",
-    target: "#rules",
+    href: "/agent-studio",
+    title: "7. Teach it your own terms",
+    text: "A business adds its refund and cancellation terms once. The panel shows exactly what the advisor is told. Your terms count as your claim, never as proof.",
+    target: "#advisor-told",
   },
   {
-    href: "/agent-studio",
-    title: "9. Set up once",
-    text: "A merchant adds their own refund and cancellation terms here, and the advisor reads them on every check. This is our own design of the screen, not Razorpay's.",
+    href: "/evals",
+    title: "8. Can you trust it? The test",
+    text: "Before an AI is allowed near money decisions, it is tested. This page scores the advisor on practice disputes against a person's answer, and shows where it is weak.",
+    target: "#why-evals",
+    audience: "reviewers",
   },
   {
     href: "/how-it-works",
-    title: "10. How it works, and what it will not do",
-    text: "The seven safety rules, how the system learns, and how a change ships. That is the tour. Open any dispute to try it yourself.",
-    target: "#learning",
+    title: "9. How it works, in one example",
+    text: "One dispute followed from start to finish in plain words, then the safety rules and how the system learns. That is the tour. Open any dispute to try it yourself.",
+    target: "#one-minute",
+    audience: "reviewers",
   },
 ];

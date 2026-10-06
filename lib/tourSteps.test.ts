@@ -5,6 +5,11 @@ import { getDemoCases } from "./data";
 
 const PAGES = new Set(["/disputes", "/results", "/evals", "/agent-studio", "/how-it-works"]);
 
+test("merchant stops come first and the last two are for reviewers", () => {
+  const flags = TOUR_STEPS.map((s) => s.audience === "reviewers");
+  assert.deepEqual(flags, [false, false, false, false, false, false, false, true, true]);
+});
+
 test("every tour stop points at a real page or demo dispute", () => {
   const demo = new Set(getDemoCases().map((c) => `/disputes/${c.id}`));
   for (const s of TOUR_STEPS) assert.ok(PAGES.has(s.href) || demo.has(s.href), s.href);
