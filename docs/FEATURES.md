@@ -179,6 +179,8 @@ The server also caps input (4,000 characters, 5 documents, 60 KB request), rate-
 
 ---
 
+**Start here and patterns (6 Oct).** The list opens with a "New here? Try these three" card for reviewers: C06 (a fight call), C15 (an escalate call) and C10 (a clear win). On a phone it folds to one line so the list stays on the first screen. Below the table, "What is causing your disputes" groups the 15 non-fraud demo disputes by reason code with the count, the rupees at stake, how many the advisor would fight, fold or escalate, and a prevention fix (`lib/patterns.ts`, tested). It answers the Grow half of the track. The fixes are tips written for the demo, not model output, and the card says so.
+
 ## F7 · Clear-win fast lane ✅
 
 **What it does.** When the call is Fight with High confidence, nothing is missing or contradicted, no safety rule blocks the response, and the response cites Razorpay's own record, a green banner says "Clear win" and offers **Review and submit**, which jumps to the response. The merchant still approves; it only saves looking for the next step.

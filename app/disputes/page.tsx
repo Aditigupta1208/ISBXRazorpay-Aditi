@@ -1,5 +1,8 @@
 import { DisputeTable, type Row } from "@/components/DisputeTable";
-import { getDemoCases, getSavedResult } from "@/lib/data";
+import { Patterns } from "@/components/Patterns";
+import { StartHere } from "@/components/StartHere";
+import { getDemoCases, getReasonTip, getSavedResult } from "@/lib/data";
+import { buildPatterns } from "@/lib/patterns";
 import { byUrgency } from "@/lib/list";
 import { getRates } from "@/lib/fx";
 import { rateNote, rateWord } from "@/lib/rates";
@@ -34,6 +37,7 @@ export default async function DisputesPage() {
     };
   });
 
+  const patterns = buildPatterns(rows.map((r) => ({ code: r.c.dispute.reason_code, reason: r.c.dispute.reason_description, inr: r.inr, call: r.saved?.call ?? null })));
   const needDecision = rows.filter((r) => r.saved?.call !== "shield");
   const atStake = needDecision.reduce((s, r) => s + r.inr, 0);
   const due24 = needDecision.filter((r) => r.c.dispute.respond_by_hours_left < 24).length;
@@ -41,6 +45,7 @@ export default async function DisputesPage() {
   return (
     <>
       <h1 className="mb-4 text-2xl leading-8 font-semibold">Disputes</h1>
+      <StartHere />
       <div className="mb-4 grid grid-cols-3 gap-2 md:gap-4">
         <Stat label="Need a decision" value={String(needDecision.length)} />
         <Stat label={`At stake (${rateWord(rates)})`} value={formatInr(atStake)} />
@@ -48,6 +53,10 @@ export default async function DisputesPage() {
       </div>
       <p className="mb-2 text-[13px] text-helper">Demo data: 16 disputes from 16 different businesses, so the names change from row to row. Due within 24 hours comes first.</p>
       <DisputeTable rows={tableRows} rateNote={rateNote(rates)} />
+      <Patterns
+        patterns={patterns}
+        tips={Object.fromEntries(patterns.map((p) => [p.code, getReasonTip(p.code)]))}
+      />
     </>
   );
 }

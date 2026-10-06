@@ -131,3 +131,8 @@ export function getCheckView(caseId: string): CheckView | undefined {
     raw: raw as unknown as Record<string, unknown>,
   };
 }
+
+/** The builder-written prevention tip for a reason code (not model output). */
+export function getReasonTip(code: string): string {
+  return SUPP.reason_code_tips[code] ?? "";
+}
