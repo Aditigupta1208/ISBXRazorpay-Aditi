@@ -217,6 +217,8 @@ A right-hand drawer on every dispute:
 
 ## F10 · Evals page ✅
 
+_6 Oct: the fixed-checklist baseline is now code (`lib/baseline.ts`), with 5 tests that reproduce all 20 stored checklist answers, so the comparison cannot be accused of a hand-picked loser. The page also says the builder chose the case types._
+
 **What it does.** `/evals` compares the human answer key, the fixed checklist, the saved v1 ChatGPT run, the earlier Claude run and the latest automated run, case by case and against the PRD bars (launch, target, stretch). It covers 20 cases, including two messy ones (C17, C18) and two with instructions hidden in the evidence (C19, C20). C15 is highlighted. Every number is computed from the data files, and the limits are stated on the page.
 
 **How it works.** `npm run eval` runs every case through the same code as the app (forced tool call, zod, safety rules) and writes `eval/results/<prompt>-<model>-<date>.json` and a summary. The page reads the newest file. It shows the model's own call and the call after the safety rules, so you can see what the rules fixed. Cases without a usable answer count as wrong.
