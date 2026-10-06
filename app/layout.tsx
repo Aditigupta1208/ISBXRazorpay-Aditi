@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { RatesProvider } from "@/components/RatesProvider";
+import { Tracker } from "@/components/Tracker";
 import { Shell } from "@/components/Shell";
 import { getRates } from "@/lib/fx";
 import "./globals.css";
@@ -24,6 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased">
         <RatesProvider rates={rates}>
+          <Tracker />
           <Shell>{children}</Shell>
         </RatesProvider>
       </body>

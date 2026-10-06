@@ -116,6 +116,12 @@ export default function HowItWorksPage() {
           <p className="mt-2 text-[13px] text-helper">The guide is the June 2024 edition, so a newer one may differ. Everything here is a reading of public documents, not legal or Visa advice. Razorpay&apos;s response windows (3 business days for the first stage, then 2, then 1) are shown in its guide; this demo uses hours left and the first stage only.</p>
         </Section>
 
+        <Section title="What this demo counts">
+          <p className="text-[15px] text-ink-soft">
+            If the builder has connected a counter, the demo adds one to an anonymous count when you open a dispute, re-run a check, upload, submit, fold, mark an outcome, or view Results, Evals or this page, and once for a first visit. No names, emails, IP addresses, cookies, evidence text or accounts are stored, and nothing is counted if your browser sends Do Not Track. Your outcomes and drafts stay in your own browser.
+          </p>
+        </Section>
+
         <Section title="Limits you should know">
           <ul className="list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft md:columns-2 md:gap-10">
             <li>All 20 test cases are written by us from public patterns. The documents inside them are made up.</li>

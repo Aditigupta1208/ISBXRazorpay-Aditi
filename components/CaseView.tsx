@@ -18,6 +18,7 @@ import { EvidenceChecklist } from "@/components/EvidenceChecklist";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
+import { track } from "@/lib/track";
 import { fromAction, historyFor, sampleRecords } from "@/lib/results";
 
 const Card = ({ children, className = "", id }: { children: ReactNode; className?: string; id?: string }) => (
@@ -117,6 +118,10 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, state.action, state.outcome]);
 
+  useEffect(() => {
+    track("dispute_opened", c.id);
+  }, [c.id]);
+
   const { recs: myRecs } = useLedger();
   const record = useMemo(() => historyFor([...sampleRecords(rates), ...myRecs.filter((r) => r.id !== c.id)], d.reason_code), [rates, myRecs, c.id, d.reason_code]);
 
@@ -168,6 +173,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   const foldRequest = () => `POST /v1/disputes/${d.id}/accept`;
 
   const readFile = async (file: File | undefined) => {
+    if (file) track("upload");
     if (!file) return;
     setAddError("");
     setReadNote("");
@@ -229,6 +235,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
 
   const steps = [`Reading ${allEvidence.length} documents…`, `Applying Visa rule ${d.reason_code}…`, "Writing the response…"];
   const rerun = async () => {
+    track("rerun");
     const profile = readProfile();
     if (!profile.enabled) {
       setNotice({ kind: "info", text: "Dispute Advisor is off in Agent setup. Turn it on to run a new check." });
@@ -290,6 +297,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
         { at: now(), actor: "You" as const, text: type === "submit" ? "Approved and submitted the response (simulated)" : "Folded: accepted the dispute (simulated)" },
       ],
     }));
+    track(type === "submit" ? "submit" : "fold");
     setDialog(null);
     setWhy("");
   };
@@ -934,6 +942,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                   aria-pressed={state.outcome === o}
                   onClick={() => {
                     update((s) => ({ ...s, outcome: o }));
+                    track(o === "won" ? "outcome_won" : "outcome_lost");
                     log("You", `Marked the dispute ${o} (demo)`);
                   }}
                 >

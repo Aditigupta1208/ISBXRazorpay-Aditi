@@ -1,7 +1,7 @@
 # What is deployed
 
 Live: https://isbx-razorpay-aditi.vercel.app/disputes
-Last updated: 5 Oct 2026, after milestone 3. Update this file at the end of every milestone.
+Last updated: 6 Oct 2026, after the deep dives and the extra features below. Update this file at the end of every milestone.
 
 ## Milestone 1: shell, list and detail on saved results
 
@@ -92,26 +92,38 @@ Last updated: 5 Oct 2026, after milestone 3. Update this file at the end of ever
 - Tested: 35 unit tests (safety rules, money maths, request building, retry, fallbacks, cache, rate limit, injection escaping, schema match) and a browser test of the whole live flow against a stand-in server that mimics Anthropic's API, plus a no-key run.
 - **Not tested: a real call to the Claude API.** It needs an API key. Until then the deployed app shows saved results and says "Decide manually" when evidence is added.
 
-## Milestones 4 and 5 (built 6 Oct, not yet pushed at the time of writing)
+## Milestones 4, 5 and 5b, deep dives 1 to 7, and later additions (built and pushed 6 Oct)
+- [x] Evals page, `npm run eval`, 20 cases (4 added for messy evidence and hidden instructions); Agent setup (terms sent as the merchant's claim); How it works; demo script
+- [x] Numbered next-step prompts, clear-win lane, PDF and image upload, draft contest on Escalate (prompt v2.2)
+- [x] Deep dives on the check panel, review and submit, disputes list, Add evidence, Evals, Agent setup, How it works, and an accessibility pass (contrast, skip link, drawer focus, 40px tap targets)
+- [x] Live USD/INR rate (ECB via frankfurter.dev, cached 12 h, labelled with its date), fallback to the ₹88 demo values, optional pin
+- [x] "New here? Try these three" card and a "What is causing your disputes" section on the list
+- [x] Results tab: ledger of what the merchant did, recovered per ₹, win rate, on-time, calibration, 24 labelled sample past disputes, and "your record" beside the AI estimate
+- [x] Per-reason evidence checklist, rules checked against Visa's merchant guide and Razorpay's API, sources on How it works (`docs/RULE_CHECK.md`)
+- [x] Optional anonymous usage counter (below)
 
-- `/evals`: checklist vs v1 vs the latest prompt against the PRD bars, per-case table, limits. Reads `eval/results/`.
-- `npm run eval` and `lib/eval.ts`; eval cases C17 to C20 in `data/`.
-- `/agent-studio`: terms, how customers accept them, approvals, notify, scope, on/off. Terms flow into checks.
-- `/how-it-works`: flow, safety rules, the seven brief questions, assumption A1, out of scope, limits.
-- Section tabs: Agent setup, Evals, How it works.
+### Optional settings (all can stay empty; the app works without them)
+| Variable | What it does |
+|---|---|
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Turns on the live check, upload and Escalate drafts. Without them the saved results show |
+| `FX_RATE_INR_PER_USD` | Pins the USD rate (labelled "fixed rate") so the video, note and demo agree |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Anonymous usage counts. Create a free Upstash Redis database from the Vercel Marketplace and copy both values into Vercel |
+| `USAGE_ADMIN_TOKEN` | A long random string. Lets you read the counts at `/usage` (not linked anywhere, not indexed) |
+
+The counter stores only counts per fixed event name and per demo dispute ID, no names, emails, IPs, cookies or evidence text, and counts nothing if the browser sends Do Not Track. How it works says so to visitors.
 
 ## Not deployed yet
 - [ ] Real-model run of the C06 demo, a PDF and a screenshot (needs the API key)
 - [ ] A real v2.2 run of `npm run eval` (needs the API key)
-- [ ] M5: copy and accessibility pass
 - [ ] M6: product note, video, final public build log
 - Cut from the MVP: PDF and image upload; draft contest on Escalate; clear-win fast lane (F7) unless time allows
 
 ## Known gaps against the spec (`docs/pm/04-screens.md`)
-- No extracted key facts per document, no file upload
-- No policy profile (F2) in the check
-- The "How can I help you next?" numbered prompts from the Ray-style answer are not built
-- Saved results use placeholder odds (see M2); live results use the model's own
-- The ₹ amounts use a placeholder rate; the real rate and its source are still to be chosen
+- No extracted key facts per document (FR-15, a P0 in the PRD; needs the model)
+- Saved results are from the ChatGPT v1 kill test; odds on them come from confidence. After the real run they should be regenerated from Claude with prompt v2.2
+- Only the first dispute stage is modelled (no pre-arbitration or arbitration)
+- Not proven on the real model: the live check, upload, Escalate drafts, the forced tool call on Sonnet 5.5, `maxDuration`, and the first real `npm run eval`
+- The live rate fetch and the usage counter were tested against stand-in servers only
+- The Results sample history is made up and labelled so
 
 Full feature descriptions: `docs/FEATURES.md`.
