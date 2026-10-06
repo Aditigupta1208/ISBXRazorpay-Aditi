@@ -13,11 +13,11 @@ const REVIEWER = [
   { label: "How it works", href: "/how-it-works" },
 ];
 
-/** The merchant's own screens. Only places a merchant would actually go. */
+/** The merchant's own screens, inside the black bar like the dashboard's own top navigation. */
 export function SubTabs() {
   const path = usePathname() ?? "";
   return (
-    <nav aria-label="Sections" className="flex gap-6 overflow-x-auto border-b border-line bg-white px-4 md:gap-8 md:px-7">
+    <nav aria-label="Sections" className="order-last -mb-px flex w-full gap-1 overflow-x-auto px-1 md:order-none md:w-auto md:self-stretch">
       {TABS.map((t) => {
         const on = path === t.href || path.startsWith(t.href + "/");
         return (
@@ -25,7 +25,7 @@ export function SubTabs() {
             key={t.label}
             href={t.href}
             aria-current={on ? "page" : undefined}
-            className={`shrink-0 border-b-2 px-0.5 py-[13px] font-medium ${on ? "border-brand text-brand" : "border-transparent text-[#555] hover:text-brand"}`}
+            className={`flex shrink-0 items-center px-3 text-[14px] font-semibold md:min-h-[56px] ${on ? "text-white shadow-[inset_0_-3px_0_#4BA66F]" : "text-[#B9BEC7] hover:text-white"} min-h-11`}
           >
             {t.label}
           </Link>
@@ -40,7 +40,7 @@ export function ReviewerNav() {
   const path = usePathname() ?? "";
   return (
     <nav aria-label="For reviewers" className="flex items-center gap-1 text-[13px]">
-      <span className="mr-1 hidden text-[#9a9a9a] md:inline">For reviewers</span>
+      <span className="mr-1 hidden text-[#8B919C] md:inline">For reviewers</span>
       {REVIEWER.map((t) => {
         const on = path === t.href;
         return (
@@ -48,12 +48,33 @@ export function ReviewerNav() {
             key={t.label}
             href={t.href}
             aria-current={on ? "page" : undefined}
-            className={`inline-flex min-h-10 items-center rounded-lg px-3 font-medium ${on ? "bg-white/15 text-white" : "text-[#d8d8d8] hover:bg-white/10 hover:text-white"}`}
+            className={`inline-flex min-h-10 items-center rounded-lg px-3 font-semibold ${on ? "bg-white/15 text-white" : "text-[#C9CED6] hover:bg-white/10 hover:text-white"}`}
           >
             {t.label}
           </Link>
         );
       })}
+    </nav>
+  );
+}
+
+/** Where this sits in the Razorpay dashboard, so a reader is never unsure. */
+export function Breadcrumb() {
+  const path = usePathname() ?? "";
+  const trail: [string, string?][] | null =
+    path === "/disputes" ? [["Razorpay Dashboard", "/"], ["Transactions"], ["Disputes"], ["Dispute Advisor"]]
+    : path === "/results" ? [["Razorpay Dashboard", "/"], ["Dispute Advisor", "/disputes"], ["Results"]]
+    : path === "/agent-studio" ? [["Razorpay Dashboard", "/"], ["Agent Studio"], ["Dispute Advisor setup"]]
+    : null;
+  if (!trail) return null;
+  return (
+    <nav aria-label="Breadcrumb" className="mb-3 flex flex-wrap items-center gap-x-1.5 text-[12px] text-helper print:hidden">
+      {trail.map(([label, href], i) => (
+        <span key={label} className="flex items-center gap-1.5">
+          {i > 0 && <span aria-hidden>›</span>}
+          {href ? <Link href={href} className="-my-2 inline-block py-2 font-semibold text-brand hover:underline">{label}</Link> : <span className={i === trail.length - 1 ? "font-semibold text-ink" : ""}>{label}</span>}
+        </span>
+      ))}
     </nav>
   );
 }

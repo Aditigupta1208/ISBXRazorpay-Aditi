@@ -1,41 +1,18 @@
-import { DisputeTable, type Row } from "@/components/DisputeTable";
+import { DisputeTable } from "@/components/DisputeTable";
+import { getDisputeRows } from "@/lib/disputeRows";
 import { Patterns } from "@/components/Patterns";
 import { StartHere } from "@/components/StartHere";
-import { getDemoCases, getReasonTip, getSavedResult } from "@/lib/data";
+import { getReasonTip } from "@/lib/data";
 import { buildPatterns } from "@/lib/patterns";
-import { byUrgency } from "@/lib/list";
 import { getRates } from "@/lib/fx";
 import { rateNote, rateWord } from "@/lib/rates";
-import { formatInr, formatOriginal, merchantShort, timeLeft, toInr } from "@/lib/format";
+import { formatInr } from "@/lib/format";
 
 export const metadata = { title: "Disputes | Dispute Advisor (concept prototype)" };
 
 export default async function DisputesPage() {
   const rates = await getRates();
-  const rows = getDemoCases()
-    .map((c) => {
-      const inr = toInr(c.dispute.amount / 100, c.dispute.currency, rates);
-      return { c, inr, saved: getSavedResult(c.id) };
-    })
-    .sort((a, b) => byUrgency({ hours: a.c.dispute.respond_by_hours_left, inr: a.inr, shield: a.saved?.call === "shield" }, { hours: b.c.dispute.respond_by_hours_left, inr: b.inr, shield: b.saved?.call === "shield" }));
-
-  const tableRows: Row[] = rows.map(({ c, inr, saved }) => {
-    const tl = timeLeft(c.dispute.respond_by_hours_left);
-    return {
-      id: c.id,
-      disputeId: c.dispute.id,
-      merchant: merchantShort(c.merchant),
-      amount: formatOriginal(c.dispute.amount, c.dispute.currency),
-      inr: formatInr(inr),
-      inrNumber: inr,
-      reasonCode: c.dispute.reason_code,
-      reason: c.dispute.reason_description,
-      timeText: tl.text,
-      warn: tl.warn,
-      hours: c.dispute.respond_by_hours_left,
-      call: saved?.call ?? null,
-    };
-  });
+  const { rows, tableRows } = getDisputeRows(rates);
 
   const patterns = buildPatterns(rows.map((r) => ({ code: r.c.dispute.reason_code, reason: r.c.dispute.reason_description, inr: r.inr, call: r.saved?.call ?? null })));
   const needDecision = rows.filter((r) => r.saved?.call !== "shield");

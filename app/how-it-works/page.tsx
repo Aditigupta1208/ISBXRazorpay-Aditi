@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card, PageTitle, Section } from "@/components/ui";
+import { HowTabs } from "@/components/HowTabs";
 import { PROMPT_VERSION } from "@/lib/prompt";
 import { SOURCES } from "@/lib/evidenceChecklist";
 import { ODDS_PRIOR_WEIGHT } from "@/lib/results";
@@ -45,12 +46,9 @@ const ANSWERS = [
 ];
 
 export default function HowItWorksPage() {
-  return (
+  const product = (
     <>
-      <PageTitle eyebrow="For reviewers" title="How it works">
-        For businesses that sell services, subscriptions, travel or digital goods abroad. When a customer disputes a card payment and it is not fraud, Dispute Advisor tells you whether to fight, fold or escalate, and why.
-      </PageTitle>
-
+      <Pipeline />
       <section id="one-minute" aria-labelledby="one-minute-h" className="mb-8 scroll-mt-4">
         <h2 id="one-minute-h" className="text-[16px] font-semibold">One dispute, start to finish</h2>
         <p className="mb-3 text-[14px] text-ink-soft">A customer in Ireland disputes a $480 subscription charge. They say: &ldquo;I cancelled this.&rdquo;</p>
@@ -103,10 +101,10 @@ export default function HowItWorksPage() {
         </Card>
       </Section>
 
-      <div className="mt-10 border-t border-line pt-6">
-        <h2 className="text-[16px] font-semibold">For reviewers</h2>
-        <p className="mb-5 text-[12px] text-helper">The challenge brief&apos;s seven questions, what we assumed, what we left out, and where this prototype is weak.</p>
-
+    </>
+  );
+  const answers = (
+    <>
         <Section title="The seven questions in the challenge brief">
           <Card>
           <dl className="grid gap-x-10 gap-y-4 md:grid-cols-2">
@@ -134,7 +132,11 @@ export default function HowItWorksPage() {
           </Section>
         </div>
 
-        <Fold title="Where the rules come from" note="Checked on 6 Oct 2026 against the published sources. The five rules were written first from public guides, then compared with these.">
+    </>
+  );
+  const trust = (
+    <>
+        <Section title="Where the rules come from" note="Checked on 6 Oct 2026 against the published sources. The five rules were written first from public guides, then compared with these.">
           <ul className="mb-3 list-disc space-y-1 pl-5 text-[14px] text-ink-soft">
             <li><a className="text-brand underline" href={SOURCES.visa.url} target="_blank" rel="noreferrer">{SOURCES.visa.label}</a>: the rules for each reason code.</li>
             <li><a className="text-brand underline" href={SOURCES.razorpay.url} target="_blank" rel="noreferrer">{SOURCES.razorpay.label}</a>: the 11 evidence slots, the 1,000 character summary, draft and submit.</li>
@@ -152,7 +154,7 @@ export default function HowItWorksPage() {
             </table>
           </div>
           <p className="mt-2 text-[12px] text-helper">The guide is the June 2024 edition, so a newer one may differ. Everything here is a reading of public documents, not legal or Visa advice. Razorpay&apos;s response windows (3 business days for the first stage, then 2, then 1) are shown in its guide; this demo uses hours left and the first stage only.</p>
-        </Fold>
+        </Section>
 
         <Section title="What this demo counts">
           <Card><p className="text-[14px] text-ink-soft">
@@ -169,17 +171,48 @@ export default function HowItWorksPage() {
             <li>Odds on saved results are derived from the confidence level. Live checks give the model&apos;s own estimate. Neither is a promise.</li>
           </ul></Card>
         </Section>
-      </div>
+    </>
+  );
+  return (
+    <>
+      <PageTitle eyebrow="For reviewers" title="How it works">
+        For businesses that sell services, subscriptions, travel or digital goods abroad. When a customer disputes a card payment and it is not fraud, Dispute Advisor tells you whether to fight, fold or escalate, and why.
+      </PageTitle>
+      <HowTabs
+        tabs={[
+          { id: "product", label: "The product", note: "What happens to one dispute, the checks that run on every answer, and how it learns.", content: product },
+          { id: "answers", label: "Brief answers", note: "The challenge brief's seven questions, what we assumed, and what we left out.", content: answers },
+          { id: "trust", label: "Sources and limits", note: "Where the rules come from, what the demo counts, and where this prototype is weak.", content: trust },
+        ]}
+      />
     </>
   );
 }
 
-function Fold({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
+function Pipeline() {
+  const Box = ({ title, children, tone = "" }: { title: string; children: React.ReactNode; tone?: string }) => (
+    <li className={`rounded-2xl border border-line bg-white p-4 ${tone}`}>
+      <b className="block text-[14px]">{title}</b>
+      <span className="block text-[12px] text-ink-soft">{children}</span>
+    </li>
+  );
+  const Arrow = () => (
+    <li aria-hidden className="flex items-center justify-center text-[16px] text-helper md:px-1">
+      <span className="md:hidden">↓</span>
+      <span className="hidden md:inline">→</span>
+    </li>
+  );
   return (
-    <details className="mb-6 rounded-2xl border border-line bg-white px-4 py-1 md:px-5">
-      <summary className="min-h-10 cursor-pointer py-2.5 text-[14px] font-semibold">{title}</summary>
-      {note && <p className="mb-2 text-[12px] text-helper">{note}</p>}
-      <div className="pb-3">{children}</div>
-    </details>
+    <section aria-label="The pipeline" className="mb-8">
+      <ol className="grid items-stretch gap-2 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
+        <Box title="What goes in">Razorpay&apos;s dispute record, the documents you add, and your own terms (read as your claim, never as proof).</Box>
+        <Arrow />
+        <Box title="The advisor reads">Visa&apos;s rule for that reason, then names the documents that decide it and works out the money.</Box>
+        <Arrow />
+        <Box title="Seven checks run in code">They can downgrade a Fight to Escalate, and reject anything that is missing a source.</Box>
+        <Arrow />
+        <Box title="What you get" tone="border-brand bg-[#F4F8FF]">Fight, Fold or Escalate, and a draft that cites a document in every sentence. You approve.</Box>
+      </ol>
+    </section>
   );
 }

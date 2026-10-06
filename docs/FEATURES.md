@@ -345,3 +345,10 @@ The dispute page now answers the merchant's question first. One column: the call
 - Evals: intro, explainer boxes and score tiles merged into one summary card; same card and type scale throughout.
 - How it works: sections sit in cards; the long "where the rules come from" table is folded.
 - Distinct text styles per page went from 11-21 down to 5-12.
+
+## F19 · Where it sits in the Razorpay dashboard, one top bar, tabbed How it works (7 Oct, branch wip/razorpay-entry)
+- New home page (`/`): a concept view of the Razorpay Dashboard, Transactions then Disputes, with Dispute Advisor added as a "New" menu item, a banner and a column showing the call on each dispute. Each row opens that dispute. Items that are not part of the concept are greyed and say so. No Razorpay logo is used.
+- Breadcrumbs on Disputes, Results and Agent setup say where the page sits (Razorpay Dashboard, Transactions, Disputes, Dispute Advisor) and link back to the dashboard view.
+- One black top bar: wordmark, the three merchant tabs inside it with a green underline on the current one (like the dashboard's own top navigation), and the reviewer links grouped on the right. The separate white tab bar is gone. On phones it is two rows.
+- How it works has three tabs (The product, Brief answers, Sources and limits) and a four-box pipeline at the top. Links such as `#rules` and `#learning` open the right tab.
+- The tour has a new first stop, "Start where you already work" (10 stops).

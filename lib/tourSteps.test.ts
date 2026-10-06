@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 import { TOUR_STEPS } from "./tourSteps";
 import { getDemoCases } from "./data";
 
-const PAGES = new Set(["/disputes", "/results", "/evals", "/agent-studio", "/how-it-works"]);
+const PAGES = new Set(["/", "/disputes", "/results", "/evals", "/agent-studio", "/how-it-works"]);
 
 test("merchant stops come first and the last two are for reviewers", () => {
   const flags = TOUR_STEPS.map((s) => s.audience === "reviewers");
-  assert.deepEqual(flags, [false, false, false, false, false, false, false, true, true]);
+  assert.deepEqual(flags, [false, false, false, false, false, false, false, false, true, true]);
 });
 
 test("every tour stop points at a real page or demo dispute", () => {
