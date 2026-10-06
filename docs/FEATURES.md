@@ -94,6 +94,8 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 ---
 
+**Checklist and sources (6 Oct).** Each dispute's evidence card now has "What 13.x needs: 3 of 3 key documents in place", which opens to what usually decides that reason code and what helps, each line ticked with the documents that fill it or marked "Not yet. Goes in: <slot>" (`lib/evidenceChecklist.ts`, `components/EvidenceChecklist.tsx`). It reads the slot mapping from the last check, so new documents are placed after a re-run, and it says so. The requirements come from Visa's merchant dispute guide (June 2024, pages 37 to 47) and Razorpay's contest API, which also fixed the 11 slot names; each line says where it comes from when Visa's guide directly supports it. How it works now has a "Where the rules come from" section with the links and a table of the five rules checked against the guide, and `docs/RULE_CHECK.md` records the result: no rule was wrong, five nuances are not modelled.
+
 ## F2 · Policy profile ✅
 
 **What it does.** On the Agent setup page the merchant writes their refund, cancellation and renewal terms once (up to 1,000 characters) and says how customers accept them: checkbox at checkout, email, footer link only, or not sure. Every new check (Re-run check, Add evidence) sends that text to the model.

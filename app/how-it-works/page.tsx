@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PROMPT_VERSION } from "@/lib/prompt";
+import { SOURCES } from "@/lib/evidenceChecklist";
 
 export const metadata = { title: "How it works | Dispute Advisor (concept prototype)" };
 
@@ -19,6 +20,14 @@ const RULES = [
   ["R5", "Fraud reasons (10.x) go to Chargeback Shield before any AI call."],
   ["R6", "The draft is 1,000 characters or less."],
   ["R7", "Full card numbers are rejected."],
+];
+
+const RULE_CHECK = [
+  ["13.1", "37", "Matches. Visa also lets you answer if the delivery date has not passed or the customer cancelled before delivery; the advisor does not model those."],
+  ["13.2", "39", "Matches the rebuttal: proof the customer used the service after withdrawing permission. Visa also lists processing the credit."],
+  ["13.3", "40", "Matches: an invoice, contract or similar that answers the claim. Visa also allows a neutral third-party opinion on quality; not modelled."],
+  ["13.6", "45", "Matches: the credit was already processed, or the sale was valid and none was due."],
+  ["13.7", "46 to 47", "Matches: the policy must be disclosed and agreed at the time of sale, and online that means a click-to-accept. The advisor treats this narrowly on purpose; the guide also allows other answers, such as a credit already given."],
 ];
 
 const ANSWERS = [
@@ -86,6 +95,26 @@ export default function HowItWorksPage() {
             </p>
           </Section>
         </div>
+
+        <Section title="Where the rules come from" note="Checked on 6 Oct 2026 against the published sources. The five rules were written first from public guides, then compared with these.">
+          <ul className="mb-3 list-disc space-y-1 pl-5 text-[15px] text-ink-soft">
+            <li><a className="text-brand underline" href={SOURCES.visa.url} target="_blank" rel="noreferrer">{SOURCES.visa.label}</a>: the rules for each reason code.</li>
+            <li><a className="text-brand underline" href={SOURCES.razorpay.url} target="_blank" rel="noreferrer">{SOURCES.razorpay.label}</a>: the 11 evidence slots, the 1,000 character summary, draft and submit.</li>
+            <li><a className="text-brand underline" href={SOURCES.razorpayBlog.url} target="_blank" rel="noreferrer">{SOURCES.razorpayBlog.label}</a>: the USD 600 Visa arbitration fee (from 1 April 2025) and the response windows.</li>
+          </ul>
+          <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+            <table className="w-full text-left text-[14px]">
+              <caption className="sr-only">Each rule compared with Visa&apos;s merchant guide</caption>
+              <thead className="text-[13px] text-helper"><tr><th scope="col" className="px-3 py-2 font-medium">Code</th><th scope="col" className="px-3 py-2 font-medium">Visa guide page</th><th scope="col" className="px-3 py-2 font-medium">Result of the check</th></tr></thead>
+              <tbody>
+                {RULE_CHECK.map(([code, page, note]) => (
+                  <tr key={code} className="border-t border-line align-top"><th scope="row" className="px-3 py-2 font-semibold">{code}</th><td className="px-3 py-2 whitespace-nowrap">{page}</td><td className="px-3 py-2 text-ink-soft">{note}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-[13px] text-helper">The guide is the June 2024 edition, so a newer one may differ. Everything here is a reading of public documents, not legal or Visa advice. Razorpay&apos;s response windows (3 business days for the first stage, then 2, then 1) are shown in its guide; this demo uses hours left and the first stage only.</p>
+        </Section>
 
         <Section title="Limits you should know">
           <ul className="list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft md:columns-2 md:gap-10">

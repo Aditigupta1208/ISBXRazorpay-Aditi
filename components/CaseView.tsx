@@ -14,6 +14,7 @@ import { useRates } from "@/components/RatesProvider";
 import type { CaseData, CheckView } from "@/lib/types";
 import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
 import { evidenceHint } from "@/lib/evidenceHints";
+import { EvidenceChecklist } from "@/components/EvidenceChecklist";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
@@ -438,6 +439,9 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
               );
             })}
 
+            {finalCall !== "shield" && (
+              <EvidenceChecklist code={d.reason_code} documentsBySlot={documentsBySlot} stale={!!state.dirty && !acted} docName={docName} />
+            )}
             {!acted && !adding && finalCall !== "shield" && (
               <button className={`${ghost} mt-3 !border-brand !text-brand`} onClick={() => setAdding(true)}>
                 + Add evidence
