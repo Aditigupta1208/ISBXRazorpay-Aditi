@@ -1,5 +1,6 @@
 import { DisputeTable, type Row } from "@/components/DisputeTable";
 import { getDemoCases, getSavedResult } from "@/lib/data";
+import { byUrgency } from "@/lib/list";
 import { formatInr, formatOriginal, merchantShort, timeLeft, toInr } from "@/lib/format";
 
 export const metadata = { title: "Disputes | Dispute Advisor (concept prototype)" };
@@ -8,9 +9,9 @@ export default function DisputesPage() {
   const rows = getDemoCases()
     .map((c) => {
       const inr = toInr(c.dispute.amount / 100, c.dispute.currency);
-      return { c, inr, saved: getSavedResult(c.id), score: inr / (c.dispute.respond_by_hours_left + 12) };
+      return { c, inr, saved: getSavedResult(c.id) };
     })
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => byUrgency({ hours: a.c.dispute.respond_by_hours_left, inr: a.inr, shield: a.saved?.call === "shield" }, { hours: b.c.dispute.respond_by_hours_left, inr: b.inr, shield: b.saved?.call === "shield" }));
 
   const tableRows: Row[] = rows.map(({ c, inr, saved }) => {
     const tl = timeLeft(c.dispute.respond_by_hours_left);
@@ -37,11 +38,12 @@ export default function DisputesPage() {
   return (
     <>
       <h1 className="mb-4 text-2xl leading-8 font-semibold">Disputes</h1>
-      <div className="mb-4 grid gap-4 md:grid-cols-3">
+      <div className="mb-4 grid grid-cols-3 gap-2 md:gap-4">
         <Stat label="Need a decision" value={String(needDecision.length)} />
         <Stat label="At stake (demo rate)" value={formatInr(atStake)} />
         <Stat label="Due within 24 hours" value={String(due24)} warn />
       </div>
+      <p className="mb-2 text-[13px] text-helper">Demo data: 16 disputes from 16 different businesses, so the names change from row to row. Due within 24 hours comes first.</p>
       <DisputeTable rows={tableRows} />
     </>
   );
@@ -49,9 +51,9 @@ export default function DisputesPage() {
 
 function Stat({ label, value, warn }: { label: string; value: string; warn?: boolean }) {
   return (
-    <div className="rounded-2xl border border-line bg-white p-[22px] shadow-[0_1px_2px_rgba(0,0,0,.03)]">
-      <span className="block text-[13px] text-helper">{label}</span>
-      <b className={`text-[26px] font-semibold ${warn && value !== "0" ? "text-warn" : ""}`}>{value}</b>
+    <div className="rounded-2xl border border-line bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,.03)] md:p-[22px]">
+      <span className="block text-[12px] leading-4 text-helper md:text-[13px]">{label}</span>
+      <b className={`text-xl font-semibold md:text-[26px] ${warn && value !== "0" ? "text-warn" : ""}`}>{value}</b>
     </div>
   );
 }

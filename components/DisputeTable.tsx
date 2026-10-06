@@ -75,7 +75,33 @@ export function DisputeTable({ rows }: { rows: Row[] }) {
           Download CSV
         </button>
       </div>
-      <div className="overflow-x-auto">
+      <ul className="md:hidden" aria-label="Disputes">
+        {shown.map((r) => (
+          <li key={r.id} className="border-b border-[#F1F1F1] last:border-0">
+            <Link href={`/disputes/${r.id}`} className="block px-4 py-3.5 active:bg-[#FAFCFF]">
+              <div className="flex items-start justify-between gap-3">
+                <span className="font-semibold">
+                  {r.amount}
+                  <span className="font-normal text-helper"> · {r.inr}</span>
+                </span>
+                <span className={`shrink-0 text-[14px] font-semibold ${r.warn ? "text-warn" : ""}`}>
+                  {r.warn && <span aria-hidden>⚠ </span>}
+                  {r.timeText} left
+                </span>
+              </div>
+              <div className="mt-0.5 text-[13px] text-[#555]">
+                <span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-xs text-[#344]">{r.reasonCode}</span> {r.reason}
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-3">
+                {r.call ? <CallChip call={r.call} /> : <span className="text-helper">Not checked</span>}
+                <span className="text-[13px] text-helper">{actions[r.id] ?? r.merchant}</span>
+              </div>
+            </Link>
+          </li>
+        ))}
+        {shown.length === 0 && <li className="px-4 py-8 text-center text-helper">No disputes with this call.</li>}
+      </ul>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[820px] border-collapse text-[15px]">
           <thead>
             <tr className="border-b border-line bg-[#FAFAFA] text-left text-xs font-semibold text-helper">
@@ -125,7 +151,7 @@ export function DisputeTable({ rows }: { rows: Row[] }) {
           </tbody>
         </table>
       </div>
-      <p className="px-[18px] py-3.5 text-[13px] text-helper">Calls are saved results from the kill test. Amounts in ₹ use a fixed demo rate.</p>
+      <p className="px-[18px] py-3.5 text-[13px] text-helper">Calls are saved results from an earlier test run, so this list works without an API key. Amounts in ₹ use a fixed demo rate.</p>
     </div>
   );
 }

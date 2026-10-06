@@ -161,11 +161,13 @@ The server also caps input (4,000 characters, 5 documents, 60 KB request), rate-
 
 ## F6 · Priority inbox ✅
 
+**Deep dive 3 (6 Oct).** The order is now: due within 24 hours first, then the rest, Chargeback Shield last, biggest rupees first inside each group (C06 and C10 rise to the top block; before, C10 was last). On phones each dispute is a card (amount, time left, reason, call chip) instead of a sideways-scrolling table, and the three summary numbers sit in one row. A note says the 16 disputes are from 16 different demo businesses, and the footer says the calls are saved results so the list works without an API key.
+
 **What it does.** `/disputes` lists every dispute so the merchant sees what needs a decision first.
 
 - **Summary cards:** disputes needing a decision (fraud excluded), total at stake in ₹, and how many are due within 24 hours (orange when above zero).
 - **Table:** dispute ID and merchant, amount (original currency and ₹), reason code with plain name, time left (⚠ and orange under 24 hours), call chip, status, and Details.
-- **Order:** by rupee amount against time left, so large and urgent come first.
+- **Order:** due within 24 hours first, then the rest, Chargeback Shield last; biggest rupees first inside each group.
 - **Filter** by call (All, Fight, Fold, Escalate, Chargeback Shield).
 - **Download CSV** of what is shown.
 - **Status:** Open, or Contested / Folded (simulated) once you act.

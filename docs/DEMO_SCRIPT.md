@@ -6,7 +6,7 @@ Before recording: open the app in a fresh browser window (clean saved state) at 
 
 | Sec | Screen | Say (short) | Do |
 |---|---|---|---|
-| 0 to 10 | `/disputes` | "Indian merchants lose card disputes because proving a non-fraud dispute is slow. Every dispute here already has a call, sorted by money and time." | Show the list, point at the call chips and the red "time left". |
+| 0 to 10 | `/disputes` | "Indian merchants lose card disputes because proving a non-fraud dispute is slow. Every dispute here already has a call, and what is due within 24 hours comes first." | Show the list, point at the call chips and the red "time left". |
 | 10 to 35 | C04 | "Fight. It names the Visa rule, the two documents that decide it, and the money maths. Every sentence of the draft cites a document." | Click a deciding-evidence ID so the document highlights. Open Review your response, then Approve and submit. Point at "Simulated: not sent to Razorpay". |
 | 35 to 55 | C06 | "New evidence changes the call." | Add evidence: title "Billing audit log", text "30 Jul 2026: customer clicked Cancel subscription". Re-run check. Call flips to Fold; safety lines update. |
 | 55 to 70 | C15 | "Not everything is a fight. Here it says Escalate: USD 3,200 at stake, only half is owed, and one document is missing." | Show the Escalate card and what to get first. |
