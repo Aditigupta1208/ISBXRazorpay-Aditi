@@ -119,3 +119,22 @@ test("the demo list holds only cases with a saved result; eval-only cases stay o
   assert.equal(ids.length, 16);
   for (const id of ["C17", "C18", "C19", "C20"]) assert.ok(!ids.includes(id));
 });
+
+import { releaseGate, type Summary } from "./eval.ts";
+const goodSummary = (over: Partial<Summary> = {}): Summary => ({
+  cases: 20, failed: 0, agreement: 0.95, agreementChecklist: 0.45, byType: {}, needsJudgment: 0.9, wrongFold: 0, wrongFight: 0,
+  wrongFoldRate: 0, wrongFightRate: 0, decidingEvidence: 0.95, citationFirstTry: 0.98, draftsChecked: 10, unsupportedCitations: 0,
+  fraudRouted: 1, injectionResisted: 1, injectionFlagged: 1, ruleTriggers: {}, downgrades: 0, rawAgreement: 0.95, avgCostUsd: 0.01, avgMs: 1000, ...over,
+});
+
+test("release gate passes when every measure meets its launch bar and injections are resisted", () => {
+  assert.equal(releaseGate(goodSummary()).pass, true);
+});
+
+test("release gate fails if any measure is below launch, a measure has no data, or an injection got through", () => {
+  assert.equal(releaseGate(goodSummary({ agreement: 0.8 })).pass, false);
+  assert.equal(releaseGate(goodSummary({ wrongFightRate: 0.1 })).pass, false);
+  assert.equal(releaseGate(goodSummary({ citationFirstTry: null })).pass, false);
+  assert.equal(releaseGate(goodSummary({ injectionResisted: 0.5 })).pass, false);
+  assert.equal(releaseGate(goodSummary({ injectionResisted: null })).pass, false);
+});

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { PROMPT_VERSION } from "@/lib/prompt";
 import { SOURCES } from "@/lib/evidenceChecklist";
+import { ODDS_PRIOR_WEIGHT } from "@/lib/results";
+import { THRESHOLDS } from "@/lib/eval";
 
 export const metadata = { title: "How it works | Dispute Advisor (concept prototype)" };
 
@@ -65,6 +67,31 @@ export default function HowItWorksPage() {
             <li key={id} className="flex gap-3 text-[15px]"><b className="w-8 shrink-0 text-brand">{id}</b><span>{t}</span></li>
           ))}
         </ul>
+      </Section>
+
+      <Section id="learning" title="How it learns, and how a change ships" note="What this prototype does today, and what a real launch would add.">
+        <div className="grid gap-x-10 gap-y-5 md:grid-cols-2">
+          <div>
+            <h3 className="text-[15px] font-semibold">After an outcome (built)</h3>
+            <ul className="mt-1 list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft">
+              <li>Marking a dispute won or lost updates your record on the Results page.</li>
+              <li>Your record shifts the odds shown on the next dispute where the advisor was equally confident. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check then uses the adjusted odds.</li>
+              <li>A miss (the advisor said Fight and it was lost, or said Fold and you won) can be downloaded as a candidate eval case, with names and numbers masked and a proposed answer a person must confirm.</li>
+              <li>Here all of this stays in your browser. A real launch would store outcomes per merchant, queue misses for review and recalibrate on all merchants together.</li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-[15px] font-semibold">Before a prompt or model change ships (the gate)</h3>
+            <p className="mt-1 text-[15px] text-ink-soft">The change is run on all 20 cases with <code>npm run eval -- --gate</code>. It ships only if no measure is below its launch bar and every hidden-instruction case is resisted. The previous prompt (v2.1) is kept as the baseline to compare against.</p>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-[14px] text-ink-soft">
+              {THRESHOLDS.map((t) => (
+                <li key={t.key}>{t.label}: {t.dir === "min" ? "at least" : "at most"} {Math.round(t.launch * 100)}%</li>
+              ))}
+              <li>Hidden instructions resisted: all of them</li>
+            </ul>
+            <p className="mt-2 text-xs text-helper">The gate is a command we run before changing the live prompt, not an automatic block on deploys.</p>
+          </div>
+        </div>
       </Section>
 
       <div className="mt-10 border-t border-line pt-6">

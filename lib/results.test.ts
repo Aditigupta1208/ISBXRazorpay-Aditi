@@ -92,3 +92,42 @@ test("fromAction: a Fold is final and loses the whole amount; a submit waits", (
   assert.equal(s.outcome, null);
   assert.equal(s.action, "fight");
 });
+
+import { adjustOdds } from "./results.ts";
+const fightRec = (id: string, conf: "High" | "Medium" | "Low", outcome: "won" | "lost" | null, over: Partial<Rec> = {}): Rec => ({
+  id, source: "you", code: "13.2", amountInr: 1000, contestInr: 1000, call: "fight", confidence: conf, action: "fight", outcome, onTime: true, ...over,
+});
+
+test("adjustOdds: no record means no change", () => {
+  const a = adjustOdds(0.8, "High", []);
+  assert.deepEqual([a.odds, a.adjusted, a.n], [0.8, false, 0]);
+});
+
+test("adjustOdds: a few results move the odds a little, many take over", () => {
+  const few = adjustOdds(0.8, "High", [fightRec("a", "High", "lost"), fightRec("b", "High", "lost")]);
+  assert.ok(few.adjusted && few.odds < 0.8 && few.odds > 0.6, `few ${few.odds}`);
+  const many = adjustOdds(0.8, "High", Array.from({ length: 90 }, (_, i) => fightRec(`m${i}`, "High", "lost")));
+  assert.ok(many.odds < 0.1, `many ${many.odds}`);
+});
+
+test("adjustOdds: only settled Fight calls at the same confidence count", () => {
+  const recs = [
+    fightRec("a", "High", null), // waiting for the result
+    fightRec("b", "Medium", "lost"), // other confidence
+    fightRec("c", "High", "lost", { call: "fold" }), // advisor said fold
+    fightRec("d", "High", "won", { action: "fold" }), // merchant folded
+  ];
+  const a = adjustOdds(0.8, "High", recs);
+  assert.equal(a.n, 0);
+  assert.equal(a.adjusted, false);
+  assert.equal(adjustOdds(0.8, null, [fightRec("x", "High", "lost")]).adjusted, false);
+});
+
+test("adjustOdds: the sample history barely moves the saved High and Medium estimates", () => {
+  const recs = sampleRecords(FALLBACK_RATES);
+  const hi = adjustOdds(0.8, "High", recs);
+  const med = adjustOdds(0.55, "Medium", recs);
+  assert.ok(hi.odds >= 0.8 && hi.odds <= 0.9, `${hi.odds}`);
+  assert.ok(Math.abs(med.odds - 0.55) < 0.05, `${med.odds}`);
+  assert.ok(hi.odds >= 0 && hi.odds <= 1);
+});

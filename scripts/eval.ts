@@ -2,7 +2,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { DEFAULT_MODEL, makeCallModel } from "../lib/anthropic";
-import { runAll, summarize, toMarkdown, type LabelRow } from "../lib/eval";
+import { releaseGate, runAll, summarize, toMarkdown, type LabelRow } from "../lib/eval";
 import { PROMPT_VERSION, loadPrompt } from "../lib/prompt";
 import type { CaseData } from "../lib/types";
 
@@ -35,6 +35,11 @@ async function main() {
   writeFileSync(`${base}.json`, JSON.stringify({ run, summary, rows }, null, 2) + "\n");
   writeFileSync(`${base}.md`, toMarkdown(run, rows, summary));
   console.log(`Wrote ${base}.json and ${base}.md`);
+  // Release gate: a prompt or model change ships only if nothing is below its launch bar. Use --gate to fail the command when it is.
+  const gate = releaseGate(summary);
+  console.log(gate.pass ? "Release gate: PASS" : "Release gate: FAIL");
+  for (const l of gate.lines) console.log(`  ${l.ok ? "ok  " : "FAIL"} ${l.label}: ${l.value === null ? "no data" : Math.round(l.value * 100) + "%"}${l.tier ? ` (${l.tier})` : ""}`);
+  if (!gate.pass && process.argv.includes("--gate")) process.exitCode = 2;
 }
 
 main().catch((e) => {

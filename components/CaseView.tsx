@@ -19,7 +19,9 @@ import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
 import { track } from "@/lib/track";
-import { fromAction, historyFor, sampleRecords } from "@/lib/results";
+import { ODDS_PRIOR_WEIGHT, adjustOdds, fromAction, historyFor, sampleRecords } from "@/lib/results";
+import { compareWithChecklist } from "@/lib/vsChecklist";
+import { buildMissCase, missKind } from "@/lib/missCase";
 
 const Card = ({ children, className = "", id }: { children: ReactNode; className?: string; id?: string }) => (
   <section id={id} className={`mb-4 rounded-2xl border border-line bg-white p-[22px] shadow-[0_1px_2px_rgba(0,0,0,.03)] ${className}`}>
@@ -88,8 +90,44 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
     [draft, view, d.reason_code, documentCount],
   );
   const finalCall = g.finalCall;
+  const vsChecklist = useMemo(
+    () =>
+      finalCall === "shield"
+        ? null
+        : compareWithChecklist(
+            { reasonCode: d.reason_code, razorpayFacts: c.razorpay_facts, evidence: allEvidence.map((e) => ({ id: e.id, content: `${"title" in e ? e.title : ""} ${e.content}` })) },
+            finalCall,
+          ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [finalCall, d.reason_code, c.razorpay_facts, allEvidence.length, state.added],
+  );
   const rates = useRates();
-  const money = moneyCheck({ amountSubunits: d.amount, currency: d.currency, contestSubunits, odds: view.odds }, rates);
+  // The merchant's record (sample history plus what they did here, never this dispute itself) shifts the AI's odds a little.
+  const { recs: myRecs } = useLedger();
+  const pool = useMemo(() => [...sampleRecords(rates), ...myRecs.filter((r) => r.id !== c.id)], [rates, myRecs, c.id]);
+  const record = useMemo(() => historyFor(pool, d.reason_code), [pool, d.reason_code]);
+  const oddsAdj = useMemo(() => adjustOdds(view.odds, view.confidence, pool), [view.odds, view.confidence, pool]);
+  const money = moneyCheck({ amountSubunits: d.amount, currency: d.currency, contestSubunits, odds: oddsAdj.odds }, rates);
+  const miss = useMemo(() => {
+    const input = { call: finalCall, action: state.action?.type, outcome: state.outcome };
+    const kind = missKind(input);
+    if (!kind) return null;
+    const file = buildMissCase({
+      ...input,
+      caseId: c.id,
+      reasonCode: d.reason_code,
+      reasonDescription: d.reason_description,
+      currency: d.currency,
+      customerClaim: c.customer_claim,
+      razorpayFacts: c.razorpay_facts,
+      evidence: allEvidence.map((e) => ({ id: e.id, title: "title" in e ? (e as { title: string }).title : undefined, content: e.content })),
+      confidence: view.confidence,
+      decidingEvidence: view.decidingEvidence,
+      reason: view.reason,
+    });
+    return file ? { kind, file } : null;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finalCall, state.action, state.outcome, view, state.added]);
   const t = timeLeft(d.respond_by_hours_left);
   const showResponse = finalCall !== "shield" && !state.action && (finalCall === "fight" || state.reviewOpen);
   const acted = state.action;
@@ -121,9 +159,6 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   useEffect(() => {
     track("dispute_opened", c.id);
   }, [c.id]);
-
-  const { recs: myRecs } = useLedger();
-  const record = useMemo(() => historyFor([...sampleRecords(rates), ...myRecs.filter((r) => r.id !== c.id)], d.reason_code), [rates, myRecs, c.id, d.reason_code]);
 
   const log = (actor: "You" | "Advisor", text: string) =>
     update((s) => ({ ...s, audit: [...s.audit, { at: now(), actor, text }] }));
@@ -604,12 +639,31 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                   {view.contradictions.length ? view.contradictions.join("; ") : "none"}
                 </p>
 
+                {vsChecklist && (
+                  <div className="mt-3 rounded-xl border border-line bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="vs-checklist">
+                    <b>Why not just a checklist?</b>{" "}
+                    {vsChecklist.agree ? (
+                      <>
+                        A fixed checklist would also say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}</b> here ({vsChecklist.basis.toLowerCase()}) The agent adds the reasons, the money check and the cited draft.
+                      </>
+                    ) : (
+                      <>
+                        A fixed checklist would say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}</b> ({vsChecklist.basis.toLowerCase()}) It only sees which documents are attached. The agent read what they say and says <b>{vsChecklist.agentWord}</b>.
+                      </>
+                    )}
+                  </div>
+                )}
+
                 <div id="money"><H3>Money</H3></div>
                 <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
                   <Stat label="At stake" value={formatInrFull(money.atStakeInr)} sub={`${formatOriginal(d.amount, d.currency)} · ${rateWord(rates)} ₹${rateFor(d.currency, rates).toFixed(2)}`} />
                   <Stat label="Taken back if you lose" value={formatInrFull(money.atStakeInr)} sub={`at today's ${rateWord(rates)}`} />
                   <Stat label="Possible fee if you fight and lose" value={formatInrFull(money.feesAtRiskInr)} sub={`Visa arbitration, USD ${VISA_ARBITRATION_FEE_USD}. Only if the bank escalates.`} />
-                  <Stat label="AI estimate of odds" value={`${Math.round(view.odds * 100)}%`} sub="estimate, not a promise" />
+                  <Stat
+                    label={oddsAdj.adjusted ? "Odds, adjusted by your record" : "AI estimate of odds"}
+                    value={`${Math.round(oddsAdj.odds * 100)}%`}
+                    sub={oddsAdj.adjusted ? `AI said ${Math.round(oddsAdj.ai * 100)}%. Estimate, not a promise.` : "estimate, not a promise"}
+                  />
                 </div>
                 {view.defensibleAmount !== null && (
                   <p className="mt-2 text-[13px] text-[#555]">
@@ -617,6 +671,11 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                   </p>
                 )}
                 <p className="mt-2 text-xs text-helper">{view.oddsNote}</p>
+                {oddsAdj.adjusted && (
+                  <p className="mt-1 text-xs text-helper" data-testid="odds-adjusted">
+                    Adjusted by your record: {oddsAdj.won} of {oddsAdj.n} fights the advisor called Fight at {view.confidence} confidence were won. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check uses this number.
+                  </p>
+                )}
                 {record.fights > 0 && (
                   <p className="mt-2 text-[14px]" data-testid="own-record">
                     <b>Your record on {d.reason_code}:</b> fought {record.fights}, won {record.won} ({Math.round((record.won / record.fights) * 100)}%). <Link href="/results" className="relative font-medium text-brand after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] hover:underline">See Results</Link>
@@ -959,6 +1018,29 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                 Reason {d.reason_code}
                 {documentsBySlot.size > 0 && <> with {[...documentsBySlot.keys()].join(" + ")}</>}: <b>{state.outcome}</b>. In the real product this feeds the odds for the next dispute like this one.
               </p>
+              {miss && (
+                <div className="mt-3 rounded-xl border border-line bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="miss-case">
+                  <b>{miss.kind === "wrong_fight" ? "The advisor said Fight and it was lost." : "The advisor said Fold and you won."}</b> That is the kind of case an eval set needs.
+                  In the real product it would be queued for review. Here you can download it as a candidate case: names, emails and long numbers are masked, and the proposed answer ({miss.file.proposed_label}) must be confirmed by a person before it is added.
+                  <div className="mt-2">
+                    <button
+                      className={ghost}
+                      onClick={() => {
+                        const blob = new Blob([JSON.stringify(miss.file, null, 2)], { type: "application/json" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = `eval-candidate-${c.id}.json`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        log("You", "Downloaded this dispute as an eval candidate (demo)");
+                      }}
+                    >
+                      Download as eval case
+                    </button>
+                  </div>
+                </div>
+              )}
               {view.tip && (
                 <>
                   <H3>Next time</H3>

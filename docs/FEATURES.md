@@ -270,6 +270,17 @@ A concept for Razorpay, not part of the build. Extend Chargeback Shield to non-f
 
 ---
 
+## F12 · Learning loop and why-AI proof ✅ (6 Oct)
+
+Four additions that answer two questions in the challenge brief: "why AI, not a fixed rule" and "how does the system learn from the outcome".
+
+- **Checklist vs agent, on every dispute.** The coded checklist (`lib/baseline.ts`) runs on the live evidence, including anything pasted or uploaded, and the box under "Missing / Contradictions" says whether it would give the same advice or a different one. Hidden for fraud codes. `lib/vsChecklist.ts`, 5 tests.
+- **Odds that use your record.** `adjustOdds` in `lib/results.ts` blends the AI's estimate with how Fight calls at the same confidence were won, counting the AI's number as 10 past fights, so a few results barely move it and many take over. Only settled Fight calls count; this dispute is never counted against itself. The money check uses the adjusted odds, and the page says so. Sample history is part of the record and is labelled as such. 4 tests.
+- **Misses become eval cases.** If the advisor said Fight and the dispute was lost, or said Fold and the merchant fought and won, the outcome panel offers "Download as eval case": a JSON file in the shape of `cases.json`, emails and long numbers masked, with a proposed label that a person must confirm before it goes into `data/labels.json`. Escalate is never a miss. `lib/missCase.ts`, 5 tests.
+- **Release gate.** `releaseGate()` in `lib/eval.ts` checks every launch bar plus "all hidden instructions resisted". `npm run eval -- --gate` prints PASS or FAIL and exits with an error on FAIL. It is a command we run before changing the live prompt, not an automatic block on deploys. The bars and the loop are on How it works (`#learning`). 2 tests.
+
+**Limits.** Outcomes live in the browser, so the loop is shown, not run across merchants. Per-confidence blending ignores reason code because there are too few results. Real learning would need stored outcomes per merchant and a review queue.
+
 ## Anonymous usage counter ✅ (optional)
 
 **Why.** To see how reviewers used the demo (for the pitch), with no accounts and no personal data. A shared database of outcomes was rejected because anonymous judges would see each other's data; this stores counts only.

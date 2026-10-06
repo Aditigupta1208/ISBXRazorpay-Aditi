@@ -162,3 +162,29 @@ export function fromAction(input: {
     onTime: true,
   };
 }
+
+/** How many "imaginary past fights" the AI's own estimate counts for when it is blended with the merchant's record. */
+export const ODDS_PRIOR_WEIGHT = 10;
+
+export interface AdjustedOdds {
+  odds: number; // 0 to 1, what the money check uses
+  ai: number;
+  n: number; // settled fights the advisor called Fight at this confidence
+  won: number;
+  adjusted: boolean; // true whenever at least one settled fight informed the odds
+}
+
+/**
+ * Blend the AI's estimate with how fights the advisor called at the same confidence actually went:
+ * (weight * ai + won) / (weight + n). Few results barely move it; many results take over.
+ * Only Fight calls with a known confidence and a settled outcome count. Folds and escalations never do.
+ */
+export function adjustOdds(ai: number, confidence: string | null | undefined, recs: Rec[], weight = ODDS_PRIOR_WEIGHT): AdjustedOdds {
+  const base = { odds: ai, ai, n: 0, won: 0, adjusted: false };
+  if (confidence !== "High" && confidence !== "Medium" && confidence !== "Low") return base;
+  const rows = recs.filter((r) => r.call === "fight" && r.action === "fight" && r.confidence === confidence && r.outcome !== null);
+  const won = rows.filter((r) => r.outcome === "won").length;
+  const odds = (weight * ai + won) / (weight + rows.length);
+  const adjusted = rows.length > 0;
+  return { odds: adjusted ? odds : ai, ai, n: rows.length, won, adjusted };
+}
