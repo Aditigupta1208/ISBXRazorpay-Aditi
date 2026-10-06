@@ -643,7 +643,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {notice.text}
             </p>
           )}
-          <Card className={running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}>
+          <Card id="decision" className={running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}>
             <div className="flex flex-wrap items-center gap-3">
               <CallChip call={finalCall} size="lg" />
               {finalCall !== "shield" && <span className="font-medium text-[#555]">{view.confidence} confidence</span>}
@@ -839,7 +839,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           </Card>
 
           {finalCall === "escalate" && !acted && (
-            <Card>
+            <Card id="get-first">
               <H3>Get this first</H3>
               <p className="text-[17px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
               {view.draft && <p className="mt-2 text-[14px] text-[#555]">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}

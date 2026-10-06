@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { TourLink } from "./TourLink";
 
 const KEY = "da:v1:tips-hidden";
 
@@ -50,16 +51,16 @@ export function StartHere() {
           <span id="start-here">New here? Try these three</span>
           <span aria-hidden className="text-brand transition-transform group-open:rotate-90">›</span>
         </summary>
-        <p className="mt-1 mb-3 text-[13px] text-helper">About two minutes. Nothing is sent anywhere.</p>
+        <p className="mt-1 mb-3 text-[13px] text-helper">About two minutes. Nothing is sent anywhere. <TourLink className="-my-3 inline-block py-3 font-semibold text-brand underline" label="Or take the guided tour" /></p>
         <ol className="grid gap-2">{STEPS.map((s, i) => <Step key={s.id} s={s} i={i} />)}</ol>
       </details>
       <div className="hidden md:block">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2 className="text-[17px] font-semibold">New here? Try these three</h2>
-            <p className="mb-3 text-[13px] text-helper">About two minutes. Nothing is sent anywhere.</p>
+            <p className="mb-3 text-[13px] text-helper">About two minutes. Nothing is sent anywhere. <TourLink className="-my-3 inline-block py-3 font-semibold text-brand underline" label="Or take the guided tour" /></p>
           </div>
-          <button type="button" onClick={() => set(true)} className="shrink-0 text-[13px] font-semibold text-helper underline">Hide</button>
+          <button type="button" onClick={() => set(true)} className="-mt-2 min-h-10 shrink-0 px-2 text-[13px] font-semibold text-helper underline">Hide</button>
         </div>
         <ol className="grid grid-cols-3 gap-3">{STEPS.map((s, i) => <Step key={s.id} s={s} i={i} />)}</ol>
       </div>

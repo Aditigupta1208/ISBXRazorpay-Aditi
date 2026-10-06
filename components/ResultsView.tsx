@@ -82,7 +82,7 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
             )}
           </Section>
 
-          <Section title="Was the advisor right?" note="This is how the product would learn. The AI estimate is checked against what actually happened.">
+          <Section id="advisor-right" title="Was the advisor right?" note="This is how the product would learn. The AI estimate is checked against what actually happened.">
             <div className="grid gap-3 md:grid-cols-2">
               <div className="rounded-2xl border border-line bg-white p-4">
                 <h3 className="mb-1 text-[15px] font-semibold">Fight calls, by confidence</h3>
@@ -137,9 +137,9 @@ function Tile({ label, value, note }: { label: string; value: string; note: stri
   );
 }
 
-function Section({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
+function Section({ id, title, note, children }: { id?: string; title: string; note?: string; children: React.ReactNode }) {
   return (
-    <section className="mb-6">
+    <section id={id} className="mb-6">
       <h2 className="text-[17px] font-semibold">{title}</h2>
       {note && <p className="mb-2 text-[13px] text-helper">{note}</p>}
       <div className={note ? "" : "mt-2"}>{children}</div>

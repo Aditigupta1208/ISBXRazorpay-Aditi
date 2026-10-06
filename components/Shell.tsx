@@ -1,4 +1,6 @@
 import { SubTabs } from "./SubTabs";
+import { Tour } from "./Tour";
+import { TourLink } from "./TourLink";
 import type { ReactNode } from "react";
 
 const TOP = ["Ray AI", "Payments", "Banking+", "Payroll", "More"];
@@ -13,7 +15,8 @@ export function Shell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       <div className="bg-[#FFF4CC] px-3 print:hidden py-1.5 text-center text-xs text-[#5C4400]">
-        Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.
+        Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.{" "}
+        <TourLink className="-my-3 inline-block py-3 font-semibold underline" />
       </div>
       <header className="flex h-[60px] items-center justify-between bg-nav px-3 text-white md:px-7">
         <nav aria-label="Main" className="scroll-fade flex gap-5 overflow-x-auto md:gap-[34px]">
@@ -39,6 +42,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <SubTabs />
+      <Tour />
       <main id="main" tabIndex={-1} className="mx-auto max-w-[1180px] px-4 pt-4 pb-10 outline-none md:px-6 md:pt-7 md:pb-[60px]">{children}</main>
     </>
   );
