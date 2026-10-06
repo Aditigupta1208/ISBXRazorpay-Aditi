@@ -19,11 +19,11 @@ export default async function ResultsPage() {
   return (
     <>
       <h1 className="mb-1 text-2xl leading-8 font-semibold">Results</h1>
-      <p className="mb-4 max-w-[760px] text-[15px] text-ink-soft">
+      <p className="mb-4 max-w-[760px] text-[14px] text-ink-soft">
         What happened to the disputes you acted on, and whether the advisor was right.
       </p>
       <ResultsView rates={rates} tips={tips} reasonNames={REASONS} />
-      <p className="mt-6 text-[13px] text-helper">{rateNote(rates)} Sample history is not real data and not Razorpay data. What you record stays in this browser.</p>
+      <p className="mt-6 text-[12px] text-helper">{rateNote(rates)} Sample history is not real data and not Razorpay data. What you record stays in this browser.</p>
     </>
   );
 }
