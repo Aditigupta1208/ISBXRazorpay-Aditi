@@ -24,6 +24,7 @@
 }
 
 body { background: var(--color-canvas); color: #000; font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums; }
+b, strong { font-weight: 600; }
 :focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
 
 /* Tab rows that scroll sideways on a phone get a soft fade on the right so the hidden tabs are noticed. */

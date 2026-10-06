@@ -5,6 +5,7 @@ import { useLedger, clearLedger } from "@/lib/ledger";
 import { SAMPLE_COUNT, sampleRecords, summarize, weakestCode } from "@/lib/results";
 import { ODDS_BY_CONFIDENCE } from "@/lib/results";
 import type { Rates } from "@/lib/rates";
+import { Card, Section, Stat } from "@/components/ui";
 
 const pct = (n: number | null) => (n === null ? "n/a" : `${Math.round(n * 100)}%`);
 
@@ -150,29 +151,5 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
         </>
       )}
     </div>
-  );
-}
-
-function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`overflow-hidden rounded-2xl border border-line bg-white p-4 md:p-5 ${className}`}>{children}</div>;
-}
-
-function Stat({ label, value, note }: { label: string; value: string; note: string }) {
-  return (
-    <div className="px-3 py-3 md:px-5 md:py-4">
-      <div className="text-[12px] text-helper">{label}</div>
-      <div className="text-[24px] leading-8 font-semibold">{value}</div>
-      <div className="text-[12px] text-helper">{note}</div>
-    </div>
-  );
-}
-
-function Section({ id, title, note, children }: { id?: string; title: string; note?: string; children: React.ReactNode }) {
-  return (
-    <section id={id} className="mb-6">
-      <h2 className="text-[16px] font-semibold">{title}</h2>
-      {note && <p className="mb-2 text-[12px] text-helper">{note}</p>}
-      <div className={note ? "" : "mt-2"}>{children}</div>
-    </section>
   );
 }

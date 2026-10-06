@@ -1,4 +1,5 @@
 import { CallChip } from "@/components/CallChip";
+import { Card, PageTitle, Stat } from "@/components/ui";
 import { RulesVsUnseen } from "@/components/RulesVsUnseen";
 import { scoreRules, type KeyRow } from "@/lib/ruleScoreboard";
 import labelsFileData from "@/data/labels.json";
@@ -71,7 +72,7 @@ export default function EvalsPage() {
             <span className="sr-only">differs from the human answer</span>
           </span>
         )}
-        {note && <span className="text-xs text-helper">{note}</span>}
+        {note && <span className="text-[12px] text-helper">{note}</span>}
       </span>
     );
 
@@ -79,49 +80,45 @@ export default function EvalsPage() {
 
   return (
     <>
-      <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">For reviewers</p>
-      <h1 className="mb-2 text-2xl leading-8 font-semibold">Evals: can you trust the advisor?</h1>
-      <section id="why-evals" aria-labelledby="why-evals-h" className="mb-5 scroll-mt-4 rounded-2xl border border-line bg-white p-5">
-        <h2 id="why-evals-h" className="text-[17px] font-semibold">Why this page exists</h2>
-        <p className="mt-1 max-w-[760px] text-[15px] text-ink-soft">
-          The advisor recommends whether to fight or give up money. Before anyone relies on that, we test it the way you would test a new hire: give it practice disputes where a person already knows the right answer, and count how often it agrees.
+      <PageTitle eyebrow="For reviewers" title="Evals: can you trust the advisor?">
+        We test the advisor the way you would test a new hire: practice disputes where a person already knows the right answer, and count how often it agrees.
+      </PageTitle>
+
+      <Card id="why-evals" className="mb-4 scroll-mt-4 !p-0">
+        <div className="px-4 py-4 md:px-5">
+          <h2 className="text-[16px] font-semibold">The result so far</h2>
+          <p className="mt-1 max-w-[760px] text-[14px] text-ink-soft">
+            {labels.length} practice disputes, each with an answer written by a person, and a plain fixed checklist beside the agent so you can see what the AI adds. The saved agent run matched the person on {agreeCount(v1Rows)} of {n(v1Rows)}; the checklist on {agreeCount(only(v1Ids))}. {latest ? "A newer run is below." : "The new Claude run is not done yet."}
+          </p>
+        </div>
+        <div className="grid grid-cols-3 divide-x divide-line border-t border-line">
+          <Stat label="Agent v1 (saved)" value={`${agreeCount(v1Rows)} of ${n(v1Rows)}`} note="match the human answer" />
+          <Stat label="Fixed checklist" value={`${agreeCount(only(v1Ids))} of ${n(only(v1Ids))}`} note="same cases, same key" />
+          {latest ? (
+            <Stat label={`Agent ${latestName} (automated)`} value={`${agreeCount(latest.rows)} of ${n(latest.rows)}`} note={`checklist: ${agreeCount(only(latestIds))} of ${n(only(latestIds))}`} />
+          ) : (
+            <Stat label={`Agent ${PROMPT_VERSION} (automated)`} value="Not run yet" note="needs the API key" muted />
+          )}
+        </div>
+        <p className="border-t border-line px-4 py-3 text-[12px] text-helper md:px-5">
+          The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases) have no saved agent run. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
+          {!latest && <> Run <code className="text-[12px]">npm run eval</code> to score the agent on all of them.</>}
         </p>
-        <ol className="mt-3 hidden gap-3 text-[14px] md:grid md:grid-cols-3">
-          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">1. The test</b>{labels.length} practice disputes, each with an answer written by a person.</li>
-          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">2. The comparison</b>A plain fixed checklist, so you can see what the AI adds beyond ticking off documents.</li>
-          <li className="rounded-xl bg-[#F7F8FA] p-3"><b className="block">3. The result so far</b>The saved run matched the person on {agreeCount(v1Rows)} of {n(v1Rows)}; the checklist on {agreeCount(only(v1Ids))}. {latest ? "A newer run is below." : "The new Claude run is not done yet."}</li>
-        </ol>
-        <p className="mt-3 hidden text-[13px] text-helper md:block">How to read the tables: a green call matches the person. A red cross means it differs. The page ends with what these numbers cannot show.</p>
-      </section>
+      </Card>
 
-
-      <nav aria-label="On this page" className="mb-4 flex flex-wrap gap-2 text-[13px] font-semibold">
+      <nav aria-label="On this page" className="mb-5 flex flex-wrap gap-2 text-[14px] font-semibold">
         {[["#c15", "The case that matters"], ["#cases", "Each case"], ["#rules", "Rules vs unseen cases"], ["#limits", "What the numbers do not show"]].map(([href, label]) => (
           <a key={href} href={href} className="inline-flex min-h-10 items-center rounded-full border border-line bg-white px-3.5 text-brand hover:border-brand">{label}</a>
         ))}
       </nav>
 
-      <div className="mb-3 grid grid-cols-3 gap-2 md:gap-4">
-        <Tile label="Agent v1 (saved)" value={`${agreeCount(v1Rows)} of ${n(v1Rows)}`} note="match the human answer" />
-        <Tile label="Fixed checklist" value={`${agreeCount(only(v1Ids))} of ${n(only(v1Ids))}`} note="same cases, same answer key" />
-        {latest ? (
-          <Tile label={`Agent ${latestName} (automated)`} value={`${agreeCount(latest.rows)} of ${n(latest.rows)}`} note={`checklist on these: ${agreeCount(only(latestIds))} of ${n(only(latestIds))}`} />
-        ) : (
-          <Tile label={`Agent ${PROMPT_VERSION} (automated)`} value="Not run yet" note="needs the API key" muted />
-        )}
-      </div>
-      <p className="mb-4 text-[13px] text-helper">
-        The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases) have no saved agent run. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
-        {!latest && <> Run <code className="rounded bg-white px-1 py-0.5 text-[12px]">npm run eval</code> to score the agent on all of them.</>}
-      </p>
-
       {c15 && (
-        <section className="mb-4 scroll-mt-4 rounded-2xl border border-brand bg-brand-soft p-[18px]" aria-labelledby="c15">
-          <h2 id="c15" className="text-[17px] font-semibold">The case that matters most: C15</h2>
-          <p className="mt-1 mb-3 max-w-[760px] text-[14px] text-[#333]">
-            A group-tour dispute where the accepted policy meant only half was owed. A reviewer that only applied Visa&apos;s rules said Accept, which would have refunded USD 1,600 the merchant did not owe. The right call depends on the money and on a document the merchant has not sent: Escalate. (From the kill test, <code className="text-[12px]">eval/kill-test-v1.md</code>.)
+        <section className="mb-5 scroll-mt-4 rounded-2xl border border-brand bg-brand-soft p-4 md:p-5" aria-labelledby="c15">
+          <h2 id="c15" className="text-[16px] font-semibold">The case that matters most: C15</h2>
+          <p className="mt-1 mb-3 max-w-[760px] text-[14px] text-ink-soft">
+            A group-tour dispute where the accepted policy meant only half was owed. A reviewer that only applied Visa&apos;s rules said Accept, which would have refunded USD 1,600 the merchant did not owe. The right call depends on the money and on a document the merchant has not sent: Escalate. (From the kill test, <code>eval/kill-test-v1.md</code>.)
           </p>
-          <div className="flex flex-wrap gap-x-5 gap-y-2 text-[13px]">
+          <div className="flex flex-wrap gap-x-5 gap-y-2 text-[14px]">
             {[
               ["Human answer", toCall(c15.decision) as Call],
               ["Checklist", toCall(c15.checklist_decision) as Call],
@@ -137,11 +134,11 @@ export default function EvalsPage() {
         </section>
       )}
 
-      <div className="relative mb-4 overflow-x-auto rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgba(0,0,0,.03)]">
+      <div className="relative mb-5 overflow-x-auto rounded-2xl border border-line bg-white">
         <table className="w-full min-w-[640px] text-left text-[14px]">
           <caption className="sr-only">Results against the PRD bars</caption>
           <thead>
-            <tr className="border-b border-line text-[13px] text-helper">
+            <tr className="border-b border-line text-[12px] text-helper">
               <th scope="col" className="px-4 py-3 font-medium">Measure</th>
               <th scope="col" className="px-4 py-3 font-medium">Launch / target / stretch</th>
               {cols.map((c) => (
@@ -165,9 +162,9 @@ export default function EvalsPage() {
                   const tr = c.agent ? tier(t, v) : null; // the bars are the agent's targets, not the checklist's
                   return (
                     <td key={c.name} className="px-4 py-3">
-                      <b className="text-[15px]">{text}</b>
+                      <b className="font-semibold">{text}</b>
                       {t.key.startsWith("wrong") && <span className="ml-1 text-helper">({pct(v)})</span>}
-                      {tr && <span className={`mt-1 block w-fit rounded-full px-2 py-0.5 text-xs font-semibold ${TIER_CLS[tr]}`}>{TIER_TEXT[tr]}</span>}
+                      {tr && <span className={`mt-1 block w-fit rounded-full px-2 py-0.5 text-[12px] font-semibold ${TIER_CLS[tr]}`}>{TIER_TEXT[tr]}</span>}
                     </td>
                   );
                 })}
@@ -177,7 +174,7 @@ export default function EvalsPage() {
               <th scope="row" className="px-4 py-3 font-medium">Other bars</th>
               <td className="px-4 py-3 text-ink-soft">Unsupported claims 0, fraud routed 100%</td>
               {cols.map((c) => (
-                <td key={c.name} className="px-4 py-3 text-[13px] text-ink-soft">
+                <td key={c.name} className="px-4 py-3 text-[14px] text-ink-soft">
                   {!c.agent || !c.s ? <span className="text-helper">n/a</span> : (
                     <>Unsupported citations: <b>{c.s.unsupportedCitations}</b><br />Fraud routed: <b>{pct(c.s.fraudRouted)}</b>{latest && c.name.includes(latestName) && <><br />Injection resisted: <b>{pct(c.s.injectionResisted)}</b></>}</>
                   )}
@@ -189,21 +186,23 @@ export default function EvalsPage() {
       </div>
 
       {latest && (
-        <div className="mb-4 grid gap-4 md:grid-cols-3">
-          <Card label="Safety rules changed the call" value={`${latest.summary.downgrades} cases`} note={`Model alone: ${pct(latest.summary.rawAgreement)}. After the rules: ${pct(latest.summary.agreement)}.`} />
-          <Card label="Average cost per check" value={latest.summary.avgCostUsd === null ? "n/a" : `USD ${latest.summary.avgCostUsd.toFixed(3)}`} note="Token prices as of the date in lib/pricing.ts." />
-          <Card label="Average time per check" value={latest.summary.avgMs === null ? "n/a" : `${(latest.summary.avgMs / 1000).toFixed(1)} s`} note={`${latest.summary.failed} of ${latest.summary.cases} had no usable answer.`} />
-        </div>
+        <Card className="mb-5 !p-0">
+          <div className="grid grid-cols-3 divide-x divide-line">
+            <Stat label="Safety rules changed the call" value={`${latest.summary.downgrades} cases`} note={`Model alone: ${pct(latest.summary.rawAgreement)}. After the rules: ${pct(latest.summary.agreement)}.`} />
+            <Stat label="Average cost per check" value={latest.summary.avgCostUsd === null ? "n/a" : `USD ${latest.summary.avgCostUsd.toFixed(3)}`} note="Token prices as of the date in lib/pricing.ts." />
+            <Stat label="Average time per check" value={latest.summary.avgMs === null ? "n/a" : `${(latest.summary.avgMs / 1000).toFixed(1)} s`} note={`${latest.summary.failed} of ${latest.summary.cases} had no usable answer.`} />
+          </div>
+        </Card>
       )}
 
-      <h2 id="cases" className="mt-6 mb-2 scroll-mt-4 text-lg font-semibold">Case by case</h2>
+      <h2 id="cases" className="mb-1 scroll-mt-4 text-[16px] font-semibold">Case by case</h2>
       <details className="mb-4" data-testid="cases-detail">
         <summary className="mb-2 inline-flex min-h-10 cursor-pointer items-center text-[14px] font-semibold text-brand">Show all {labels.length} cases</summary>
-      <div className="relative mb-2 overflow-x-auto rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgba(0,0,0,.03)]">
+      <div className="relative mb-2 overflow-x-auto rounded-2xl border border-line bg-white">
         <table className="w-full text-left text-[14px]">
           <caption className="sr-only">Each case: the human answer and what each method said. A cross means it differs from the human answer.</caption>
           <thead>
-            <tr className="border-b border-line text-[13px] text-helper">
+            <tr className="border-b border-line text-[12px] text-helper">
               <th scope="col" className="px-1 py-3 font-medium md:px-4">Case</th>
               <th scope="col" className="hidden px-4 py-3 font-medium md:table-cell">Type</th>
               <th scope="col" className="px-1 py-3 font-medium md:px-4"><span className="md:hidden">Human</span><span className="hidden md:inline">Human answer</span></th>
@@ -234,15 +233,15 @@ export default function EvalsPage() {
           </tbody>
         </table>
       </div>
-      <p className="mb-6 max-w-[760px] text-[13px] text-helper">
+      <p className="mb-6 max-w-[760px] text-[12px] text-helper">
         A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C30 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run yet (needs the API key)`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
       </p>
       </details>
 
       <RulesVsUnseen s={rules} agentKnown={{ agree: agreeCount(v1Rows), n: n(v1Rows) }} />
 
-      <h2 id="limits" className="mb-2 scroll-mt-4 text-lg font-semibold">What these numbers do not show</h2>
-      <ul className="mb-6 max-w-[760px] list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft">
+      <h2 id="limits" className="mb-2 scroll-mt-4 text-[16px] font-semibold">What these numbers do not show</h2>
+      <ul className="mb-6 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
         <li>The answer key was written by the builder from Visa&apos;s rules. A second AI flagged disagreements, but the builder decided them.</li>
         <li>The {labels.length} cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases. C21 to C30 were drafted by the builder&apos;s AI assistant for the unseen-rules test, and their answers are proposed, not yet confirmed.</li>
         <li>The v1 results came from a different prompt and model, by hand. They are kept as the clean baseline, not as the product&apos;s score.</li>
@@ -252,25 +251,5 @@ export default function EvalsPage() {
         <li>Nothing here is a real win rate. It shows the agent applies the rules to written evidence and knows when to stop.</li>
       </ul>
     </>
-  );
-}
-
-function Tile({ label, value, note, muted }: { label: string; value: string; note: string; muted?: boolean }) {
-  return (
-    <div className="rounded-2xl border border-line bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,.03)] md:p-[22px]">
-      <span className="block text-[12px] leading-4 text-helper md:text-[13px]">{label}</span>
-      <b className={`block text-xl font-semibold md:text-[26px] ${muted ? "text-helper" : ""}`}>{value}</b>
-      <span className="mt-0.5 block text-[11px] leading-4 text-ink-soft md:text-[13px]">{note}</span>
-    </div>
-  );
-}
-
-function Card({ label, value, note }: { label: string; value: string; note: string }) {
-  return (
-    <div className="rounded-2xl border border-line bg-white p-[22px] shadow-[0_1px_2px_rgba(0,0,0,.03)]">
-      <span className="block text-[13px] text-helper">{label}</span>
-      <b className="text-[26px] font-semibold">{value}</b>
-      <span className="mt-1 block text-[13px] text-ink-soft">{note}</span>
-    </div>
   );
 }

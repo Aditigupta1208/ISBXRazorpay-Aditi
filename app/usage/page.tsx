@@ -6,7 +6,7 @@ export default function UsagePage() {
   return (
     <>
       <h1 className="mb-1 text-2xl leading-8 font-semibold">Usage</h1>
-      <p className="mb-4 max-w-[760px] text-[15px] text-ink-soft">Builder only. Anonymous counts of what reviewers did in this demo. Needs the admin token.</p>
+      <p className="mb-4 max-w-[760px] text-[14px] text-ink-soft">Builder only. Anonymous counts of what reviewers did in this demo. Needs the admin token.</p>
       <UsageReport />
     </>
   );

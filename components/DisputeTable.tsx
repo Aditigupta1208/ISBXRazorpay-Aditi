@@ -73,13 +73,13 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
               key={f.key}
               aria-pressed={filter === f.key}
               onClick={() => setFilter(f.key)}
-              className={`min-h-10 rounded-full border px-3.5 text-[13px] font-semibold ${filter === f.key ? "border-brand bg-brand-soft text-[#2B5BC8]" : "border-[#D6D6D6] bg-white text-[#333]"}`}
+              className={`min-h-10 rounded-full border px-3.5 text-[12px] font-semibold ${filter === f.key ? "border-brand bg-brand-soft text-[#2B5BC8]" : "border-[#D6D6D6] bg-white text-[#333]"}`}
             >
               {f.label}
             </button>
           ))}
         </div>
-        <button onClick={download} className="ml-auto min-h-10 rounded-[10px] border border-[#D6D6D6] px-3.5 text-[13px] font-semibold">
+        <button onClick={download} className="ml-auto min-h-10 rounded-[10px] border border-[#D6D6D6] px-3.5 text-[12px] font-semibold">
           Download CSV
         </button>
       </div>
@@ -97,12 +97,12 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
                   {r.timeText} left
                 </span>
               </div>
-              <div className="mt-0.5 text-[13px] text-[#555]">
-                <span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-xs text-[#344]">{r.reasonCode}</span> {r.reason}
+              <div className="mt-0.5 text-[12px] text-[#555]">
+                <span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-[12px] text-[#344]">{r.reasonCode}</span> {r.reason}
               </div>
               <div className="mt-2 flex items-center justify-between gap-3">
                 {r.call ? <CallChip call={r.call} /> : <span className="text-helper">Not checked</span>}
-                <span className="text-[13px] text-helper">{actions[r.id] ?? r.merchant}</span>
+                <span className="text-[12px] text-helper">{actions[r.id] ?? r.merchant}</span>
               </div>
             </Link>
           </li>
@@ -110,9 +110,9 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
         {shown.length === 0 && <li className="px-4 py-8 text-center text-helper">No disputes with this call.</li>}
       </ul>
       <div className="hidden overflow-x-auto md:block">
-        <table className="w-full min-w-[820px] border-collapse text-[15px]">
+        <table className="w-full min-w-[820px] border-collapse text-[14px]">
           <thead>
-            <tr className="border-b border-line bg-[#FAFAFA] text-left text-xs font-semibold text-helper">
+            <tr className="border-b border-line bg-[#FAFAFA] text-left text-[12px] font-semibold text-helper">
               <th className="px-[18px] py-3.5">Dispute</th>
               <th className="px-[18px] py-3.5">Amount</th>
               <th className="px-[18px] py-3.5">Reason</th>
@@ -128,17 +128,17 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
             {shown.map((r) => (
               <tr key={r.id} className="relative border-b border-[#F1F1F1] hover:bg-[#FAFCFF]">
                 <td className={`px-[18px] py-4 ${r.call ? EDGE_BAR[r.call] : ""}`}>
-                  <Link href={`/disputes/${r.id}`} className="font-mono text-[13px] text-[#555] after:absolute after:inset-0 after:content-['']">
+                  <Link href={`/disputes/${r.id}`} className="font-mono text-[12px] text-[#555] after:absolute after:inset-0 after:content-['']">
                     {r.disputeId}
                   </Link>
-                  <div className="text-[13px] text-helper">{r.merchant}</div>
+                  <div className="text-[12px] text-helper">{r.merchant}</div>
                 </td>
                 <td className="px-[18px] py-4 font-semibold whitespace-nowrap">
                   {r.amount}
                   <span className="font-normal text-helper"> · {r.inr}</span>
                 </td>
                 <td className="px-[18px] py-4">
-                  <span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-xs text-[#344]">{r.reasonCode}</span> {r.reason}
+                  <span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-[12px] text-[#344]">{r.reasonCode}</span> {r.reason}
                 </td>
                 <td className={`px-[18px] py-4 font-semibold ${r.warn ? "text-warn" : ""}`}>
                   {r.warn && <span aria-hidden>⚠ </span>}
@@ -159,7 +159,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
           </tbody>
         </table>
       </div>
-      <p className="px-[18px] py-3.5 text-[13px] text-helper">Calls are saved results from an earlier test run, so this list works without an API key. {rateNote}</p>
+      <p className="px-[18px] py-3.5 text-[12px] text-helper">Calls are saved results from an earlier test run, so this list works without an API key. {rateNote}</p>
     </div>
   );
 }

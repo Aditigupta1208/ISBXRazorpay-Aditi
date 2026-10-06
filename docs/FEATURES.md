@@ -338,3 +338,10 @@ The dispute page now answers the merchant's question first. One column: the call
 - Progress is a bar. Left and right arrow keys move between steps; Esc closes. The page stays usable underneath.
 - Welcome is a tinted block with no border, so it reads as an introduction, not a section.
 - Calls have one colour each, used everywhere: solid chips (green Fight, amber Fold, red Escalate, grey Shield) and a colour bar down the left of every list row. Blue is only for actions.
+
+## F18 · One design system across every page (7 Oct, branch wip/agent-and-audit)
+- One type scale: 24 title, 16 section heading, 14 body, 12 caption (plus the hero sizes on the dispute page and welcome). Bold is always semibold. Shared pieces live in `components/ui.tsx` (Card, Section, PageTitle, Stat, SettingRow).
+- Agent setup rebuilt: terms and settings on the left, a sticky "What the advisor is told" preview and a "see it work" link on the right. The "what this screen is for" card is gone (its three points are the page subtitle and the preview).
+- Evals: intro, explainer boxes and score tiles merged into one summary card; same card and type scale throughout.
+- How it works: sections sit in cards; the long "where the rules come from" table is folded.
+- Distinct text styles per page dropped from 11 to 21 down to 5 to 12.

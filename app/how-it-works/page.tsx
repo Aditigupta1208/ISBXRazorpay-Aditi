@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Card, PageTitle, Section } from "@/components/ui";
 import { PROMPT_VERSION } from "@/lib/prompt";
 import { SOURCES } from "@/lib/evidenceChecklist";
 import { ODDS_PRIOR_WEIGHT } from "@/lib/results";
@@ -46,40 +47,41 @@ const ANSWERS = [
 export default function HowItWorksPage() {
   return (
     <>
-      <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">For reviewers</p>
-      <h1 className="mb-1 text-2xl leading-8 font-semibold">How it works</h1>
-      <p className="mb-5 max-w-[760px] text-[15px] text-ink-soft">
+      <PageTitle eyebrow="For reviewers" title="How it works">
         For businesses that sell services, subscriptions, travel or digital goods abroad. When a customer disputes a card payment and it is not fraud, Dispute Advisor tells you whether to fight, fold or escalate, and why.
-      </p>
+      </PageTitle>
 
       <section id="one-minute" aria-labelledby="one-minute-h" className="mb-8 scroll-mt-4">
-        <h2 id="one-minute-h" className="text-lg font-semibold">One dispute, start to finish</h2>
+        <h2 id="one-minute-h" className="text-[16px] font-semibold">One dispute, start to finish</h2>
         <p className="mb-3 text-[14px] text-ink-soft">A customer in Ireland disputes a $480 subscription charge. They say: &ldquo;I cancelled this.&rdquo;</p>
         <ol className="grid gap-3 md:grid-cols-5" aria-label="Flow">
           {FLOW.map(([n, t, d, href, cta]) => (
             <li key={n} className="relative rounded-2xl border border-line bg-white p-4 focus-within:ring-2 focus-within:ring-brand-soft hover:border-brand">
-              <span aria-hidden className="mb-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-[13px] font-semibold text-brand">{n}</span>
-              <b className="block text-[15px]">{t}</b>
-              <span className="block text-[13px] text-ink-soft">{d}</span>
-              <Link href={href} className="mt-2 inline-block text-[13px] font-medium text-brand after:absolute after:inset-0 after:content-[''] hover:underline">{cta} →</Link>
+              <span aria-hidden className="mb-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-[12px] font-semibold text-brand">{n}</span>
+              <b className="block text-[14px]">{t}</b>
+              <span className="block text-[12px] text-ink-soft">{d}</span>
+              <Link href={href} className="mt-2 inline-block text-[12px] font-semibold text-brand after:absolute after:inset-0 after:content-[''] hover:underline">{cta} →</Link>
             </li>
           ))}
         </ol>
       </section>
 
       <Section id="rules" title="The seven safety rules" note="They run in code after every answer. You can see each result on the dispute page.">
+        <Card>
         <ul className="grid gap-x-10 gap-y-2 md:grid-cols-2">
           {RULES.map(([id, t]) => (
-            <li key={id} className="flex gap-3 text-[15px]"><b className="w-8 shrink-0 text-brand">{id}</b><span>{t}</span></li>
+            <li key={id} className="flex gap-3 text-[14px]"><b className="w-8 shrink-0 text-brand">{id}</b><span>{t}</span></li>
           ))}
         </ul>
+        </Card>
       </Section>
 
       <Section id="learning" title="How it learns, and how a change ships" note="What this prototype does today, and what a real launch would add.">
+        <Card>
         <div className="grid gap-x-10 gap-y-5 md:grid-cols-2">
           <div>
-            <h3 className="text-[15px] font-semibold">After an outcome (built)</h3>
-            <ul className="mt-1 list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft">
+            <h3 className="text-[14px] font-semibold">After an outcome (built)</h3>
+            <ul className="mt-1 list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
               <li>Marking a dispute won or lost updates your record on the Results page.</li>
               <li>Your record shifts the odds shown on the next dispute where the advisor was equally confident. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check then uses the adjusted odds.</li>
               <li>A miss (the advisor said Fight and it was lost, or said Fold and you won) can be downloaded as a candidate eval case, with names and numbers masked and a proposed answer a person must confirm.</li>
@@ -87,50 +89,53 @@ export default function HowItWorksPage() {
             </ul>
           </div>
           <div>
-            <h3 className="text-[15px] font-semibold">Before a prompt or model change ships (the gate)</h3>
-            <p className="mt-1 text-[15px] text-ink-soft">The change is run on every case in the eval set ({getCases().length} today) with <code>npm run eval -- --gate</code>. It ships only if no measure is below its launch bar and every hidden-instruction case is resisted. The previous prompt (v2.1) is kept as the baseline to compare against.</p>
+            <h3 className="text-[14px] font-semibold">Before a prompt or model change ships (the gate)</h3>
+            <p className="mt-1 text-[14px] text-ink-soft">The change is run on every case in the eval set ({getCases().length} today) with <code>npm run eval -- --gate</code>. It ships only if no measure is below its launch bar and every hidden-instruction case is resisted. The previous prompt (v2.1) is kept as the baseline to compare against.</p>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-[14px] text-ink-soft">
               {THRESHOLDS.map((t) => (
                 <li key={t.key}>{t.label}: {t.dir === "min" ? "at least" : "at most"} {Math.round(t.launch * 100)}%</li>
               ))}
               <li>Hidden instructions resisted: all of them</li>
             </ul>
-            <p className="mt-2 text-xs text-helper">The gate is a command we run before changing the live prompt, not an automatic block on deploys.</p>
+            <p className="mt-2 text-[12px] text-helper">The gate is a command we run before changing the live prompt, not an automatic block on deploys.</p>
           </div>
         </div>
+        </Card>
       </Section>
 
       <div className="mt-10 border-t border-line pt-6">
-        <h2 className="text-xl font-semibold">For reviewers</h2>
-        <p className="mb-5 text-[13px] text-helper">The challenge brief&apos;s seven questions, what we assumed, what we left out, and where this prototype is weak.</p>
+        <h2 className="text-[16px] font-semibold">For reviewers</h2>
+        <p className="mb-5 text-[12px] text-helper">The challenge brief&apos;s seven questions, what we assumed, what we left out, and where this prototype is weak.</p>
 
         <Section title="The seven questions in the challenge brief">
+          <Card>
           <dl className="grid gap-x-10 gap-y-4 md:grid-cols-2">
             {ANSWERS.map(([q, a]) => (
               <div key={q}>
-                <dt className="text-[15px] font-semibold">{q}</dt>
-                <dd className="text-[15px] text-ink-soft">{a}</dd>
+                <dt className="text-[14px] font-semibold">{q}</dt>
+                <dd className="text-[14px] text-ink-soft">{a}</dd>
               </div>
             ))}
           </dl>
+          </Card>
         </Section>
 
-        <div className="grid gap-x-10 md:grid-cols-2">
+        <div className="grid gap-x-4 md:grid-cols-2">
           <Section title="One assumption to confirm">
-            <p className="text-[15px] text-ink-soft">
+            <Card><p className="text-[14px] text-ink-soft">
               We assume Razorpay&apos;s Dispute Responder does not today recommend fold or fight for a merchant&apos;s own evidence. Razorpay&apos;s Agentic Dashboard demo shows Ray reading an uploaded file in chat, so reading uploads alone is not new. What we add is the dispute-specific rule, the money maths and the Escalate call. We could not confirm this with the Agent Studio team.
-            </p>
+            </p></Card>
           </Section>
 
           <Section title="Left out on purpose">
-            <p className="text-[15px] text-ink-soft">
+            <Card><p className="text-[14px] text-ink-soft">
               Fraud disputes (Chargeback Shield covers them), pre-dispute alerts, real calls to Razorpay (requests are shown, not sent), connections to booking or product systems, contacting customers, arbitration, sign-in and several merchants, and a mobile app.
-            </p>
+            </p></Card>
           </Section>
         </div>
 
-        <Section title="Where the rules come from" note="Checked on 6 Oct 2026 against the published sources. The five rules were written first from public guides, then compared with these.">
-          <ul className="mb-3 list-disc space-y-1 pl-5 text-[15px] text-ink-soft">
+        <Fold title="Where the rules come from" note="Checked on 6 Oct 2026 against the published sources. The five rules were written first from public guides, then compared with these.">
+          <ul className="mb-3 list-disc space-y-1 pl-5 text-[14px] text-ink-soft">
             <li><a className="text-brand underline" href={SOURCES.visa.url} target="_blank" rel="noreferrer">{SOURCES.visa.label}</a>: the rules for each reason code.</li>
             <li><a className="text-brand underline" href={SOURCES.razorpay.url} target="_blank" rel="noreferrer">{SOURCES.razorpay.label}</a>: the 11 evidence slots, the 1,000 character summary, draft and submit.</li>
             <li><a className="text-brand underline" href={SOURCES.razorpayBlog.url} target="_blank" rel="noreferrer">{SOURCES.razorpayBlog.label}</a>: the USD 600 Visa arbitration fee (from 1 April 2025) and the response windows.</li>
@@ -138,7 +143,7 @@ export default function HowItWorksPage() {
           <div className="overflow-x-auto rounded-2xl border border-line bg-white">
             <table className="w-full text-left text-[14px]">
               <caption className="sr-only">Each rule compared with Visa&apos;s merchant guide</caption>
-              <thead className="text-[13px] text-helper"><tr><th scope="col" className="px-3 py-2 font-medium">Code</th><th scope="col" className="px-3 py-2 font-medium">Visa guide page</th><th scope="col" className="px-3 py-2 font-medium">Result of the check</th></tr></thead>
+              <thead className="text-[12px] text-helper"><tr><th scope="col" className="px-3 py-2 font-semibold">Code</th><th scope="col" className="px-3 py-2 font-semibold">Visa guide page</th><th scope="col" className="px-3 py-2 font-semibold">Result of the check</th></tr></thead>
               <tbody>
                 {RULE_CHECK.map(([code, page, note]) => (
                   <tr key={code} className="border-t border-line align-top"><th scope="row" className="px-3 py-2 font-semibold">{code}</th><td className="px-3 py-2 whitespace-nowrap">{page}</td><td className="px-3 py-2 text-ink-soft">{note}</td></tr>
@@ -146,35 +151,35 @@ export default function HowItWorksPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-2 text-[13px] text-helper">The guide is the June 2024 edition, so a newer one may differ. Everything here is a reading of public documents, not legal or Visa advice. Razorpay&apos;s response windows (3 business days for the first stage, then 2, then 1) are shown in its guide; this demo uses hours left and the first stage only.</p>
-        </Section>
+          <p className="mt-2 text-[12px] text-helper">The guide is the June 2024 edition, so a newer one may differ. Everything here is a reading of public documents, not legal or Visa advice. Razorpay&apos;s response windows (3 business days for the first stage, then 2, then 1) are shown in its guide; this demo uses hours left and the first stage only.</p>
+        </Fold>
 
         <Section title="What this demo counts">
-          <p className="text-[15px] text-ink-soft">
+          <Card><p className="text-[14px] text-ink-soft">
             If the builder has connected a counter, the demo adds one to an anonymous count when you open a dispute, re-run a check, upload, submit, fold, mark an outcome, or view Results, Evals or this page, and once for a first visit. No names, emails, IP addresses, cookies, evidence text or accounts are stored, and nothing is counted if your browser sends Do Not Track. Your outcomes and drafts stay in your own browser.
-          </p>
+          </p></Card>
         </Section>
 
         <Section title="Limits you should know">
-          <ul className="list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft md:columns-2 md:gap-10">
+          <Card><ul className="list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft md:columns-2 md:gap-10">
             <li>All {getCases().length} test cases are written by us from public patterns. The documents inside them are made up.</li>
             <li>The answer key is our reading of Visa&apos;s rules. It is not a real win rate.</li>
             <li>Exchange rates and fees in the money maths are demo values and are labelled that way.</li>
             <li>Without an API key this demo shows saved results. A new check on added evidence needs the live model.</li>
             <li>Odds on saved results are derived from the confidence level. Live checks give the model&apos;s own estimate. Neither is a promise.</li>
-          </ul>
+          </ul></Card>
         </Section>
       </div>
     </>
   );
 }
 
-function Section({ id, title, note, children }: { id?: string; title: string; note?: string; children: React.ReactNode }) {
+function Fold({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="mb-8 scroll-mt-4">
-      <h2 className="text-lg font-semibold">{title}</h2>
-      {note && <p className="mb-2 text-[13px] text-helper">{note}</p>}
-      <div className={note ? "" : "mt-2"}>{children}</div>
-    </section>
+    <details className="mb-6 rounded-2xl border border-line bg-white px-4 py-1 md:px-5">
+      <summary className="min-h-10 cursor-pointer py-2.5 text-[14px] font-semibold">{title}</summary>
+      {note && <p className="mb-2 text-[12px] text-helper">{note}</p>}
+      <div className="pb-3">{children}</div>
+    </details>
   );
 }

@@ -31,7 +31,7 @@ const Card = ({ children, className = "", id }: { children: ReactNode; className
   </section>
 );
 const H3 = ({ children }: { children: ReactNode }) => (
-  <h3 className="mt-4 mb-1.5 text-xs font-semibold tracking-[.6px] text-helper uppercase first:mt-0">{children}</h3>
+  <h3 className="mt-4 mb-1.5 text-[12px] font-semibold tracking-[.6px] text-helper uppercase first:mt-0">{children}</h3>
 );
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
 const CALL_NAME = { fight: "Fight", fold: "Fold", escalate: "Escalate", shield: "Chargeback Shield" } as const;
@@ -390,11 +390,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         <Link href="/disputes" className="relative mb-2.5 inline-block font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">
           ← All disputes
         </Link>
-        <button type="button" onClick={() => window.print()} className="mb-2.5 ml-auto mr-3 min-h-10 text-[13px] font-semibold text-helper underline print:hidden md:min-h-0">
+        <button type="button" onClick={() => window.print()} className="mb-2.5 ml-auto mr-3 min-h-10 text-[12px] font-semibold text-helper underline print:hidden md:min-h-0">
           Print or save as PDF
         </button>
         {(state.action || state.audit.length > 0 || state.draft !== undefined) && (
-          <button onClick={reset} className="mb-2.5 text-[13px] font-semibold text-helper underline">
+          <button onClick={reset} className="mb-2.5 text-[12px] font-semibold text-helper underline">
             Reset this demo
           </button>
         )}
@@ -402,22 +402,22 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
 
         <header className="mb-5">
-          <p className="text-[13px] text-helper">{c.merchant}</p>
+          <p className="text-[12px] text-helper">{c.merchant}</p>
           <div className="mt-1 flex flex-wrap items-start justify-between gap-x-6 gap-y-1">
             <h1 className="text-2xl leading-8 font-semibold">
               {formatOriginal(d.amount, d.currency)} · {d.network} {d.reason_code} {d.reason_description}
             </h1>
             {finalCall === "shield" && (
-              <p className={`text-[15px] font-semibold ${t.warn ? "text-warn" : "text-ink-soft"}`}>
+              <p className={`text-[14px] font-semibold ${t.warn ? "text-warn" : "text-ink-soft"}`}>
               {t.warn && <span aria-hidden>⚠ </span>}
               {t.text} <span className="font-normal text-helper">left to respond</span>
             </p>
             )}
           </div>
-          <p className="mt-1 text-[15px] text-[#444]">
+          <p className="mt-1 text-[14px] text-[#444]">
             The customer says: &ldquo;{c.customer_claim}&rdquo; <span className="font-mono text-[12px] text-helper">{d.id}</span>
           </p>
-          {acted && <p className="mt-1 text-[13px] font-semibold text-green-ink">{acted.type === "submit" ? "Contested (simulated)" : "Folded (simulated)"}</p>}
+          {acted && <p className="mt-1 text-[12px] font-semibold text-green-ink">{acted.type === "submit" ? "Contested (simulated)" : "Folded (simulated)"}</p>}
           {d.respond_by_hours_left < 6 && !acted && (
             <p className="mt-3 rounded-[10px] bg-escalate-soft px-3 py-2 font-semibold text-escalate">Respond now. Less than 6 hours left.</p>
           )}
@@ -467,34 +467,34 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         <section id="decision" aria-label="The advisor's call" className={`mb-5 rounded-2xl border border-line border-l-4 bg-white p-4 md:p-6 ${EDGE[finalCall]} ${running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}`}>
           <div id="verdict" className="flex flex-wrap items-center gap-3">
             <CallChip call={finalCall} size="lg" />
-            {finalCall !== "shield" && <span className="text-[15px] font-medium text-[#555]">{view.confidence} confidence</span>}
-            {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[13px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
+            {finalCall !== "shield" && <span className="text-[14px] font-semibold text-[#555]">{view.confidence} confidence</span>}
+            {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
           </div>
           <h2 className="mt-3 text-2xl leading-8 font-semibold md:text-[28px] md:leading-9">{HEAD[finalCall]}</h2>
           {g.changedReason && finalCall !== "shield" && (
-            <p className="mt-2 rounded-[10px] bg-fold-soft px-3 py-1.5 text-[13px] font-semibold text-fold">Changed by safety rule: {g.changedReason}</p>
+            <p className="mt-2 rounded-[10px] bg-fold-soft px-3 py-1.5 text-[12px] font-semibold text-fold">Changed by safety rule: {g.changedReason}</p>
           )}
 
           {finalCall === "shield" ? (
-            <p className="mt-2 text-[17px] leading-7 text-[#333]">Reason code {d.reason_code} is a fraud code. Dispute Advisor only covers non-fraud disputes, so no check was run and there is nothing to submit here.</p>
+            <p className="mt-2 text-[16px] leading-7 text-[#333]">Reason code {d.reason_code} is a fraud code. Dispute Advisor only covers non-fraud disputes, so no check was run and there is nothing to submit here.</p>
           ) : (
             <>
-              <p className="mt-2 text-[17px] leading-7 text-[#222]">{view.reason}</p>
+              <p className="mt-2 text-[16px] leading-7 text-[#222]">{view.reason}</p>
 
               <dl className="mt-5 grid grid-cols-3 gap-4 border-y border-line py-4">
                 <div>
-                  <dt className="text-[13px] text-helper">At stake</dt>
-                  <dd className="text-[22px] font-semibold md:text-[26px]">{formatInrFull(money.atStakeInr)}</dd>
+                  <dt className="text-[12px] text-helper">At stake</dt>
+                  <dd className="text-[24px] font-semibold">{formatInrFull(money.atStakeInr)}</dd>
                   <dd className="text-[12px] text-helper">{formatOriginal(d.amount, d.currency)}</dd>
                 </div>
                 <div>
-                  <dt className="text-[13px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
-                  <dd className="text-[22px] font-semibold md:text-[26px]">{Math.round(oddsAdj.odds * 100)}%</dd>
+                  <dt className="text-[12px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
+                  <dd className="text-[24px] font-semibold">{Math.round(oddsAdj.odds * 100)}%</dd>
                   <dd className="text-[12px] text-helper">an estimate</dd>
                 </div>
                 <div>
-                  <dt className="text-[13px] text-helper">Time left</dt>
-                  <dd className={`text-[22px] font-semibold md:text-[26px] ${t.warn ? "text-warn" : ""}`}>{t.text}</dd>
+                  <dt className="text-[12px] text-helper">Time left</dt>
+                  <dd className={`text-[24px] font-semibold ${t.warn ? "text-warn" : ""}`}>{t.text}</dd>
                   <dd className="text-[12px] text-helper">to respond</dd>
                 </div>
               </dl>
@@ -512,7 +512,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     return <p className={`mt-4 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
                   })()
                 ) : null}
-                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.</p>}
+                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[12px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.</p>}
 
               {(view.missingEvidence.length > 0 || view.contradictions.length > 0) && finalCall !== "escalate" && (
                 <p className="mt-3 text-[14px]">
@@ -523,20 +523,20 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
               {finalCall === "escalate" && !acted && (
                 <div id="get-first" className="mt-4 rounded-xl bg-[#FFF8E6] p-4">
-                  <p className="text-xs font-semibold tracking-[.6px] text-fold uppercase">Get this first</p>
-                  <p className="mt-1 text-[17px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
+                  <p className="text-[12px] font-semibold tracking-[.6px] text-fold uppercase">Get this first</p>
+                  <p className="mt-1 text-[16px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
                   {view.defensibleAmount !== null && (
                     <p className="mt-1 text-[14px] text-[#555]">Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).</p>
                   )}
-                  <p className="mt-2 text-[15px]">
+                  <p className="mt-2 text-[14px]">
                     {d.respond_by_hours_left < 6
                       ? "No time to gather more: choose Fight or Fold."
                       : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
                   </p>
-                  {view.draft && <p className="mt-1 text-[13px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
+                  {view.draft && <p className="mt-1 text-[12px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
                   {view.requestText && (
                     <>
-                      <p className="mt-3 text-[13px] font-semibold text-helper">Message to send</p>
+                      <p className="mt-3 text-[12px] font-semibold text-helper">Message to send</p>
                       <p className="mt-1 rounded-xl bg-white p-3 text-[14px]">{view.requestText}</p>
                     </>
                   )}
@@ -577,7 +577,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <span className="text-helper">Based on </span>
                   {view.decidingEvidence.map((e) => (
                     <button key={e} onClick={() => focusEvidence([e])} className="relative mr-3 inline-flex min-h-6 items-center gap-1.5 rounded-md text-left hover:underline after:absolute after:-inset-2 after:content-['']" aria-label={`Show ${e}`}>
-                      <span className="rounded bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]">{e}</span>
+                      <span className="rounded bg-brand-soft px-1.5 text-[12px] font-semibold text-[#2B5BC8]">{e}</span>
                       <span>{docName(e)}</span>
                     </button>
                   ))}
@@ -591,20 +591,20 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {steps[step]}
             </p>
           )}
-          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[13px] text-helper">
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[12px] text-helper">
             <span>{view.source.label}</span>
             <span className="ml-auto flex items-center gap-2">
               <span>Was this call useful?</span>
               <button
                 aria-label="Thumbs up"
                 aria-pressed={state.thumbs === "up"}
-                className={`min-h-11 min-w-11 rounded-[10px] border text-lg ${state.thumbs === "up" ? "border-brand bg-brand-soft" : "border-[#D6D6D6]"}`}
+                className={`min-h-11 min-w-11 rounded-[10px] border text-[16px] ${state.thumbs === "up" ? "border-brand bg-brand-soft" : "border-[#D6D6D6]"}`}
                 onClick={() => { update((s) => ({ ...s, thumbs: "up" })); log("You", "Marked the call useful"); }}
               >👍</button>
               <button
                 aria-label="Thumbs down"
                 aria-pressed={state.thumbs === "down"}
-                className={`min-h-11 min-w-11 rounded-[10px] border text-lg ${state.thumbs === "down" ? "border-brand bg-brand-soft" : "border-[#D6D6D6]"}`}
+                className={`min-h-11 min-w-11 rounded-[10px] border text-[16px] ${state.thumbs === "down" ? "border-brand bg-brand-soft" : "border-[#D6D6D6]"}`}
                 onClick={() => { update((s) => ({ ...s, thumbs: "down" })); log("You", "Marked the call not useful"); }}
               >👎</button>
               {finalCall !== "shield" && !acted && (
@@ -617,8 +617,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
         {showResponse && (
         <Card id="response">
-          <h2 className="mb-1 text-lg font-semibold">Review your response</h2>
-          <p className="mb-3 text-[13px] text-helper">Every sentence needs a source. You can edit anything. Nothing is sent until you approve.</p>
+          <h2 className="mb-1 text-[16px] font-semibold">Review your response</h2>
+          <p className="mb-3 text-[12px] text-helper">Every sentence needs a source. You can edit anything. Nothing is sent until you approve.</p>
           {state.dirty && (
             <p className="mb-3 rounded-xl bg-fold-soft px-3 py-2 text-[14px] font-semibold text-fold">You added or removed evidence after the last check. Re-run it before you submit.</p>
           )}
@@ -643,10 +643,10 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 audit: s.audit.some((a) => a.text === "Edited the draft") ? s.audit : [...s.audit, { at: now(), actor: "You", text: "Edited the draft" }],
               }));
             }}
-            className="mt-1 w-full rounded-xl border border-line p-3 text-[15px] leading-[1.6] focus:border-brand-focus focus:outline-none"
+            className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] leading-[1.6] focus:border-brand-focus focus:outline-none"
             aria-describedby="draft-help"
           />
-          <div id="draft-help" className="mt-1 flex justify-between text-[13px]">
+          <div id="draft-help" className="mt-1 flex justify-between text-[12px]">
             <span className="text-helper">Use [E1] style tags to cite a document, or [Razorpay] for Razorpay's records.</span>
             <span className={draft.trim().length > DRAFT_LIMIT ? "font-semibold text-escalate" : "text-helper"}>
               {draft.trim().length} / {DRAFT_LIMIT}
@@ -665,12 +665,12 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                       <span className={ok ? "" : "underline decoration-escalate decoration-wavy"}>{s.replace(/\s*\[[^\]]*\]/g, "")}</span>{" "}
                       {ok ? (
                         ids.map((id) => (
-                          <button key={id} onClick={() => id !== "Razorpay" && focusEvidence([id])} className="relative mr-1 inline-flex min-h-8 min-w-8 items-center justify-center rounded-md bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8] after:absolute after:-inset-1 after:content-['']">
+                          <button key={id} onClick={() => id !== "Razorpay" && focusEvidence([id])} className="relative mr-1 inline-flex min-h-8 min-w-8 items-center justify-center rounded-md bg-brand-soft px-1.5 text-[12px] font-semibold text-[#2B5BC8] after:absolute after:-inset-1 after:content-['']">
                             {id}
                           </button>
                         ))
                       ) : (
-                        <span className="text-[13px] font-semibold text-escalate">Add a source or remove this sentence</span>
+                        <span className="text-[12px] font-semibold text-escalate">Add a source or remove this sentence</span>
                       )}
                     </li>
                   );
@@ -689,7 +689,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <span className="rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[12px]">{slot}</span>
                   {ids.map((id) => (
                     <button key={id} onClick={() => focusEvidence([id])} className="relative ml-2 inline-flex min-h-6 items-center gap-1.5 rounded-md text-left hover:underline after:absolute after:-inset-2 after:content-['']">
-                      <span className="rounded bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]">{id}</span>
+                      <span className="rounded bg-brand-soft px-1.5 text-[12px] font-semibold text-[#2B5BC8]">{id}</span>
                       <span className="text-[#333]">{docName(id)}</span>
                     </button>
                   ))}
@@ -718,9 +718,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               }}
               className="w-32 rounded-[10px] border border-line px-3 py-2 focus:border-brand-focus focus:outline-none"
             />
-            <span className="text-[13px] text-helper">of {formatOriginal(d.amount, d.currency)}</span>
+            <span className="text-[12px] text-helper">of {formatOriginal(d.amount, d.currency)}</span>
           </div>
-          <p className="mt-1 text-[13px] text-helper">
+          <p className="mt-1 text-[12px] text-helper">
             {view.defensibleAmount !== null ? "Pre-filled with the part the check found defensible. " : "Full amount by default. "}You can contest a smaller part.
           </p>
 
@@ -740,16 +740,16 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <button className={`${ghost} !border-brand !text-brand ml-auto`} onClick={() => copy("draft", draft)}>
               {copied === "draft" ? "Copied" : "Copy response"}
             </button>
-            <p className="w-full text-xs text-helper">Simulated: nothing is sent to Razorpay.</p>
+            <p className="w-full text-[12px] text-helper">Simulated: nothing is sent to Razorpay.</p>
           </div>
         </Card>
       )}
 
         {acted && (
         <Card>
-          <h2 className="mb-1 text-lg font-semibold">{acted.type === "submit" ? "Response submitted (simulated)" : "Dispute folded (simulated)"}</h2>
-          <p className="mb-2 text-[13px] font-semibold text-helper">Simulated: nothing was sent to Razorpay.</p>
-          <p className="text-[15px]">
+          <h2 className="mb-1 text-[16px] font-semibold">{acted.type === "submit" ? "Response submitted (simulated)" : "Dispute folded (simulated)"}</h2>
+          <p className="mb-2 text-[12px] font-semibold text-helper">Simulated: nothing was sent to Razorpay.</p>
+          <p className="text-[14px]">
             {acted.type === "submit"
               ? `You contested ${formatOriginal(contestSubunits, d.currency)} of ${formatOriginal(d.amount, d.currency)} with ${[...documentsBySlot.values()].flat().length} documents. In the real app this goes to Razorpay and the bank decides. The status below then moves from Under review to Won or Lost.`
               : `You accepted the dispute. ${formatInrFull(money.atStakeInr)} would be taken from your balance (${formatOriginal(d.amount, d.currency)} at the ${rateWord(rates)} of ₹${rateFor(d.currency, rates).toFixed(2)}).`}
@@ -771,7 +771,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           </ol>
           {acted.type === "submit" && (
             <div className="mt-3 flex flex-wrap items-center gap-2.5">
-              <span className="text-[13px] text-helper">Demo: set the outcome</span>
+              <span className="text-[12px] text-helper">Demo: set the outcome</span>
               {(["won", "lost"] as const).map((o) => (
                 <button
                   key={o}
@@ -792,7 +792,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           {state.outcome && (
             <>
               <H3>What the agent learns</H3>
-              <p className="text-[15px]">
+              <p className="text-[14px]">
                 Reason {d.reason_code}
                 {documentsBySlot.size > 0 && <> with {[...documentsBySlot.keys()].join(" + ")}</>}: <b>{state.outcome}</b>. In the real product this feeds the odds for the next dispute like this one.
               </p>
@@ -822,14 +822,14 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {view.tip && (
                 <>
                   <H3>Next time</H3>
-                  <p className="text-[15px]">{view.tip}</p>
+                  <p className="text-[14px]">{view.tip}</p>
                 </>
               )}
               {state.outcome === "lost" && (
                 <>
                   <H3>Next steps</H3>
-                  <p className="text-[13px] text-helper">Things to confirm, not advice.</p>
-                  <ol className="mt-1 list-decimal space-y-1.5 pl-5 text-[15px]">
+                  <p className="text-[12px] text-helper">Things to confirm, not advice.</p>
+                  <ol className="mt-1 list-decimal space-y-1.5 pl-5 text-[14px]">
                     <li>Ask your bank about reducing the export value recorded for this payment. Razorpay can supply the dispute documents.</li>
                     <li>Ask your accountant whether a GST credit note applies.</li>
                   </ol>
@@ -854,9 +854,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   id={`ev-${e.id}`}
                   className={`mt-2.5 grid grid-cols-[34px_1fr] gap-2.5 rounded-xl border p-3 ${on ? "border-brand bg-[#F4F8FF]" : "border-[#F1F1F1]"}`}
                 >
-                  <div className="flex h-[26px] items-center justify-center rounded-lg bg-shield-soft text-xs font-semibold">{e.id}</div>
+                  <div className="flex h-[26px] items-center justify-center rounded-lg bg-shield-soft text-[12px] font-semibold">{e.id}</div>
                   <div>
-                    {addedItem && <p className="text-xs font-semibold text-helper">Added by you · {(e as { title: string }).title}</p>}
+                    {addedItem && <p className="text-[12px] font-semibold text-helper">Added by you · {(e as { title: string }).title}</p>}
                     <p className="text-sm text-[#555]">{e.content}</p>
                     {slots.map((s) => (
                       <span key={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[11.5px] text-[#555]">
@@ -869,7 +869,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                       </span>
                     ))}
                     {addedItem && !acted && (
-                      <button onClick={() => removeEvidence(e.id)} className="relative after:absolute after:-inset-2 after:content-['']  mt-1.5 block min-h-6 text-[13px] font-semibold text-escalate underline">
+                      <button onClick={() => removeEvidence(e.id)} className="relative after:absolute after:-inset-2 after:content-['']  mt-1.5 block min-h-6 text-[12px] font-semibold text-escalate underline">
                         Remove
                       </button>
                     )}
@@ -889,7 +889,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             {state.dirty && !acted && !adding && (
               <div className="mt-3 rounded-xl border border-brand bg-[#F4F8FF] p-3" role="status">
                 <p className="text-[14px] font-semibold">Your evidence changed.</p>
-                <p className="text-[13px] text-[#555]">Re-run the check to see if it changes the call.</p>
+                <p className="text-[12px] text-[#555]">Re-run the check to see if it changes the call.</p>
                 <button className={`${primary} mt-2`} onClick={rerun} disabled={running}>
                   {running ? "Checking…" : "Re-run check"}
                 </button>
@@ -898,7 +898,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             {adding && (
               <div className="mt-3 rounded-xl border border-line p-3">
                 {(evidenceHint(d.reason_code) || view.missingEvidence.length > 0) && (
-                  <div className="mb-3 rounded-xl bg-[#F4F8FF] px-3 py-2 text-[13px] text-[#333]">
+                  <div className="mb-3 rounded-xl bg-[#F4F8FF] px-3 py-2 text-[12px] text-[#333]">
                     {view.missingEvidence.length > 0 && finalCall === "escalate" && (
                       <p>
                         <b>The advisor asked for:</b> {view.getFirst ?? view.missingEvidence.join("; ")}
@@ -915,7 +915,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 <label htmlFor="ev-file" className={`${ghost} cursor-pointer !border-brand !text-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand peer-disabled:opacity-50`}>
                   {reading ? "Reading…" : "Upload a PDF or image"}
                 </label>
-                <p id="ev-file-help" className="mt-1 text-[13px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
+                <p id="ev-file-help" className="mt-1 text-[12px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
                 <label htmlFor="ev-title" className="mt-3 block text-sm font-semibold">
                   Title
                 </label>
@@ -924,7 +924,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   What it says
                 </label>
                 <textarea id="ev-text" rows={4} value={newText} onChange={(e) => setNewText(e.target.value)} placeholder="Paste the text of the document." className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] focus:border-brand-focus focus:outline-none" aria-describedby="ev-help" />
-                <div id="ev-help" className="mt-1 flex justify-between text-[13px]">
+                <div id="ev-help" className="mt-1 flex justify-between text-[12px]">
                   <span className="text-helper">Don&apos;t paste full card numbers.</span>
                   <span className={newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-escalate" : "text-helper"}>
                     {newText.length} / {MAX_EVIDENCE_CHARS.toLocaleString()}
@@ -964,11 +964,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   return (
                     <li key={`${ev.iso}-${ev.evidenceId ?? "d"}-${i}`} className="relative pb-3 last:pb-0">
                       <span aria-hidden className={`absolute top-1.5 -left-[21px] h-2.5 w-2.5 rounded-full border-2 border-white ${isDispute ? "bg-escalate" : "bg-brand"}`} />
-                      <p className="text-[13px] font-semibold">
+                      <p className="text-[12px] font-semibold">
                         {ev.label}
                         {i > 0 && gap > 0 && <span className="ml-2 font-normal text-helper">+{gap} day{gap === 1 ? "" : "s"}</span>}
                       </p>
-                      <p className="text-[13px] text-[#555]">
+                      <p className="text-[12px] text-[#555]">
                         {ev.evidenceId ? (
                           <>
                             <button type="button" onClick={() => focusEvidence([ev.evidenceId as string])} className="mr-1.5 inline-flex min-h-10 min-w-10 items-center justify-center rounded-md bg-shield-soft px-1.5 text-[11.5px] font-semibold text-brand hover:underline md:min-h-6 md:min-w-0 md:py-0.5">
@@ -1000,19 +1000,19 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   />
                 </div>
                 {view.defensibleAmount !== null && (
-                  <p className="mt-2 text-[13px] text-[#555]">
+                  <p className="mt-2 text-[12px] text-[#555]">
                     Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).
                   </p>
                 )}
-                <p className="mt-2 text-xs text-helper">{view.oddsNote}</p>
+                <p className="mt-2 text-[12px] text-helper">{view.oddsNote}</p>
                 {oddsAdj.adjusted && (
-                  <p className="mt-1 text-xs text-helper" data-testid="odds-adjusted">
+                  <p className="mt-1 text-[12px] text-helper" data-testid="odds-adjusted">
                     Adjusted by your record: {oddsAdj.won} of {oddsAdj.n} fights the advisor called Fight at {view.confidence} confidence were won. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check uses this number.
                   </p>
                 )}
                 {record.fights > 0 && (
                   <p className="mt-2 text-[14px]" data-testid="own-record">
-                    <b>Your record on {d.reason_code}:</b> fought {record.fights}, won {record.won} ({Math.round((record.won / record.fights) * 100)}%). <Link href="/results" className="relative font-medium text-brand after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] hover:underline">See Results</Link>
+                    <b>Your record on {d.reason_code}:</b> fought {record.fights}, won {record.won} ({Math.round((record.won / record.fights) * 100)}%). <Link href="/results" className="relative font-semibold text-brand after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] hover:underline">See Results</Link>
                   </p>
                 )}
                 {view.economicsNote && <p className="mt-2 text-[14px] text-[#333]">{view.economicsNote}</p>}
@@ -1038,7 +1038,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           )}
           <Row id="rule" title="What Visa's rule means" summary={`${d.reason_code} ${d.reason_description}`} open={!!openRows.rule} onToggle={() => toggleRow("rule")}>
             {view.ruleText && <p className="text-[14px] leading-6 text-[#444]">{view.ruleText}</p>}
-            <p className="mt-3 text-xs font-semibold tracking-[.6px] text-helper uppercase">What Razorpay knows</p>
+            <p className="mt-3 text-[12px] font-semibold tracking-[.6px] text-helper uppercase">What Razorpay knows</p>
             <p className="mt-1 text-[14px] leading-6 text-[#444]">{c.razorpay_facts}</p>
           </Row>
           {finalCall !== "shield" && (
@@ -1063,17 +1063,17 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
       </div>
 
       <Dialog open={dialog === "fold"} onClose={() => setDialog(null)} title="Fold this dispute?">
-        <p className="text-[15px]">
+        <p className="text-[14px]">
           {formatInrFull(money.atStakeInr)} will be taken from your balance ({formatOriginal(d.amount, d.currency)} at the {rateWord(rates)} of ₹{rateFor(d.currency, rates).toFixed(2)}; the real rate is the one on the day the dispute was created). You can&apos;t undo this.
         </p>
         <p className="mt-2 text-[14px] text-helper">Why the advisor says {finalCall}: {view.reason}</p>
-        <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[13px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
+        <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[12px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
         {finalCall === "fight" && <OverrideWhy why={why} setWhy={setWhy} />}
         <DialogButtons onCancel={() => setDialog(null)} onYes={confirmAction} yes="Yes, fold" />
       </Dialog>
       <Dialog open={dialog === "submit"} onClose={() => setDialog(null)} title="Submit your response?">
-        <p className="text-[15px]">In the real app, this sends your response to the customer&apos;s bank and you can&apos;t edit it afterwards.</p>
-        <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[13px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
+        <p className="text-[14px]">In the real app, this sends your response to the customer&apos;s bank and you can&apos;t edit it afterwards.</p>
+        <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[12px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
         <p className="mt-2 text-[14px] text-helper">
           Contesting {formatOriginal(contestSubunits, d.currency)} of {formatOriginal(d.amount, d.currency)}.
         </p>
@@ -1101,18 +1101,18 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 ${state.check.meta.costUsd.toFixed(4)} · ₹{state.check.meta.costInr.toFixed(2)}
               </dd>
             </dl>
-            <p className="mt-1 text-[13px] text-helper">Cost uses the token prices in the repo and the rate below.</p>
+            <p className="mt-1 text-[12px] text-helper">Cost uses the token prices in the repo and the rate below.</p>
           </>
         ) : (
           <>
             <p>
               <b>Saved result</b>, not a live call. {view.source.model}, prompt {view.source.promptVersion}, run on {view.source.date}.
             </p>
-            <p className="mt-1 text-[13px] text-helper">Tokens, response time and cost appear here after a live check.</p>
-            <p className="mt-1 text-[13px] text-helper">Odds, the defensible amount, the request text and the prevention tip on saved results come from the builder&apos;s supplement file, not the model.</p>
+            <p className="mt-1 text-[12px] text-helper">Tokens, response time and cost appear here after a live check.</p>
+            <p className="mt-1 text-[12px] text-helper">Odds, the defensible amount, the request text and the prevention tip on saved results come from the builder&apos;s supplement file, not the model.</p>
           </>
         )}
-        <p className="mt-1 text-[13px] text-helper">{rateNote(rates)}</p>
+        <p className="mt-1 text-[12px] text-helper">{rateNote(rates)}</p>
 
         <H3>Safety checks</H3>
         <ul className="space-y-1.5">
@@ -1152,9 +1152,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="rounded-xl border border-[#F1F1F1] bg-[#FAFAFA] px-3 py-2.5">
-      <span className="block text-xs text-helper">{label}</span>
-      <b className="block text-[17px] font-semibold">{value}</b>
-      <em className="text-xs text-helper not-italic">{sub}</em>
+      <span className="block text-[12px] text-helper">{label}</span>
+      <b className="block text-[16px] font-semibold">{value}</b>
+      <em className="text-[12px] text-helper not-italic">{sub}</em>
     </div>
   );
 }
@@ -1188,8 +1188,8 @@ function Row({ id, title, summary, open, onToggle, children }: { id: string; tit
     <div data-row={id} className="border-b border-line last:border-0">
       <button type="button" aria-expanded={open} aria-controls={`row-${id}`} onClick={onToggle} className="flex min-h-14 w-full items-center gap-3 px-5 py-3 text-left hover:bg-[#FAFAFA]">
         <span className="min-w-0 flex-1">
-          <b className="block text-[15px] font-semibold">{title}</b>
-          <span className="block text-[13px] text-helper">{summary}</span>
+          <b className="block text-[14px] font-semibold">{title}</b>
+          <span className="block text-[12px] text-helper">{summary}</span>
         </span>
         <span aria-hidden className={`text-brand transition-transform ${open ? "rotate-90" : ""}`}>›</span>
       </button>

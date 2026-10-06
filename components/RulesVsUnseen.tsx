@@ -4,7 +4,7 @@ import type { Scoreboard } from "@/lib/ruleScoreboard";
 export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { agree: number; n: number } }) {
   const Row = ({ name, sub, known, unseen, strong }: { name: string; sub: string; known: string; unseen: string; strong?: boolean }) => (
     <tr className="border-t border-line">
-      <th scope="row" className="py-2.5 pr-3 text-left font-medium">
+      <th scope="row" className="py-2.5 pr-3 text-left font-semibold">
         {name}
         <span className="block text-[12px] font-normal text-helper">{sub}</span>
       </th>
@@ -14,9 +14,9 @@ export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { 
   );
   const u = s.unseen;
   return (
-    <section className="mb-6 rounded-2xl border border-line bg-white p-[18px]" aria-labelledby="rules">
-      <h2 id="rules" className="text-[17px] font-semibold">Why not just write smarter rules?</h2>
-      <p className="mt-1 mb-3 max-w-[760px] text-[14px] text-[#333]">
+    <section className="mb-6 rounded-2xl border border-line bg-white p-4 md:p-5" aria-labelledby="rules">
+      <h2 id="rules" className="text-[16px] font-semibold">Why not just write smarter rules?</h2>
+      <p className="mt-1 mb-3 max-w-[760px] text-[14px] text-ink-soft">
         We wrote the best fixed rules we could by reading the {s.known.n} known cases. {s.rulesAdded} extra rules get {s.known.tuned} of {s.known.n} right. On {u.n} cases they had never seen they get {u.tuned} of {u.n},
         {u.tuned < u.simple ? " fewer than" : u.tuned === u.simple ? " the same as" : " more than"} the simple checklist ({u.simple} of {u.n}).
       </p>
@@ -36,7 +36,7 @@ export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { 
           </tbody>
         </table>
       </div>
-      <ul className="mt-3 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-[#333]">
+      <ul className="mt-3 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
         <li>
           Tuned rules missed {u.tunedMisses.map((m) => (m.rule ? `${m.id} (rule ${m.rule} fired wrongly)` : m.id)).join(", ")}. The simple checklist missed {u.simpleMisses.join(", ")}.
           A rule written for one case can break another, and a missing rule leaves a gap, so each new trap needs a new rule.

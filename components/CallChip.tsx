@@ -14,10 +14,10 @@ export function CallChip({ call, size = "sm", short = false }: { call: Call; siz
     <span
       className={`inline-flex items-center rounded-full font-semibold whitespace-nowrap ${m.cls} ${
         size === "lg"
-          ? "gap-1.5 px-3.5 py-1.5 text-[15px]"
+          ? "gap-1.5 px-3.5 py-1.5 text-[14px]"
           : short
-            ? "gap-1 px-1.5 py-0.5 text-xs md:gap-1.5 md:px-2.5 md:text-[13px]"
-            : "gap-1.5 px-2.5 py-0.5 text-[13px]"
+            ? "gap-1 px-1.5 py-0.5 text-[12px] md:gap-1.5 md:px-2.5 "
+            : "gap-1.5 px-2.5 py-0.5 text-[12px]"
       }`}
     >
       <span aria-hidden>{m.icon}</span>

@@ -1,3 +1,4 @@
+import { PageTitle } from "@/components/ui";
 import { ResultsView } from "@/components/ResultsView";
 import { getRates } from "@/lib/fx";
 import { rateNote } from "@/lib/rates";
@@ -18,10 +19,7 @@ export default async function ResultsPage() {
   const tips = Object.fromEntries(Object.keys(REASONS).map((c) => [c, getReasonTip(c)]));
   return (
     <>
-      <h1 className="mb-1 text-2xl leading-8 font-semibold">Results</h1>
-      <p className="mb-4 max-w-[760px] text-[14px] text-ink-soft">
-        What happened to the disputes you acted on, and whether the advisor was right.
-      </p>
+      <PageTitle title="Results">What happened to the disputes you acted on, and whether the advisor was right.</PageTitle>
       <ResultsView rates={rates} tips={tips} reasonNames={REASONS} />
       <p className="mt-6 text-[12px] text-helper">{rateNote(rates)} Sample history is not real data and not Razorpay data. What you record stays in this browser.</p>
     </>

@@ -4,7 +4,7 @@ export default function ErrorPage({ reset }: { error: Error; reset: () => void }
   return (
     <section role="alert" className="mx-auto max-w-xl rounded-2xl border border-line bg-white p-6 text-center md:mt-8 md:p-10">
       <h1 className="text-2xl font-semibold">Something went wrong</h1>
-      <p className="mt-2 text-[15px] text-ink-soft">
+      <p className="mt-2 text-[14px] text-ink-soft">
         Nothing was sent and nothing was lost. Try again, or go back to the list.
       </p>
       <div className="mt-5 flex justify-center gap-2">
