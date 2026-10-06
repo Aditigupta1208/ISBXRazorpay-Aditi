@@ -188,3 +188,11 @@ export function adjustOdds(ai: number, confidence: string | null | undefined, re
   const adjusted = rows.length > 0;
   return { odds: adjusted ? odds : ai, ai, n: rows.length, won, adjusted };
 }
+
+/**
+ * Odds to show for the call on screen. The record only shifts a Fight call: it is built from Fight calls that were
+ * acted on, so applying it to a Fold or Escalate would borrow wins from a different kind of call.
+ */
+export function oddsForCall(call: string, ai: number, confidence: string | null | undefined, recs: Rec[], weight = ODDS_PRIOR_WEIGHT): AdjustedOdds {
+  return adjustOdds(ai, call === "fight" ? confidence : null, recs, weight);
+}

@@ -59,11 +59,22 @@ export function Tour() {
     const timer = setTimeout(() => {
       el = sel ? document.querySelector<HTMLElement>(sel) : null;
       if (!el) return;
+      if (TOUR_STEPS[step].reveal) el.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
       el.style.outline = "3px solid #2F63C8";
       el.style.outlineOffset = "4px";
       el.style.borderRadius = el.style.borderRadius || "12px";
-      el.style.scrollMarginTop = "90px";
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.style.scrollMarginTop = "100px";
+      setTimeout(() => {
+        if (!el) return;
+        el.scrollIntoView({ behavior: "auto", block: "start" });
+        // Keep the target above the tour card: nudge if the card would cover it.
+        requestAnimationFrame(() => {
+          if (!el) return;
+          const r = el.getBoundingClientRect();
+          const cardTop = cardRef.current?.getBoundingClientRect().top ?? window.innerHeight;
+          if (r.bottom > cardTop - 12 && r.height < cardTop - 120) window.scrollBy({ top: r.bottom - (cardTop - 12) });
+        });
+      }, TOUR_STEPS[step].reveal ? 160 : 0);
     }, 350);
     return () => {
       clearTimeout(timer);

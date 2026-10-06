@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import supp from "../data/prerun/demo-supplements.json" with { type: "json" };
 import { FALLBACK_RATES } from "./rates.ts";
-import { ODDS_BY_CONFIDENCE, SAMPLE_COUNT, fromAction, historyFor, sampleRecords, summarize, weakestCode, type Rec } from "./results.ts";
+import { ODDS_BY_CONFIDENCE, SAMPLE_COUNT, oddsForCall, fromAction, historyFor, sampleRecords, summarize, weakestCode, type Rec } from "./results.ts";
 
 const rec = (o: Partial<Rec>): Rec => ({ id: "x", source: "you", code: "13.2", amountInr: 1000, contestInr: 1000, call: "fight", confidence: "High", action: "fight", outcome: "won", onTime: true, ...o });
 
@@ -130,4 +130,16 @@ test("adjustOdds: the sample history barely moves the saved High and Medium esti
   assert.ok(hi.odds >= 0.8 && hi.odds <= 0.9, `${hi.odds}`);
   assert.ok(Math.abs(med.odds - 0.55) < 0.05, `${med.odds}`);
   assert.ok(hi.odds >= 0 && hi.odds <= 1);
+});
+
+test("the record shifts a Fight call's odds but never a Fold or Escalate", () => {
+  const recs = sampleRecords(FALLBACK_RATES);
+  const fight = oddsForCall("fight", 0.15, "High", recs);
+  assert.equal(fight.adjusted, true);
+  assert.ok(fight.odds > 0.15);
+  for (const call of ["fold", "escalate", "shield"]) {
+    const o = oddsForCall(call, 0.15, "High", recs);
+    assert.equal(o.adjusted, false, call);
+    assert.equal(o.odds, 0.15, call);
+  }
 });

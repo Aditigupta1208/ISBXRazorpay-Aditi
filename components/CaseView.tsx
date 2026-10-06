@@ -15,11 +15,12 @@ import type { CaseData, CheckView } from "@/lib/types";
 import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
 import { evidenceHint } from "@/lib/evidenceHints";
 import { EvidenceChecklist } from "@/components/EvidenceChecklist";
+import { checklistFor } from "@/lib/evidenceChecklist";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
 import { track } from "@/lib/track";
-import { ODDS_PRIOR_WEIGHT, adjustOdds, fromAction, historyFor, sampleRecords } from "@/lib/results";
+import { ODDS_PRIOR_WEIGHT, oddsForCall, fromAction, historyFor, sampleRecords } from "@/lib/results";
 import { compareWithChecklist } from "@/lib/vsChecklist";
 import { buildMissCase, missKind } from "@/lib/missCase";
 import { buildTimeline, daysBetween } from "@/lib/timeline";
@@ -64,6 +65,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState(0);
   const [notice, setNotice] = useState<{ kind: "info" | "error"; text: string } | null>(null);
+  const [openRows, setOpenRows] = useState<Record<string, boolean>>({});
+  const toggleRow = (k: string) => setOpenRows((o) => ({ ...o, [k]: !o[k] }));
+  const showRow = (k: string) => setOpenRows((o) => ({ ...o, [k]: true }));
 
   const view = state.check?.view ?? savedView;
   const allEvidence = [...c.evidence, ...(state.added ?? [])];
@@ -112,7 +116,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const { recs: myRecs } = useLedger();
   const pool = useMemo(() => [...sampleRecords(rates), ...myRecs.filter((r) => r.id !== c.id)], [rates, myRecs, c.id]);
   const record = useMemo(() => historyFor(pool, d.reason_code), [pool, d.reason_code]);
-  const oddsAdj = useMemo(() => adjustOdds(view.odds, view.confidence, pool), [view.odds, view.confidence, pool]);
+  const oddsAdj = useMemo(() => oddsForCall(finalCall, view.odds, view.confidence, pool), [view.odds, view.confidence, pool]);
   const money = moneyCheck({ amountSubunits: d.amount, currency: d.currency, contestSubunits, odds: oddsAdj.odds }, rates);
   const miss = useMemo(() => {
     const input = { call: finalCall, action: state.action?.type, outcome: state.outcome };
@@ -135,7 +139,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finalCall, state.action, state.outcome, view, state.added]);
   const t = timeLeft(d.respond_by_hours_left);
-  const showResponse = finalCall !== "shield" && !state.action && (finalCall === "fight" || state.reviewOpen);
+  const showResponse = finalCall !== "shield" && !state.action && !!state.reviewOpen;
   const acted = state.action;
   const checkTheMoney = finalCall === "fight" && !money.worthFighting;
 
@@ -180,7 +184,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   };
   const focusEvidence = (ids: string[]) => {
     setHighlight(ids);
-    document.getElementById(`ev-${ids[0]}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    showRow("evidence");
+    setTimeout(() => document.getElementById(`ev-${ids[0]}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
   };
   const copy = async (label: string, text: string) => {
     try {
@@ -357,42 +362,30 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     citedIds(draft).includes("Razorpay");
 
   // "How can I help you next?" Each option does something real on this dispute. Fewer than three is fine.
-  const goTo = (id: string) => setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
+  const goTo = (id: string) => setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" }), 140);
   const openReview = () => {
     update((s) => ({ ...s, reviewOpen: true }));
     goTo("response");
   };
   const openAdd = () => {
+    showRow("evidence");
     setAdding(true);
     goTo("ev-title");
   };
-  const nextSteps: { label: string; hint: string; run: () => void }[] =
-    acted || finalCall === "shield"
-      ? []
-      : finalCall === "fight"
-        ? [
-            { label: "Review and edit the response", hint: "Every sentence cites a document.", run: openReview },
-            { label: "Show me the documents that decide this", hint: "Highlights them on the left.", run: () => focusEvidence(view.decidingEvidence) },
-            { label: "Add another document", hint: "Then re-run the check.", run: openAdd },
-          ]
-        : finalCall === "fold"
-          ? [
-              { label: "Fold this dispute", hint: "Accepts it. You confirm first.", run: () => setDialog("fold") },
-              { label: "Show me the money", hint: "What you could win and what you could lose.", run: () => goTo("money") },
-              { label: "Fight anyway", hint: "Your call. We'll note that you overrode the advice.", run: openReview },
-            ]
-          : [
-              ...(view.requestText ? [{ label: "Copy the message asking for the missing document", hint: "Paste it into an email or chat.", run: () => copy("request", view.requestText ?? "") }] : []),
-              { label: "Add the document when I have it", hint: "Then re-run the check.", run: openAdd },
-              view.defensibleAmount !== null
-                ? { label: `Contest only the part worth fighting (${formatInrFull(money.contestInr)})`, hint: view.draft ? "Opens the draft written for that part." : "Opens the response with that amount.", run: openReview }
-                : view.draft
-                  ? { label: "Review the draft contest", hint: "Written from the documents you have now.", run: openReview }
-                  : { label: "Fold this dispute", hint: "Accepts it. You confirm first.", run: () => setDialog("fold") },
-            ].slice(0, 3);
+
+  const HEAD: Record<typeof finalCall, string> = {
+    fight: "Fight this dispute",
+    fold: "Fold: accept this dispute",
+    escalate: "Get one document before you decide",
+    shield: "Fraud dispute: Chargeback Shield handles it",
+  };
+  const EDGE: Record<typeof finalCall, string> = { fight: "border-l-fight", fold: "border-l-fold", escalate: "border-l-escalate", shield: "border-l-shield" };
+  const passed = g.lines.filter((l) => l.status === "pass").length;
+  const keyDocs = finalCall !== "shield" ? checklistFor(d.reason_code, documentsBySlot) : null;
 
   return (
     <>
+      <div className="mx-auto max-w-[820px]">
       <div className="flex items-center justify-between">
         <Link href="/disputes" className="relative mb-2.5 inline-block font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">
           ← All disputes
@@ -407,203 +400,30 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         )}
       </div>
 
-      <Card>
-        <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-          <div>
-            <p className="font-mono text-[13px] text-[#555]">{d.id}</p>
-            <h1 className="my-1 text-xl leading-[26px] font-semibold md:text-2xl md:leading-8">
+
+        <header className="mb-5">
+          <p className="text-[13px] text-helper">{c.merchant}</p>
+          <div className="mt-1 flex flex-wrap items-start justify-between gap-x-6 gap-y-1">
+            <h1 className="text-2xl leading-8 font-semibold">
               {formatOriginal(d.amount, d.currency)} · {d.network} {d.reason_code} {d.reason_description}
             </h1>
-            <p className="text-[13px] text-helper">
-              {c.merchant} Raised {d.raised_on}. {formatInrFull(money.atStakeInr)} at ₹{rateFor(d.currency, rates).toFixed(2)} per {d.currency}.
-            </p>
-          </div>
-          <div className="md:text-right">
-            <div className={`text-[28px] font-semibold ${t.warn ? "text-warn" : ""}`}>
+            {finalCall === "shield" && (
+              <p className={`text-[15px] font-semibold ${t.warn ? "text-warn" : "text-ink-soft"}`}>
               {t.warn && <span aria-hidden>⚠ </span>}
-              {t.text}
-            </div>
-            <div className="text-[13px] text-helper">left to respond</div>
-            {acted && (
-              <div className="mt-1 text-[13px] font-semibold text-green-ink">
-                {acted.type === "submit" ? "Contested (simulated)" : "Folded (simulated)"}
-              </div>
+              {t.text} <span className="font-normal text-helper">left to respond</span>
+            </p>
             )}
           </div>
-        </div>
-        {d.respond_by_hours_left < 6 && !acted && (
-          <p className="mt-3 rounded-[10px] bg-escalate-soft px-3 py-2 font-semibold text-escalate">Respond now. Less than 6 hours left.</p>
-        )}
-      </Card>
-
-      <div className="grid items-start gap-4 md:grid-cols-[5fr_6fr]">
-        <div className="order-2 md:order-none">
-          <Card>
-            <H3>What the customer says</H3>
-            <p className="mt-1 text-[17px]">&ldquo;{c.customer_claim}&rdquo;</p>
-            {view.ruleText && (
-              <>
-                <H3>What this means</H3>
-                <p>{view.ruleText}</p>
-              </>
-            )}
-            <H3>What Razorpay knows</H3>
-            <p>{c.razorpay_facts}</p>
-          </Card>
-
-          <Card>
-            <div className="flex items-center justify-between">
-              <H3>Your evidence</H3>
-              <span className="text-[13px] text-helper">{allEvidence.length} documents</span>
-            </div>
-            {allEvidence.map((e) => {
-              const on = highlight.includes(e.id);
-              const slots = view.slots.filter((s) => s.evidenceId === e.id);
-              const flags = (view.evidenceFlags ?? []).filter((f) => f.evidenceId === e.id);
-              const addedItem = "title" in e;
-              return (
-                <div
-                  key={e.id}
-                  id={`ev-${e.id}`}
-                  className={`mt-2.5 grid grid-cols-[34px_1fr] gap-2.5 rounded-xl border p-3 ${on ? "border-brand bg-[#F4F8FF]" : "border-[#F1F1F1]"}`}
-                >
-                  <div className="flex h-[26px] items-center justify-center rounded-lg bg-shield-soft text-xs font-semibold">{e.id}</div>
-                  <div>
-                    {addedItem && <p className="text-xs font-semibold text-helper">Added by you · {(e as { title: string }).title}</p>}
-                    <p className="text-sm text-[#555]">{e.content}</p>
-                    {slots.map((s) => (
-                      <span key={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[11.5px] text-[#555]">
-                        {s.slot}
-                      </span>
-                    ))}
-                    {flags.map((f) => (
-                      <span key={f.flag} className="mt-1.5 mr-1 inline-block rounded-md bg-fold-soft px-[7px] py-0.5 text-[11.5px] font-semibold text-fold">
-                        {f.flag === "instruction_like" ? "⚠ Looks like instructions" : f.flag === "unreadable" ? "⚠ Couldn't read" : "⚠ Contradiction"}
-                      </span>
-                    ))}
-                    {addedItem && !acted && (
-                      <button onClick={() => removeEvidence(e.id)} className="relative after:absolute after:-inset-2 after:content-['']  mt-1.5 block min-h-6 text-[13px] font-semibold text-escalate underline">
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-
-            {finalCall !== "shield" && (
-              <EvidenceChecklist code={d.reason_code} documentsBySlot={documentsBySlot} stale={!!state.dirty && !acted} docName={docName} />
-            )}
-            {!acted && !adding && finalCall !== "shield" && (
-              <button className={`${ghost} mt-3 !border-brand !text-brand`} onClick={() => setAdding(true)}>
-                + Add evidence
-              </button>
-            )}
-            {state.dirty && !acted && !adding && (
-              <div className="mt-3 rounded-xl border border-brand bg-[#F4F8FF] p-3" role="status">
-                <p className="text-[14px] font-semibold">Your evidence changed.</p>
-                <p className="text-[13px] text-[#555]">Re-run the check to see if it changes the call.</p>
-                <button className={`${primary} mt-2`} onClick={rerun} disabled={running}>
-                  {running ? "Checking…" : "Re-run check"}
-                </button>
-              </div>
-            )}
-            {adding && (
-              <div className="mt-3 rounded-xl border border-line p-3">
-                {(evidenceHint(d.reason_code) || view.missingEvidence.length > 0) && (
-                  <div className="mb-3 rounded-xl bg-[#F4F8FF] px-3 py-2 text-[13px] text-[#333]">
-                    {view.missingEvidence.length > 0 && finalCall === "escalate" && (
-                      <p>
-                        <b>The advisor asked for:</b> {view.getFirst ?? view.missingEvidence.join("; ")}
-                      </p>
-                    )}
-                    {evidenceHint(d.reason_code) && (
-                      <p>
-                        <b>What helps for {d.reason_code}:</b> {evidenceHint(d.reason_code)}
-                      </p>
-                    )}
-                  </div>
-                )}
-                <input id="ev-file" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" disabled={reading} onChange={(e) => { void readFile(e.target.files?.[0]); e.target.value = ""; }} className="peer sr-only" aria-describedby="ev-file-help" />
-                <label htmlFor="ev-file" className={`${ghost} cursor-pointer !border-brand !text-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand peer-disabled:opacity-50`}>
-                  {reading ? "Reading…" : "Upload a PDF or image"}
-                </label>
-                <p id="ev-file-help" className="mt-1 text-[13px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
-                <label htmlFor="ev-title" className="mt-3 block text-sm font-semibold">
-                  Title
-                </label>
-                <input id="ev-title" value={newTitle} maxLength={MAX_TITLE_CHARS + 20} onChange={(e) => setNewTitle(e.target.value)} placeholder="e.g. Billing audit log" className="mt-1 w-full rounded-[10px] border border-line px-3 py-2 focus:border-brand-focus focus:outline-none" />
-                <label htmlFor="ev-text" className="mt-3 block text-sm font-semibold">
-                  What it says
-                </label>
-                <textarea id="ev-text" rows={4} value={newText} onChange={(e) => setNewText(e.target.value)} placeholder="Paste the text of the document." className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] focus:border-brand-focus focus:outline-none" aria-describedby="ev-help" />
-                <div id="ev-help" className="mt-1 flex justify-between text-[13px]">
-                  <span className="text-helper">Don&apos;t paste full card numbers.</span>
-                  <span className={newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-escalate" : "text-helper"}>
-                    {newText.length} / {MAX_EVIDENCE_CHARS.toLocaleString()}
-                  </span>
-                </div>
-                {addError && (
-                  <p role="alert" className="mt-2 text-[14px] font-semibold text-escalate">
-                    {addError}
-                  </p>
-                )}
-                <div className="mt-3 flex gap-2.5">
-                  <button className={primary} onClick={addEvidence}>
-                    Add evidence
-                  </button>
-                  <button
-                    className={ghost}
-                    onClick={() => {
-                      setAdding(false);
-                      setAddError("");
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-          </Card>
-
-          {timeline.length >= 3 && (
-            <Card id="timeline">
-              <H3>Timeline from your documents</H3>
-              <p className="mb-2 text-[13px] text-helper">Dates written in your evidence, in order. For {d.reason_code}, what came before or after the charge often decides the case.</p>
-              <ol className="relative ml-1.5 border-l border-line pl-4">
-                {timeline.map((ev, i) => {
-                  const prevEv = timeline[i - 1];
-                  const gap = prevEv ? daysBetween(prevEv.iso, ev.iso) : 0;
-                  const isDispute = ev.evidenceId === null;
-                  return (
-                    <li key={`${ev.iso}-${ev.evidenceId ?? "d"}-${i}`} className="relative pb-3 last:pb-0">
-                      <span aria-hidden className={`absolute top-1.5 -left-[21px] h-2.5 w-2.5 rounded-full border-2 border-white ${isDispute ? "bg-escalate" : "bg-brand"}`} />
-                      <p className="text-[13px] font-semibold">
-                        {ev.label}
-                        {i > 0 && gap > 0 && <span className="ml-2 font-normal text-helper">+{gap} day{gap === 1 ? "" : "s"}</span>}
-                      </p>
-                      <p className="text-[13px] text-[#555]">
-                        {ev.evidenceId ? (
-                          <>
-                            <button type="button" onClick={() => focusEvidence([ev.evidenceId as string])} className="mr-1.5 inline-flex min-h-10 min-w-10 items-center justify-center rounded-md bg-shield-soft px-1.5 text-[11.5px] font-semibold text-brand hover:underline md:min-h-6 md:min-w-0 md:py-0.5">
-                              {ev.evidenceId}
-                            </button>
-                            {ev.text}
-                          </>
-                        ) : (
-                          <b>{ev.text}</b>
-                        )}
-                      </p>
-                    </li>
-                  );
-                })}
-              </ol>
-            </Card>
+          <p className="mt-1 text-[15px] text-[#444]">
+            The customer says: &ldquo;{c.customer_claim}&rdquo; <span className="font-mono text-[12px] text-helper">{d.id}</span>
+          </p>
+          {acted && <p className="mt-1 text-[13px] font-semibold text-green-ink">{acted.type === "submit" ? "Contested (simulated)" : "Folded (simulated)"}</p>}
+          {d.respond_by_hours_left < 6 && !acted && (
+            <p className="mt-3 rounded-[10px] bg-escalate-soft px-3 py-2 font-semibold text-escalate">Respond now. Less than 6 hours left.</p>
           )}
-        </div>
+        </header>
 
-        <div className="order-1 md:order-none">
-          {state.prevCall && state.prevCall !== finalCall && state.check && (
+        {state.prevCall && state.prevCall !== finalCall && state.check && (
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand bg-[#F4F8FF] px-4 py-3" role="status">
               <span>
                 <b className="block">The call changed: {CALL_NAME[state.prevCall]} → {CALL_NAME[finalCall]}</b>
@@ -643,89 +463,41 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {notice.text}
             </p>
           )}
-          <Card id="decision" className={running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}>
-            <div className="flex flex-wrap items-center gap-3">
-              <CallChip call={finalCall} size="lg" />
-              {finalCall !== "shield" && <span className="font-medium text-[#555]">{view.confidence} confidence</span>}
-              {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[13px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
-              <span className="ml-auto text-xs text-helper">{view.source.label}</span>
-            </div>
-            {g.changedReason && finalCall !== "shield" && (
-              <p className="mt-2 rounded-[10px] bg-fold-soft px-3 py-1.5 text-[13px] font-semibold text-fold">Changed by safety rule: {g.changedReason}</p>
-            )}
 
-            {finalCall === "shield" ? (
-              <>
-                <p className="mt-3 text-[17px] font-semibold">This is a fraud dispute. Chargeback Shield handles it.</p>
-                <p className="mt-1 text-[15px]">Reason code {d.reason_code} is a fraud code. Dispute Advisor only covers non-fraud disputes, so no check was run and there is nothing to submit here.</p>
-              </>
-            ) : (
-              <>
-                <p className="mt-3 text-[17px] leading-[1.4] font-semibold">{view.reason}</p>
+        <section id="decision" aria-label="The advisor's call" className={`mb-5 rounded-2xl border border-line border-l-4 bg-white p-4 md:p-6 ${EDGE[finalCall]} ${running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}`}>
+          <div id="verdict" className="flex flex-wrap items-center gap-3">
+            <CallChip call={finalCall} size="lg" />
+            {finalCall !== "shield" && <span className="text-[15px] font-medium text-[#555]">{view.confidence} confidence</span>}
+            {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[13px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
+          </div>
+          <h2 className="mt-3 text-2xl leading-8 font-semibold md:text-[28px] md:leading-9">{HEAD[finalCall]}</h2>
+          {g.changedReason && finalCall !== "shield" && (
+            <p className="mt-2 rounded-[10px] bg-fold-soft px-3 py-1.5 text-[13px] font-semibold text-fold">Changed by safety rule: {g.changedReason}</p>
+          )}
 
-                {view.decidingEvidence.length > 0 && <H3>Deciding evidence</H3>}
-                <p>
-                  {view.decidingEvidence.map((e) => (
-                    <button
-                      key={e}
-                      onClick={() => focusEvidence([e])}
-                      className="relative mr-1.5 min-h-6 rounded-md after:absolute after:-inset-2 after:content-[''] bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]"
-                      aria-label={`Show ${e}`}
-                    >
-                      {e}
-                    </button>
-                  ))}
-                </p>
-                <p className="mt-2 text-[14px]">
-                  <span className="text-helper">Missing: </span>
-                  {view.missingEvidence.length ? view.missingEvidence.join("; ") : "nothing"}
-                  <span className="ml-3 text-helper">Contradictions: </span>
-                  {view.contradictions.length ? view.contradictions.join("; ") : "none"}
-                </p>
+          {finalCall === "shield" ? (
+            <p className="mt-2 text-[17px] leading-7 text-[#333]">Reason code {d.reason_code} is a fraud code. Dispute Advisor only covers non-fraud disputes, so no check was run and there is nothing to submit here.</p>
+          ) : (
+            <>
+              <p className="mt-2 text-[17px] leading-7 text-[#222]">{view.reason}</p>
 
-                {vsChecklist && (
-                  <div className="mt-3 rounded-xl border border-line bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="vs-checklist">
-                    <b>Why not just a checklist?</b>{" "}
-                    {vsChecklist.agree ? (
-                      <>
-                        A fixed checklist would also say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}</b> here ({vsChecklist.basis.toLowerCase()}) The agent adds the reasons, the money check and the cited draft.
-                      </>
-                    ) : (
-                      <>
-                        A fixed checklist would say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}</b> ({vsChecklist.basis.toLowerCase()}) It only sees which documents are attached. The agent read what they say and says <b>{vsChecklist.agentWord}</b>.
-                      </>
-                    )}
-                  </div>
-                )}
-
-                <div id="money"><H3>Money</H3></div>
-                <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
-                  <Stat label="At stake" value={formatInrFull(money.atStakeInr)} sub={`${formatOriginal(d.amount, d.currency)} · ${rateWord(rates)} ₹${rateFor(d.currency, rates).toFixed(2)}`} />
-                  <Stat label="Taken back if you lose" value={formatInrFull(money.atStakeInr)} sub={`at today's ${rateWord(rates)}`} />
-                  <Stat label="Possible fee if you fight and lose" value={formatInrFull(money.feesAtRiskInr)} sub={`Visa arbitration, USD ${VISA_ARBITRATION_FEE_USD}. Only if the bank escalates.`} />
-                  <Stat
-                    label={oddsAdj.adjusted ? "Odds, adjusted by your record" : "AI estimate of odds"}
-                    value={`${Math.round(oddsAdj.odds * 100)}%`}
-                    sub={oddsAdj.adjusted ? `AI said ${Math.round(oddsAdj.ai * 100)}%. Estimate, not a promise.` : "estimate, not a promise"}
-                  />
+              <dl className="mt-5 grid grid-cols-3 gap-4 border-y border-line py-4">
+                <div>
+                  <dt className="text-[13px] text-helper">At stake</dt>
+                  <dd className="text-[22px] font-semibold md:text-[26px]">{formatInrFull(money.atStakeInr)}</dd>
+                  <dd className="text-[12px] text-helper">{formatOriginal(d.amount, d.currency)}</dd>
                 </div>
-                {view.defensibleAmount !== null && (
-                  <p className="mt-2 text-[13px] text-[#555]">
-                    Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).
-                  </p>
-                )}
-                <p className="mt-2 text-xs text-helper">{view.oddsNote}</p>
-                {oddsAdj.adjusted && (
-                  <p className="mt-1 text-xs text-helper" data-testid="odds-adjusted">
-                    Adjusted by your record: {oddsAdj.won} of {oddsAdj.n} fights the advisor called Fight at {view.confidence} confidence were won. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check uses this number.
-                  </p>
-                )}
-                {record.fights > 0 && (
-                  <p className="mt-2 text-[14px]" data-testid="own-record">
-                    <b>Your record on {d.reason_code}:</b> fought {record.fights}, won {record.won} ({Math.round((record.won / record.fights) * 100)}%). <Link href="/results" className="relative font-medium text-brand after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] hover:underline">See Results</Link>
-                  </p>
-                )}
-                {view.economicsNote && <p className="mt-2 text-[14px] text-[#333]">{view.economicsNote}</p>}
+                <div>
+                  <dt className="text-[13px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
+                  <dd className="text-[22px] font-semibold md:text-[26px]">{Math.round(oddsAdj.odds * 100)}%</dd>
+                  <dd className="text-[12px] text-helper">an estimate</dd>
+                </div>
+                <div>
+                  <dt className="text-[13px] text-helper">Time left</dt>
+                  <dd className={`text-[22px] font-semibold md:text-[26px] ${t.warn ? "text-warn" : ""}`}>{t.text}</dd>
+                  <dd className="text-[12px] text-helper">to respond</dd>
+                </div>
+              </dl>
                 {finalCall === "fight" || finalCall === "fold" ? (
                   (() => {
                     const agrees = finalCall === "fight" ? money.worthFighting : !money.worthFighting;
@@ -737,151 +509,113 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                         : money.worthFighting
                           ? "⚠ Check the money: the numbers say fighting could pay"
                           : "✓ The numbers agree: fighting is not worth it here";
-                    return <p className={`mt-2 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
+                    return <p className={`mt-4 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
                   })()
                 ) : null}
                 {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.</p>}
-              </>
-            )}
 
-            {finalCall !== "shield" && (
-              <details className="mt-4 border-t border-line pt-3">
-                <summary className="cursor-pointer py-3 font-semibold text-green-ink">
-                  Safety checks ({g.lines.filter((l) => l.status === "pass").length} of {g.lines.length} passed)
-                </summary>
-                <ul className="mt-2 space-y-1.5">
-                  {g.lines.map((l) => (
-                    <li key={l.id} className={`text-[14px] ${STATUS_CLS[l.status]}`}>
-                      <span aria-hidden>{STATUS_ICON[l.status]} </span>
-                      <span className="font-semibold">
-                        {l.id} · {STATUS_WORD[l.status]}:
-                      </span>{" "}
-                      <span className="text-[#333]">{l.message}</span>
-                    </li>
+              {(view.missingEvidence.length > 0 || view.contradictions.length > 0) && finalCall !== "escalate" && (
+                <p className="mt-3 text-[14px]">
+                  {view.missingEvidence.length > 0 && (<><span className="text-helper">Missing: </span>{view.missingEvidence.join("; ")} </>)}
+                  {view.contradictions.length > 0 && (<><span className="text-helper">Contradictions: </span>{view.contradictions.join("; ")}</>)}
+                </p>
+              )}
+
+              {finalCall === "escalate" && !acted && (
+                <div id="get-first" className="mt-4 rounded-xl bg-[#FFF8E6] p-4">
+                  <p className="text-xs font-semibold tracking-[.6px] text-fold uppercase">Get this first</p>
+                  <p className="mt-1 text-[17px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
+                  {view.defensibleAmount !== null && (
+                    <p className="mt-1 text-[14px] text-[#555]">Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).</p>
+                  )}
+                  <p className="mt-2 text-[15px]">
+                    {d.respond_by_hours_left < 6
+                      ? "No time to gather more: choose Fight or Fold."
+                      : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
+                  </p>
+                  {view.draft && <p className="mt-1 text-[13px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
+                  {view.requestText && (
+                    <>
+                      <p className="mt-3 text-[13px] font-semibold text-helper">Message to send</p>
+                      <p className="mt-1 rounded-xl bg-white p-3 text-[14px]">{view.requestText}</p>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {!acted && (
+                <div id="primary-action" className="mt-5 flex flex-wrap items-center gap-2.5">
+                  {finalCall === "fight" && (
+                    <>
+                      <button className={primary} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>Review response</button>
+                      <button className={ghost} onClick={() => setDialog("fold")}>Fold</button>
+                    </>
+                  )}
+                  {finalCall === "fold" && (
+                    <>
+                      <button className={primary} onClick={() => setDialog("fold")}>Fold</button>
+                      <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>Fight instead</button>
+                    </>
+                  )}
+                  {finalCall === "escalate" && (
+                    <>
+                      {view.requestText ? (
+                        <button className={primary} onClick={() => copy("request", view.requestText ?? "")}>{copied === "request" ? "Copied" : "Copy the message"}</button>
+                      ) : (
+                        <button className={primary} onClick={openAdd}>Add the document</button>
+                      )}
+                      {view.requestText && <button className={ghost} onClick={openAdd}>Add the document</button>}
+                      <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>Fight anyway</button>
+                      <button className={ghost} onClick={() => setDialog("fold")}>Fold</button>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {view.decidingEvidence.length > 0 && (
+                <p className="mt-5 text-[14px] text-[#555]">
+                  <span className="text-helper">Based on </span>
+                  {view.decidingEvidence.map((e) => (
+                    <button key={e} onClick={() => focusEvidence([e])} className="relative mr-3 inline-flex min-h-6 items-center gap-1.5 rounded-md text-left hover:underline after:absolute after:-inset-2 after:content-['']" aria-label={`Show ${e}`}>
+                      <span className="rounded bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]">{e}</span>
+                      <span>{docName(e)}</span>
+                    </button>
                   ))}
-                </ul>
-              </details>
-            )}
+                </p>
+              )}
+            </>
+          )}
 
-            {!acted && finalCall !== "shield" && (
-              <div className="mt-4 flex flex-wrap items-center gap-2.5">
-                {finalCall === "fight" && (
-                  <>
-                    <button className={primary} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>
-                      Review response
-                    </button>
-                    <button className={ghost} onClick={() => setDialog("fold")}>
-                      Fold
-                    </button>
-                  </>
-                )}
-                {finalCall === "fold" && (
-                  <>
-                    <button className={primary} onClick={() => setDialog("fold")}>
-                      Fold
-                    </button>
-                    <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>
-                      Fight instead
-                    </button>
-                  </>
-                )}
-                {finalCall === "escalate" && (
-                  <>
-                    <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>
-                      Fight anyway
-                    </button>
-                    <button className={ghost} onClick={() => setDialog("fold")}>
-                      Fold
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-
-            {running && (
-              <p className="mt-3 text-[14px] font-semibold text-brand" role="status" aria-live="polite">
-                {steps[step]}
-              </p>
-            )}
-            <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-line pt-3">
-              <span className="text-[13px] text-helper">Was this call useful?</span>
+          {running && (
+            <p className="mt-3 text-[14px] font-semibold text-brand" role="status" aria-live="polite">
+              {steps[step]}
+            </p>
+          )}
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[13px] text-helper">
+            <span>{view.source.label}</span>
+            <span className="ml-auto flex items-center gap-2">
+              <span>Was this call useful?</span>
               <button
                 aria-label="Thumbs up"
                 aria-pressed={state.thumbs === "up"}
                 className={`min-h-11 min-w-11 rounded-[10px] border text-lg ${state.thumbs === "up" ? "border-brand bg-brand-soft" : "border-[#D6D6D6]"}`}
-                onClick={() => {
-                  update((s) => ({ ...s, thumbs: "up" }));
-                  log("You", "Marked the call useful");
-                }}
-              >
-                👍
-              </button>
+                onClick={() => { update((s) => ({ ...s, thumbs: "up" })); log("You", "Marked the call useful"); }}
+              >👍</button>
               <button
                 aria-label="Thumbs down"
                 aria-pressed={state.thumbs === "down"}
                 className={`min-h-11 min-w-11 rounded-[10px] border text-lg ${state.thumbs === "down" ? "border-brand bg-brand-soft" : "border-[#D6D6D6]"}`}
-                onClick={() => {
-                  update((s) => ({ ...s, thumbs: "down" }));
-                  log("You", "Marked the call not useful");
-                }}
-              >
-                👎
-              </button>
+                onClick={() => { update((s) => ({ ...s, thumbs: "down" })); log("You", "Marked the call not useful"); }}
+              >👎</button>
               {finalCall !== "shield" && !acted && (
-                <button className={ghost} onClick={rerun} disabled={running}>
-                  Re-run check
-                </button>
+                <button className={ghost} onClick={rerun} disabled={running}>Re-run check</button>
               )}
-              <button onClick={() => setDrawer(true)} className="relative ml-auto text-[14px] font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">
-                Under the hood ›
-              </button>
-            </div>
-          </Card>
+              <button onClick={() => setDrawer(true)} className="relative font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">Under the hood ›</button>
+            </span>
+          </div>
+        </section>
 
-          {finalCall === "escalate" && !acted && (
-            <Card id="get-first">
-              <H3>Get this first</H3>
-              <p className="text-[17px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
-              {view.draft && <p className="mt-2 text-[14px] text-[#555]">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
-              <p className="mt-2 text-[15px]">
-                {d.respond_by_hours_left < 6
-                  ? "No time to gather more: choose Fight or Fold."
-                  : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? ` for the part worth contesting (${formatInrFull(money.contestInr)})` : ""} or Fold.`}
-              </p>
-              {view.requestText && (
-                <>
-                  <H3>Message to send</H3>
-                  <p className="rounded-xl bg-[#FAFAFA] p-3 text-[14px]">{view.requestText}</p>
-                  <button className={`${ghost} mt-3 !border-brand !text-brand`} onClick={() => copy("request", view.requestText ?? "")}>
-                    {copied === "request" ? "Copied" : "Copy"}
-                  </button>
-                </>
-              )}
-            </Card>
-          )}
-          {nextSteps.length > 0 && (
-            <Card>
-              <H3>How can I help you next?</H3>
-              <ol className="mt-2 space-y-2">
-                {nextSteps.map((n, i) => (
-                  <li key={n.label}>
-                    <button onClick={n.run} className="flex min-h-11 w-full items-start gap-3 rounded-xl border border-line px-3 py-2.5 text-left hover:border-brand hover:bg-[#F4F8FF] focus-visible:outline-2 focus-visible:outline-brand">
-                      <span aria-hidden className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[13px] font-semibold text-brand">{i + 1}</span>
-                      <span>
-                        <b className="block text-[15px]">{n.label}</b>
-                        <span className="text-[13px] text-helper">{n.hint}</span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ol>
-              {copied === "request" && <p role="status" className="mt-2 text-[13px] font-semibold text-fight">Copied</p>}
-            </Card>
-          )}
-        </div>
-      </div>
-
-      {showResponse && (
+        {showResponse && (
         <Card id="response">
           <h2 className="mb-1 text-lg font-semibold">Review your response</h2>
           <p className="mb-3 text-[13px] text-helper">Every sentence needs a source. You can edit anything. Nothing is sent until you approve.</p>
@@ -1011,7 +745,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         </Card>
       )}
 
-      {acted && (
+        {acted && (
         <Card>
           <h2 className="mb-1 text-lg font-semibold">{acted.type === "submit" ? "Response submitted (simulated)" : "Dispute folded (simulated)"}</h2>
           <p className="mb-2 text-[13px] font-semibold text-helper">Simulated: nothing was sent to Razorpay.</p>
@@ -1106,12 +840,227 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         </Card>
       )}
 
+        <div className="mb-5 overflow-hidden rounded-2xl border border-line bg-white" aria-label="More detail">
+          <Row id="evidence" title="Your evidence" summary={`${allEvidence.length} documents${keyDocs ? ` · ${keyDocs.keyCovered} of ${keyDocs.keyTotal} key documents for ${d.reason_code} in place` : ""}${state.dirty && !acted ? " · changed since the last check" : ""}`} open={!!openRows.evidence} onToggle={() => toggleRow("evidence")}>
+            <>
+            {allEvidence.map((e) => {
+              const on = highlight.includes(e.id);
+              const slots = view.slots.filter((s) => s.evidenceId === e.id);
+              const flags = (view.evidenceFlags ?? []).filter((f) => f.evidenceId === e.id);
+              const addedItem = "title" in e;
+              return (
+                <div
+                  key={e.id}
+                  id={`ev-${e.id}`}
+                  className={`mt-2.5 grid grid-cols-[34px_1fr] gap-2.5 rounded-xl border p-3 ${on ? "border-brand bg-[#F4F8FF]" : "border-[#F1F1F1]"}`}
+                >
+                  <div className="flex h-[26px] items-center justify-center rounded-lg bg-shield-soft text-xs font-semibold">{e.id}</div>
+                  <div>
+                    {addedItem && <p className="text-xs font-semibold text-helper">Added by you · {(e as { title: string }).title}</p>}
+                    <p className="text-sm text-[#555]">{e.content}</p>
+                    {slots.map((s) => (
+                      <span key={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[11.5px] text-[#555]">
+                        {s.slot}
+                      </span>
+                    ))}
+                    {flags.map((f) => (
+                      <span key={f.flag} className="mt-1.5 mr-1 inline-block rounded-md bg-fold-soft px-[7px] py-0.5 text-[11.5px] font-semibold text-fold">
+                        {f.flag === "instruction_like" ? "⚠ Looks like instructions" : f.flag === "unreadable" ? "⚠ Couldn't read" : "⚠ Contradiction"}
+                      </span>
+                    ))}
+                    {addedItem && !acted && (
+                      <button onClick={() => removeEvidence(e.id)} className="relative after:absolute after:-inset-2 after:content-['']  mt-1.5 block min-h-6 text-[13px] font-semibold text-escalate underline">
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+            {finalCall !== "shield" && (
+              <EvidenceChecklist code={d.reason_code} documentsBySlot={documentsBySlot} stale={!!state.dirty && !acted} docName={docName} />
+            )}
+            {!acted && !adding && finalCall !== "shield" && (
+              <button className={`${ghost} mt-3 !border-brand !text-brand`} onClick={() => setAdding(true)}>
+                + Add evidence
+              </button>
+            )}
+            {state.dirty && !acted && !adding && (
+              <div className="mt-3 rounded-xl border border-brand bg-[#F4F8FF] p-3" role="status">
+                <p className="text-[14px] font-semibold">Your evidence changed.</p>
+                <p className="text-[13px] text-[#555]">Re-run the check to see if it changes the call.</p>
+                <button className={`${primary} mt-2`} onClick={rerun} disabled={running}>
+                  {running ? "Checking…" : "Re-run check"}
+                </button>
+              </div>
+            )}
+            {adding && (
+              <div className="mt-3 rounded-xl border border-line p-3">
+                {(evidenceHint(d.reason_code) || view.missingEvidence.length > 0) && (
+                  <div className="mb-3 rounded-xl bg-[#F4F8FF] px-3 py-2 text-[13px] text-[#333]">
+                    {view.missingEvidence.length > 0 && finalCall === "escalate" && (
+                      <p>
+                        <b>The advisor asked for:</b> {view.getFirst ?? view.missingEvidence.join("; ")}
+                      </p>
+                    )}
+                    {evidenceHint(d.reason_code) && (
+                      <p>
+                        <b>What helps for {d.reason_code}:</b> {evidenceHint(d.reason_code)}
+                      </p>
+                    )}
+                  </div>
+                )}
+                <input id="ev-file" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" disabled={reading} onChange={(e) => { void readFile(e.target.files?.[0]); e.target.value = ""; }} className="peer sr-only" aria-describedby="ev-file-help" />
+                <label htmlFor="ev-file" className={`${ghost} cursor-pointer !border-brand !text-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand peer-disabled:opacity-50`}>
+                  {reading ? "Reading…" : "Upload a PDF or image"}
+                </label>
+                <p id="ev-file-help" className="mt-1 text-[13px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
+                <label htmlFor="ev-title" className="mt-3 block text-sm font-semibold">
+                  Title
+                </label>
+                <input id="ev-title" value={newTitle} maxLength={MAX_TITLE_CHARS + 20} onChange={(e) => setNewTitle(e.target.value)} placeholder="e.g. Billing audit log" className="mt-1 w-full rounded-[10px] border border-line px-3 py-2 focus:border-brand-focus focus:outline-none" />
+                <label htmlFor="ev-text" className="mt-3 block text-sm font-semibold">
+                  What it says
+                </label>
+                <textarea id="ev-text" rows={4} value={newText} onChange={(e) => setNewText(e.target.value)} placeholder="Paste the text of the document." className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] focus:border-brand-focus focus:outline-none" aria-describedby="ev-help" />
+                <div id="ev-help" className="mt-1 flex justify-between text-[13px]">
+                  <span className="text-helper">Don&apos;t paste full card numbers.</span>
+                  <span className={newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-escalate" : "text-helper"}>
+                    {newText.length} / {MAX_EVIDENCE_CHARS.toLocaleString()}
+                  </span>
+                </div>
+                {addError && (
+                  <p role="alert" className="mt-2 text-[14px] font-semibold text-escalate">
+                    {addError}
+                  </p>
+                )}
+                <div className="mt-3 flex gap-2.5">
+                  <button className={primary} onClick={addEvidence}>
+                    Add evidence
+                  </button>
+                  <button
+                    className={ghost}
+                    onClick={() => {
+                      setAdding(false);
+                      setAddError("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            </>
+          </Row>
+          {timeline.length >= 3 && (
+            <Row id="timeline" title="Timeline from your documents" summary={`${timeline.length} dates, in order. Click a tag to jump to its document.`} open={!!openRows.timeline} onToggle={() => toggleRow("timeline")}>
+              <ol className="relative ml-1.5 border-l border-line pl-4">
+                {timeline.map((ev, i) => {
+                  const prevEv = timeline[i - 1];
+                  const gap = prevEv ? daysBetween(prevEv.iso, ev.iso) : 0;
+                  const isDispute = ev.evidenceId === null;
+                  return (
+                    <li key={`${ev.iso}-${ev.evidenceId ?? "d"}-${i}`} className="relative pb-3 last:pb-0">
+                      <span aria-hidden className={`absolute top-1.5 -left-[21px] h-2.5 w-2.5 rounded-full border-2 border-white ${isDispute ? "bg-escalate" : "bg-brand"}`} />
+                      <p className="text-[13px] font-semibold">
+                        {ev.label}
+                        {i > 0 && gap > 0 && <span className="ml-2 font-normal text-helper">+{gap} day{gap === 1 ? "" : "s"}</span>}
+                      </p>
+                      <p className="text-[13px] text-[#555]">
+                        {ev.evidenceId ? (
+                          <>
+                            <button type="button" onClick={() => focusEvidence([ev.evidenceId as string])} className="mr-1.5 inline-flex min-h-10 min-w-10 items-center justify-center rounded-md bg-shield-soft px-1.5 text-[11.5px] font-semibold text-brand hover:underline md:min-h-6 md:min-w-0 md:py-0.5">
+                              {ev.evidenceId}
+                            </button>
+                            {ev.text}
+                          </>
+                        ) : (
+                          <b>{ev.text}</b>
+                        )}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ol>
+            </Row>
+          )}
+          {finalCall !== "shield" && (
+            <Row id="money" title="The money" summary={`If you lose: ${formatInrFull(money.atStakeInr)} back, plus a possible fee of ${formatInrFull(money.feesAtRiskInr)}`} open={!!openRows.money} onToggle={() => toggleRow("money")}>
+              <div className="mt-1">
+                <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
+                  <Stat label="At stake" value={formatInrFull(money.atStakeInr)} sub={`${formatOriginal(d.amount, d.currency)} · ${rateWord(rates)} ₹${rateFor(d.currency, rates).toFixed(2)}`} />
+                  <Stat label="Taken back if you lose" value={formatInrFull(money.atStakeInr)} sub={`at today's ${rateWord(rates)}`} />
+                  <Stat label="Possible fee if you fight and lose" value={formatInrFull(money.feesAtRiskInr)} sub={`Visa arbitration, USD ${VISA_ARBITRATION_FEE_USD}. Only if the bank escalates.`} />
+                  <Stat
+                    label={oddsAdj.adjusted ? "Odds, adjusted by your record" : "AI estimate of odds"}
+                    value={`${Math.round(oddsAdj.odds * 100)}%`}
+                    sub={oddsAdj.adjusted ? `AI said ${Math.round(oddsAdj.ai * 100)}%. Estimate, not a promise.` : "estimate, not a promise"}
+                  />
+                </div>
+                {view.defensibleAmount !== null && (
+                  <p className="mt-2 text-[13px] text-[#555]">
+                    Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).
+                  </p>
+                )}
+                <p className="mt-2 text-xs text-helper">{view.oddsNote}</p>
+                {oddsAdj.adjusted && (
+                  <p className="mt-1 text-xs text-helper" data-testid="odds-adjusted">
+                    Adjusted by your record: {oddsAdj.won} of {oddsAdj.n} fights the advisor called Fight at {view.confidence} confidence were won. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check uses this number.
+                  </p>
+                )}
+                {record.fights > 0 && (
+                  <p className="mt-2 text-[14px]" data-testid="own-record">
+                    <b>Your record on {d.reason_code}:</b> fought {record.fights}, won {record.won} ({Math.round((record.won / record.fights) * 100)}%). <Link href="/results" className="relative font-medium text-brand after:absolute after:-inset-x-2 after:-inset-y-3 after:content-[''] hover:underline">See Results</Link>
+                  </p>
+                )}
+                {view.economicsNote && <p className="mt-2 text-[14px] text-[#333]">{view.economicsNote}</p>}
+
+              </div>
+            </Row>
+          )}
+          {vsChecklist && (
+            <Row id="checklist" title="Why AI, not a fixed checklist?" summary={`A checklist would say ${vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}${vsChecklist.agree ? ", the same" : ", which differs"}`} open={!!openRows.checklist} onToggle={() => toggleRow("checklist")}>
+              <div className="rounded-xl bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="vs-checklist">
+                    
+                    {vsChecklist.agree ? (
+                      <>
+                        A fixed checklist would also say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}</b> here ({vsChecklist.basis.toLowerCase()}) The agent adds the reasons, the money check and the cited draft.
+                      </>
+                    ) : (
+                      <>
+                        A fixed checklist would say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}</b> ({vsChecklist.basis.toLowerCase()}) It only sees which documents are attached. The agent read what they say and says <b>{vsChecklist.agentWord}</b>.
+                      </>
+                    )}
+                  </div>
+            </Row>
+          )}
+          <Row id="rule" title="What Visa's rule means" summary={`${d.reason_code} ${d.reason_description}`} open={!!openRows.rule} onToggle={() => toggleRow("rule")}>
+            {view.ruleText && <p className="text-[14px] leading-6 text-[#444]">{view.ruleText}</p>}
+            <p className="mt-3 text-xs font-semibold tracking-[.6px] text-helper uppercase">What Razorpay knows</p>
+            <p className="mt-1 text-[14px] leading-6 text-[#444]">{c.razorpay_facts}</p>
+          </Row>
+          {finalCall !== "shield" && (
+            <Row id="safety" title="Safety checks" summary={`${passed} of ${g.lines.length} passed. These run in code on every answer.`} open={!!openRows.safety} onToggle={() => toggleRow("safety")}>
+              <ul className="space-y-1.5">
+                {g.lines.map((l) => (
+                  <li key={l.id} className={`text-[14px] ${STATUS_CLS[l.status]}`}>
+                    <span aria-hidden>{STATUS_ICON[l.status]} </span>
+                    <span className="font-semibold">{l.id} · {STATUS_WORD[l.status]}:</span> <span className="text-[#333]">{l.message}</span>
+                  </li>
+                ))}
+              </ul>
+            </Row>
+          )}
+        </div>
       {(prev || next) && (
         <nav aria-label="Other disputes" className="mb-4 flex items-center justify-between gap-3 text-[14px] font-semibold print:hidden">
           {prev ? <Link href={`/disputes/${prev}`} className="rounded-lg border border-line bg-white px-3 py-2.5 text-brand hover:border-brand">← Previous: {prev}</Link> : <span />}
           {next ? <Link href={`/disputes/${next}`} className="rounded-lg border border-line bg-white px-3 py-2.5 text-brand hover:border-brand">Next: {next} →</Link> : <span />}
         </nav>
       )}
+      </div>
 
       <Dialog open={dialog === "fold"} onClose={() => setDialog(null)} title="Fold this dispute?">
         <p className="text-[15px]">
@@ -1230,6 +1179,21 @@ function DialogButtons({ onCancel, onYes, yes }: { onCancel: () => void; onYes: 
       <button className={primary} onClick={onYes}>
         {yes}
       </button>
+    </div>
+  );
+}
+
+function Row({ id, title, summary, open, onToggle, children }: { id: string; title: string; summary: string; open: boolean; onToggle: () => void; children: ReactNode }) {
+  return (
+    <div data-row={id} className="border-b border-line last:border-0">
+      <button type="button" aria-expanded={open} aria-controls={`row-${id}`} onClick={onToggle} className="flex min-h-14 w-full items-center gap-3 px-5 py-3 text-left hover:bg-[#FAFAFA]">
+        <span className="min-w-0 flex-1">
+          <b className="block text-[15px] font-semibold">{title}</b>
+          <span className="block text-[13px] text-helper">{summary}</span>
+        </span>
+        <span aria-hidden className={`text-brand transition-transform ${open ? "rotate-90" : ""}`}>›</span>
+      </button>
+      {open && <div id={`row-${id}`} className="px-5 pb-5">{children}</div>}
     </div>
   );
 }

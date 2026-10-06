@@ -5,6 +5,8 @@ export interface TourStep {
   text: string;
   /** CSS selector of the part of the page to point at; the step still works if it is missing. */
   target?: string;
+  /** Open the folded row the target points at, so the reviewer sees what the step talks about. */
+  reveal?: boolean;
 }
 
 export const TOUR_STEPS: TourStep[] = [
@@ -24,13 +26,15 @@ export const TOUR_STEPS: TourStep[] = [
     href: "/disputes/C06",
     title: "3. Why AI, not a fixed checklist",
     text: "This box shows what a plain checklist would say on the same dispute. The money check below it shows what you could win, what you could lose and the fee.",
-    target: '[data-testid="vs-checklist"]',
+    target: '[data-row="checklist"]',
+    reveal: true,
   },
   {
     href: "/disputes/C06",
     title: "4. Dates from your own documents",
     text: "For a cancelled subscription, the order of dates decides the case. Click E1, E2 or E3 to jump to the document behind a date.",
-    target: "#timeline",
+    target: '[data-row="timeline"]',
+    reveal: true,
   },
   {
     href: "/disputes/C06",

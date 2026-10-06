@@ -318,3 +318,9 @@ A "Take the 2-minute tour" link sits in the banner on every page (and "Or take t
 - Nothing shows until the reviewer asks for it, so it never covers the app by surprise.
 - Back, Next, Close, Escape and Finish all work; it picks up where it left off after a reload (this tab only).
 - Steps live in `lib/tourSteps.ts` (tested: real pages, numbered, short, no jargon). Browser test: `e2e_tour` (desktop and 390px phone).
+
+## F15 · Decision-first dispute page (7 Oct, on branch wip/decision-first-redesign)
+The dispute page now answers the merchant's question first. One column: the call as a sentence ("Fight this dispute"), the reason, three numbers (at stake, chance to win, time left) and the buttons, all on the first screen. Everything else is a short list of folded rows: Your evidence, Timeline, The money, Why AI not a checklist, What Visa's rule means, Safety checks. The response form opens only when asked.
+- Escalate shows "Get this first" and a copy-the-message button inside the call card.
+- Fixed a bug found while testing: a Fold call's odds were being "adjusted" with the merchant's won Fight calls (15% showed as 53%). Only Fight calls are adjusted now (`oddsForCall`, tested).
+- Measured before: 949 words, 29 boxes, 9 font sizes, main button 1,085px down. Aim: main button on the first screen.
