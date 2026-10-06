@@ -6,6 +6,12 @@ const TOP = ["Ray AI", "Payments", "Banking+", "Payroll", "More"];
 export function Shell({ children }: { children: ReactNode }) {
   return (
     <>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-brand focus:shadow-lg"
+      >
+        Skip to content
+      </a>
       <div className="bg-[#FFF4CC] px-3 py-1.5 text-center text-xs text-[#5C4400]">
         Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.
       </div>
@@ -33,7 +39,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <SubTabs />
-      <main className="mx-auto max-w-[1180px] px-4 pt-4 pb-10 md:px-6 md:pt-7 md:pb-[60px]">{children}</main>
+      <main id="main" tabIndex={-1} className="mx-auto max-w-[1180px] px-4 pt-4 pb-10 outline-none md:px-6 md:pt-7 md:pb-[60px]">{children}</main>
     </>
   );
 }

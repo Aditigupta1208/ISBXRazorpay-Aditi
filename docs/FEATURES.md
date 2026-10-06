@@ -221,6 +221,10 @@ A right-hand drawer on every dispute:
 
 **Deep dive 5 (6 Oct).** The agent and the checklist are now compared on the same 15 cases (agent v1 15 of 15, checklist 8 of 15); the 4 newer cases (C17 to C20) have their own line because they have no saved agent run. Three headline tiles sit at the top, the C15 "case that matters most" callout sits above the tables, tier badges show only for agent columns, and the case table has short headers, a "Not run" marker and a footnote about the early Claude run. On a phone the Type and early-run columns are hidden and chips are compact so the table fits without sideways scroll, also when a latest automated run is present.
 
+## Accessibility pass (deep dive 7, 6 Oct)
+
+An audit of all pages found the copy clean (R1 to R7 and "prompt" appear only where the rules and the saved-result label need them) and a visible focus ring on every control. Fixed: helper grey and link blue darkened so text reaches 4.5:1 contrast (helper #6B6B6B, brand #2F63C8, hover #244FA3; this is slightly darker than Razorpay's own blue on purpose); a "Skip to content" link; the Under the hood drawer keeps Tab inside and returns focus to its button; tap areas on phones are at least 40px (filters, Download CSV, back link, citation chips, Under the hood, Safety checks), using padding or an invisible hit area so the look is unchanged. Tested by `e2e_a11y.py`.
+
 ## 🚀 Service Dispute Shield (moonshot) ⬜
 
 A concept for Razorpay, not part of the build. Extend Chargeback Shield to non-fraud disputes: when the check says Fight with high confidence and complete evidence, Razorpay guarantees the amount for a fee per covered dispute. Only where a policy or log usually decides (13.2, 13.6, 13.7), with per-merchant limits and exclusion of merchants over Visa's early-warning ratio, to limit moral hazard. It needs months of outcome data first. It appears in the product note as the "where this goes", with those caveats.

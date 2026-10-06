@@ -313,7 +313,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   return (
     <>
       <div className="flex items-center justify-between">
-        <Link href="/disputes" className="mb-2.5 inline-block font-semibold text-brand">
+        <Link href="/disputes" className="relative mb-2.5 inline-block font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">
           ← All disputes
         </Link>
         {(state.action || state.audit.length > 0 || state.draft !== undefined) && (
@@ -398,7 +398,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                       </span>
                     ))}
                     {addedItem && !acted && (
-                      <button onClick={() => removeEvidence(e.id)} className="mt-1.5 block min-h-6 text-[13px] font-semibold text-escalate underline">
+                      <button onClick={() => removeEvidence(e.id)} className="relative after:absolute after:-inset-2 after:content-['']  mt-1.5 block min-h-6 text-[13px] font-semibold text-escalate underline">
                         Remove
                       </button>
                     )}
@@ -547,7 +547,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                     <button
                       key={e}
                       onClick={() => focusEvidence([e])}
-                      className="mr-1.5 min-h-6 rounded-md bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]"
+                      className="relative mr-1.5 min-h-6 rounded-md after:absolute after:-inset-2 after:content-[''] bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]"
                       aria-label={`Show ${e}`}
                     >
                       {e}
@@ -595,7 +595,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
 
             {finalCall !== "shield" && (
               <details className="mt-4 border-t border-line pt-3">
-                <summary className="cursor-pointer font-semibold text-green-ink">
+                <summary className="cursor-pointer py-3 font-semibold text-green-ink">
                   Safety checks ({g.lines.filter((l) => l.status === "pass").length} of {g.lines.length} passed)
                 </summary>
                 <ul className="mt-2 space-y-1.5">
@@ -681,7 +681,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                   Re-run check
                 </button>
               )}
-              <button onClick={() => setDrawer(true)} className="ml-auto text-[14px] font-semibold text-brand">
+              <button onClick={() => setDrawer(true)} className="relative ml-auto text-[14px] font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">
                 Under the hood ›
               </button>
             </div>
@@ -780,7 +780,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                       <span className={ok ? "" : "underline decoration-escalate decoration-wavy"}>{s.replace(/\s*\[[^\]]*\]/g, "")}</span>{" "}
                       {ok ? (
                         ids.map((id) => (
-                          <button key={id} onClick={() => id !== "Razorpay" && focusEvidence([id])} className="mr-1 rounded-md bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]">
+                          <button key={id} onClick={() => id !== "Razorpay" && focusEvidence([id])} className="relative mr-1 inline-flex min-h-8 min-w-8 items-center justify-center rounded-md bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8] after:absolute after:-inset-1 after:content-['']">
                             {id}
                           </button>
                         ))
@@ -803,7 +803,7 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
                 <li key={slot} className="mb-1.5">
                   <span className="rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[12px]">{slot}</span>
                   {ids.map((id) => (
-                    <button key={id} onClick={() => focusEvidence([id])} className="ml-2 inline-flex min-h-6 items-center gap-1.5 rounded-md text-left hover:underline">
+                    <button key={id} onClick={() => focusEvidence([id])} className="relative ml-2 inline-flex min-h-6 items-center gap-1.5 rounded-md text-left hover:underline after:absolute after:-inset-2 after:content-['']">
                       <span className="rounded bg-brand-soft px-1.5 text-xs font-semibold text-[#2B5BC8]">{id}</span>
                       <span className="text-[#333]">{docName(id)}</span>
                     </button>

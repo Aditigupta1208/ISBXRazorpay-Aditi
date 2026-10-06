@@ -65,13 +65,13 @@ export function DisputeTable({ rows }: { rows: Row[] }) {
               key={f.key}
               aria-pressed={filter === f.key}
               onClick={() => setFilter(f.key)}
-              className={`min-h-9 rounded-full border px-3.5 text-[13px] font-semibold ${filter === f.key ? "border-brand bg-brand-soft text-[#2B5BC8]" : "border-[#D6D6D6] bg-white text-[#333]"}`}
+              className={`min-h-10 rounded-full border px-3.5 text-[13px] font-semibold ${filter === f.key ? "border-brand bg-brand-soft text-[#2B5BC8]" : "border-[#D6D6D6] bg-white text-[#333]"}`}
             >
               {f.label}
             </button>
           ))}
         </div>
-        <button onClick={download} className="ml-auto min-h-9 rounded-[10px] border border-[#D6D6D6] px-3.5 text-[13px] font-semibold">
+        <button onClick={download} className="ml-auto min-h-10 rounded-[10px] border border-[#D6D6D6] px-3.5 text-[13px] font-semibold">
           Download CSV
         </button>
       </div>
