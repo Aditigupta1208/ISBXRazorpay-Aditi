@@ -1,6 +1,10 @@
 import { CallChip } from "@/components/CallChip";
+import { RulesVsUnseen } from "@/components/RulesVsUnseen";
+import { scoreRules, type KeyRow } from "@/lib/ruleScoreboard";
+import labelsFileData from "@/data/labels.json";
 import { THRESHOLDS, summarize, tier, type EvalRow, type Summary, type Tier } from "@/lib/eval";
 import { claudeEarlyCall, evalLabels, loadLatestRun, savedV1Rows } from "@/lib/evalView";
+import { getCases } from "@/lib/data";
 import { toCall } from "@/lib/data";
 import { PROMPT_VERSION } from "@/lib/prompt";
 import type { Call } from "@/lib/types";
@@ -43,6 +47,7 @@ export default function EvalsPage() {
   const n = (rows: EvalRow[]) => scored(rows).length;
   const latestByCase = new Map(latest?.rows.map((r) => [r.id, r]));
   const latestName = latest?.run.prompt ?? PROMPT_VERSION;
+  const rules = scoreRules(getCases(), (labelsFileData as { labels: KeyRow[] }).labels);
 
   const cols: { name: string; sub: string; s: Summary | null; n: number; agent: boolean }[] = [
     { name: "Fixed checklist", sub: `same ${n(v1Rows)} cases as agent v1`, s: checklistV1, n: n(only(v1Ids)), agent: false },
@@ -89,7 +94,7 @@ export default function EvalsPage() {
         )}
       </div>
       <p className="mb-4 text-[13px] text-helper">
-        The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions) have no saved agent run. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
+        The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases) have no saved agent run. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
         {!latest && <> Run <code className="rounded bg-white px-1 py-0.5 text-[12px]">npm run eval</code> to score the agent on all of them.</>}
       </p>
 
@@ -211,13 +216,15 @@ export default function EvalsPage() {
         </table>
       </div>
       <p className="mb-6 max-w-[760px] text-[13px] text-helper">
-        A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C20 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run yet (needs the API key)`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
+        A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C30 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run yet (needs the API key)`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
       </p>
+
+      <RulesVsUnseen s={rules} agentKnown={{ agree: agreeCount(v1Rows), n: n(v1Rows) }} />
 
       <h2 className="mb-2 text-lg font-semibold">What these numbers do not show</h2>
       <ul className="mb-6 max-w-[760px] list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft">
         <li>The answer key was written by the builder from Visa&apos;s rules. A second AI flagged disagreements, but the builder decided them.</li>
-        <li>The 20 cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases.</li>
+        <li>The {labels.length} cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases. C21 to C30 were drafted by the builder&apos;s AI assistant for the unseen-rules test, and their answers are proposed, not yet confirmed.</li>
         <li>The v1 results came from a different prompt and model, by hand. They are kept as the clean baseline, not as the product&apos;s score.</li>
         <li>The checklist only sees which document types are attached, never what they say. It cannot answer Escalate. Its answers come from code (<code>lib/baseline.ts</code>, one fixed rule per reason code), and a test checks that the code reproduces every answer shown here, so it was not hand-picked to lose.</li>
         <li>The builder chose which cases are &quot;checklist-friendly&quot; and which &quot;need judgment&quot;. On the checklist-friendly cases the checklist ties a person, as it should. The agent has to earn its place on the others, and a smarter fixed rule (for example one that reads dates) might close part of that gap.</li>

@@ -93,7 +93,7 @@ Last updated: 6 Oct 2026, after the deep dives and the extra features below. Upd
 - **Not tested: a real call to the Claude API.** It needs an API key. Until then the deployed app shows saved results and says "Decide manually" when evidence is added.
 
 ## Milestones 4, 5 and 5b, deep dives 1 to 7, and later additions (built and pushed 6 Oct)
-- [x] Evals page, `npm run eval`, 20 cases (4 added for messy evidence and hidden instructions); Agent setup (terms sent as the merchant's claim); How it works; demo script
+- [x] Evals page, `npm run eval`, 30 cases (4 for messy evidence and hidden instructions, 10 unseen test cases); Agent setup (terms sent as the merchant's claim); How it works; demo script
 - [x] Numbered next-step prompts, clear-win lane, PDF and image upload, draft contest on Escalate (prompt v2.2)
 - [x] Deep dives on the check panel, review and submit, disputes list, Add evidence, Evals, Agent setup, How it works, and an accessibility pass (contrast, skip link, drawer focus, 40px tap targets)
 - [x] Live USD/INR rate (ECB via frankfurter.dev, cached 12 h, labelled with its date), fallback to the ₹88 demo values, optional pin

@@ -22,10 +22,10 @@ const deps = (input: unknown): Deps => ({
 });
 
 test("new cases are labelled and in the data", () => {
-  assert.equal(cases.length, 20);
-  assert.equal(labels.length, 20);
+  assert.equal(cases.length, 30);
+  assert.equal(labels.length, 30);
   for (const c of cases) assert.ok(labels.find((l) => l.id === c.id), c.id);
-  for (const id of ["C17", "C18", "C19", "C20"]) {
+  for (const id of ["C17", "C18", "C19", "C20", "C21", "C22", "C23", "C24", "C25", "C26", "C27", "C28", "C29", "C30"]) {
     const ids = get(id).c.evidence.map((e) => e.id);
     for (const e of labelEvidence(get(id).l)) assert.ok(ids.includes(e), `${id} ${e}`);
   }

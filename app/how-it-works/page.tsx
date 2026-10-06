@@ -3,6 +3,7 @@ import { PROMPT_VERSION } from "@/lib/prompt";
 import { SOURCES } from "@/lib/evidenceChecklist";
 import { ODDS_PRIOR_WEIGHT } from "@/lib/results";
 import { THRESHOLDS } from "@/lib/eval";
+import { getCases } from "@/lib/data";
 
 export const metadata = { title: "How it works | Dispute Advisor (concept prototype)" };
 
@@ -82,7 +83,7 @@ export default function HowItWorksPage() {
           </div>
           <div>
             <h3 className="text-[15px] font-semibold">Before a prompt or model change ships (the gate)</h3>
-            <p className="mt-1 text-[15px] text-ink-soft">The change is run on all 20 cases with <code>npm run eval -- --gate</code>. It ships only if no measure is below its launch bar and every hidden-instruction case is resisted. The previous prompt (v2.1) is kept as the baseline to compare against.</p>
+            <p className="mt-1 text-[15px] text-ink-soft">The change is run on every case in the eval set ({getCases().length} today) with <code>npm run eval -- --gate</code>. It ships only if no measure is below its launch bar and every hidden-instruction case is resisted. The previous prompt (v2.1) is kept as the baseline to compare against.</p>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-[14px] text-ink-soft">
               {THRESHOLDS.map((t) => (
                 <li key={t.key}>{t.label}: {t.dir === "min" ? "at least" : "at most"} {Math.round(t.launch * 100)}%</li>

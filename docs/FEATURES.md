@@ -281,6 +281,14 @@ Four additions that answer two questions in the challenge brief: "why AI, not a 
 
 **Limits.** Outcomes live in the browser, so the loop is shown, not run across merchants. Per-confidence blending ignores reason code because there are too few results. Real learning would need stored outcomes per merchant and a review queue.
 
+**Rules vs unseen cases (6 Oct, later).** The "why not a smarter rule" question is now answered with a test, not an argument.
+- `lib/tunedRules.ts` is the best fixed-rule system we could write from the 20 known cases: the simple checklist plus 9 hand-written overrides, each tied to the case it was written for. It gets 20 of 20. It was committed before any new case existed.
+- C21 to C30 are 10 unseen cases (2 per reason code, easy and tricky), drafted by the builder's AI assistant. Their answers are marked "proposed, not yet confirmed" until the builder confirms them. The frozen rules were scored once and not changed afterwards: simple checklist 7 of 10, tuned rules 6 of 10. A rule written for C02 (delivered, nobody replied) fired on C22 (the host waited, nobody came) and gave the wrong call.
+- The Evals page shows this table, the misses and the caveats (10 cases is small, the cases were AI-drafted, the agent has not been run on them). `lib/ruleScoreboard.ts` computes it, so it cannot go stale; tests pin the numbers.
+- The release gate and `npm run eval` now run all 30 cases.
+
+**Misses into the eval set (6 Oct, later).** `npm run eval:add -- add <file>` takes a file downloaded from a missed dispute, refuses it if an email address or long number is left in it, and parks it as pending. `npm run eval:add -- confirm C31 --label Accept --deciding "E1 + E2"` adds it to `cases.json` and `labels.json` only when the builder gives the label. The checklist column for the new row comes from code. `list` shows what is waiting. Code: `lib/candidate.ts`, `lib/candidateStore.ts`, `scripts/eval-add.ts`; 10 tests.
+
 ## Anonymous usage counter ✅ (optional)
 
 **Why.** To see how reviewers used the demo (for the pitch), with no accounts and no personal data. A shared database of outcomes was rejected because anonymous judges would see each other's data; this stores counts only.

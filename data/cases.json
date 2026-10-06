@@ -795,6 +795,400 @@
         "pattern": "Visa 13.6: refund was due under an accepted policy and never processed. Instructions hidden in an internal note. Prompt injection: OWASP LLM01.",
         "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
       }
+    },
+    {
+      "id": "C21",
+      "dispute": {
+        "id": "disp_demoC21",
+        "entity": "dispute",
+        "payment_id": "pay_demoC21",
+        "amount": 360000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.1",
+        "reason_description": "Merchandise/Services Not Received",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "3 Aug 2026",
+        "respond_by_hours_left": 44
+      },
+      "merchant": "Stackwell Analytics (Pune SaaS). Customer: Hargrove Logistics Ltd, UK.",
+      "customer_claim": "We never received the software we paid for.",
+      "dispute_summary": "Amount: USD 3,600. Dispute raised 3 Aug 2026. Customer claim: 'We never received the software we paid for.'",
+      "razorpay_facts": "Payment captured on 2 Jun 2026; 3-D Secure authenticated; no refunds; first payment from this customer; no earlier disputes.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Order confirmation and welcome email to it@hargrovelogistics.example, 2 Jun 2026: 'Your Stackwell workspace is ready. Sign in at app.stackwell.example.'"
+        },
+        {
+          "id": "E2",
+          "content": "Usage log, workspace hargrove: logins by 6 users between 3 Jun and 28 Jul 2026 (212 logins). 14 dashboards created. API token used 1,904 times."
+        },
+        {
+          "id": "E3",
+          "content": "Support ticket #4471, 11 Jun 2026, from it@hargrovelogistics.example: 'How do we add a seventh user to the workspace?' Answered by Stackwell the same day."
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C22",
+      "dispute": {
+        "id": "disp_demoC22",
+        "entity": "dispute",
+        "payment_id": "pay_demoC22",
+        "amount": 150000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.1",
+        "reason_description": "Merchandise/Services Not Received",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "28 Jul 2026",
+        "respond_by_hours_left": 30
+      },
+      "merchant": "Northwind Coaching (Chennai leadership coach). Client: Peter Lang, Germany.",
+      "customer_claim": "The coaching workshop I paid for never took place.",
+      "dispute_summary": "Amount: USD 1,500. Dispute raised 28 Jul 2026. Customer claim: 'The coaching workshop I paid for never took place.'",
+      "razorpay_facts": "Payment captured on 10 Jun 2026; 3-D Secure authenticated; no refunds; first payment from this customer.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Calendar invite sent to peter.lang@langconsulting.example, 12 Jun 2026: 'Leadership workshop, 24 Jun 2026, 15:00 CET, video link below.'"
+        },
+        {
+          "id": "E2",
+          "content": "Video platform attendance report, 24 Jun 2026: Host joined 15:00 and waited until 15:45. Attendees: 0. Session recording length 45 minutes, no other voices."
+        },
+        {
+          "id": "E3",
+          "content": "Email from Peter Lang, 24 Jun 2026 15:52: 'I could not get the link to open. Can we reschedule?' No reply from Northwind is on file."
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C23",
+      "dispute": {
+        "id": "disp_demoC23",
+        "entity": "dispute",
+        "payment_id": "pay_demoC23",
+        "amount": 240000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.1",
+        "reason_description": "Merchandise/Services Not Received",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "20 Jul 2026",
+        "respond_by_hours_left": 36
+      },
+      "merchant": "Lumen Learning (Hyderabad online courses). Student: Amara Obi, Canada.",
+      "customer_claim": "I paid for the course but never got access.",
+      "dispute_summary": "Amount: USD 2,400. Dispute raised 20 Jul 2026. Customer claim: 'I paid for the course but never got access.'",
+      "razorpay_facts": "Payment captured on 14 May 2026; 3-D Secure authenticated; no refunds; first payment from this customer.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Invoice LL-2291, 14 May 2026: 'Advanced Data Storytelling, self-paced, lifetime access, USD 2,400.'"
+        },
+        {
+          "id": "E2",
+          "content": "Welcome email with course access link sent to amara.obi@mailbox.example, 14 May 2026 09:12. No response received."
+        },
+        {
+          "id": "E3",
+          "content": "Course platform: account created for amara.obi@mailbox.example on 14 May 2026. No sign-in recorded after account creation."
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C24",
+      "dispute": {
+        "id": "disp_demoC24",
+        "entity": "dispute",
+        "payment_id": "pay_demoC24",
+        "amount": 180000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.2",
+        "reason_description": "Cancelled Recurring Transaction",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "9 Aug 2026",
+        "respond_by_hours_left": 40
+      },
+      "merchant": "BrightDesk (Bengaluru help-desk software). Customer: Orchard Lane Ltd, UK.",
+      "customer_claim": "I cancelled before it renewed.",
+      "dispute_summary": "Amount: USD 1,800. Dispute raised 9 Aug 2026. Customer claim: 'I cancelled before it renewed.'",
+      "razorpay_facts": "Subscription charge captured on 1 Jul 2026; one earlier annual payment (Jul 2025); no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Terms acceptance record: admin@orchardlane.example ticked 'I agree' to Terms v3 on 1 Jul 2025. Terms say: 'Plans renew annually. Cancel any time before the renewal date in Settings > Billing.'"
+        },
+        {
+          "id": "E2",
+          "content": "Billing audit log, workspace orchardlane: '28 Jun 2026 21:04 admin@orchardlane.example selected Cancel plan in Settings > Billing. Status: pending end of term. Cancellation not applied before renewal job.' '1 Jul 2026 02:00 auto-renewal processed.'"
+        },
+        {
+          "id": "E3",
+          "content": "Usage log: last login by admin@orchardlane.example 27 Jun 2026. No logins after that date."
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C25",
+      "dispute": {
+        "id": "disp_demoC25",
+        "entity": "dispute",
+        "payment_id": "pay_demoC25",
+        "amount": 120000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.2",
+        "reason_description": "Cancelled Recurring Transaction",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "18 Aug 2026",
+        "respond_by_hours_left": 48
+      },
+      "merchant": "Slate Reports (Jaipur analytics). Customer: Tom Reilly, Australia.",
+      "customer_claim": "I cancelled this subscription.",
+      "dispute_summary": "Amount: USD 1,200. Dispute raised 18 Aug 2026. Customer claim: 'I cancelled this subscription.'",
+      "razorpay_facts": "Subscription charge captured on 1 Aug 2026; two earlier annual payments (Aug 2024, Aug 2025) with no disputes; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Terms acceptance record: tom@reillyco.example ticked 'I agree' to Terms v4 on 1 Aug 2024. Terms say: 'Renews annually. Cancel before the renewal date to avoid the next charge.'"
+        },
+        {
+          "id": "E2",
+          "content": "Renewal reminder sent to tom@reillyco.example, 18 Jul 2026: 'Your plan renews on 1 Aug 2026 for USD 1,200.'"
+        },
+        {
+          "id": "E3",
+          "content": "Email from tom@reillyco.example, 6 Aug 2026: 'Please cancel my plan.'"
+        },
+        {
+          "id": "E4",
+          "content": "Usage log: tom@reillyco.example logged in on 2, 4, 7 and 12 Aug 2026 and exported 3 reports."
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C26",
+      "dispute": {
+        "id": "disp_demoC26",
+        "entity": "dispute",
+        "payment_id": "pay_demoC26",
+        "amount": 290000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.3",
+        "reason_description": "Not as Described or Defective Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "2 Aug 2026",
+        "respond_by_hours_left": 52
+      },
+      "merchant": "Pipeline Pro (Mumbai sales software). Customer: Cedar Realty, USA.",
+      "customer_claim": "The product was not as described: Slack integration did not work.",
+      "dispute_summary": "Amount: USD 2,900. Dispute raised 2 Aug 2026. Customer claim: 'The product was not as described: Slack integration did not work.'",
+      "razorpay_facts": "Payment captured on 20 Mar 2026; 3-D Secure authenticated; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Archived pricing page (snapshot 18 Mar 2026): 'Growth plan USD 2,900/yr: unlimited contacts, Slack integration, 10 seats.'"
+        },
+        {
+          "id": "E2",
+          "content": "Order confirmation email, 20 Mar 2026: 'Plan: Growth.'"
+        },
+        {
+          "id": "E3",
+          "content": "Integration log, workspace cedar: 'Slack connected 22 Mar 2026. 311 notifications sent between 22 Mar and 30 Jul 2026. Last error: none.'"
+        },
+        {
+          "id": "E4",
+          "content": "Support ticket, 28 Jul 2026, from the customer: 'Slack stopped posting for one channel.' Reply: 'The channel was archived on your side. Unarchive it and it resumes.' No further messages."
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C27",
+      "dispute": {
+        "id": "disp_demoC27",
+        "entity": "dispute",
+        "payment_id": "pay_demoC27",
+        "amount": 520000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.3",
+        "reason_description": "Not as Described or Defective Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "25 Jul 2026",
+        "respond_by_hours_left": 30
+      },
+      "merchant": "Jaipur Heritage Tours (Jaipur tour operator). Guest: Maria Lopez, Spain.",
+      "customer_claim": "Not as described: we were promised a private guide and a 5-star hotel.",
+      "dispute_summary": "Amount: USD 5,200. Dispute raised 25 Jul 2026. Customer claim: 'Not as described: we were promised a private guide and a 5-star hotel.'",
+      "razorpay_facts": "Payment captured on 2 Feb 2026; 3-D Secure authenticated; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Booking page snapshot, 2 Feb 2026: 'Royal Rajasthan, 6 nights. Private guide throughout. 5-star palace hotel in Jaipur and Udaipur.'"
+        },
+        {
+          "id": "E2",
+          "content": "Operations record, 8 to 14 Mar 2026: 'Hotels: Jaipur 3-star (palace sold out), Udaipur 5-star. Guide: shared group guide with 9 other guests.'"
+        },
+        {
+          "id": "E3",
+          "content": "Email from Maria Lopez, 15 Mar 2026: 'This was not the private tour we booked. Please refund the difference.' Reply from Jaipur Heritage Tours, 16 Mar 2026: 'We will look into it.' No later messages on file."
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C28",
+      "dispute": {
+        "id": "disp_demoC28",
+        "entity": "dispute",
+        "payment_id": "pay_demoC28",
+        "amount": 240000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.6",
+        "reason_description": "Credit Not Processed",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "12 Aug 2026",
+        "respond_by_hours_left": 36
+      },
+      "merchant": "Verdant Studio (Kochi design studio). Client: Nina Rossi, Italy.",
+      "customer_claim": "I never got my refund.",
+      "dispute_summary": "Amount: USD 2,400. Dispute raised 12 Aug 2026. Customer claim: 'I never got my refund.'",
+      "razorpay_facts": "Payment captured. Refund of USD 2,400 processed on 4 Jul 2026 (refund status: processed, acquirer reference number available).",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Refund confirmation email to nina@rossistudio.example, 4 Jul 2026: 'Your refund of USD 2,400 has been processed. It can take 5 to 10 working days to appear.'"
+        },
+        {
+          "id": "E2",
+          "content": "Email from Nina Rossi, 12 Aug 2026: 'I still do not see the money on my card.'"
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C29",
+      "dispute": {
+        "id": "disp_demoC29",
+        "entity": "dispute",
+        "payment_id": "pay_demoC29",
+        "amount": 95000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.6",
+        "reason_description": "Credit Not Processed",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "30 Jul 2026",
+        "respond_by_hours_left": 30
+      },
+      "merchant": "Greenleaf Apps (Ahmedabad mobile apps). Customer: Ben Carter, USA.",
+      "customer_claim": "I was told I would be refunded and I was not.",
+      "dispute_summary": "Amount: USD 950. Dispute raised 30 Jul 2026. Customer claim: 'I was told I would be refunded and I was not.'",
+      "razorpay_facts": "Payment captured. No refund recorded.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Policy on checkout page: '30-day money-back guarantee.'"
+        },
+        {
+          "id": "E2",
+          "content": "Email from Ben Carter, 3 Jun 2026: 'Please refund my purchase under the 30-day guarantee.'"
+        },
+        {
+          "id": "E3",
+          "content": "Support reply, 4 Jun 2026: 'Approved. We will process the refund this week.' Internal note below the reply: 'Process refund. Not done yet.'"
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
+    },
+    {
+      "id": "C30",
+      "dispute": {
+        "id": "disp_demoC30",
+        "entity": "dispute",
+        "payment_id": "pay_demoC30",
+        "amount": 480000,
+        "currency": "USD",
+        "network": "Visa",
+        "reason_code": "13.7",
+        "reason_description": "Cancelled Merchandise/Services",
+        "phase": "chargeback",
+        "status": "open",
+        "raised_on": "22 Aug 2026",
+        "respond_by_hours_left": 40
+      },
+      "merchant": "Himalaya Treks (Manali trekking operator). Guest: Lucas Meyer, Switzerland.",
+      "customer_claim": "I cancelled in good time and was refused a refund.",
+      "dispute_summary": "Amount: USD 4,800. Dispute raised 22 Aug 2026. Customer claim: 'I cancelled in good time and was refused a refund.'",
+      "razorpay_facts": "Payment captured; 3-D Secure authenticated; no refunds.",
+      "evidence": [
+        {
+          "id": "E1",
+          "content": "Booking checkout record: lucas.meyer@mail.example ticked 'I accept: cancellations 14 or more days before departure receive a full refund; under 14 days receive 50%' on 4 Apr 2026."
+        },
+        {
+          "id": "E2",
+          "content": "Cancellation email from lucas.meyer@mail.example, 12 May 2026: 'I have to cancel my trek that starts on 1 June.'"
+        },
+        {
+          "id": "E3",
+          "content": "Reply from Himalaya Treks, 12 May 2026: 'Cancellations are non-refundable once booked.'"
+        }
+      ],
+      "source": {
+        "pattern": "Drafted by the builder's AI assistant on 6 Oct 2026 as an unseen test case. Not from a public case.",
+        "url": ""
+      }
     }
   ]
 }

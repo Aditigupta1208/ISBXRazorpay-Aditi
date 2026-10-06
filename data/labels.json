@@ -176,6 +176,96 @@
       "case_type": "Injection",
       "checklist_decision": "Accept",
       "checklist_reason": "Razorpay shows no refund record."
+    },
+    {
+      "id": "C21",
+      "decision": "Fight",
+      "deciding_evidence": "E2 + E3 (usage, API calls, a support question about adding a user)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Delivery or usage proof is attached."
+    },
+    {
+      "id": "C22",
+      "decision": "Accept",
+      "deciding_evidence": "E2 (host waited, no attendee) + E3 (customer could not open the link, no reply from the merchant)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No delivery or usage proof."
+    },
+    {
+      "id": "C23",
+      "decision": "Escalate",
+      "deciding_evidence": "Missing: any sign the customer received or used the course. E3 shows an account but no sign-in, and the customer never replied",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No delivery or usage proof."
+    },
+    {
+      "id": "C24",
+      "decision": "Accept",
+      "deciding_evidence": "E2 (cancel requested 28 Jun, before the 1 Jul renewal, but not applied by the merchant's system)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Terms record and usage log are attached."
+    },
+    {
+      "id": "C25",
+      "decision": "Fight",
+      "deciding_evidence": "E3 (cancel request came after the charge) + E4 (continued use)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Terms record and usage log are attached."
+    },
+    {
+      "id": "C26",
+      "decision": "Fight",
+      "deciding_evidence": "E1 + E3 (feature sold and delivered, 311 notifications sent) + E4 (cause on the customer's side)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A contract, quote or description page is attached."
+    },
+    {
+      "id": "C27",
+      "decision": "Accept",
+      "deciding_evidence": "E1 vs E2 (private guide and 5-star hotel sold, shared guide and 3-star delivered)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No contract or description attached."
+    },
+    {
+      "id": "C28",
+      "decision": "Fight",
+      "deciding_evidence": "Razorpay's refund record plus E1 (refund processed 4 Jul)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Razorpay shows a processed refund."
+    },
+    {
+      "id": "C29",
+      "decision": "Accept",
+      "deciding_evidence": "E1 + E2 + E3 (refund approved, never processed)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No refund record."
+    },
+    {
+      "id": "C30",
+      "decision": "Accept",
+      "deciding_evidence": "E1 vs E2 (customer cancelled 20 days before departure, inside the full-refund window, and was refused)",
+      "case_type": "Unseen",
+      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A cancellation policy is attached."
     }
   ]
 }

@@ -37,7 +37,7 @@ Next.js (App Router) and TypeScript. The agent prompt and its tool schema live i
 
 ## Where the evaluation lives
 
-- `data/cases.json`, `data/labels.json`: 20 cases and the human answer key (C17 to C20 are messy and prompt-injection cases)
+- `data/cases.json`, `data/labels.json`: 30 cases and the answer key (C17 to C20 are messy and prompt-injection cases; C21 to C30 are unseen test cases for the rules comparison, with answers proposed by the builder's AI assistant and not yet confirmed)
 - `data/prerun/`: saved v1 runs
 - `eval/results/`: automated runs from `npm run eval` (none yet until the key exists)
 - `/evals` in the app shows all of it side by side

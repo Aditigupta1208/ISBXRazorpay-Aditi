@@ -13,6 +13,6 @@ Before recording: open the app in a fresh browser window (clean saved state) at 
 | 70 to 80 | C16 | "Fraud goes to Chargeback Shield. The agent does not touch it." | Open C16, show the routing card. |
 | 80 to 90 | `/evals` | "On our test cases the agent matched the human answer where a fixed checklist missed. It also says what the numbers do not prove." | Show the table and the limits. Say the v2.2 result only if the real run is done; otherwise use the saved v1 numbers and say they are v1. |
 
-Spare cases for live demos: C14 (Fold, policy only in the footer) and C10 (clear win). C17 to C20 are eval-only: they are not in the disputes list and show only on the Evals page.
+Spare cases for live demos: C14 (Fold, policy only in the footer) and C10 (clear win). C17 to C30 are eval-only: they are not in the disputes list and show only on the Evals page.
 
 Do not say: that anything is sent to Razorpay, that the win rates are real, or that the exchange rate is live.
