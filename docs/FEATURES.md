@@ -332,3 +332,9 @@ The dispute page now answers the merchant's question first. One column: the call
 - Agent setup explains what it is for, and shows live what the advisor is told (built by the same code the live check uses).
 - Evals opens with why it exists in three lines; the case table is folded. How it works opens with one worked dispute in five steps.
 - Phone: welcome and Evals intro are shorter; the list note is hidden.
+
+## F17 · Tour as an overlay, tinted welcome, call colours (7 Oct, branch wip/tour-layer-palette)
+- Tour is a dark card that sits on top of the product. The rest of the page is dimmed with a spotlight around what the step is about. The card is placed next to the target, never over it (on phones it sits at the bottom). The spotlight and card glide between steps.
+- Progress is a bar. Left and right arrow keys move between steps; Esc closes. The page stays usable underneath.
+- Welcome is a tinted block with no border, so it reads as an introduction, not a section.
+- Calls have one colour each, used everywhere: solid chips (green Fight, amber Fold, red Escalate, grey Shield) and a colour bar down the left of every list row. Blue is only for actions.

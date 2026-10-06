@@ -1,10 +1,10 @@
 import type { Call } from "@/lib/types";
 
 const META: Record<Call, { label: string; icon: string; cls: string }> = {
-  fight: { label: "Fight", icon: "✓", cls: "bg-fight-soft text-fight" },
-  fold: { label: "Fold", icon: "↩", cls: "bg-fold-soft text-fold" },
-  escalate: { label: "Escalate", icon: "↗", cls: "bg-escalate-soft text-escalate" },
-  shield: { label: "Chargeback Shield", icon: "🛡", cls: "bg-shield-soft text-shield" },
+  fight: { label: "Fight", icon: "✓", cls: "bg-fight text-white" },
+  fold: { label: "Fold", icon: "↩", cls: "bg-fold text-white" },
+  escalate: { label: "Escalate", icon: "↗", cls: "bg-escalate text-white" },
+  shield: { label: "Chargeback Shield", icon: "🛡", cls: "bg-shield text-white" },
 };
 
 /** short: on phones the Chargeback Shield chip reads "Shield", so tables of chips fit a narrow screen. */

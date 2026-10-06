@@ -29,20 +29,20 @@ export function StartHere() {
     );
   }
   return (
-    <section aria-labelledby="start-here" className="mb-5 rounded-2xl border border-line bg-white p-4 md:p-6">
+    <section aria-labelledby="start-here" className="mb-5 rounded-2xl bg-[#E9EFFC] p-4 md:p-6">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 id="start-here" className="text-xl font-semibold md:text-[22px]">Should you fight this dispute?</h2>
-          <p className="mt-1 text-[14px] leading-5 text-ink-soft md:hidden">Tells you whether to fight, fold or escalate each card dispute. You approve everything.</p>
-          <p className="mt-1 hidden max-w-[640px] text-[15px] leading-6 text-ink-soft md:block">
-            When a customer disputes a card payment, Dispute Advisor reads your evidence and Visa&apos;s rule and tells you whether to <b className="font-semibold text-[#222]">fight, fold or escalate</b>, with the money worked out and a response that cites every document. You approve everything.
+          <h2 id="start-here" className="text-xl font-semibold text-[#0f1c3d] md:text-[22px]">Should you fight this dispute?</h2>
+          <p className="mt-1 text-[14px] leading-5 text-[#3a4663] md:hidden">Tells you whether to fight, fold or escalate each card dispute. You approve everything.</p>
+          <p className="mt-1 hidden max-w-[640px] text-[15px] leading-6 text-[#3a4663] md:block">
+            When a customer disputes a card payment, Dispute Advisor reads your evidence and Visa&apos;s rule and tells you whether to <b className="font-semibold text-[#0f1c3d]">fight, fold or escalate</b>, with the money worked out and a response that cites every document. You approve everything.
           </p>
         </div>
-        <button type="button" onClick={() => set(true)} className="-mt-2 -mr-2 min-h-10 shrink-0 px-2 text-[13px] font-semibold text-helper underline">Hide</button>
+        <button type="button" onClick={() => set(true)} className="-mt-2 -mr-2 min-h-10 shrink-0 px-2 text-[13px] font-semibold text-[#3a4663] underline">Hide</button>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 md:mt-4">
         <TourLink className="min-h-11 rounded-[10px] bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-focus" label="Take the 2-minute tour" />
-        <p className="hidden text-[13px] text-helper md:block">
+        <p className="hidden text-[13px] text-[#3a4663] md:block">
           or open an example:{" "}
           {EXAMPLES.map((e, i) => (
             <span key={e.id}>

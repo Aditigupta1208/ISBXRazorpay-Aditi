@@ -16,7 +16,7 @@ export const TOUR_STEPS: TourStep[] = [
     href: "/disputes",
     title: "1. Your disputes, most urgent first",
     text: "Each row is a card dispute. The advisor has already made a call on each: Fight, Fold or Escalate. Fraud disputes go to Chargeback Shield instead.",
-    target: "table",
+    target: "tbody tr, ul[aria-label=Disputes] li",
   },
   {
     href: "/disputes/C06",

@@ -28,6 +28,14 @@ const FILTERS: { key: "all" | Call; label: string }[] = [
   { key: "shield", label: "Chargeback Shield" },
 ];
 
+const EDGE_BAR: Record<string, string> = {
+  fight: "shadow-[inset_4px_0_0_#0F7B4F]",
+  fold: "shadow-[inset_4px_0_0_#8A4B08]",
+  escalate: "shadow-[inset_4px_0_0_#B42318]",
+  shield: "shadow-[inset_4px_0_0_#475569]",
+};
+const EDGE_LEFT: Record<string, string> = { fight: "border-l-fight", fold: "border-l-fold", escalate: "border-l-escalate", shield: "border-l-shield" };
+
 export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string }) {
   const [filter, setFilter] = useState<"all" | Call>("all");
   const [actions, setActions] = useState<Record<string, string>>({});
@@ -77,7 +85,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
       </div>
       <ul className="md:hidden" aria-label="Disputes">
         {shown.map((r) => (
-          <li key={r.id} className="border-b border-[#F1F1F1] last:border-0">
+          <li key={r.id} className={`border-b border-[#F1F1F1] border-l-4 last:border-b-0 ${r.call ? EDGE_LEFT[r.call] : "border-l-transparent"}`}>
             <Link href={`/disputes/${r.id}`} className="block px-4 py-3.5 active:bg-[#FAFCFF]">
               <div className="flex items-start justify-between gap-3">
                 <span className="font-semibold">
@@ -119,7 +127,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
           <tbody>
             {shown.map((r) => (
               <tr key={r.id} className="relative border-b border-[#F1F1F1] hover:bg-[#FAFCFF]">
-                <td className="px-[18px] py-4">
+                <td className={`px-[18px] py-4 ${r.call ? EDGE_BAR[r.call] : ""}`}>
                   <Link href={`/disputes/${r.id}`} className="font-mono text-[13px] text-[#555] after:absolute after:inset-0 after:content-['']">
                     {r.disputeId}
                   </Link>
