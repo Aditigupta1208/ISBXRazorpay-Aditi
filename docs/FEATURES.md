@@ -344,4 +344,4 @@ The dispute page now answers the merchant's question first. One column: the call
 - Agent setup rebuilt: terms and settings on the left, a sticky "What the advisor is told" preview and a "see it work" link on the right. The "what this screen is for" card is gone (its three points are the page subtitle and the preview).
 - Evals: intro, explainer boxes and score tiles merged into one summary card; same card and type scale throughout.
 - How it works: sections sit in cards; the long "where the rules come from" table is folded.
-- Distinct text styles per page dropped from 11 to 21 down to 5 to 12.
+- Distinct text styles per page went from 11-21 down to 5-12.
