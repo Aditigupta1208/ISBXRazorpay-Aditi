@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { ACCEPTANCE_OPTIONS, MAX_POLICY_CHARS, type Acceptance } from "@/lib/limits";
 import { containsCardNumber } from "@/lib/guardrails";
@@ -18,7 +19,7 @@ export function AgentSetup() {
   const [error, setError] = useState<string | null>(null);
 
   const set = <K extends keyof typeof profile>(k: K, v: (typeof profile)[K]) => {
-    setSaved(false);
+    setSaved(true);
     save({ ...profile, [k]: v });
   };
   const over = profile.policy.length > MAX_POLICY_CHARS;
@@ -58,23 +59,33 @@ export function AgentSetup() {
             ))}
           </select>
           <p className="mt-1 text-[13px] text-helper">For cancelled services (13.7), Visa wants the terms shown and agreed at the time of sale. A footer link alone usually does not count.</p>
-          <div className="mt-4 flex items-center gap-3">
-            <button
-              type="button"
-              disabled={over || !!error}
-              onClick={() => setSaved(true)}
-              className="rounded-lg bg-brand px-4 py-2 text-[15px] font-medium text-white hover:bg-brand-focus disabled:opacity-50"
-            >
-              Save setup
-            </button>
-            <span role="status" className="text-sm text-fight">{saved ? "Saved in this browser." : ""}</span>
-          </div>
+          <p role="status" className={`mt-4 text-sm ${over || error ? "text-escalate" : saved ? "text-fight" : "text-helper"}`}>
+            {over || error
+              ? "Not used yet: fix the terms above."
+              : saved
+                ? "✓ Saved in this browser."
+                : "Everything on this page saves as you change it, in this browser only."}
+          </p>
+        </Card>
+
+        <Card title="Try it on a dispute" help="Your terms are read on every live check.">
+          <p className="text-[15px]">
+            Open <Link href="/disputes/C13" className="font-medium text-brand hover:underline">dispute C13</Link> (a cancelled service, reason 13.7), add a document, and re-run the check. The call can change when your terms or how customers accept them change.
+          </p>
+          <p className="mt-2 text-[13px] text-helper">Without an API key the demo shows a saved result, so the terms only take effect on a live check.</p>
         </Card>
 
         <Card title="What the agent can do" help="Modelled on how Razorpay describes Agent Studio: you decide what it may touch.">
           <ul className="space-y-2 text-[15px]">
             <li className="flex items-start gap-2"><span aria-hidden>🔒</span><span><b>Every submit and fold needs your approval.</b> This is always on in the prototype.</span></li>
-            <li className="flex items-start gap-2"><span aria-hidden>👁</span><span>It reads the dispute record and the documents you add. It sends nothing to Razorpay or your customer.</span></li>
+            <li className="flex items-start gap-2"><span aria-hidden>👁</span><span>It reads the dispute record and the documents you add.</span></li>
+            <li className="flex items-start gap-2"><span aria-hidden>✍️</span><span>It drafts a response and recommends Fight, Fold or Escalate. You can edit or override both.</span></li>
+          </ul>
+          <h3 className="mt-4 mb-2 text-sm font-semibold">What it will never do</h3>
+          <ul className="space-y-2 text-[15px] text-ink-soft">
+            <li className="flex items-start gap-2"><span aria-hidden>✕</span><span>Send anything to Razorpay, Visa or your customer without your click.</span></li>
+            <li className="flex items-start gap-2"><span aria-hidden>✕</span><span>Treat your own terms as proof.</span></li>
+            <li className="flex items-start gap-2"><span aria-hidden>✕</span><span>Handle fraud disputes. Those go to Chargeback Shield.</span></li>
           </ul>
         </Card>
       </div>

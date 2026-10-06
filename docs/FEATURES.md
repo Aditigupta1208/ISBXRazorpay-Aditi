@@ -143,6 +143,8 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 ---
 
+**Deep dive 6 (6 Oct).** Agent setup now has one save pattern: everything saves as you change it, in this browser, with a "Saved" status line (the Save button is gone; bad terms show "Not used yet"). A "Try it on a dispute" card links to C13. "What the agent can do" now also lists what it will never do. How it works: the five flow cards link to the screens where each step happens; the merchant content (flow, seven rules) comes first and the brief answers, assumption, scope and limits sit under "For reviewers" in two columns (page about 250px shorter).
+
 ## F5 · Safety checks ✅
 
 Seven rules run in code on every result, in the browser as well as the server, and are unit-tested (`lib/guardrails.ts`). Each shows as a line: ✓ passed, ↻ changed the call, ✕ blocked, – not needed.
