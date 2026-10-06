@@ -100,7 +100,7 @@ export function AgentSetup() {
             <input type="checkbox" role="switch" checked={profile.enabled} onChange={(e) => set("enabled", e.target.checked)} className="h-5 w-5 accent-[#407AEA]" />
           </label>
         </Card>
-        <Card title="Tell me when" help="Saved for the demo. Nothing is sent.">
+        <Card title="Tell me when" help="Demo only: your choice is saved in this browser, but no email or WhatsApp is ever sent.">
           <label className="mb-2 flex items-center gap-2 text-[15px]"><input type="checkbox" checked={profile.notifyEmail} onChange={(e) => set("notifyEmail", e.target.checked)} className="h-4 w-4 accent-[#407AEA]" /> A dispute needs my decision (email)</label>
           <label className="flex items-center gap-2 text-[15px]"><input type="checkbox" checked={profile.notifyWhatsapp} onChange={(e) => set("notifyWhatsapp", e.target.checked)} className="h-4 w-4 accent-[#407AEA]" /> A deadline is under 24 hours (WhatsApp)</label>
         </Card>

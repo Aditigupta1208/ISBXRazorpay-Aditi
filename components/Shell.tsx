@@ -12,11 +12,11 @@ export function Shell({ children }: { children: ReactNode }) {
       >
         Skip to content
       </a>
-      <div className="bg-[#FFF4CC] px-3 py-1.5 text-center text-xs text-[#5C4400]">
+      <div className="bg-[#FFF4CC] px-3 print:hidden py-1.5 text-center text-xs text-[#5C4400]">
         Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.
       </div>
       <header className="flex h-[60px] items-center justify-between bg-nav px-3 text-white md:px-7">
-        <nav aria-label="Main" className="flex gap-5 overflow-x-auto md:gap-[34px]">
+        <nav aria-label="Main" className="scroll-fade flex gap-5 overflow-x-auto md:gap-[34px]">
           {TOP.map((t) => (
             <span
               key={t}

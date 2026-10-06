@@ -16,7 +16,7 @@ const TABS = [
 export function SubTabs() {
   const path = usePathname() ?? "";
   return (
-    <nav aria-label="Sections" className="flex gap-[18px] overflow-x-auto border-b border-line bg-white px-3 md:gap-7 md:px-7">
+    <nav aria-label="Sections" className="scroll-fade flex gap-[18px] overflow-x-auto border-b border-line bg-white px-3 md:gap-7 md:px-7">
       {TABS.map((t) => {
         if (!t.href) {
           return (

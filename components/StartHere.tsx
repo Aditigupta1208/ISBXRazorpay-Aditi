@@ -1,4 +1,8 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+const KEY = "da:v1:tips-hidden";
 
 const STEPS = [
   { id: "C06", title: "A fight call", text: "A cancelled subscription, 14 hours left. See the cited draft and the seven safety checks." },
@@ -24,6 +28,21 @@ function Step({ s, i }: { s: (typeof STEPS)[number]; i: number }) {
 
 /** Desktop: a card with three steps. Phone: one folded line, so the list stays on the first screen. */
 export function StartHere() {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    try { setHidden(localStorage.getItem(KEY) === "1"); } catch { /* storage may be blocked */ }
+  }, []);
+  const set = (v: boolean) => {
+    setHidden(v);
+    try { localStorage.setItem(KEY, v ? "1" : "0"); } catch { /* ignore */ }
+  };
+  if (hidden) {
+    return (
+      <p className="mb-4 hidden text-[13px] text-helper md:block">
+        <button type="button" onClick={() => set(false)} className="font-semibold text-brand hover:underline">Show the three starter disputes</button>
+      </p>
+    );
+  }
   return (
     <section aria-labelledby="start-here" className="mb-4 rounded-2xl border border-line bg-white md:p-5">
       <details className="group p-3.5 md:hidden">
@@ -35,8 +54,13 @@ export function StartHere() {
         <ol className="grid gap-2">{STEPS.map((s, i) => <Step key={s.id} s={s} i={i} />)}</ol>
       </details>
       <div className="hidden md:block">
-        <h2 className="text-[17px] font-semibold">New here? Try these three</h2>
-        <p className="mb-3 text-[13px] text-helper">About two minutes. Nothing is sent anywhere.</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-[17px] font-semibold">New here? Try these three</h2>
+            <p className="mb-3 text-[13px] text-helper">About two minutes. Nothing is sent anywhere.</p>
+          </div>
+          <button type="button" onClick={() => set(true)} className="shrink-0 text-[13px] font-semibold text-helper underline">Hide</button>
+        </div>
         <ol className="grid grid-cols-3 gap-3">{STEPS.map((s, i) => <Step key={s.id} s={s} i={i} />)}</ol>
       </div>
     </section>

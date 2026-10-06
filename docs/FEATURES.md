@@ -300,3 +300,15 @@ Four additions that answer two questions in the challenge brief: "why AI, not a 
 - `/usage` asks for `USAGE_ADMIN_TOKEN`, keeps it in memory, and shows visitors, disputes opened, submits, folds, outcomes, the most opened disputes and the last 14 days. It is not linked from the tabs and is marked noindex. The API returns 404 when the token is not set.
 
 **Tests.** `lib/usage.test.ts` (11 tests) and `e2e_usage.py` against a stand-in Supabase server (also checked: wrong key leaves the app working, no config is a no-op).
+
+## F13 · Polish pass from the 6 Oct audit ✅ (no API key needed)
+- **Branded 404, error and loading pages.** A bad link shows a page with ways back; unknown dispute ids are a real 404 (`dynamicParams = false`). `/agent`, `/evaluation` and `/how` redirect to the real pages.
+- **Icon and share image.** `app/icon.svg` and a generated Open Graph image, so a pasted link looks right. No Razorpay logo.
+- **Timeline from your documents** on each dispute (`lib/timeline.ts`, tested on all 30 cases). Only full dates written in the evidence are used; nothing is guessed. Each event links to its document.
+- **Previous / Next dispute** at the foot of a dispute, in the same order as the list (`lib/order.ts`).
+- **Print or save as PDF** on a dispute, with a print stylesheet that drops the tabs and buttons.
+- **Phone:** the tab rows fade at the right edge to show there are more tabs.
+- **Disputes list:** the starter box can be hidden (remembered in this browser).
+- **Evals:** jump links to the main sections of a long page.
+- **Honest labels:** the "Tell me when" boxes say they are demo only; the Escalate chip uses a hand-over arrow so it no longer looks like the deadline warning.
+- Already there, so not rebuilt: a confirm step before Fold, a banner when a re-run changes the call, evidence chips that scroll to and highlight the document, a Results reset and an empty state.

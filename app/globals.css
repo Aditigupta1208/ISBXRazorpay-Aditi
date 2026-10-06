@@ -25,3 +25,19 @@
 
 body { background: var(--color-canvas); color: #000; font-size: 15px; line-height: 1.5; font-variant-numeric: tabular-nums; }
 :focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+
+/* Tab rows that scroll sideways on a phone get a soft fade on the right so the hidden tabs are noticed. */
+.scroll-fade { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
+@media (min-width: 768px) { .scroll-fade { -webkit-mask-image: none; mask-image: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+
+/* Printing a dispute: only the content, no nav, banner or buttons. */
+@media print {
+  body { background: #fff; font-size: 12px; }
+  header, nav[aria-label="Sections"], nav[aria-label="Other disputes"], button { display: none !important; }
+  main { max-width: none; padding: 0; }
+  section { break-inside: avoid; box-shadow: none !important; }
+}

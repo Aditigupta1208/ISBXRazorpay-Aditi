@@ -84,6 +84,12 @@ export default function EvalsPage() {
         Does the agent make the same call as a person who knows Visa&apos;s rules, and does it beat a fixed checklist? Every score below is computed from the files in this repo.
       </p>
 
+      <nav aria-label="On this page" className="mb-4 flex flex-wrap gap-2 text-[13px] font-semibold">
+        {[["#c15", "The case that matters"], ["#cases", "Each case"], ["#rules", "Rules vs unseen cases"], ["#limits", "What the numbers do not show"]].map(([href, label]) => (
+          <a key={href} href={href} className="rounded-full border border-line bg-white px-3 py-1.5 text-brand hover:border-brand">{label}</a>
+        ))}
+      </nav>
+
       <div className="mb-3 grid grid-cols-3 gap-2 md:gap-4">
         <Tile label="Agent v1 (saved)" value={`${agreeCount(v1Rows)} of ${n(v1Rows)}`} note="match the human answer" />
         <Tile label="Fixed checklist" value={`${agreeCount(only(v1Ids))} of ${n(only(v1Ids))}`} note="same cases, same answer key" />
@@ -99,7 +105,7 @@ export default function EvalsPage() {
       </p>
 
       {c15 && (
-        <section className="mb-4 rounded-2xl border border-brand bg-brand-soft p-[18px]" aria-labelledby="c15">
+        <section className="mb-4 scroll-mt-4 rounded-2xl border border-brand bg-brand-soft p-[18px]" aria-labelledby="c15">
           <h2 id="c15" className="text-[17px] font-semibold">The case that matters most: C15</h2>
           <p className="mt-1 mb-3 max-w-[760px] text-[14px] text-[#333]">
             A group-tour dispute where the accepted policy meant only half was owed. A reviewer that only applied Visa&apos;s rules said Accept, which would have refunded USD 1,600 the merchant did not owe. The right call depends on the money and on a document the merchant has not sent: Escalate. (From the kill test, <code className="text-[12px]">eval/kill-test-v1.md</code>.)
@@ -179,7 +185,7 @@ export default function EvalsPage() {
         </div>
       )}
 
-      <h2 className="mt-6 mb-2 text-lg font-semibold">Case by case</h2>
+      <h2 id="cases" className="mt-6 mb-2 scroll-mt-4 text-lg font-semibold">Case by case</h2>
       <div className="relative mb-2 overflow-x-auto rounded-2xl border border-line bg-white shadow-[0_1px_2px_rgba(0,0,0,.03)]">
         <table className="w-full text-left text-[14px]">
           <caption className="sr-only">Each case: the human answer and what each method said. A cross means it differs from the human answer.</caption>
@@ -221,7 +227,7 @@ export default function EvalsPage() {
 
       <RulesVsUnseen s={rules} agentKnown={{ agree: agreeCount(v1Rows), n: n(v1Rows) }} />
 
-      <h2 className="mb-2 text-lg font-semibold">What these numbers do not show</h2>
+      <h2 id="limits" className="mb-2 scroll-mt-4 text-lg font-semibold">What these numbers do not show</h2>
       <ul className="mb-6 max-w-[760px] list-disc space-y-1.5 pl-5 text-[15px] text-ink-soft">
         <li>The answer key was written by the builder from Visa&apos;s rules. A second AI flagged disagreements, but the builder decided them.</li>
         <li>The {labels.length} cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases. C21 to C30 were drafted by the builder&apos;s AI assistant for the unseen-rules test, and their answers are proposed, not yet confirmed.</li>

@@ -22,6 +22,7 @@ import { track } from "@/lib/track";
 import { ODDS_PRIOR_WEIGHT, adjustOdds, fromAction, historyFor, sampleRecords } from "@/lib/results";
 import { compareWithChecklist } from "@/lib/vsChecklist";
 import { buildMissCase, missKind } from "@/lib/missCase";
+import { buildTimeline, daysBetween } from "@/lib/timeline";
 
 const Card = ({ children, className = "", id }: { children: ReactNode; className?: string; id?: string }) => (
   <section id={id} className={`mb-4 rounded-2xl border border-line bg-white p-[22px] shadow-[0_1px_2px_rgba(0,0,0,.03)] ${className}`}>
@@ -45,7 +46,7 @@ const STATUS_CLS: Record<Status, string> = {
 };
 const STATUS_WORD: Record<Status, string> = { pass: "Passed", changed: "Changed the call", blocked: "Blocked", na: "Not needed" };
 
-export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView }) {
+export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view: CheckView; prev?: string | null; next?: string | null }) {
   const d = c.dispute;
   const { state, update, reset, ready } = useCaseState(c.id);
   const [highlight, setHighlight] = useState<string[]>([]);
@@ -68,6 +69,11 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
   const allEvidence = [...c.evidence, ...(state.added ?? [])];
 
   const evidenceIds = allEvidence.map((e) => e.id);
+  const timeline = useMemo(
+    () => buildTimeline({ raisedOn: d.raised_on, evidence: allEvidence.map((e) => ({ id: e.id, content: e.content })) }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [d.raised_on, state.added],
+  );
   const draft = state.draft ?? view.draft;
   const contestSubunits = Math.min(state.contestAmount ?? view.defensibleAmount ?? d.amount, d.amount);
   const documentCount = view.slots.filter((s) => evidenceIds.includes(s.evidenceId)).length;
@@ -391,6 +397,9 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
         <Link href="/disputes" className="relative mb-2.5 inline-block font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">
           ← All disputes
         </Link>
+        <button type="button" onClick={() => window.print()} className="mb-2.5 ml-auto mr-3 min-h-10 text-[13px] font-semibold text-helper underline print:hidden md:min-h-0">
+          Print or save as PDF
+        </button>
         {(state.action || state.audit.length > 0 || state.draft !== undefined) && (
           <button onClick={reset} className="mb-2.5 text-[13px] font-semibold text-helper underline">
             Reset this demo
@@ -556,6 +565,41 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
               </div>
             )}
           </Card>
+
+          {timeline.length >= 3 && (
+            <Card id="timeline">
+              <H3>Timeline from your documents</H3>
+              <p className="mb-2 text-[13px] text-helper">Dates written in your evidence, in order. For {d.reason_code}, what came before or after the charge often decides the case.</p>
+              <ol className="relative ml-1.5 border-l border-line pl-4">
+                {timeline.map((ev, i) => {
+                  const prevEv = timeline[i - 1];
+                  const gap = prevEv ? daysBetween(prevEv.iso, ev.iso) : 0;
+                  const isDispute = ev.evidenceId === null;
+                  return (
+                    <li key={`${ev.iso}-${ev.evidenceId ?? "d"}-${i}`} className="relative pb-3 last:pb-0">
+                      <span aria-hidden className={`absolute top-1.5 -left-[21px] h-2.5 w-2.5 rounded-full border-2 border-white ${isDispute ? "bg-escalate" : "bg-brand"}`} />
+                      <p className="text-[13px] font-semibold">
+                        {ev.label}
+                        {i > 0 && gap > 0 && <span className="ml-2 font-normal text-helper">+{gap} day{gap === 1 ? "" : "s"}</span>}
+                      </p>
+                      <p className="text-[13px] text-[#555]">
+                        {ev.evidenceId ? (
+                          <>
+                            <button type="button" onClick={() => focusEvidence([ev.evidenceId as string])} className="mr-1.5 inline-flex min-h-10 min-w-10 items-center justify-center rounded-md bg-shield-soft px-1.5 text-[11.5px] font-semibold text-brand hover:underline md:min-h-6 md:min-w-0 md:py-0.5">
+                              {ev.evidenceId}
+                            </button>
+                            {ev.text}
+                          </>
+                        ) : (
+                          <b>{ev.text}</b>
+                        )}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ol>
+            </Card>
+          )}
         </div>
 
         <div className="order-1 md:order-none">
@@ -1060,6 +1104,13 @@ export function CaseView({ c, view: savedView }: { c: CaseData; view: CheckView 
             </>
           )}
         </Card>
+      )}
+
+      {(prev || next) && (
+        <nav aria-label="Other disputes" className="mb-4 flex items-center justify-between gap-3 text-[14px] font-semibold print:hidden">
+          {prev ? <Link href={`/disputes/${prev}`} className="rounded-lg border border-line bg-white px-3 py-2.5 text-brand hover:border-brand">← Previous: {prev}</Link> : <span />}
+          {next ? <Link href={`/disputes/${next}`} className="rounded-lg border border-line bg-white px-3 py-2.5 text-brand hover:border-brand">Next: {next} →</Link> : <span />}
+        </nav>
       )}
 
       <Dialog open={dialog === "fold"} onClose={() => setDialog(null)} title="Fold this dispute?">
