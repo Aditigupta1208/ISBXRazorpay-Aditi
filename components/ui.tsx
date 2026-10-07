@@ -46,7 +46,7 @@ export function Stat({ label, value, note, muted }: { label: string; value: stri
   return (
     <div className="px-3 py-3 md:px-5 md:py-4">
       <div className="text-[12px] text-helper">{label}</div>
-      <div className={`text-[24px] leading-8 font-semibold ${muted ? "text-helper" : ""}`}>{value}</div>
+      <div className={`font-semibold ${value.length > 6 ? "text-[16px] leading-6 sm:text-[24px] sm:leading-8" : "text-[24px] leading-8"} ${muted ? "text-helper" : ""}`}>{value}</div>
       {note && <div className="text-[12px] text-helper">{note}</div>}
     </div>
   );

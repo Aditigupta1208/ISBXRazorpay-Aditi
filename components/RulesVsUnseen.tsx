@@ -1,15 +1,16 @@
+import type { ReactNode } from "react";
 import type { Scoreboard } from "@/lib/ruleScoreboard";
 
 /** "Why not just write smarter rules?" Computed from code and the answer key, so it cannot go stale. */
 export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { agree: number; n: number } }) {
-  const Row = ({ name, sub, known, unseen, strong }: { name: string; sub: string; known: string; unseen: string; strong?: boolean }) => (
+  const Row = ({ name, sub, known, unseen, strong }: { name: string; sub: string; known: string; unseen: ReactNode; strong?: boolean }) => (
     <tr className="border-t border-line">
       <th scope="row" className="py-2.5 pr-3 text-left font-semibold">
         {name}
         <span className="block text-[12px] font-normal text-helper">{sub}</span>
       </th>
-      <td className="px-2 py-2.5 md:px-4">{known}</td>
-      <td className={`px-2 py-2.5 md:px-4 ${strong ? "font-semibold" : ""}`}>{unseen}</td>
+      <td className="px-2 py-2.5 whitespace-nowrap md:px-4">{known}</td>
+      <td className={`px-2 py-2.5 whitespace-nowrap md:px-4 ${strong ? "font-semibold" : ""}`}>{unseen}</td>
     </tr>
   );
   const u = s.unseen;
@@ -21,18 +22,18 @@ export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { 
         {u.tuned < u.simple ? " fewer than" : u.tuned === u.simple ? " the same as" : " more than"} the simple checklist ({u.simple} of {u.n}).
       </p>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[420px] text-left text-[14px]">
+        <table className="w-full text-left text-[14px]">
           <thead className="text-[12px] text-helper">
             <tr>
               <th scope="col" className="py-2 pr-3 font-medium">System</th>
-              <th scope="col" className="px-2 py-2 font-medium md:px-4">{s.known.n} known cases</th>
-              <th scope="col" className="px-2 py-2 font-medium md:px-4">{u.n} unseen cases</th>
+              <th scope="col" className="px-2 py-2 font-medium md:px-4">{s.known.n} known<span className="hidden md:inline"> cases</span></th>
+              <th scope="col" className="px-2 py-2 font-medium md:px-4">{u.n} unseen<span className="hidden md:inline"> cases</span></th>
             </tr>
           </thead>
           <tbody>
             <Row name="Simple checklist" sub="one rule per reason code" known={`${s.known.simple} of ${s.known.n}`} unseen={`${u.simple} of ${u.n}`} />
             <Row name="Tuned rules" sub={`${s.rulesAdded} hand-written rules added, each for a known case`} known={`${s.known.tuned} of ${s.known.n}`} unseen={`${u.tuned} of ${u.n}`} strong />
-            <Row name="Agent, prompt v1 (saved)" sub="older ChatGPT run; the Claude agent is not run yet" known={`${agentKnown.agree} of ${agentKnown.n}`} unseen="Not run (needs the API key)" />
+            <Row name="Agent, prompt v1 (saved)" sub="older ChatGPT run; the Claude agent is not run yet" known={`${agentKnown.agree} of ${agentKnown.n}`} unseen={<>Not run<span className="hidden md:inline"> (needs the API key)</span><span className="md:hidden"> yet</span></>} />
           </tbody>
         </table>
       </div>

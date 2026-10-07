@@ -84,7 +84,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
           Download CSV
         </button>
       </div>
-      <ul className="md:hidden" aria-label="Disputes">
+      <ul className="lg:hidden" aria-label="Disputes">
         {shown.map((r) => (
           <li key={r.id} className={`border-b border-[#F1F1F1] border-l-4 last:border-b-0 ${r.call ? EDGE_LEFT[r.call] : "border-l-transparent"}`}>
             <Link href={`/disputes/${r.id}`} className="block px-4 py-3.5 active:bg-[#FAFCFF]">
@@ -110,7 +110,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
         ))}
         {shown.length === 0 && <li className="px-4 py-8 text-center text-helper">No disputes with this call.</li>}
       </ul>
-      <div className="relative hidden overflow-x-auto md:block">
+      <div className="relative hidden overflow-x-auto lg:block">
         <table className="w-full min-w-[820px] border-collapse text-[14px]">
           <thead>
             <tr className="border-b border-line bg-[#FAFAFA] text-left text-[12px] font-semibold text-helper">

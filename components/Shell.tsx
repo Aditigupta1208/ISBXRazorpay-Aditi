@@ -17,13 +17,13 @@ export function Shell({ children }: { children: ReactNode }) {
         Concept prototype for the Razorpay x ISB AI PM Build Challenge. Not an official Razorpay product.{" "}
         <TourLink className="-my-3 inline-block py-3 font-semibold underline" />
       </div>
-      <header className="flex flex-wrap items-center gap-x-4 bg-nav px-3 text-white md:flex-nowrap md:gap-x-6 md:px-7 print:hidden">
-        <Link href="/" className="flex min-h-14 items-center gap-2.5">
+      <header className="flex flex-wrap items-center gap-x-4 bg-nav px-3 text-white md:px-7 lg:flex-nowrap lg:gap-x-6 print:hidden">
+        <Link href="/" className="flex min-h-14 items-center gap-2.5 whitespace-nowrap">
           <span className="text-[17px] font-semibold">Dispute Advisor</span>
           <span className="hidden rounded-full bg-white/15 px-2 py-0.5 sm:inline text-[12px] font-semibold text-[#D5DAE3]">Concept</span>
         </Link>
         <SubTabs />
-        <div className="ml-auto md:border-l md:border-white/15 md:pl-5">
+        <div className="ml-auto lg:border-l lg:border-white/15 lg:pl-5">
           <ReviewerNav />
         </div>
       </header>

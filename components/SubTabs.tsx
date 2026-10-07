@@ -17,7 +17,7 @@ const REVIEWER = [
 export function SubTabs() {
   const path = usePathname() ?? "";
   return (
-    <nav aria-label="Sections" className="order-last -mb-px flex w-full gap-1 overflow-x-auto px-1 md:order-none md:w-auto md:self-stretch">
+    <nav aria-label="Sections" className="order-last -mb-px flex w-full gap-1 overflow-x-auto px-1 lg:order-none lg:w-auto lg:self-stretch">
       {TABS.map((t) => {
         const on = path === t.href || path.startsWith(t.href + "/");
         return (
@@ -25,7 +25,7 @@ export function SubTabs() {
             key={t.label}
             href={t.href}
             aria-current={on ? "page" : undefined}
-            className={`flex shrink-0 items-center px-3 text-[14px] font-semibold md:min-h-[56px] ${on ? "text-white shadow-[inset_0_-3px_0_#4BA66F]" : "text-[#B9BEC7] hover:text-white"} min-h-11`}
+            className={`flex shrink-0 items-center px-3 text-[14px] font-semibold lg:min-h-[56px] ${on ? "text-white shadow-[inset_0_-3px_0_#4BA66F]" : "text-[#B9BEC7] hover:text-white"} min-h-11`}
           >
             {t.label}
           </Link>
@@ -40,7 +40,7 @@ export function ReviewerNav() {
   const path = usePathname() ?? "";
   return (
     <nav aria-label="For reviewers" className="flex items-center gap-1 text-[13px]">
-      <span className="mr-1 hidden text-[#8B919C] md:inline">For reviewers</span>
+      <span className="mr-1 hidden text-[#8B919C] lg:inline">For reviewers</span>
       {REVIEWER.map((t) => {
         const on = path === t.href;
         return (
