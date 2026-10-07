@@ -29,3 +29,16 @@ test("Odds are clamped to 0..1", () => {
   const m = moneyCheck({ amountSubunits: 100000, currency: "USD", odds: 3 });
   assert.equal(m.expectedGainInr, 1000 * DEMO_RATE_INR_PER_USD);
 });
+
+import { worthFindingCeiling } from "./money.ts";
+test("worth finding is the share of the contested amount that today's odds leave at risk", () => {
+  assert.equal(worthFindingCeiling(100000, 0.5), 50000);
+  assert.ok(Math.abs(worthFindingCeiling(100000, 0.85) - 15000) < 1e-6);
+  assert.equal(worthFindingCeiling(100000, 1), 0);
+  assert.equal(worthFindingCeiling(100000, 0), 100000);
+});
+test("worth finding never goes negative and clamps odds outside 0 to 1", () => {
+  assert.equal(worthFindingCeiling(100000, 1.4), 0);
+  assert.equal(worthFindingCeiling(100000, -0.2), 100000);
+  assert.equal(worthFindingCeiling(0, 0.3), 0);
+});

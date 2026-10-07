@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { TOUR_STEPS } from "@/lib/tourSteps";
+import { TOUR_BANK_EVENT, TOUR_STEPS } from "@/lib/tourSteps";
 
 const KEY = "da:v1:tour-step";
 export const TOUR_EVENT = "da:tour-start";
@@ -68,7 +68,7 @@ export function Tour() {
         ? (Array.from(document.querySelectorAll<HTMLElement>(s.target)).find((e) => e.getBoundingClientRect().height > 0) ?? null)
         : null;
       if (!el) {
-        if (s.target && ++tries < 12) timer = setTimeout(find, 150);
+        if (s.target && ++tries < 20) timer = setTimeout(find, 150);
         return;
       }
       if (s.reveal) el.querySelector<HTMLButtonElement>('button[aria-expanded="false"]')?.click();
@@ -90,8 +90,11 @@ export function Tour() {
       }, s.reveal ? 160 : 0);
     };
     timer = setTimeout(find, 250);
+    // A step can ask the page to show its result first (the bank test answers from a saved example, so nothing is spent).
+    const act = s.action === "bank-demo" ? setTimeout(() => window.dispatchEvent(new Event(TOUR_BANK_EVENT)), 200) : undefined;
     return () => {
       clearTimeout(timer);
+      if (act) clearTimeout(act);
       if (el) el.style.scrollMarginTop = "";
     };
   }, [step, path]);

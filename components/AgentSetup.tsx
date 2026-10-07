@@ -10,7 +10,20 @@ import { Card, SettingRow } from "@/components/ui";
 const CODES = ["13.1", "13.2", "13.3", "13.6", "13.7"];
 const FIELD = "w-full rounded-lg border border-line bg-white p-2.5 text-[14px] focus:border-brand-focus focus:outline-none focus:ring-2 focus:ring-brand-soft";
 
-export function AgentSetup() {
+/** What the Deadline rescue preview is written about. Built on the server from a demo dispute. */
+export interface RescueSample {
+  caseId: string;
+  amount: string;
+  inr: string;
+  code: string;
+  reason: string;
+  hoursLeft: number;
+  call: string;
+  confidence: string;
+  draftReady: boolean;
+}
+
+export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
   const { profile, save, ready } = useProfile();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +87,7 @@ export function AgentSetup() {
             <SettingRow title="Email me when a dispute needs my decision" htmlFor="n-email">
               <input id="n-email" type="checkbox" checked={profile.notifyEmail} onChange={(e) => set("notifyEmail", e.target.checked)} className="h-5 w-5 shrink-0 accent-[#2F63C8]" />
             </SettingRow>
-            <SettingRow title="WhatsApp me when a deadline is under 24 hours" htmlFor="n-wa">
+            <SettingRow title="Deadline rescue: WhatsApp me when a deadline is under 24 hours" caption="Sent with your response already drafted. You still review and approve." htmlFor="n-wa">
               <input id="n-wa" type="checkbox" checked={profile.notifyWhatsapp} onChange={(e) => set("notifyWhatsapp", e.target.checked)} className="h-5 w-5 shrink-0 accent-[#2F63C8]" />
             </SettingRow>
           </Card>
@@ -121,6 +134,27 @@ export function AgentSetup() {
             )}
             <p className="mt-3 text-[12px] text-helper">It is also told that these terms are what you say, and that only a document can show what the customer saw or agreed to.</p>
           </Card>
+          {rescue && (
+            <Card id="deadline-rescue" label="Deadline rescue">
+              <h2 className="text-[16px] font-semibold">Deadline rescue</h2>
+              <p className="mb-3 text-[12px] text-helper">
+                {profile.notifyWhatsapp ? "What you would get with 24 hours left." : "Off. Turn on Deadline rescue to get this."} Nothing is sent in this demo.
+              </p>
+              <div className={`rounded-xl border border-line bg-white p-3 text-[14px] leading-5 ${profile.notifyWhatsapp ? "" : "opacity-60"}`} data-testid="rescue-message" aria-label="Sample message">
+                <p className="text-[12px] font-semibold text-helper">Dispute Advisor · WhatsApp</p>
+                <p className="mt-1">
+                  <b>{rescue.hoursLeft} hours left.</b> A {rescue.amount} dispute ({rescue.code}, {rescue.reason}) closes soon. If you do nothing it is treated as accepted and {rescue.inr} is taken back.
+                </p>
+                <p className="mt-2">
+                  The advisor says <b>{rescue.call}</b>, {rescue.confidence} confidence.{rescue.draftReady ? " Your response is drafted and every sentence cites a document." : ""}
+                </p>
+                <Link href={`/disputes/${rescue.caseId}?review=1`} className="mt-3 inline-flex min-h-11 items-center rounded-[10px] bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-focus" data-testid="rescue-link">
+                  Review and approve
+                </Link>
+              </div>
+              <p className="mt-2 text-[12px] text-helper">The link opens the response for review. Nothing is submitted until you approve it there.</p>
+            </Card>
+          )}
           <Card label="Try it">
             <p className="text-[14px]">
               <span className="font-semibold">See it work.</span> Open <Link href="/disputes/C13" className="font-semibold text-brand hover:underline">dispute C13</Link> (a cancelled service, reason 13.7), add a document and re-run the check. The call can change when your terms change.

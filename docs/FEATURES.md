@@ -12,6 +12,8 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | F3 | Cited response draft | ✅ | Dispute detail, "Review your response" |
 | F4 | Merchant controls | ✅ | Dispute detail |
 | F5 | Safety checks (R1 to R7) | ✅ | Check panel, drawer, API route |
+| F21 | Worth finding? (value of the missing document) | ✅ | Dispute detail, Escalate "Get this first" box |
+| F22 | Deadline rescue (24-hour nudge, preview only) | ✅ preview and one-tap link; 🟡 no message is ever sent | `/agent-studio`, and `?review=1` on a dispute |
 | F20 | Bank's rebuttal (practice run against the bank) | ✅ saved examples and checks; 🟡 live call tested against a stand-in model only | Dispute detail, "Review your response" |
 | F6 | Priority inbox | ✅ | `/disputes` |
 | F7 | Clear-win fast lane | ✅ | Dispute detail, top of the right column |
@@ -364,3 +366,16 @@ The dispute page now answers the merchant's question first. One column: the call
 - **Stale results.** A result is marked out of date as soon as the draft changes, and "Use this rewrite" is disabled until the test is run again. Adding or removing a document clears it.
 - **Limits.** The bank's view is a simulation. No comparison with real issuer decisions exists, and the rewrite is checked for citations and length, not for truth: the merchant must read it. The live call has only been tested against a stand-in model.
 - Also in this branch: the star feature is now named **Fold-or-Fight check** everywhere (it appears on the dispute page, the welcome card and How it works), and the tour has a new stop for the bank test (11 stops).- UI pass on the dispute page (same branch): base text size is 14px, so the stray 15px and 11.5px sizes are gone. Distinct text styles on the open dispute page went from 13 to 9, all on the 12/14/16/24/28 scale. The bank test now has a heading, a one-line caption and its button on one row, and no longer repeats the "saved example" notice (the label under the result says it).- Findability of the bank test (same branch): a "Test it on the bank first" link beside Review response on every Fight call (opens the review and scrolls to the test), and a quiet line above Approve that says "Not tested on the bank yet", "Tested on the bank: <verdict>" or "You changed the response since the last bank test". It never blocks Approve.
+## F21 · Worth finding? (7 Oct, branch wip/tour-rescue)
+- On an Escalate call, the "Get this first" box now says what finding the missing document is worth: `(1 − odds) × the amount you could contest`, in rupees. Example, C15: up to ₹69,336 of the ₹1,54,080 that today's 55% odds leave at risk. It also compares that with the ₹500 effort cost the money check already assumes, and says whether chasing it is likely to pay.
+- It is a **ceiling, not a forecast** and says so on screen. It deliberately does not use a model's guess of the odds "if the document is found", because nothing could validate that number. It is plain code (`worthFindingCeiling` in `lib/money.ts`, unit tested), so it works with no key and cannot be invented by the model.
+- Shown only on Escalate. Not shown on Fight, Fold or Shield.
+
+## F22 · Deadline rescue (7 Oct, branch wip/tour-rescue)
+- The existing WhatsApp setting in Agent setup is now "Deadline rescue: WhatsApp me when a deadline is under 24 hours" ("sent with your response already drafted, you still review and approve"). A preview card next to it shows the message for a real demo dispute (C06): hours left, amount, what is taken back in rupees, the call, and "Your response is drafted". It dims when the setting is off.
+- The message's "Review and approve" button links to `/disputes/C06?review=1`, which opens the response for review on a Fight call and scrolls to it. Nothing is submitted; Approve is still a click. `?review=1` is ignored on Fold, Escalate and Shield calls.
+- **Limits:** no message is ever sent (labelled "Nothing is sent in this demo"). It is a preview of the nudge and the one-tap path, not a notification system. A reminder alone is not a differentiator; the value is that the response is already drafted and cited when it arrives.
+
+## Tour and How it works (7 Oct, branch wip/tour-rescue)
+- Tour stop 6 (the bank test) now shows a result: it asks the page for the saved example, so the reviewer sees a verdict, objection and rewrite. The request carries a `demo` flag that can only pick the saved example, so a tour never spends a model call. The spotlight is on the result body so the card does not cover it.
+- How it works has a "Where it could go next (not built)" section: odds from Razorpay's own cross-merchant data, proof captured at checkout, and cover for clear wins (the Service Dispute Shield idea from `docs/pm/02-features.md`), each with its main risk.

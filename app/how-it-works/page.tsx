@@ -17,6 +17,12 @@ const FLOW = [
   ["5", "You test it, decide, then it learns", "Run the draft past a practice bank reviewer and fix its weak spot. Approve. Mark Won or Lost and the next estimate moves.", "/disputes/C06", "Try the test"],
 ];
 
+const NEXT = [
+  ["Odds from Razorpay's own data", "Today the win odds are the model's estimate, nudged by your own record. Razorpay sees every dispute and its outcome across merchants, so it could replace the guess with a real rate by reason code and evidence type.", "Needs months of outcomes and a privacy review. Only the platform has this data."],
+  ["Proof captured at checkout", "The documents that win a dispute (accepted terms, usage, delivery) are made at the time of sale, mostly outside Razorpay. Capturing them at checkout would mean a dispute arrives with its proof attached.", "Not built: pre-dispute is out of scope here, and in a prototype it could only be a mock."],
+  ["Cover for clear wins", "Chargeback Shield covers fraud disputes only. When the check says Fight with high confidence and complete evidence, Razorpay could guarantee the amount for a fee, priced from the check's odds and its record of outcomes.", "Risks: merchants gaming it, and service disputes are fuzzier than fraud. Needs outcome data first."],
+];
+
 const RULES = [
   ["R1", "The answer has every expected field."],
   ["R2", "Every sentence of the draft cites a document. Cited documents must exist."],
@@ -38,7 +44,7 @@ const RULE_CHECK = [
 const ANSWERS = [
   ["What data or signal does it use?", "Razorpay's dispute record and payment facts, plus the evidence you add. Your own terms are read too, but only as your claim, never as proof."],
   ["Why AI and not a fixed rule?", "A checklist only sees which documents are attached. The AI reads what they say, spots contradictions, weighs the money and knows when to stop. On our 15 scored test cases it matched the human answer on 15 and a checklist on 8 (saved v1 run; see Evals)."],
-  ["What action does it take?", "The Fold-or-Fight check recommends Fight, Fold or Escalate, maps documents to Razorpay's evidence slots, and drafts a response that cites a document in every sentence. Before you submit you can test the draft against a practice bank reviewer, which names its weakest sentence and offers a fix. Nothing is sent from this prototype."],
+  ["What action does it take?", "The Fold-or-Fight check recommends Fight, Fold or Escalate, maps documents to Razorpay's evidence slots, and drafts a response that cites a document in every sentence. Before you submit you can test the draft against a practice bank reviewer, which names its weakest sentence and offers a fix. With 24 hours left it can nudge you with the response already drafted (a preview is in Agent setup). Nothing is sent from this prototype."],
   ["What does the merchant control?", "Everything that matters. Every submit and fold needs approval. You can edit the draft, override the call (your reason goes in the audit trail), or turn the agent off."],
   ["How does it learn?", "In a real product, won and lost outcomes by reason code and evidence type would sharpen advice. In this prototype the outcome is stored in your browser and shown back to you. No model is trained."],
   ["How is accuracy and trust protected?", "The seven safety rules, a saved result when the live check fails, an audit trail, and evidence treated as data, never as instructions. The Evals page shows where it is still weak."],
@@ -101,6 +107,17 @@ export default function HowItWorksPage() {
         </Card>
       </Section>
 
+      <Section id="next" title="Where it could go next (not built)" note="Ideas that follow from the same check. None is in this prototype.">
+        <div className="grid gap-4 md:grid-cols-3">
+          {NEXT.map(([t, d, c]) => (
+            <Card key={t}>
+              <h3 className="text-[14px] font-semibold">{t}</h3>
+              <p className="mt-1 text-[14px] text-ink-soft">{d}</p>
+              <p className="mt-2 text-[12px] text-helper">{c}</p>
+            </Card>
+          ))}
+        </div>
+      </Section>
     </>
   );
   const answers = (

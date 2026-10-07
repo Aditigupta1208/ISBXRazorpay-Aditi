@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: "rejected", code: "empty", message: "That request was not valid." }, { status: 400 });
   }
 
-  const b = body as { caseId?: unknown; added?: unknown; draft?: unknown; policy?: { text?: unknown; acceptance?: unknown } };
+  const b = body as { caseId?: unknown; added?: unknown; draft?: unknown; demo?: unknown; policy?: { text?: unknown; acceptance?: unknown } };
   const c = typeof b.caseId === "string" ? getCase(b.caseId) : undefined;
   if (!c || !Array.isArray(b.added) || b.added.length > MAX_ADDED || typeof b.draft !== "string") {
     return NextResponse.json({ status: "rejected", code: "empty", message: "That request was not valid." }, { status: 400 });
@@ -58,7 +58,8 @@ export async function POST(req: Request) {
   try {
     const prompt = loadRebuttalPrompt();
     deps = {
-      callModel: makeCallModel(process.env.ANTHROPIC_API_KEY),
+      // "demo" (used by the guided tour) can only ever pick the saved example. It cannot cause a model call.
+      callModel: b.demo === true ? null : makeCallModel(process.env.ANTHROPIC_API_KEY),
       model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL,
       system: prompt.system,
       toolSchema: prompt.toolSchema,

@@ -8,7 +8,7 @@ import type { AnalyzeResult } from "@/lib/agent";
 import { MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS } from "@/lib/limits";
 import { DRAFT_LIMIT, citedIds, containsCardNumber, evaluateGuardrails, sentenceHasSource, splitSentences, type Status } from "@/lib/guardrails";
 import { formatInrFull, formatOriginal, timeLeft } from "@/lib/format";
-import { VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor } from "@/lib/money";
+import { DEFAULT_EFFORT_COST_INR, VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor, worthFindingCeiling } from "@/lib/money";
 import { rateNote, rateWord } from "@/lib/rates";
 import { useRates } from "@/components/RatesProvider";
 import type { CaseData, CheckView } from "@/lib/types";
@@ -171,6 +171,20 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   useEffect(() => {
     track("dispute_opened", c.id);
   }, [c.id]);
+
+  // A Deadline rescue message links here with ?review=1: open the response for review (the merchant still has to approve it).
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      if (new URLSearchParams(window.location.search).get("review") !== "1") return;
+    } catch {
+      return;
+    }
+    if (finalCall !== "fight" || state.action) return;
+    if (!state.reviewOpen) update((s) => ({ ...s, reviewOpen: true }));
+    setTimeout(() => document.getElementById("response")?.scrollIntoView({ behavior: "smooth", block: "start" }), 250);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
 
   const goToBankTest = () => setTimeout(() => document.getElementById("rebuttal")?.scrollIntoView({ behavior: "smooth", block: "center" }), 200);
   const log = (actor: "You" | "Advisor", text: string) =>
@@ -535,6 +549,16 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   {view.defensibleAmount !== null && (
                     <p className="mt-1 text-[14px] text-[#555]">Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).</p>
                   )}
+                  {(() => {
+                    const ceiling = worthFindingCeiling(money.contestInr, oddsAdj.odds);
+                    return (
+                      <p className="mt-2 text-[14px]" data-testid="worth-finding">
+                        <b>Worth finding?</b> Up to {formatInrFull(ceiling)} more. That is the part of the {formatInrFull(money.contestInr)} you could contest that today&apos;s {Math.round(oddsAdj.odds * 100)}% odds still leave at risk.{" "}
+                        {ceiling > DEFAULT_EFFORT_COST_INR ? `More than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so it is worth asking.` : `Less than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so chasing it may not pay.`}{" "}
+                        <span className="text-helper">A ceiling, not a forecast.</span>
+                      </p>
+                    );
+                  })()}
                   <p className="mt-2 text-[14px]">
                     {d.respond_by_hours_left < 6
                       ? "No time to gather more: choose Fight or Fold."

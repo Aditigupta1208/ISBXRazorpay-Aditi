@@ -9,7 +9,12 @@ export interface TourStep {
   reveal?: boolean;
   /** Stops for judges and curious readers rather than for a merchant. */
   audience?: "reviewers";
+  /** Something the page should do when the step opens, so the reviewer sees the result instead of an empty panel. */
+  action?: "bank-demo";
 }
+
+/** Sent to the page by the "bank-demo" step. The bank test answers from its saved example, so no model call is made. */
+export const TOUR_BANK_EVENT = "da:tour-bank-demo";
 
 export const TOUR_STEPS: TourStep[] = [
   {
@@ -47,8 +52,9 @@ export const TOUR_STEPS: TourStep[] = [
   {
     href: "/disputes/C06",
     title: "6. Test it on the bank first",
-    text: "A second AI pass plays the cardholder's bank and attacks your draft. It names the weakest sentence and offers a fix. A practice run, not a bank decision.",
-    target: "#rebuttal",
+    text: "A second AI pass plays the cardholder's bank and attacks your draft: its strongest objection, your weakest sentence, a fix. This is a saved example. A practice run, not a bank decision.",
+    target: '[data-tour="bank-body"]',
+    action: "bank-demo",
   },
   {
     href: "/disputes/C15",

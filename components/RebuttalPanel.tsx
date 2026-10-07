@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { RebuttalResult } from "@/lib/rebuttal";
 import { VERDICT_LABEL, applyFix, sameDraft, type RebuttalView, type Verdict } from "@/lib/rebuttalCore";
+import { TOUR_BANK_EVENT } from "@/lib/tourSteps";
 import { readProfile } from "@/lib/useProfile";
 
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
@@ -53,9 +54,9 @@ export function RebuttalPanel({
   const rewrite = result ? applyFix(draft, result) : null;
   const changedChecks = result?.checks.filter((c) => c.status === "changed").length ?? 0;
 
-  const run = async () => {
+  const run = async (demo = false) => {
     const profile = readProfile();
-    if (!profile.enabled) {
+    if (!profile.enabled && !demo) {
       setNotice({ kind: "info", text: "Dispute Advisor is off in Agent setup. Turn it on to test your response." });
       return;
     }
@@ -69,6 +70,7 @@ export function RebuttalPanel({
           caseId,
           added,
           draft,
+          demo: demo || undefined,
           policy: profile.policy.trim() ? { text: profile.policy, acceptance: profile.acceptance } : undefined,
         }),
       });
@@ -86,6 +88,19 @@ export function RebuttalPanel({
     }
   };
 
+  // The guided tour asks for the saved example so the reviewer sees a result. It never calls the model.
+  const runRef = useRef(run);
+  runRef.current = run;
+  const hasResult = useRef(false);
+  hasResult.current = !!result;
+  useEffect(() => {
+    const onTour = () => {
+      if (!hasResult.current) void runRef.current(true);
+    };
+    window.addEventListener(TOUR_BANK_EVENT, onTour);
+    return () => window.removeEventListener(TOUR_BANK_EVENT, onTour);
+  }, []);
+
   return (
     <div id="rebuttal" data-testid="rebuttal" className="mt-5 scroll-mt-4 border-t border-line pt-4">
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
@@ -97,7 +112,7 @@ export function RebuttalPanel({
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
           {!hasDraft && <span className="text-[12px] text-helper">Write a response first.</span>}
-          <button className={ghostBrand} onClick={run} disabled={running || !hasDraft} data-testid="rebuttal-run">
+          <button className={ghostBrand} onClick={() => run()} disabled={running || !hasDraft} data-testid="rebuttal-run">
             {running ? "Testing…" : result ? "Test again" : "Test this response"}
           </button>
         </div>
@@ -122,6 +137,7 @@ export function RebuttalPanel({
             </p>
           )}
 
+          <div data-tour="bank-body">
           <div className="flex flex-wrap items-center gap-2.5">
             <span className={`rounded-full px-3 py-1 text-[12px] font-semibold ${VERDICT_CHIP[result.verdict]}`} data-testid="rebuttal-verdict">
               {VERDICT_LABEL[result.verdict]}
@@ -186,6 +202,8 @@ export function RebuttalPanel({
               </div>
             </div>
           )}
+
+          </div>
 
           <details className="mt-4" data-testid="rebuttal-checks">
             <summary className="flex min-h-11 cursor-pointer items-center text-[14px] font-semibold text-brand">

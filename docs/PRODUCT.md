@@ -30,7 +30,8 @@ When a non-fraud dispute arrives, the agent:
 6. Maps each document to Razorpay's evidence slots and drafts the response (max 1,000 characters, Razorpay's limit; can cover part of the amount), with a citation on every sentence.
 7. **Bank's rebuttal (optional, on a click):** before the merchant approves, a second AI pass plays the cardholder's bank, names the strongest objection and the weakest sentence, and offers a one-click rewrite or the one document to add. It is a simulation and never changes the call.
 8. Waits for the merchant to approve, edit, accept or escalate.
-9. Records the outcome, lists next steps (accountant, bank paperwork) and suggests one prevention fix after a loss.
+9. On Escalate it also says what finding the missing document is worth (**Worth finding?**: a ceiling, `(1 − odds) × amount`, not a forecast). With 24 hours left, **Deadline rescue** nudges the merchant with the response already drafted and a link that opens it for review (preview only in the prototype).
+10. Records the outcome, lists next steps (accountant, bank paperwork) and suggests one prevention fix after a loss.
 
 Fraud reason codes (10.x) are routed to Chargeback Shield.
 

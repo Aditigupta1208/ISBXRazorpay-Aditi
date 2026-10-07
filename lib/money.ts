@@ -53,3 +53,14 @@ export function moneyCheck(i: MoneyInput, rates: Rates = FALLBACK_RATES): MoneyR
     worthFighting: expectedGainInr > expectedCostInr,
   };
 }
+
+/**
+ * "Worth finding?": the most that getting a missing document can add. It is the share of the contested amount that
+ * today's odds still leave at risk, (1 - p) * A. A ceiling, not a forecast: it assumes the document settles the question,
+ * and it does not use any model estimate of the odds with the document, because nothing validates one.
+ */
+export function worthFindingCeiling(contestInr: number, odds: number): number {
+  const p = Math.max(0, Math.min(1, odds));
+  return Math.max(0, (1 - p) * contestInr);
+}
+
