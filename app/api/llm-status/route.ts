@@ -14,6 +14,7 @@ export async function GET(req: Request) {
   const asked = new URL(req.url).searchParams.get("model");
   const model = asked && /^[\w.\-]{3,60}$/.test(asked) ? asked : llm.model;
   const out: Record<string, unknown> = { provider: llm.provider, model, keyPresent: llm.callModel !== null };
+  if (llm.provider === "groq") out.thinking = ["low", "medium", "high"].includes(process.env.GROQ_REASONING ?? "") ? process.env.GROQ_REASONING : "medium";
   if (new URL(req.url).searchParams.get("probe") === "1") {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
     if (!allow(`probe:${ip}`, Date.now(), 5).ok) return NextResponse.json({ ...out, probe: "rate_limited" }, { status: 429 });
