@@ -773,7 +773,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           </p>
           <details className="mt-3">
             <summary className="cursor-pointer text-[14px] font-semibold text-brand">What would be sent</summary>
-            <pre className="mt-2 overflow-x-auto rounded-xl bg-[#0F172A] p-4 text-[12.5px] leading-[1.6] break-words whitespace-pre-wrap text-[#E2E8F0]">{acted.request}</pre>
+            <pre className="mt-2 overflow-x-auto rounded-xl bg-[#0F172A] p-4 text-[12px] leading-[1.6] break-words whitespace-pre-wrap text-[#E2E8F0]">{acted.request}</pre>
           </details>
 
           <H3>Status</H3>
@@ -876,12 +876,12 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     {addedItem && <p className="text-[12px] font-semibold text-helper">Added by you · {(e as { title: string }).title}</p>}
                     <p className="text-sm text-[#555]">{e.content}</p>
                     {slots.map((s) => (
-                      <span key={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[11.5px] text-[#555]">
+                      <span key={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[12px] text-[#555]">
                         {s.slot}
                       </span>
                     ))}
                     {flags.map((f) => (
-                      <span key={f.flag} className="mt-1.5 mr-1 inline-block rounded-md bg-fold-soft px-[7px] py-0.5 text-[11.5px] font-semibold text-fold">
+                      <span key={f.flag} className="mt-1.5 mr-1 inline-block rounded-md bg-fold-soft px-[7px] py-0.5 text-[12px] font-semibold text-fold">
                         {f.flag === "instruction_like" ? "⚠ Looks like instructions" : f.flag === "unreadable" ? "⚠ Couldn't read" : "⚠ Contradiction"}
                       </span>
                     ))}
@@ -988,7 +988,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                       <p className="text-[12px] text-[#555]">
                         {ev.evidenceId ? (
                           <>
-                            <button type="button" onClick={() => focusEvidence([ev.evidenceId as string])} className="mr-1.5 inline-flex min-h-10 min-w-10 items-center justify-center rounded-md bg-shield-soft px-1.5 text-[11.5px] font-semibold text-brand hover:underline md:min-h-6 md:min-w-0 md:py-0.5">
+                            <button type="button" onClick={() => focusEvidence([ev.evidenceId as string])} className="mr-1.5 inline-flex min-h-10 min-w-10 items-center justify-center rounded-md bg-shield-soft px-1.5 text-[12px] font-semibold text-brand hover:underline md:min-h-6 md:min-w-0 md:py-0.5">
                               {ev.evidenceId}
                             </button>
                             {ev.text}

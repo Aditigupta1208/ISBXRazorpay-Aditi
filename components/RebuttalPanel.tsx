@@ -76,7 +76,6 @@ export function RebuttalPanel({
       if (r.status === "live" || r.status === "saved") {
         onResult(r.view);
         onLog(`Tested the response against a bank reviewer: ${VERDICT_LABEL[r.view.verdict]}${r.status === "saved" ? " (saved example)" : ""}`);
-        if (r.status === "saved") setNotice({ kind: "info", text: r.message });
       } else {
         setNotice({ kind: "error", text: r.message });
       }
@@ -88,24 +87,26 @@ export function RebuttalPanel({
   };
 
   return (
-    <div id="rebuttal" data-testid="rebuttal" className="scroll-mt-4">
-      <h3 className="mt-4 mb-1.5 text-[12px] font-semibold tracking-[.6px] text-helper uppercase">Test it on the bank first</h3>
-      <p className="text-[14px] text-[#333]">
-        A second AI pass reads your response like a sceptical reviewer at the cardholder's bank and tells you where it is weakest.
-        <span className="text-helper"> A practice run, not a real bank decision. It never changes your call or edits anything on its own.</span>
-      </p>
-
-      <div className="mt-3 flex flex-wrap items-center gap-2.5">
-        <button className={ghostBrand} onClick={run} disabled={running || !hasDraft} data-testid="rebuttal-run">
-          {running ? "Testing…" : result ? "Test again" : "Test this response"}
-        </button>
-        {!hasDraft && <span className="text-[12px] text-helper">Write a response first.</span>}
-        {running && (
-          <span className="text-[14px] font-semibold text-brand" role="status" aria-live="polite">
-            Reading it as the bank would…
-          </span>
-        )}
+    <div id="rebuttal" data-testid="rebuttal" className="mt-5 scroll-mt-4 border-t border-line pt-4">
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+        <div className="min-w-0 flex-1 basis-72">
+          <h3 className="text-[16px] font-semibold">Test it on the bank first</h3>
+          <p className="mt-0.5 text-[12px] text-helper">
+            A practice run, not a real bank decision. A second AI pass reads your response like the cardholder&apos;s bank and tells you where it is weakest. It never changes your call or edits your draft.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2.5">
+          {!hasDraft && <span className="text-[12px] text-helper">Write a response first.</span>}
+          <button className={ghostBrand} onClick={run} disabled={running || !hasDraft} data-testid="rebuttal-run">
+            {running ? "Testing…" : result ? "Test again" : "Test this response"}
+          </button>
+        </div>
       </div>
+      {running && (
+        <p className="mt-3 text-[14px] font-semibold text-brand" role="status" aria-live="polite">
+          Reading it as the bank would…
+        </p>
+      )}
 
       {notice && (
         <p className={`mt-3 rounded-[10px] px-3 py-2 text-[14px] ${notice.kind === "error" ? "bg-escalate-soft text-escalate" : "bg-[#F4F8FF] text-[#2B5BC8]"}`} role="status">
