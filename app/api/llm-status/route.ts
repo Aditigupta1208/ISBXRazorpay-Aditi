@@ -11,7 +11,9 @@ export const maxDuration = 30;
  */
 export async function GET(req: Request) {
   const llm = getLlm();
-  const out: Record<string, unknown> = { provider: llm.provider, model: llm.model, keyPresent: llm.callModel !== null };
+  const asked = new URL(req.url).searchParams.get("model");
+  const model = asked && /^[\w.\-]{3,60}$/.test(asked) ? asked : llm.model;
+  const out: Record<string, unknown> = { provider: llm.provider, model, keyPresent: llm.callModel !== null };
   if (new URL(req.url).searchParams.get("probe") === "1") {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
     if (!allow(`probe:${ip}`, Date.now(), 5).ok) return NextResponse.json({ ...out, probe: "rate_limited" }, { status: 429 });
@@ -19,7 +21,7 @@ export async function GET(req: Request) {
     const started = Date.now();
     try {
       const r = await llm.callModel({
-        model: llm.model,
+        model,
         system: "Call the tool with ok set to true.",
         user: "ping",
         toolName: "record_ping",
@@ -27,6 +29,7 @@ export async function GET(req: Request) {
         toolSchema: { type: "object", required: ["ok"], properties: { ok: { type: "boolean" } } },
         maxTokens: 50,
       });
+      out.answeredBy = r.model ?? model;
       out.probe = (r.input as { ok?: boolean } | undefined)?.ok === true ? "ok" : "no_tool_call";
       out.tokens = { in: r.tokensIn, out: r.tokensOut };
     } catch (err) {

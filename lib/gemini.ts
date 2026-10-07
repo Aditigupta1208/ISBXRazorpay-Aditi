@@ -43,9 +43,19 @@ export function toGeminiParts(user: string | unknown[]): Json[] {
   });
 }
 
-export function makeGeminiCallModel(apiKey: string | undefined, baseUrl: string = BASE): ((p: ModelParams) => Promise<ModelReply>) | null {
+/** Overload and outage responses worth trying another model for. Config errors (400, 401, 403) are not: a second model would fail the same way. */
+const FALLBACK_STATUSES = new Set([404, 429, 500, 502, 503, 504]);
+export const GEMINI_FALLBACK_MODELS = ["gemini-3.5-flash"]; // also free tier per Google's pricing page, 7 Oct 2026
+const PER_MODEL_TIMEOUT_MS = 25_000;
+
+export function makeGeminiCallModel(
+  apiKey: string | undefined,
+  baseUrl: string = BASE,
+  fallbacks: string[] = GEMINI_FALLBACK_MODELS,
+): ((p: ModelParams) => Promise<ModelReply>) | null {
   if (!apiKey) return null;
-  return async (p) => {
+
+  const once = async (p: ModelParams, model: string): Promise<ModelReply> => {
     const body = {
       systemInstruction: { parts: [{ text: p.system }] },
       contents: [{ role: "user", parts: toGeminiParts(p.user) }],
@@ -54,15 +64,15 @@ export function makeGeminiCallModel(apiKey: string | undefined, baseUrl: string 
       generationConfig: { maxOutputTokens: p.maxTokens + THINKING_HEADROOM, temperature: 0 },
     };
     // The key goes in a header, never in the URL, so it cannot end up in logs.
-    const res = await fetch(`${baseUrl.replace(/\/$/, "")}/models/${encodeURIComponent(p.model)}:generateContent`, {
+    const res = await fetch(`${baseUrl.replace(/\/$/, "")}/models/${encodeURIComponent(model)}:generateContent`, {
       method: "POST",
       headers: { "content-type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+      signal: AbortSignal.timeout(PER_MODEL_TIMEOUT_MS),
     });
     if (!res.ok) {
       const text = (await res.text().catch(() => "")).replaceAll(apiKey, "[key]").replace(/\s+/g, " ").slice(0, 300);
-      throw new Error(`Gemini HTTP ${res.status}: ${text}`);
+      throw new GeminiHttpError(res.status, `Gemini HTTP ${res.status} (${model}): ${text}`);
     }
     const data = (await res.json()) as {
       candidates?: { content?: { parts?: { functionCall?: { name?: string; args?: unknown } }[] } }[];
@@ -70,6 +80,28 @@ export function makeGeminiCallModel(apiKey: string | undefined, baseUrl: string 
     };
     const call = data.candidates?.[0]?.content?.parts?.find((x) => x.functionCall && x.functionCall.name === p.toolName)?.functionCall;
     const u = data.usageMetadata ?? {};
-    return { input: call?.args, tokensIn: u.promptTokenCount ?? 0, tokensOut: (u.candidatesTokenCount ?? 0) + (u.thoughtsTokenCount ?? 0) };
+    return { input: call?.args, tokensIn: u.promptTokenCount ?? 0, tokensOut: (u.candidatesTokenCount ?? 0) + (u.thoughtsTokenCount ?? 0), model };
   };
+
+  return async (p) => {
+    const models = [p.model, ...fallbacks.filter((m) => m !== p.model)];
+    let last: unknown;
+    for (const m of models) {
+      try {
+        return await once(p, m);
+      } catch (err) {
+        last = err;
+        const retryable = err instanceof GeminiHttpError ? FALLBACK_STATUSES.has(err.status) : true; // network errors and timeouts too
+        console.error(`[llm] ${err instanceof Error ? err.message : String(err)}${retryable && m !== models[models.length - 1] ? " -> trying the next model" : ""}`);
+        if (!retryable) break;
+      }
+    }
+    throw last;
+  };
+}
+
+class GeminiHttpError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+  }
 }

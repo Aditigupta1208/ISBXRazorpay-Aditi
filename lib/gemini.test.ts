@@ -54,7 +54,7 @@ test("the request forces the tool, keeps the key out of the URL, and the reply a
   const call = makeGeminiCallModel("secret", base)!;
   const r = await call({ model: "gemini-x", system: "S", user: "U", toolName: "t", toolDescription: "d", toolSchema: { type: "object", properties: { a: { type: ["string", "null"] } } }, maxTokens: 500 });
   server.close();
-  assert.deepEqual(r, { input: { ok: 1 }, tokensIn: 100, tokensOut: 50 });
+  assert.deepEqual(r, { input: { ok: 1 }, tokensIn: 100, tokensOut: 50, model: "gemini-x" });
   assert.equal(seen.url, "/v1beta/models/gemini-x:generateContent");
   assert.ok(!seen.url.includes("secret"));
   assert.equal(seen.key, "secret");
@@ -97,4 +97,44 @@ test("cost uses the model's own price list", () => {
   assert.equal(costUsd(1_000_000, 0, "claude-sonnet-5-5"), 2);
   assert.equal(costUsd(1_000_000, 0, "gemini-3.8-flash"), 0.75);
   assert.equal(costUsd(0, 1_000_000, "gemini-3.8-flash"), 3.75);
+});
+
+test("an overloaded model (503) falls back to the next model and the reply says which one answered", async () => {
+  const urls: string[] = [];
+  const server = createServer((req, res) => {
+    urls.push(req.url ?? "");
+    req.resume();
+    req.on("end", () => {
+      if ((req.url ?? "").includes("/models/m1:")) { res.statusCode = 503; res.end(JSON.stringify({ error: { message: "high demand" } })); return; }
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({ candidates: [{ content: { parts: [{ functionCall: { name: "t", args: { ok: 1 } } }] } }], usageMetadata: { promptTokenCount: 5, candidatesTokenCount: 5 } }));
+    });
+  });
+  await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/v1beta`;
+  const call = makeGeminiCallModel("k", base, ["m2"])!;
+  const r = await call({ model: "m1", system: "s", user: "u", toolName: "t", toolDescription: "d", toolSchema: { type: "object" }, maxTokens: 10 });
+  server.close();
+  assert.equal(r.model, "m2");
+  assert.deepEqual(r.input, { ok: 1 });
+  assert.equal(urls.length, 2);
+  assert.ok(urls[0].includes("m1") && urls[1].includes("m2"));
+});
+
+test("a configuration error (403) does not try other models, and the error text never contains the key", async () => {
+  let hits = 0;
+  const server = createServer((req, res) => {
+    hits++;
+    req.resume();
+    req.on("end", () => { res.statusCode = 403; res.end(JSON.stringify({ error: { message: "API key SECRETKEY123 is not allowed" } })); });
+  });
+  await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/v1beta`;
+  const call = makeGeminiCallModel("SECRETKEY123", base, ["m2"])!;
+  let message = "";
+  await call({ model: "m1", system: "s", user: "u", toolName: "t", toolDescription: "d", toolSchema: { type: "object" }, maxTokens: 10 }).catch((e) => (message = e.message));
+  server.close();
+  assert.equal(hits, 1);
+  assert.match(message, /403/);
+  assert.ok(!message.includes("SECRETKEY123"));
 });

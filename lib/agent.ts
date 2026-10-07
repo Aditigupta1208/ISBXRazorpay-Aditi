@@ -32,6 +32,8 @@ export interface ModelReply {
   input: unknown;
   tokensIn: number;
   tokensOut: number;
+  /** The model that really answered, when it differs from the one asked for (a fallback). */
+  model?: string;
 }
 
 export interface Deps {
@@ -195,6 +197,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
   const started = now();
   let tokensIn = 0;
   let tokensOut = 0;
+  let answeredBy = deps.model;
   for (let attempt = 0; attempt < 2; attempt++) {
     let reply: ModelReply;
     try {
@@ -213,10 +216,11 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
     }
     tokensIn += reply.tokensIn;
     tokensOut += reply.tokensOut;
+    answeredBy = reply.model ?? deps.model;
     const parsed = decisionSchema.safeParse(reply.input);
     if (parsed.success) {
-      const usd = costUsd(tokensIn, tokensOut, deps.model);
-      const meta: Meta = { live: true, model: deps.model, promptVersion: PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
+      const usd = costUsd(tokensIn, tokensOut, answeredBy);
+      const meta: Meta = { live: true, model: answeredBy, promptVersion: PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
       const value: LiveOk = { status: "live", view: toCheckView(parsed.data, c, meta), meta };
       deps.cache?.set(key, { at: now(), value });
       if (deps.cache && deps.cache.size > 200) deps.cache.delete(deps.cache.keys().next().value as string);

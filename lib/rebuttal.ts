@@ -114,6 +114,7 @@ export async function analyzeRebuttal(c: CaseData, added: AddedEvidence[], draft
   const started = now();
   let tokensIn = 0;
   let tokensOut = 0;
+  let answeredBy = deps.model;
   for (let attempt = 0; attempt < 2; attempt++) {
     let reply: ModelReply;
     try {
@@ -132,14 +133,15 @@ export async function analyzeRebuttal(c: CaseData, added: AddedEvidence[], draft
     }
     tokensIn += reply.tokensIn;
     tokensOut += reply.tokensOut;
+    answeredBy = reply.model ?? deps.model;
     const parsed = rebuttalSchema.safeParse(reply.input);
     if (parsed.success) {
-      const usd = costUsd(tokensIn, tokensOut, deps.model);
-      const meta: RebuttalMeta = { live: true, model: deps.model, promptVersion: REBUTTAL_PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
+      const usd = costUsd(tokensIn, tokensOut, answeredBy);
+      const meta: RebuttalMeta = { live: true, model: answeredBy, promptVersion: REBUTTAL_PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
       const view = checkRebuttal(parsed.data, {
         draft: text,
         evidenceIds,
-        source: { label: `Live practice run: ${deps.model}, prompt ${REBUTTAL_PROMPT_VERSION}`, model: deps.model, promptVersion: REBUTTAL_PROMPT_VERSION, date: today(), live: true },
+        source: { label: `Live practice run: ${answeredBy}, prompt ${REBUTTAL_PROMPT_VERSION}`, model: answeredBy, promptVersion: REBUTTAL_PROMPT_VERSION, date: today(), live: true },
       });
       const value: RebuttalLive = { status: "live", view, meta };
       deps.cache?.set(key, { at: now(), value });
