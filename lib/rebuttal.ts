@@ -129,7 +129,7 @@ export async function analyzeRebuttal(c: CaseData, added: AddedEvidence[], draft
       });
     } catch (err) {
       console.error("[llm] rebuttal call failed:", err instanceof Error ? err.message : String(err));
-      return fallback("call_failed", "The live test didn't answer, so you are seeing a saved example.");
+      return fallback("call_failed", "The AI model was busy or too slow, so you are seeing a saved example. Try the test again in a moment.");
     }
     tokensIn += reply.tokensIn;
     tokensOut += reply.tokensOut;

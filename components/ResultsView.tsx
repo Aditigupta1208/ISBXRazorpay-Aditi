@@ -6,6 +6,8 @@ import { SAMPLE_COUNT, sampleRecords, summarize, weakestCode } from "@/lib/resul
 import { ODDS_BY_CONFIDENCE } from "@/lib/results";
 import type { Rates } from "@/lib/rates";
 import { Card, Section, Stat } from "@/components/ui";
+import { LearnBox } from "@/components/LearnBox";
+import { compactStats } from "@/lib/assistCore";
 
 const pct = (n: number | null) => (n === null ? "n/a" : `${Math.round(n * 100)}%`);
 
@@ -139,6 +141,8 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
               )}
             </Card>
           </Section>
+
+          <LearnBox stats={compactStats(m)} usesSample={withSample && youCount === 0} />
 
           <details className="mb-6 rounded-2xl border border-line bg-white px-4 py-1 md:px-5">
             <summary className="min-h-10 cursor-pointer py-2.5 text-[14px] font-semibold">How the loop works</summary>

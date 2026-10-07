@@ -1,0 +1,48 @@
+{
+  "label": "Saved example, written for this demo",
+  "note": "Key facts for three demo disputes, so the feature shows without an API key. Each fact carries a word-for-word quote from its document, and a test checks that every quote is really in the document.",
+  "cases": {
+    "C01": [
+      { "id": "E1", "facts": [
+        { "fact": "The signed scope promised 12 mobile app screens in Figma with 2 revision rounds.", "quote": "12 mobile app screens in Figma, 2 revision rounds" },
+        { "fact": "The customer signed it on 30 May 2026.", "quote": "Signed by Mark Ellis" }
+      ] },
+      { "id": "E2", "facts": [
+        { "fact": "On 20 Jun 2026 the customer approved milestone 2 and all 12 screens in writing.", "quote": "Approved milestone 2. All 12 screens look great" },
+        { "fact": "The customer told the merchant to go ahead with the final handoff.", "quote": "go ahead with final handoff" }
+      ] },
+      { "id": "E3", "facts": [
+        { "fact": "The customer opened the design file on 22 Jun, 25 Jun and 14 Jul 2026.", "quote": "viewed 'Brightline App v3' on 22 Jun, 25 Jun and 14 Jul 2026" },
+        { "fact": "The customer made their own copy of the file on 14 Jul 2026.", "quote": "duplicated the file on 14 Jul 2026" }
+      ] }
+    ],
+    "C06": [
+      { "id": "E1", "facts": [
+        { "fact": "The terms say the plan renews every year and must be cancelled in Settings > Billing before the renewal date.", "quote": "Renews annually; cancel in Settings > Billing before the renewal date" },
+        { "fact": "The customer accepted these terms on 3 Aug 2025.", "quote": "accepted 3 Aug 2025" }
+      ] },
+      { "id": "E2", "facts": [
+        { "fact": "On 29 Jul 2026 the customer said they were thinking of cancelling. That is not a cancellation.", "quote": "Honestly I'm thinking of cancelling, not using it much." },
+        { "fact": "The support agent pointed them to Settings > Billing. There were no more messages.", "quote": "You can cancel from Settings > Billing any time." }
+      ] },
+      { "id": "E3", "facts": [
+        { "fact": "The customer's last login was 28 Jul 2026, with none after.", "quote": "last login 28 Jul 2026. None after." }
+      ] },
+      { "id": "E4", "facts": [
+        { "fact": "The billing audit log shows no cancellation action.", "quote": "no cancellation action recorded" }
+      ] }
+    ],
+    "C15": [
+      { "id": "E1", "facts": [
+        { "fact": "The booker ticked the policy at checkout on 10 Feb 2026.", "quote": "ticked 'I accept: cancellations 7 to 14 days before departure get a 50% refund" },
+        { "fact": "Under 7 days before departure there is no refund.", "quote": "under 7 days no refund" }
+      ] },
+      { "id": "E2", "facts": [
+        { "fact": "The cancellation request on 1 Mar 2026 came from a different email address than the one that booked.", "quote": "Please cancel our tour.' (Not the address that booked.)" }
+      ] },
+      { "id": "E3", "facts": [
+        { "fact": "The merchant replied that only the booker can cancel. There were no further messages.", "quote": "We can only accept cancellations from the booker." }
+      ] }
+    ]
+  }
+}

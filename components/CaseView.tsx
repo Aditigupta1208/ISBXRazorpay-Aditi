@@ -16,6 +16,8 @@ import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
 import { evidenceHint } from "@/lib/evidenceHints";
 import { EvidenceChecklist } from "@/components/EvidenceChecklist";
 import { RebuttalPanel } from "@/components/RebuttalPanel";
+import { ShortenBox } from "@/components/ShortenBox";
+import { KeyFactLines, KeyFactsButton } from "@/components/KeyFactsBox";
 import { VERDICT_LABEL, sameDraft } from "@/lib/rebuttalCore";
 import { checklistFor } from "@/lib/evidenceChecklist";
 import { readProfile } from "@/lib/useProfile";
@@ -75,6 +77,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const allEvidence = [...c.evidence, ...(state.added ?? [])];
 
   const evidenceIds = allEvidence.map((e) => e.id);
+  const evidenceSig = allEvidence.map((e) => `${e.id}:${e.content.length}`).join("|");
+  const keyFactsR = state.keyFacts && state.keyFacts.sig === evidenceSig ? state.keyFacts.result : undefined;
+  const keyFactsShown = keyFactsR && (keyFactsR.status === "live" || keyFactsR.status === "saved") ? keyFactsR : undefined;
   const timeline = useMemo(
     () => buildTimeline({ raisedOn: d.raised_on, evidence: allEvidence.map((e) => ({ id: e.id, content: e.content })) }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -630,7 +635,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             </div>
           )}
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[12px] text-helper">
-            <span>{view.source.label}</span>
+            <span data-tour="source-label">{view.source.label}</span>
             <span className="ml-auto flex flex-wrap items-center justify-end gap-2">
               <span>Was this call useful?</span>
               <button
@@ -690,6 +695,17 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {draft.trim().length} / {DRAFT_LIMIT}
             </span>
           </div>
+          {draft.trim().length > DRAFT_LIMIT && !acted && (
+            <ShortenBox
+              caseId={c.id}
+              added={(state.added ?? []).map((a) => ({ title: a.title, content: a.content }))}
+              draft={draft}
+              onUse={(nd, how) => {
+                update((s) => ({ ...s, draft: nd }));
+                log("You", how === "ai" ? "Used the AI's shorter version of the draft" : "Used a shorter version made by dropping the last sentences");
+              }}
+            />
+          )}
 
           {sentences.length > 0 && (
             <>
@@ -925,6 +941,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <div>
                     {addedItem && <p className="text-[12px] font-semibold text-helper">Added by you · {(e as { title: string }).title}</p>}
                     <p className="text-sm text-[#555]">{e.content}</p>
+                    {keyFactsShown && <KeyFactLines docs={keyFactsShown.docs} id={e.id} />}
                     {slots.map((s) => (
                       <span key={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[12px] text-[#555]">
                         {s.slot}
@@ -947,6 +964,17 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
             {finalCall !== "shield" && (
               <EvidenceChecklist code={d.reason_code} documentsBySlot={documentsBySlot} stale={!!state.dirty && !acted} docName={docName} />
+            )}
+            {finalCall !== "shield" && (
+              <KeyFactsButton
+                caseId={c.id}
+                added={(state.added ?? []).map((a) => ({ title: a.title, content: a.content }))}
+                result={keyFactsShown ? state.keyFacts?.result : undefined}
+                onResult={(r) => {
+                  update((s) => ({ ...s, keyFacts: { sig: evidenceSig, result: r } }));
+                  log("Advisor", r.status === "live" ? "Read key facts from the documents" : "Showed saved key facts");
+                }}
+              />
             )}
             {!acted && !adding && finalCall !== "shield" && (
               <button className={`${ghost} mt-3 !border-brand !text-brand`} onClick={() => setAdding(true)}>

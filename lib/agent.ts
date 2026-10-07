@@ -185,7 +185,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
   const fallback = (reason: string, message: string): AnalyzeResult =>
     added.length === 0 && deps.getSaved(c.id)
       ? { status: "saved", reason, message }
-      : { status: "unavailable", reason, message: "We couldn't run the check. Decide manually." };
+      : { status: "unavailable", reason, message: reason === "no_key" ? "We couldn't run the check. Decide manually." : "We couldn't run the check. Decide manually. The AI model was busy or too slow, so you can also try Re-run check again in a moment." };
 
   if (!deps.callModel) return fallback("no_key", "The live check is off in this demo, so you are seeing the saved result.");
 
@@ -212,7 +212,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
       });
     } catch (err) {
       console.error("[llm] call failed:", err instanceof Error ? err.message : String(err));
-      return fallback("call_failed", "The live check didn't answer, so you are seeing the saved result.");
+      return fallback("call_failed", "The AI model was busy or too slow, so you are seeing the saved result. Try Re-run check again in a moment.");
     }
     tokensIn += reply.tokensIn;
     tokensOut += reply.tokensOut;

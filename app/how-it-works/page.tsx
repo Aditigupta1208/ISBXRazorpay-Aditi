@@ -179,6 +179,17 @@ export default function HowItWorksPage() {
           </p></Card>
         </Section>
 
+        <Section title="Live checks, saved results and the helpers">
+          <Card><ul className="list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
+            <li><b className="font-semibold text-ink">Live.</b> Re-run check, Add evidence, the bank test and the three helpers below make a real call to an AI model. This demo runs on a free-tier model, so a call can take up to a minute, and a busy model can refuse it.</li>
+            <li><b className="font-semibold text-ink">Saved.</b> If a call fails or no key is set, you see the saved result from an earlier test run instead. The label under every answer says <i>Live</i> or <i>Saved result</i> and names the model, so you always know which you are looking at.</li>
+            <li><b className="font-semibold text-ink">Same question, same answer.</b> Repeating a check with the same case and evidence returns the first answer from a one-hour cache. Add evidence to get a fresh one.</li>
+            <li><b className="font-semibold text-ink">Shorten.</b> If your response is over Razorpay&apos;s 1,000 characters, the advisor offers a shorter version. Code checks that every sentence still has a source and no new numbers appear. If the AI cannot answer, code drops the last sentences instead. You choose whether to use it.</li>
+            <li><b className="font-semibold text-ink">Key facts.</b> The advisor lists up to three facts per document. Each one comes with a quote, and a fact is shown only if its quote is word for word in the document.</li>
+            <li><b className="font-semibold text-ink">What to change next.</b> On Results, the advisor reads the counts (never names, amounts or documents) and suggests one change to your terms, checkout or evidence. Code checks that every number it quotes matches the counts. In this prototype it is a suggestion only; nothing is trained and nothing changes by itself.</li>
+          </ul></Card>
+        </Section>
+
         <Section title="Limits you should know">
           <Card><ul className="list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft md:columns-2 md:gap-10">
             <li>All {getCases().length} test cases are written by us from public patterns. The documents inside them are made up.</li>

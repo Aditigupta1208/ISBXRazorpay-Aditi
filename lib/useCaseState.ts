@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import type { Meta } from "./agent";
+import type { KeyFactsResult } from "./assistCore";
 import type { RebuttalView } from "./rebuttalCore";
 import type { CheckView } from "./types";
 
@@ -30,6 +31,8 @@ export interface CaseState {
   dirty?: boolean;
   /** The latest practice run against the bank's reviewer (Bank's rebuttal). Cleared when the check is re-run. */
   rebuttal?: RebuttalView;
+  /** Key facts read from the documents, with a signature of the documents they were read from. Hidden when the documents change. */
+  keyFacts?: { sig: string; result: KeyFactsResult };
   audit: AuditEntry[];
 }
 

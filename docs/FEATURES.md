@@ -15,6 +15,9 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | F21 | Worth finding? (value of the missing document) | ✅ | Dispute detail, Escalate "Get this first" box |
 | F22 | Deadline rescue (24-hour nudge, preview only) | ✅ preview and one-tap link; 🟡 no message is ever sent | `/agent-studio`, and `?review=1` on a dispute |
 | F20 | Bank's rebuttal (practice run against the bank) | ✅ saved examples and checks; 🟡 live call tested against a stand-in model only | Dispute detail, "Review your response" |
+| F23 | Shorten for me (AI shortens a draft over 1,000 characters; code trims if the AI cannot) | ✅ tested on a stand-in model; not yet on the real model | Dispute detail, under the draft |
+| F24 | Key facts per document (up to 3 lines each, each backed by a word-for-word quote) | ✅ saved examples for C01, C06, C15; live tested on a stand-in model | Dispute detail, Your evidence |
+| F25 | What to change next (one suggestion from the counts on Results) | ✅ saved example for the sample history; live tested on a stand-in model | `/results` |
 | F6 | Priority inbox | ✅ | `/disputes` |
 | F7 | Clear-win fast lane | ✅ | Dispute detail, top of the right column |
 | F8 | Outcome, next steps and prevention tip | ✅ | Dispute detail, after an action |
@@ -379,3 +382,17 @@ The dispute page now answers the merchant's question first. One column: the call
 ## Tour and How it works (7 Oct, branch wip/tour-rescue)
 - Tour stop 6 (the bank test) now shows a result: it asks the page for the saved example, so the reviewer sees a verdict, objection and rewrite. The request carries a `demo` flag that can only pick the saved example, so a tour never spends a model call. The spotlight is on the result body so the card does not cover it.
 - How it works has a "Where it could go next (not built)" section: odds from Razorpay's own cross-merchant data, proof captured at checkout, and cover for clear wins (the Service Dispute Shield idea from `docs/pm/02-features.md`), each with its main risk.
+
+---
+
+## F23 to F25 · Three AI helpers (7 Oct)
+
+All three use `POST /api/assist` (server only, same key and per-IP limit as the main check, counted separately), the same provider layer (Claude, Groq or Gemini), a forced tool call, zod validation, one retry, and a no-key fallback. In every case the model proposes, code checks, and the merchant decides.
+
+**F23 Shorten for me.** When the draft is over Razorpay's 1,000 characters, a box under the draft offers a shorter version. The AI must keep a source tag on every sentence, cite only documents that exist, and add no number that is not in the draft, the documents or the dispute facts; code checks all three. The merchant sees the proposal first and chooses "Use this version" or "Keep mine". If the AI cannot answer or fails the checks twice, code drops the last whole sentences instead and says so. Files: `lib/assistCore.ts` (`checkShortened`, `trimToLimit`), `components/ShortenBox.tsx`.
+
+**F24 Key facts.** A button in Your evidence reads up to three facts per document. Each fact comes with a quote; it is shown only if the quote is word for word in the document and every number in the fact appears in the document. Facts that fail are dropped and counted. Saved examples for C01, C06 and C15 (`data/prerun/key-facts-examples.json`) go through the same check on load. Facts are hidden when the documents change. Files: `verifyKeyFacts`, `components/KeyFactsBox.tsx`.
+
+**F25 What to change next.** On Results, a button sends only counts (by reason code, by confidence, folds, escalations) and the merchant's terms, never names, amounts or documents. The AI returns one pattern and one change (terms, checkout, evidence or fold sooner). Code checks that every reason code and every won/fights count it quotes matches the counts it was given, and refuses promises and legal or tax advice. A saved example (`data/prerun/learning-example.json`) is shown only while the counts equal the sample history. Samples under 5 fights are flagged as a hint. Merchant edits are not used: the prototype does not record them. Files: `compactStats`, `checkLearning`, `components/LearnBox.tsx`.
+
+**Limits.** None of the three has run on the real Claude API yet. Key facts on Groq are text only. The learning suggestion on sample data shows how it would work, not what it has learned from real merchants.

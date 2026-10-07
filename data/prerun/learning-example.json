@@ -1,0 +1,84 @@
+{
+ "label": "Saved example, written for this demo",
+ "note": "One suggestion for the 24 made-up sample disputes on the Results page, so the feature shows without an API key. It is only shown while the counts are exactly the sample counts. A test checks every number it cites against the sample history.",
+ "forStats": {
+  "settled": 24,
+  "fights": 17,
+  "won": 13,
+  "onTimeRate": 0.96,
+  "byCode": [
+   {
+    "code": "13.1",
+    "disputes": 5,
+    "fights": 4,
+    "won": 3
+   },
+   {
+    "code": "13.2",
+    "disputes": 7,
+    "fights": 5,
+    "won": 4
+   },
+   {
+    "code": "13.3",
+    "disputes": 5,
+    "fights": 3,
+    "won": 2
+   },
+   {
+    "code": "13.6",
+    "disputes": 4,
+    "fights": 3,
+    "won": 3
+   },
+   {
+    "code": "13.7",
+    "disputes": 3,
+    "fights": 2,
+    "won": 1
+   }
+  ],
+  "byConfidence": [
+   {
+    "confidence": "High",
+    "n": 10,
+    "won": 9
+   },
+   {
+    "confidence": "Medium",
+    "n": 4,
+    "won": 2
+   }
+  ],
+  "fold": {
+   "n": 8,
+   "wrong": 1
+  },
+  "escalated": {
+   "n": 2,
+   "fought": 2,
+   "won": 1
+  }
+ },
+ "output": {
+  "headline": "Your weakest reasons are 13.7 and 13.3, where you won 3 of 5 fights.",
+  "finding": "13.7 (cancelled services) was won 1 of 2 and 13.3 (not as described) 2 of 3. The other three reasons were won 10 of 12.",
+  "cites": [
+   {
+    "code": "13.7",
+    "won": 1,
+    "fights": 2
+   },
+   {
+    "code": "13.3",
+    "won": 2,
+    "fights": 3
+   }
+  ],
+  "suggestion": {
+   "kind": "checkout",
+   "text": "Make customers tick a box that accepts your cancellation and refund terms at checkout, and keep a record of each tick. For 13.7, Visa looks for a policy that was agreed at the time of sale, and a saved tick is the document that shows it."
+  },
+  "note": "Small sample: 5 fights across these two reasons. Treat this as a hint, not a rule."
+ }
+}
