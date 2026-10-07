@@ -10,9 +10,10 @@ export const GROQ_DEFAULT_MODEL = "openai/gpt-oss-120b";
 export const GROQ_FALLBACK_MODELS = ["llama-3.3-70b-versatile"];
 const BASE = "https://api.groq.com/openai/v1";
 /** Three tries at 15 s stay inside the 60 s limit of the routes. */
-const PER_MODEL_TIMEOUT_MS = 15_000;
 /** The gpt-oss models reason before answering, and that counts against max_tokens. */
-const REASONING_HEADROOM = 2000;
+// Room for the model's hidden thinking on top of the answer. Higher thinking needs more, or the answer is cut off.
+const REASONING_HEADROOM = { low: 2000, medium: 4000, high: 8000 } as const;
+const TIMEOUT_MS = { low: 15_000, medium: 20_000, high: 28_000 } as const;
 const FALLBACK_STATUSES = new Set([404, 408, 413, 429, 500, 502, 503, 504]);
 
 class GroqHttpError extends Error {
@@ -44,7 +45,7 @@ export function makeGroqCallModel(
     const body = {
       model,
       temperature: 0,
-      max_tokens: p.maxTokens + (withReasoning ? REASONING_HEADROOM : 0),
+      max_tokens: p.maxTokens + (withReasoning ? REASONING_HEADROOM[effort] : 0),
       messages: [
         { role: "system", content: p.system },
         { role: "user", content: toGroqText(p.user) },
@@ -58,7 +59,7 @@ export function makeGroqCallModel(
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(PER_MODEL_TIMEOUT_MS),
+      signal: AbortSignal.timeout(TIMEOUT_MS[effort]),
     });
     if (!res.ok) {
       const raw = await res.text().catch(() => "");
