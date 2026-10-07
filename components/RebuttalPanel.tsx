@@ -118,9 +118,10 @@ export function RebuttalPanel({
         </div>
       </div>
       {running && (
-        <p className="mt-3 text-[14px] font-semibold text-brand" role="status" aria-live="polite">
-          Reading it as the bank would…
-        </p>
+        <div className="mt-3" role="status" aria-live="polite">
+          <p className="text-[14px] font-semibold text-brand">Reading it as the bank would…</p>
+          <p className="mt-0.5 text-[12px] text-helper" data-testid="wait-note">Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see the saved result.</p>
+        </div>
       )}
 
       {notice && (

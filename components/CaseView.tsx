@@ -623,9 +623,10 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           )}
 
           {running && (
-            <p className="mt-3 text-[14px] font-semibold text-brand" role="status" aria-live="polite">
-              {steps[step]}
-            </p>
+            <div className="mt-3" role="status" aria-live="polite">
+              <p className="text-[14px] font-semibold text-brand">{steps[step]}</p>
+              <p className="mt-0.5 text-[12px] text-helper" data-testid="wait-note">Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see the saved result.</p>
+            </div>
           )}
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[12px] text-helper">
             <span>{view.source.label}</span>

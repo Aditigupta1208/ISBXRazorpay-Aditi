@@ -123,7 +123,8 @@ export function evaluateGuardrails(i: GuardrailInput): GuardrailResult {
   );
 
   // R3 deciding evidence exists
-  const unknown = i.decidingEvidence.filter((e) => !i.evidenceIds.includes(e));
+  // "Razorpay" is Razorpay's own dispute record, which the prompt allows as deciding evidence (R2 accepts it as a source too).
+  const unknown = i.decidingEvidence.filter((e) => e !== "Razorpay" && !i.evidenceIds.includes(e));
   if (finalCall !== "shield" && unknown.length > 0) {
     finalCall = "escalate";
     changedReason = `The answer cited ${unknown.join(", ")}, which is not in this dispute`;

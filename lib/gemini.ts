@@ -1,4 +1,5 @@
 import type { ModelParams, ModelReply } from "./agent";
+import { healthyFirst, markBad } from "./modelHealth";
 
 /** Google Gemini through plain REST (no SDK), so the app can run on a free-tier key. Same ModelParams in, same ModelReply out. */
 export const GEMINI_DEFAULT_MODEL = "gemini-3.8-flash"; // free tier per Google's pricing page, checked 7 Oct 2026
@@ -91,13 +92,14 @@ export function makeGeminiCallModel(
   };
 
   return async (p) => {
-    const models = [p.model, ...fallbacks.filter((m) => m !== p.model)];
+    const models = healthyFirst([p.model, ...fallbacks.filter((m) => m !== p.model)]);
     let last: unknown;
     for (const m of models) {
       try {
         return await once(p, m);
       } catch (err) {
         last = err;
+        if (!(err instanceof GeminiHttpError) || FALLBACK_STATUSES.has(err.status)) markBad(m);
         const retryable = err instanceof GeminiHttpError ? FALLBACK_STATUSES.has(err.status) : true; // network errors and timeouts too
         console.error(`[llm] ${err instanceof Error ? err.message : String(err)}${retryable && m !== models[models.length - 1] ? " -> trying the next model" : ""}`);
         if (!retryable) break;

@@ -52,6 +52,16 @@ test("R3: deciding evidence that does not exist becomes Escalate", () => {
   assert.equal(status(r, "R3"), "changed");
 });
 
+test("R3: Razorpay's own record is a valid deciding source, and a made-up one still is not", () => {
+  const ok = evaluateGuardrails({ ...base, decidingEvidence: ["E3", "Razorpay"] });
+  assert.equal(ok.finalCall, "fight");
+  assert.equal(status(ok, "R3"), "pass");
+  const bad = evaluateGuardrails({ ...base, decidingEvidence: ["Razorpay", "E9"] });
+  assert.equal(bad.finalCall, "escalate");
+  assert.match(bad.changedReason ?? "", /E9/);
+  assert.ok(!(bad.changedReason ?? "").includes("Razorpay,"));
+});
+
 test("R2: sentence without a source blocks submit", () => {
   const r = evaluateGuardrails({ ...base, draft: "The customer cancelled after the charge. [E3] They kept using it." });
   assert.equal(status(r, "R2"), "blocked");
