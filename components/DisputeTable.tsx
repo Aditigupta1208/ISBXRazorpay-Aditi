@@ -109,7 +109,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
         ))}
         {shown.length === 0 && <li className="px-4 py-8 text-center text-helper">No disputes with this call.</li>}
       </ul>
-      <div className="hidden overflow-x-auto md:block">
+      <div className="relative hidden overflow-x-auto md:block">
         <table className="w-full min-w-[820px] border-collapse text-[14px]">
           <thead>
             <tr className="border-b border-line bg-[#FAFAFA] text-left text-[12px] font-semibold text-helper">

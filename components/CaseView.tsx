@@ -502,20 +502,20 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <>
               <p className="mt-2 text-[16px] leading-7 text-[#222]">{view.reason}</p>
 
-              <dl className="mt-5 grid grid-cols-3 gap-4 border-y border-line py-4">
+              <dl className="mt-5 grid grid-cols-3 gap-3 border-y border-line py-4">
                 <div>
                   <dt className="text-[12px] text-helper">At stake</dt>
-                  <dd className="text-[24px] font-semibold">{formatInrFull(money.atStakeInr)}</dd>
+                  <dd className="text-[16px] font-semibold sm:text-[24px]">{formatInrFull(money.atStakeInr)}</dd>
                   <dd className="text-[12px] text-helper">{formatOriginal(d.amount, d.currency)}</dd>
                 </div>
                 <div>
                   <dt className="text-[12px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
-                  <dd className="text-[24px] font-semibold">{Math.round(oddsAdj.odds * 100)}%</dd>
+                  <dd className="text-[16px] font-semibold sm:text-[24px]">{Math.round(oddsAdj.odds * 100)}%</dd>
                   <dd className="text-[12px] text-helper">an estimate</dd>
                 </div>
                 <div>
                   <dt className="text-[12px] text-helper">Time left</dt>
-                  <dd className={`text-[24px] font-semibold ${t.warn ? "text-warn" : ""}`}>{t.text}</dd>
+                  <dd className={`text-[16px] font-semibold sm:text-[24px] ${t.warn ? "text-warn" : ""}`}>{t.text}</dd>
                   <dd className="text-[12px] text-helper">to respond</dd>
                 </div>
               </dl>
@@ -627,7 +627,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           )}
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[12px] text-helper">
             <span>{view.source.label}</span>
-            <span className="ml-auto flex items-center gap-2">
+            <span className="ml-auto flex flex-wrap items-center justify-end gap-2">
               <span>Was this call useful?</span>
               <button
                 aria-label="Thumbs up"
@@ -642,7 +642,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 onClick={() => { update((s) => ({ ...s, thumbs: "down" })); log("You", "Marked the call not useful"); }}
               >👎</button>
               {finalCall !== "shield" && !acted && (
-                <button className={ghost} onClick={rerun} disabled={running}>Re-run check</button>
+                <button className={`${ghost} whitespace-nowrap`} onClick={rerun} disabled={running}>Re-run check</button>
               )}
               <button onClick={() => setDrawer(true)} className="relative font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">Under the hood ›</button>
             </span>

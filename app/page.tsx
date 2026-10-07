@@ -95,7 +95,7 @@ export default async function DashboardEntry() {
               <Link href="/disputes" className="inline-flex min-h-11 items-center rounded-[10px] bg-brand px-5 text-[14px] font-semibold text-white hover:bg-brand-focus">Open Dispute Advisor</Link>
             </div>
 
-            <ul className="md:hidden" aria-label="Disputes">
+            <ul className="lg:hidden" aria-label="Disputes">
               {shown.map((r) => (
                 <li key={r.id} className="border-b border-line last:border-0">
                   <Link href={`/disputes/${r.id}`} className="block py-3">
@@ -110,7 +110,7 @@ export default async function DashboardEntry() {
               ))}
             </ul>
 
-            <div className="hidden overflow-x-auto md:block">
+            <div className="relative hidden overflow-x-auto lg:block">
               <table className="w-full text-left text-[14px]">
                 <caption className="sr-only">Disputes as Razorpay lists them, with the Dispute Advisor call added</caption>
                 <thead>
