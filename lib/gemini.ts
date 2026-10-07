@@ -45,23 +45,27 @@ export function toGeminiParts(user: string | unknown[]): Json[] {
 
 /** Overload and outage responses worth trying another model for. Config errors (400, 401, 403) are not: a second model would fail the same way. */
 const FALLBACK_STATUSES = new Set([404, 429, 500, 502, 503, 504]);
-export const GEMINI_FALLBACK_MODELS = ["gemini-3.5-flash"]; // also free tier per Google's pricing page, 7 Oct 2026
-const PER_MODEL_TIMEOUT_MS = 25_000;
+export const GEMINI_FALLBACK_MODELS = ["gemini-3.7-flash", "gemini-3.5-flash"]; // also free tier per Google's pricing page, 7 Oct 2026
+/** Three models at 15 s each stay inside the 60 s limit of the routes. */
+const PER_MODEL_TIMEOUT_MS = 15_000;
+/** Gemini 3 models think before answering (default "medium"), which is slow. "low" is much faster and still reasons. Thinking cannot be fully turned off on these models. */
+export const GEMINI_THINKING_LEVEL = "low";
 
 export function makeGeminiCallModel(
   apiKey: string | undefined,
   baseUrl: string = BASE,
   fallbacks: string[] = GEMINI_FALLBACK_MODELS,
+  thinkingLevel: string = GEMINI_THINKING_LEVEL,
 ): ((p: ModelParams) => Promise<ModelReply>) | null {
   if (!apiKey) return null;
 
-  const once = async (p: ModelParams, model: string): Promise<ModelReply> => {
+  const once = async (p: ModelParams, model: string, withThinking = model.startsWith("gemini-3")): Promise<ModelReply> => {
     const body = {
       systemInstruction: { parts: [{ text: p.system }] },
       contents: [{ role: "user", parts: toGeminiParts(p.user) }],
       tools: [{ functionDeclarations: [{ name: p.toolName, description: p.toolDescription, parameters: toGeminiSchema(p.toolSchema) }] }],
       toolConfig: { functionCallingConfig: { mode: "ANY", allowedFunctionNames: [p.toolName] } },
-      generationConfig: { maxOutputTokens: p.maxTokens + THINKING_HEADROOM, temperature: 0 },
+      generationConfig: { maxOutputTokens: p.maxTokens + THINKING_HEADROOM, temperature: 0, ...(withThinking ? { thinkingConfig: { thinkingLevel: thinkingLevel } } : {}) },
     };
     // The key goes in a header, never in the URL, so it cannot end up in logs.
     const res = await fetch(`${baseUrl.replace(/\/$/, "")}/models/${encodeURIComponent(model)}:generateContent`, {
@@ -71,7 +75,10 @@ export function makeGeminiCallModel(
       signal: AbortSignal.timeout(PER_MODEL_TIMEOUT_MS),
     });
     if (!res.ok) {
-      const text = (await res.text().catch(() => "")).replaceAll(apiKey, "[key]").replace(/\s+/g, " ").slice(0, 300);
+      const raw = await res.text().catch(() => "");
+      // If this model rejects the thinking setting, ask once more without it rather than lose the call.
+      if (res.status === 400 && withThinking && /thinking/i.test(raw)) return once(p, model, false);
+      const text = raw.replaceAll(apiKey, "[key]").replace(/\s+/g, " ").slice(0, 300);
       throw new GeminiHttpError(res.status, `Gemini HTTP ${res.status} (${model}): ${text}`);
     }
     const data = (await res.json()) as {

@@ -3,7 +3,7 @@ import { getLlm } from "@/lib/llm";
 import { allow } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 /**
  * Setup check. Says which provider this deployment will use and whether a key reached the server (never the key itself).

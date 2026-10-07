@@ -138,3 +138,32 @@ test("a configuration error (403) does not try other models, and the error text 
   assert.match(message, /403/);
   assert.ok(!message.includes("SECRETKEY123"));
 });
+
+test("Gemini 3 models are asked to think at a low level, older models are not, and a rejected thinking setting is retried without it", async () => {
+  const bodies: any[] = [];
+  let rejectThinking = false;
+  const server = createServer((req, res) => {
+    let b = "";
+    req.on("data", (c) => (b += c));
+    req.on("end", () => {
+      const body = JSON.parse(b);
+      bodies.push({ url: req.url, gc: body.generationConfig });
+      if (rejectThinking && body.generationConfig.thinkingConfig) { res.statusCode = 400; res.end(JSON.stringify({ error: { message: "Unknown field thinkingConfig" } })); return; }
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({ candidates: [{ content: { parts: [{ functionCall: { name: "t", args: {} } }] } }], usageMetadata: {} }));
+    });
+  });
+  await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}/v1beta`;
+  const call = makeGeminiCallModel("test-key-123456", base, [])!;
+  const p = { system: "s", user: "u", toolName: "t", toolDescription: "d", toolSchema: { type: "object" }, maxTokens: 10 };
+  await call({ ...p, model: "gemini-3.8-flash" });
+  await call({ ...p, model: "gemini-2.5-flash" });
+  rejectThinking = true;
+  await call({ ...p, model: "gemini-3.5-flash" });
+  server.close();
+  assert.deepEqual(bodies[0].gc.thinkingConfig, { thinkingLevel: "low" });
+  assert.equal(bodies[1].gc.thinkingConfig, undefined);
+  assert.equal(bodies.length, 4); // the third call was sent twice: with thinking, rejected, then without
+  assert.equal(bodies[3].gc.thinkingConfig, undefined);
+});

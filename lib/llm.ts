@@ -19,7 +19,7 @@ export function getLlm(env: Record<string, string | undefined> = process.env): L
   const provider: Provider | null =
     forced === "gemini" ? "gemini" : forced === "anthropic" ? "anthropic" : env.ANTHROPIC_API_KEY ? "anthropic" : env.GEMINI_API_KEY ? "gemini" : null;
   if (provider === "gemini") {
-    return { provider, callModel: makeGeminiCallModel(env.GEMINI_API_KEY, env.GEMINI_API_URL || undefined, env.GEMINI_FALLBACK_MODELS ? env.GEMINI_FALLBACK_MODELS.split(",").map((m) => m.trim()).filter(Boolean) : GEMINI_FALLBACK_MODELS), model: env.GEMINI_MODEL || GEMINI_DEFAULT_MODEL };
+    return { provider, callModel: makeGeminiCallModel(env.GEMINI_API_KEY, env.GEMINI_API_URL || undefined, env.GEMINI_FALLBACK_MODELS ? env.GEMINI_FALLBACK_MODELS.split(",").map((m) => m.trim()).filter(Boolean) : GEMINI_FALLBACK_MODELS, env.GEMINI_THINKING_LEVEL || undefined), model: env.GEMINI_MODEL || GEMINI_DEFAULT_MODEL };
   }
   if (provider === "anthropic") {
     return { provider, callModel: makeCallModel(env.ANTHROPIC_API_KEY), model: env.ANTHROPIC_MODEL || DEFAULT_MODEL };
