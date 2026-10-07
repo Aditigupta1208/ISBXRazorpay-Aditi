@@ -546,31 +546,33 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 <div id="get-first" className="mt-4 rounded-xl bg-[#FFF8E6] p-4">
                   <p className="text-[12px] font-semibold tracking-[.6px] text-fold uppercase">Get this first</p>
                   <p className="mt-1 text-[16px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
-                  {view.defensibleAmount !== null && (
-                    <p className="mt-1 text-[14px] text-[#555]">Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).</p>
-                  )}
-                  {(() => {
-                    const ceiling = worthFindingCeiling(money.contestInr, oddsAdj.odds);
-                    return (
-                      <p className="mt-2 text-[14px]" data-testid="worth-finding">
-                        <b>Worth finding?</b> Up to {formatInrFull(ceiling)} more. That is the part of the {formatInrFull(money.contestInr)} you could contest that today&apos;s {Math.round(oddsAdj.odds * 100)}% odds still leave at risk.{" "}
-                        {ceiling > DEFAULT_EFFORT_COST_INR ? `More than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so it is worth asking.` : `Less than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so chasing it may not pay.`}{" "}
-                        <span className="text-helper">A ceiling, not a forecast.</span>
-                      </p>
-                    );
-                  })()}
-                  <p className="mt-2 text-[14px]">
-                    {d.respond_by_hours_left < 6
-                      ? "No time to gather more: choose Fight or Fold."
-                      : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
-                  </p>
-                  {view.draft && <p className="mt-1 text-[12px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
                   {view.requestText && (
-                    <>
-                      <p className="mt-3 text-[12px] font-semibold text-helper">Message to send</p>
+                    <div className="mt-3">
+                      <p className="text-[12px] font-semibold text-helper">Message to send</p>
                       <p className="mt-1 rounded-xl bg-white p-3 text-[14px]">{view.requestText}</p>
-                    </>
+                    </div>
                   )}
+                  <div className="mt-3 space-y-1.5 border-t border-[#F0E3BE] pt-3 text-[14px]">
+                    {view.defensibleAmount !== null && (
+                      <p className="text-[#555]">Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).</p>
+                    )}
+                    {(() => {
+                      const ceiling = worthFindingCeiling(money.contestInr, oddsAdj.odds);
+                      return (
+                        <p data-testid="worth-finding">
+                          <b>Worth finding?</b> Up to {formatInrFull(ceiling)} more is still at risk at today&apos;s {Math.round(oddsAdj.odds * 100)}% odds, out of the {formatInrFull(money.contestInr)} you could contest.{" "}
+                          {ceiling > DEFAULT_EFFORT_COST_INR ? `More than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so it is worth asking.` : `Less than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so chasing it may not pay.`}{" "}
+                          <span className="text-helper">A ceiling, not a forecast.</span>
+                        </p>
+                      );
+                    })()}
+                    <p>
+                      {d.respond_by_hours_left < 6
+                        ? "No time to gather more: choose Fight or Fold."
+                        : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
+                    </p>
+                    {view.draft && <p className="text-[12px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
+                  </div>
                 </div>
               )}
 
@@ -903,7 +905,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
       )}
 
         <div className="mb-5 overflow-hidden rounded-2xl border border-line bg-white" aria-label="More detail">
-          <Row id="evidence" title="Your evidence" summary={`${allEvidence.length} documents${keyDocs ? ` · ${keyDocs.keyCovered} of ${keyDocs.keyTotal} key documents for ${d.reason_code} in place` : ""}${state.dirty && !acted ? " · changed since the last check" : ""}`} open={!!openRows.evidence} onToggle={() => toggleRow("evidence")}>
+          <Row id="evidence" title="Your evidence" summary={`${allEvidence.length} documents${keyDocs ? ` · ${keyDocs.keyCovered} of ${keyDocs.keyTotal} key documents for ${d.reason_code} in place` : ""}${state.dirty && !acted ? " · changed since the last check" : ""}`} open={!!openRows.evidence} onToggle={() => toggleRow("evidence")}
+              badge={keyDocs ? { text: `${keyDocs.keyCovered} of ${keyDocs.keyTotal} key`, tone: keyDocs.keyCovered >= keyDocs.keyTotal ? "ok" : "warn" } : undefined}>
             <>
             {allEvidence.map((e) => {
               const on = highlight.includes(e.id);
@@ -1083,7 +1086,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             </Row>
           )}
           {vsChecklist && (
-            <Row id="checklist" title="Why AI, not a fixed checklist?" summary={`A checklist would say ${vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}${vsChecklist.agree ? ", the same" : ", which differs"}`} open={!!openRows.checklist} onToggle={() => toggleRow("checklist")}>
+            <Row id="checklist" title="Why AI, not a fixed checklist?" summary={`A checklist would say ${vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}${vsChecklist.agree ? ", the same" : ", which differs"}`} open={!!openRows.checklist} onToggle={() => toggleRow("checklist")}
+              badge={vsChecklist.agree ? { text: "Same call", tone: "ok" } : { text: "Differs", tone: "info" }}>
               <div className="rounded-xl bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="vs-checklist">
                     
                     {vsChecklist.agree ? (
@@ -1104,7 +1108,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <p className="mt-1 text-[14px] leading-6 text-[#444]">{c.razorpay_facts}</p>
           </Row>
           {finalCall !== "shield" && (
-            <Row id="safety" title="Safety checks" summary={`${passed} of ${g.lines.length} passed. These run in code on every answer.`} open={!!openRows.safety} onToggle={() => toggleRow("safety")}>
+            <Row id="safety" title="Safety checks" summary={`${passed} of ${g.lines.length} passed. These run in code on every answer.`} open={!!openRows.safety} onToggle={() => toggleRow("safety")}
+              badge={{ text: `${passed} of ${g.lines.length}`, tone: g.lines.some((l) => l.status === "changed" || l.status === "blocked") ? "warn" : "ok" }}>
               <ul className="space-y-1.5">
                 {g.lines.map((l) => (
                   <li key={l.id} className={`text-[14px] ${STATUS_CLS[l.status]}`}>
@@ -1245,7 +1250,8 @@ function DialogButtons({ onCancel, onYes, yes }: { onCancel: () => void; onYes: 
   );
 }
 
-function Row({ id, title, summary, open, onToggle, children }: { id: string; title: string; summary: string; open: boolean; onToggle: () => void; children: ReactNode }) {
+const BADGE_CLS = { ok: "bg-[#E3F5EC] text-fight", warn: "bg-fold-soft text-fold", info: "bg-brand-soft text-brand" } as const;
+function Row({ id, title, summary, open, onToggle, children, badge }: { id: string; title: string; summary: string; open: boolean; onToggle: () => void; children: ReactNode; badge?: { text: string; tone: keyof typeof BADGE_CLS } }) {
   return (
     <div data-row={id} className="border-b border-line last:border-0">
       <button type="button" aria-expanded={open} aria-controls={`row-${id}`} onClick={onToggle} className="flex min-h-14 w-full items-center gap-3 px-5 py-3 text-left hover:bg-[#FAFAFA]">
@@ -1253,6 +1259,7 @@ function Row({ id, title, summary, open, onToggle, children }: { id: string; tit
           <b className="block text-[14px] font-semibold">{title}</b>
           <span className="block text-[12px] text-helper">{summary}</span>
         </span>
+        {badge && <span className={`shrink-0 rounded-full px-2 py-0.5 text-[12px] font-semibold ${BADGE_CLS[badge.tone]}`}>{badge.text}</span>}
         <span aria-hidden className={`text-brand transition-transform ${open ? "rotate-90" : ""}`}>›</span>
       </button>
       {open && <div id={`row-${id}`} className="px-5 pb-5">{children}</div>}

@@ -241,15 +241,20 @@ export default function EvalsPage() {
       <RulesVsUnseen s={rules} agentKnown={{ agree: agreeCount(v1Rows), n: n(v1Rows) }} />
 
       <h2 id="limits" className="mb-2 scroll-mt-4 text-[16px] font-semibold">What these numbers do not show</h2>
-      <ul className="mb-6 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
+      <ul className="mb-1 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
         <li>The answer key was written by the builder from Visa&apos;s rules. A second AI flagged disagreements, but the builder decided them.</li>
         <li>The {labels.length} cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases. C21 to C30 were drafted by the builder&apos;s AI assistant for the unseen-rules test, and their answers are proposed, not yet confirmed.</li>
+        <li>Nothing here is a real win rate. It shows the agent applies the rules to written evidence and knows when to stop.</li>
+      </ul>
+      <details className="mb-6 max-w-[760px]" data-testid="limits-more">
+        <summary className="inline-flex min-h-10 cursor-pointer items-center text-[14px] font-semibold text-brand">Read the other 4 limits</summary>
+        <ul className="list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
         <li>The v1 results came from a different prompt and model, by hand. They are kept as the clean baseline, not as the product&apos;s score.</li>
         <li>The checklist only sees which document types are attached, never what they say. It cannot answer Escalate. Its answers come from code (<code>lib/baseline.ts</code>, one fixed rule per reason code), and a test checks that the code reproduces every answer shown here, so it was not hand-picked to lose.</li>
         <li>The builder chose which cases are &quot;checklist-friendly&quot; and which &quot;need judgment&quot;. On the checklist-friendly cases the checklist ties a person, as it should. The agent has to earn its place on the others, and a smarter fixed rule (for example one that reads dates) might close part of that gap.</li>
         <li>&quot;Finds the deciding evidence&quot; counts how many of the human answer&apos;s document numbers the agent named. The kill test&apos;s 15 of 15 was judged by reading, so this is stricter.</li>
-        <li>Nothing here is a real win rate. It shows the agent applies the rules to written evidence and knows when to stop.</li>
-      </ul>
+        </ul>
+      </details>
     </>
   );
 }

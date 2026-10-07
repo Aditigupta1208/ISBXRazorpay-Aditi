@@ -37,14 +37,19 @@ export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { 
         </table>
       </div>
       <ul className="mt-3 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
+        <li>Be careful with this result: {u.n} cases is small (one case moves a score by 10 points), and the cases were drafted by the builder&apos;s AI assistant. {u.unconfirmed} of the {u.n} answers are still proposed, not confirmed by the builder.</li>
+        <li>It shows that fixed rules do not simply get better with more rules. It does not show that the agent does better: the agent has not been run on these cases yet.</li>
+      </ul>
+      <details className="mt-1 max-w-[760px]" data-testid="rules-more">
+        <summary className="inline-flex min-h-10 cursor-pointer items-center text-[14px] font-semibold text-brand">How the rules were tested</summary>
+        <ul className="list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
         <li>
           Tuned rules missed {u.tunedMisses.map((m) => (m.rule ? `${m.id} (rule ${m.rule} fired wrongly)` : m.id)).join(", ")}. The simple checklist missed {u.simpleMisses.join(", ")}.
           A rule written for one case can break another, and a missing rule leaves a gap, so each new trap needs a new rule.
         </li>
         <li>The rules were frozen and committed before the {u.n} unseen cases were written, and were not changed after scoring.</li>
-        <li>Be careful with this result: {u.n} cases is small (one case moves a score by 10 points), and the cases were drafted by the builder&apos;s AI assistant. {u.unconfirmed} of the {u.n} answers are still proposed, not confirmed by the builder.</li>
-        <li>It shows that fixed rules do not simply get better with more rules. It does not show that the agent does better: the agent has not been run on these cases yet.</li>
-      </ul>
+        </ul>
+      </details>
     </section>
   );
 }

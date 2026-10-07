@@ -39,6 +39,7 @@ const EDGE_LEFT: Record<string, string> = { fight: "border-l-fight", fold: "bord
 export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string }) {
   const [filter, setFilter] = useState<"all" | Call>("all");
   const [actions, setActions] = useState<Record<string, string>>({});
+  const hasActions = Object.keys(actions).length > 0; // the Status column only appears once you have acted on something
 
   useEffect(() => {
     const a: Record<string, string> = {};
@@ -118,7 +119,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
               <th className="px-[18px] py-3.5">Reason</th>
               <th className="px-[18px] py-3.5 whitespace-nowrap">Time left</th>
               <th className="px-[18px] py-3.5">Call</th>
-              <th className="px-[18px] py-3.5">Status</th>
+              {hasActions && <th className="px-[18px] py-3.5">Status</th>}
               <th className="px-[18px] py-3.5">
                 <span className="sr-only">Open</span>
               </th>
@@ -145,13 +146,13 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
                   {r.timeText}
                 </td>
                 <td className="px-[18px] py-4">{r.call ? <CallChip call={r.call} /> : <span className="text-helper">Not checked</span>}</td>
-                <td className="px-[18px] py-4 text-[14px] whitespace-nowrap">{actions[r.id] ?? <span className="text-helper">Open</span>}</td>
+                {hasActions && <td className="px-[18px] py-4 text-[14px] whitespace-nowrap">{actions[r.id] ?? <span className="text-helper">Open</span>}</td>}
                 <td className="px-[18px] py-4 font-semibold text-brand">Details</td>
               </tr>
             ))}
             {shown.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-[18px] py-8 text-center text-helper">
+                <td colSpan={hasActions ? 7 : 6} className="px-[18px] py-8 text-center text-helper">
                   No disputes with this call.
                 </td>
               </tr>

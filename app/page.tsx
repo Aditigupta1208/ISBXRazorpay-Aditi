@@ -39,12 +39,14 @@ export default async function DashboardEntry() {
         A concept view of how a merchant reaches it. The path is the one they already use for disputes. The advisor adds a call to each dispute.
       </PageTitle>
 
-      <ol className="mb-5 grid gap-3 md:grid-cols-3" aria-label="How a merchant gets here">
+      <ol className="mb-5 grid gap-2 md:grid-cols-3 md:gap-3" aria-label="How a merchant gets here">
         {STEPS.map(([n, t, d]) => (
-          <li key={n} className="rounded-2xl border border-line bg-white p-4">
-            <span aria-hidden className="mb-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-[12px] font-semibold text-brand">{n}</span>
-            <b className="block text-[14px]">{t}</b>
-            <span className="block text-[12px] text-ink-soft">{d}</span>
+          <li key={n} className="flex gap-3 rounded-2xl border border-line bg-white p-3 md:block md:p-4">
+            <span aria-hidden className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-soft text-[12px] font-semibold text-brand md:mb-2">{n}</span>
+            <span className="min-w-0">
+              <b className="block text-[14px]">{t}</b>
+              <span className="block text-[12px] text-ink-soft">{d}</span>
+            </span>
           </li>
         ))}
       </ol>
