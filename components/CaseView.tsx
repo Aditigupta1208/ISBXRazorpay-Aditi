@@ -16,6 +16,7 @@ import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
 import { evidenceHint } from "@/lib/evidenceHints";
 import { EvidenceChecklist } from "@/components/EvidenceChecklist";
 import { RebuttalPanel } from "@/components/RebuttalPanel";
+import { VERDICT_LABEL, sameDraft } from "@/lib/rebuttalCore";
 import { checklistFor } from "@/lib/evidenceChecklist";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
@@ -171,6 +172,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     track("dispute_opened", c.id);
   }, [c.id]);
 
+  const goToBankTest = () => setTimeout(() => document.getElementById("rebuttal")?.scrollIntoView({ behavior: "smooth", block: "center" }), 200);
   const log = (actor: "You" | "Advisor", text: string) =>
     update((s) => ({ ...s, audit: [...s.audit, { at: now(), actor, text }] }));
 
@@ -554,6 +556,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     <>
                       <button className={primary} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>Review response</button>
                       <button className={ghost} onClick={() => setDialog("fold")}>Fold</button>
+                      <button type="button" data-testid="test-bank-link" className="min-h-11 px-2 text-sm font-semibold text-brand hover:underline" onClick={() => { update((s) => ({ ...s, reviewOpen: true })); goToBankTest(); }}>
+                        Test it on the bank first
+                      </button>
                     </>
                   )}
                   {finalCall === "fold" && (
@@ -746,6 +751,22 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               <span className="font-semibold">You can't submit yet:</span> {blockers.join(". ")}.
             </p>
           )}
+
+          {(() => {
+            const rb = state.rebuttal;
+            const fresh = !!rb && sameDraft(draft, rb.forDraft);
+            return (
+              <p className="mt-4 rounded-[10px] bg-[#F4F8FF] px-3 py-2 text-[14px]" data-testid="rebuttal-hint">
+                {!rb ? (
+                  <>Not tested on the bank yet. <button type="button" className="font-semibold text-brand hover:underline" onClick={goToBankTest}>Test it first</button></>
+                ) : fresh ? (
+                  <>Tested on the bank: <b>{VERDICT_LABEL[rb.verdict]}</b>.</>
+                ) : (
+                  <>You changed the response since the last bank test. <button type="button" className="font-semibold text-brand hover:underline" onClick={goToBankTest}>Test again</button></>
+                )}
+              </p>
+            );
+          })()}
 
           <div className="mt-4 flex flex-wrap items-center gap-2.5">
             <button className={primary} disabled={blockers.length > 0} onClick={() => setDialog("submit")} title={blockers.length ? blockers.join(". ") : undefined}>
