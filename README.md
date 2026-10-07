@@ -22,7 +22,7 @@ Status: M1 to M5 built (M3 and M4 live parts wait for an API key). Submission 13
 
 ```bash
 npm install
-cp .env.example .env.local   # optional: add ANTHROPIC_API_KEY to turn on the live check
+cp .env.example .env.local   # optional: add ANTHROPIC_API_KEY or GEMINI_API_KEY to turn on the live check
 npm run dev                  # http://localhost:3000
 npm test                     # unit tests
 npm run build                # production build

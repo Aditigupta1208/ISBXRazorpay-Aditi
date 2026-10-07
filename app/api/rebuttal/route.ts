@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS, type AddedEvidence } from "@/lib/agent";
-import { DEFAULT_MODEL, makeCallModel } from "@/lib/anthropic";
+import { getLlm } from "@/lib/llm";
 import { getCase, getRuleText } from "@/lib/data";
 import { ACCEPTANCE_OPTIONS, MAX_POLICY_CHARS, type Policy } from "@/lib/limits";
 import { loadRebuttalPrompt } from "@/lib/prompt";
@@ -57,10 +57,11 @@ export async function POST(req: Request) {
   let deps: RebuttalDeps;
   try {
     const prompt = loadRebuttalPrompt();
+    const llm = getLlm();
     deps = {
       // "demo" (used by the guided tour) can only ever pick the saved example. It cannot cause a model call.
-      callModel: b.demo === true ? null : makeCallModel(process.env.ANTHROPIC_API_KEY),
-      model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL,
+      callModel: b.demo === true ? null : llm.callModel,
+      model: llm.model,
       system: prompt.system,
       toolSchema: prompt.toolSchema,
       getSaved: getSavedRebuttal,

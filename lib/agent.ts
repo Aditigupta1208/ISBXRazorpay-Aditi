@@ -214,7 +214,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
     tokensOut += reply.tokensOut;
     const parsed = decisionSchema.safeParse(reply.input);
     if (parsed.success) {
-      const usd = costUsd(tokensIn, tokensOut);
+      const usd = costUsd(tokensIn, tokensOut, deps.model);
       const meta: Meta = { live: true, model: deps.model, promptVersion: PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
       const value: LiveOk = { status: "live", view: toCheckView(parsed.data, c, meta), meta };
       deps.cache?.set(key, { at: now(), value });

@@ -106,6 +106,7 @@ Last updated: 6 Oct 2026, after the deep dives and the extra features below. Upd
 | Variable | What it does |
 |---|---|
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Turns on the live check, upload and Escalate drafts. Without them the saved results show |
+| `GEMINI_API_KEY`, `GEMINI_MODEL`, `LLM_PROVIDER` | Same, on Google Gemini (free tier works). An Anthropic key wins if both are set; `LLM_PROVIDER` forces one. Free tier may use inputs to improve Google products, so made-up data only |
 | `FX_RATE_INR_PER_USD` | Pins the USD rate (labelled "fixed rate") so the video, note and demo agree |
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Anonymous usage counts. Added automatically by the Vercel Supabase integration. Run `docs/supabase-usage.sql` once in the Supabase SQL Editor to create the table. Server-only; never use a `NEXT_PUBLIC_` name |
 | `USAGE_ADMIN_TOKEN` | A long random string. Lets you read the counts at `/usage` (not linked anywhere, not indexed) |

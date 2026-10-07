@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { analyze, MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS, type AddedEvidence, type Deps } from "@/lib/agent";
 import { ACCEPTANCE_OPTIONS, MAX_POLICY_CHARS, type Policy } from "@/lib/limits";
-import { DEFAULT_MODEL, makeCallModel } from "@/lib/anthropic";
+import { getLlm } from "@/lib/llm";
 import { getCase, getCheckView } from "@/lib/data";
 import { loadPrompt } from "@/lib/prompt";
 import { allow } from "@/lib/ratelimit";
@@ -56,9 +56,10 @@ export async function POST(req: Request) {
   let deps: Deps;
   try {
     const prompt = loadPrompt();
+    const llm = getLlm();
     deps = {
-      callModel: makeCallModel(process.env.ANTHROPIC_API_KEY),
-      model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL,
+      callModel: llm.callModel,
+      model: llm.model,
       system: prompt.system,
       toolSchema: prompt.toolSchema,
       getSaved: getCheckView,

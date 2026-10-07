@@ -184,6 +184,7 @@ export default function HowItWorksPage() {
             <li>All {getCases().length} test cases are written by us from public patterns. The documents inside them are made up.</li>
             <li>The answer key is our reading of Visa&apos;s rules. It is not a real win rate.</li>
             <li>Exchange rates and fees in the money maths are demo values and are labelled that way.</li>
+            <li>Text you add or upload is sent to the AI provider that runs the live check. Free-tier keys, such as Google&apos;s Gemini free tier, may let the provider use inputs to improve its products, so use made-up or masked data only.</li>
             <li>Without an API key this demo shows saved results. A new check on added evidence needs the live model.</li>
             <li>Odds on saved results are derived from the confidence level. Live checks give the model&apos;s own estimate. Neither is a promise.</li>
             <li>The bank test is a simulation. We cannot know how a real issuing bank will read your response, and nobody has yet compared its objections with real bank decisions. The saved examples shown without an API key were written by the builder, not produced by a model.</li>

@@ -33,7 +33,7 @@ export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { 
           <tbody>
             <Row name="Simple checklist" sub="one rule per reason code" known={`${s.known.simple} of ${s.known.n}`} unseen={`${u.simple} of ${u.n}`} />
             <Row name="Tuned rules" sub={`${s.rulesAdded} hand-written rules added, each for a known case`} known={`${s.known.tuned} of ${s.known.n}`} unseen={`${u.tuned} of ${u.n}`} strong />
-            <Row name="Agent, prompt v1 (saved)" sub="older ChatGPT run; the Claude agent is not run yet" known={`${agentKnown.agree} of ${agentKnown.n}`} unseen={<>Not run<span className="hidden md:inline"> (needs the API key)</span><span className="md:hidden"> yet</span></>} />
+            <Row name="Agent, prompt v1 (saved)" sub="older ChatGPT run; the live agent is not run yet" known={`${agentKnown.agree} of ${agentKnown.n}`} unseen={<>Not run<span className="hidden md:inline"> (needs the API key)</span><span className="md:hidden"> yet</span></>} />
           </tbody>
         </table>
       </div>

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DEFAULT_MODEL, makeCallModel } from "@/lib/anthropic";
+import { getLlm } from "@/lib/llm";
 import { extractDocument } from "@/lib/extract";
 import { allow } from "@/lib/ratelimit";
 
@@ -24,9 +24,10 @@ export async function POST(req: Request) {
   if (typeof body.mediaType !== "string" || typeof body.data !== "string") {
     return NextResponse.json({ status: "rejected", message: "That request was not valid." }, { status: 400 });
   }
+  const llm = getLlm();
   const result = await extractDocument(
     { name: typeof body.name === "string" ? body.name : "Uploaded file", mediaType: body.mediaType, data: body.data },
-    { callModel: makeCallModel(process.env.ANTHROPIC_API_KEY), model: process.env.ANTHROPIC_MODEL || DEFAULT_MODEL },
+    { callModel: llm.callModel, model: llm.model },
   );
   return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });
 }

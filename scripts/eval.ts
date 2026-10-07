@@ -1,20 +1,19 @@
-/** npm run eval: runs every case through the live agent and writes the results. Needs ANTHROPIC_API_KEY. */
+/** npm run eval: runs every case through the live agent and writes the results. Needs ANTHROPIC_API_KEY or GEMINI_API_KEY. */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { DEFAULT_MODEL, makeCallModel } from "../lib/anthropic";
+import { getLlm } from "../lib/llm";
 import { releaseGate, runAll, summarize, toMarkdown, type LabelRow } from "../lib/eval";
 import { PROMPT_VERSION, loadPrompt } from "../lib/prompt";
 import type { CaseData } from "../lib/types";
 
 async function main() {
-  const callModel = makeCallModel(process.env.ANTHROPIC_API_KEY);
+  const { callModel, model } = getLlm();
   if (!callModel) {
-    console.error("No ANTHROPIC_API_KEY. Put it in .env.local and run again. Nothing was written.");
+    console.error("No API key. Put ANTHROPIC_API_KEY or GEMINI_API_KEY in .env.local and run again. Nothing was written.");
     process.exit(1);
   }
   const cases = (JSON.parse(readFileSync("data/cases.json", "utf8")) as { cases: CaseData[] }).cases;
   const labels = (JSON.parse(readFileSync("data/labels.json", "utf8")) as { labels: LabelRow[] }).labels;
-  const model = process.env.ANTHROPIC_MODEL || DEFAULT_MODEL;
   const prompt = loadPrompt();
   const date = new Date().toISOString().slice(0, 10);
   // EVAL_OUT_DIR lets a test run against a stand-in server write somewhere that is not eval/results.

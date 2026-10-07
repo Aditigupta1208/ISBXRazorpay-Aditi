@@ -990,7 +990,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 </label>
                 <textarea id="ev-text" rows={4} value={newText} onChange={(e) => setNewText(e.target.value)} placeholder="Paste the text of the document." className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] focus:border-brand-focus focus:outline-none" aria-describedby="ev-help" />
                 <div id="ev-help" className="mt-1 flex justify-between text-[12px]">
-                  <span className="text-helper">Don&apos;t paste full card numbers.</span>
+                  <span className="text-helper">Made-up or masked text only. No card numbers.</span>
                   <span className={newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-escalate" : "text-helper"}>
                     {newText.length} / {MAX_EVIDENCE_CHARS.toLocaleString()}
                   </span>
