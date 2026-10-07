@@ -39,7 +39,7 @@ test("the request forces the function, sends the key as a bearer header only, an
   assert.ok(!JSON.stringify(q.body).includes("gsk-secret-123"));
   assert.deepEqual(q.body.tool_choice, { type: "function", function: { name: "t" } });
   assert.equal(q.body.messages[0].role, "system");
-  assert.equal(q.body.reasoning_effort, "low");
+  assert.equal(q.body.reasoning_effort, "medium");
   assert.ok(q.body.max_tokens > 100);
 });
 

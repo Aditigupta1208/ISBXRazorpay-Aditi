@@ -36,6 +36,7 @@ export function makeGroqCallModel(
   apiKey: string | undefined,
   baseUrl: string = BASE,
   fallbacks: string[] = GROQ_FALLBACK_MODELS,
+  effort: "low" | "medium" | "high" = "medium",
 ): ((p: ModelParams) => Promise<ModelReply>) | null {
   if (!apiKey) return null;
 
@@ -50,7 +51,7 @@ export function makeGroqCallModel(
       ],
       tools: [{ type: "function", function: { name: p.toolName, description: p.toolDescription, parameters: p.toolSchema } }],
       tool_choice: { type: "function", function: { name: p.toolName } },
-      ...(withReasoning ? { reasoning_effort: "low" } : {}),
+      ...(withReasoning ? { reasoning_effort: effort } : {}),
     };
     // The key goes in a header, never in the URL or the body.
     const res = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {

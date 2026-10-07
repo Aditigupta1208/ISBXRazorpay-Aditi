@@ -24,7 +24,7 @@ export function getLlm(env: Record<string, string | undefined> = process.env): L
   if (provider === "groq") {
     return {
       provider,
-      callModel: makeGroqCallModel(env.GROQ_API_KEY, env.GROQ_API_URL || undefined, env.GROQ_FALLBACK_MODELS ? env.GROQ_FALLBACK_MODELS.split(",").map((m) => m.trim()).filter(Boolean) : GROQ_FALLBACK_MODELS),
+      callModel: makeGroqCallModel(env.GROQ_API_KEY, env.GROQ_API_URL || undefined, env.GROQ_FALLBACK_MODELS ? env.GROQ_FALLBACK_MODELS.split(",").map((m) => m.trim()).filter(Boolean) : GROQ_FALLBACK_MODELS, (["low", "medium", "high"] as const).find((e) => e === env.GROQ_REASONING) ?? "medium"),
       model: env.GROQ_MODEL || GROQ_DEFAULT_MODEL,
     };
   }
