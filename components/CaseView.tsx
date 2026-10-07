@@ -489,7 +489,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <CallChip call={finalCall} size="lg" />
             {finalCall !== "shield" && <span className="text-[14px] font-semibold text-[#555]">{view.confidence} confidence</span>}
             {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
-            <span className="ml-auto hidden text-[12px] font-semibold tracking-[.6px] text-helper uppercase sm:inline">Fold-or-Fight check</span>
+            {finalCall !== "shield" && <span className="ml-auto hidden text-[12px] font-semibold tracking-[.6px] text-helper uppercase sm:inline">Fold-or-Fight check</span>}
           </div>
           <h2 className="mt-3 text-2xl leading-8 font-semibold md:text-[28px] md:leading-9">{HEAD[finalCall]}</h2>
           {g.changedReason && finalCall !== "shield" && (
