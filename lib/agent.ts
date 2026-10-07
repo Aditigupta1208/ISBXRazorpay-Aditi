@@ -207,7 +207,8 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
         toolSchema: deps.toolSchema,
         maxTokens: MAX_TOKENS,
       });
-    } catch {
+    } catch (err) {
+      console.error("[llm] call failed:", err instanceof Error ? err.message : String(err));
       return fallback("call_failed", "The live check didn't answer, so you are seeing the saved result.");
     }
     tokensIn += reply.tokensIn;

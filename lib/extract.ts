@@ -79,7 +79,8 @@ export async function extractDocument(f: UploadedFile, deps: ExtractDeps): Promi
       toolSchema: EXTRACT_SCHEMA,
       maxTokens: EXTRACT_MAX_TOKENS,
     });
-  } catch {
+  } catch (err) {
+    console.error("[llm] extract call failed:", err instanceof Error ? err.message : String(err));
     return { status: "unavailable", message: "We couldn't read the file. Paste the text instead." };
   }
   const parsed = outSchema.safeParse(reply.input);

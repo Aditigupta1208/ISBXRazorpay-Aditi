@@ -60,7 +60,10 @@ export function makeGeminiCallModel(apiKey: string | undefined, baseUrl: string 
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
     });
-    if (!res.ok) throw new Error(`Gemini HTTP ${res.status}`);
+    if (!res.ok) {
+      const text = (await res.text().catch(() => "")).replaceAll(apiKey, "[key]").replace(/\s+/g, " ").slice(0, 300);
+      throw new Error(`Gemini HTTP ${res.status}: ${text}`);
+    }
     const data = (await res.json()) as {
       candidates?: { content?: { parts?: { functionCall?: { name?: string; args?: unknown } }[] } }[];
       usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number; thoughtsTokenCount?: number };
