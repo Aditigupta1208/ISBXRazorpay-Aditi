@@ -34,10 +34,29 @@ const CITE = "\\[(?:E\\d+|Razorpay)(?:\\s*,\\s*(?:E\\d+|Razorpay))*\\]";
 const ENDS_WITH_CITE = new RegExp(`(?:${CITE}\\s*)+[.!?]?\\s*$`);
 const ANY_CITE = new RegExp(CITE, "g");
 
-/** Split a draft into sentences; citations after the full stop stay with their sentence. */
+const ABBREV = /(?:^|[\s(])(?:dr|mr|mrs|ms|vs|inc|ltd|approx|e\.g|i\.e)\.$/i;
+
+/**
+ * Split a draft into sentences; citations after the full stop stay with their sentence.
+ * A full stop only ends a sentence when a space, the end of the text or a citation follows it,
+ * so amounts like "USD 1,200.50" and "3.5%" stay whole. Common abbreviations ("Dr.", "e.g.") do not end one either.
+ */
 export function splitSentences(draft: string): string[] {
-  const out = draft.match(/[^.!?]+(?:[.!?]+(?:\s*\[[^\]]+\])*)?/g) ?? [];
-  return out.map((s) => s.trim()).filter((s) => s.replace(/\[[^\]]*\]/g, "").trim().length > 0);
+  const raw = draft.match(/(?:[^.!?]|[.!?](?![\s\[]|$))+(?:[.!?]+(?:\s*\[[^\]]+\])*)?/g) ?? [];
+  const merged: string[] = [];
+  let carry = "";
+  for (const part of raw) {
+    const text = (carry ? `${carry} ${part.trim()}` : part.trim()).trim();
+    const bare = text.replace(/\s*\[[^\]]*\]\s*$/, "");
+    if (ABBREV.test(bare) && !/\[[^\]]*\]\s*$/.test(text)) {
+      carry = text;
+      continue;
+    }
+    carry = "";
+    merged.push(text);
+  }
+  if (carry) merged.push(carry);
+  return merged.filter((s) => s.replace(/\[[^\]]*\]/g, "").trim().length > 0);
 }
 
 export function citedIds(text: string): string[] {

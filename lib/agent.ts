@@ -66,7 +66,7 @@ export type AnalyzeResult =
 
 /** Evidence is data. Neutralise anything that could close or open our wrapper tags. */
 export function escapeEvidence(text: string): string {
-  return text.replace(/<\s*(\/?)\s*evidence/gi, "&lt;$1evidence");
+  return text.replace(/<\s*(\/?)\s*(evidence|merchant_policy|draft)/gi, (_m, slash: string, tag: string) => `&lt;${slash}${tag.toLowerCase()}`);
 }
 
 export { policyBlock, escapePolicy } from "./policyBlock";
