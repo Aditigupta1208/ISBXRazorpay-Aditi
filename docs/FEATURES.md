@@ -6,12 +6,13 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 | # | Feature | Status | Where |
 |---|---|---|---|
-| ⭐ | Fight-or-Fold check (the star feature) | ✅ (live call tested against a stand-in model only) | Dispute detail, right column |
+| ⭐ | Fold-or-Fight check (the star feature) | ✅ (live call tested against a stand-in model only) | Dispute detail, right column |
 | F1 | Evidence locker | ✅ paste; 🟡 file upload built, proven on a stand-in model only | Dispute detail, left column |
 | F2 | Policy profile | ✅ (terms are sent as the merchant's claim, not proof; tested on a stand-in model) | `/agent-studio` |
 | F3 | Cited response draft | ✅ | Dispute detail, "Review your response" |
 | F4 | Merchant controls | ✅ | Dispute detail |
 | F5 | Safety checks (R1 to R7) | ✅ | Check panel, drawer, API route |
+| F20 | Bank's rebuttal (practice run against the bank) | ✅ saved examples and checks; 🟡 live call tested against a stand-in model only | Dispute detail, "Review your response" |
 | F6 | Priority inbox | ✅ | `/disputes` |
 | F7 | Clear-win fast lane | ✅ | Dispute detail, top of the right column |
 | F8 | Outcome, next steps and prevention tip | ✅ | Dispute detail, after an action |
@@ -24,7 +25,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 ---
 
-## ⭐ Fight-or-Fold check
+## ⭐ Fold-or-Fight check
 
 **Deep dive 1 (6 Oct).** After a re-run that changes the call, a blue banner says "The call changed: Fight → Fold" and names the new document that decided it, with a "Show the document" button; it survives a reload until dismissed. The fee tile is now "Possible fee if you fight and lose" (Visa arbitration, only if the bank escalates), because "Fees at risk" looked larger than the dispute itself on small amounts.
 
@@ -352,3 +353,15 @@ The dispute page now answers the merchant's question first. One column: the call
 - One black top bar: wordmark, the three merchant tabs inside it with a green underline on the current one (like the dashboard's own top navigation), and the reviewer links grouped on the right. The separate white tab bar is gone. On phones it is two rows.
 - How it works has three tabs (The product, Brief answers, Sources and limits) and a four-box pipeline at the top. Links such as `#rules` and `#learning` open the right tab.
 - The tour has a new first stop, "Start where you already work" (10 stops).
+
+## F20 · Bank's rebuttal: test the response on the bank first (7 Oct, branch wip/bank-rebuttal)
+- **What it does.** On "Review your response", a button reads "Test this response". A second, separate AI call plays a sceptical reviewer at the cardholder's bank and attacks the draft. It returns a verdict (Holds up, Has a weak spot, Likely to lose), the bank's strongest objection, the weakest sentence quoted from the draft, and either a suggested rewrite (one click to use it) or the one document that would answer the objection (a button to add it).
+- **Why it is not a fixed rule.** It has to read what the draft says against what the documents say, find the sentence a reviewer would pick on, and write a stronger one from the same evidence. A checklist cannot do that.
+- **What it never does.** It never changes the call, never edits the draft by itself, never gives odds, and runs only when the merchant clicks. It is labelled a practice run, not a bank decision.
+- **Prompt and model call.** `prompts/bank-rebuttal-v1.md`: its own system prompt and tool (`record_bank_rebuttal`), forced with `tool_choice`, validated with zod, retried once, 1,200 token cap, cached for an hour, own per-IP limit (20 an hour, counted apart from the main check). Evidence and the draft are wrapped as data and their closing tags are escaped.
+- **Four safety checks (RB1 to RB4), run in code after every answer, live or saved, and shown under the result.** RB1: the quoted sentence must really be in the draft, else it is hidden and no rewrite is offered. RB2: a rewrite must cite documents that exist and every sentence must have a source, else it is dropped. RB3: a rewrite must keep the draft within 1,000 characters. RB4: only documents in this dispute can be named. The checks only ever remove something unsafe.
+- **No key.** Eight saved examples (the demo disputes that have a draft) are shown, labelled "Saved example, written by the builder. Not a live check." They were written by hand, not produced by a model, and each fits one saved draft: once the merchant edits the draft or adds a document, the app says the live test is off instead of showing a mismatched example.
+- **Stale results.** A result is marked out of date as soon as the draft changes, and "Use this rewrite" is disabled until the test is run again. Adding or removing a document clears it.
+- **Limits.** The bank's view is a simulation. No comparison with real issuer decisions exists, and the rewrite is checked for citations and length, not for truth: the merchant must read it. The live call has only been tested against a stand-in model.
+- Also in this branch: the star feature is now named **Fold-or-Fight check** everywhere (it appears on the dispute page, the welcome card and How it works), and the tour has a new stop for the bank test (11 stops).
+

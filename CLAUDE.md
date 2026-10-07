@@ -5,13 +5,14 @@ Submission deadline: 13 Oct 2026, 11:59 PM IST. Builder works about 2 hours a da
 
 ## What we are building (one paragraph)
 
-An Agent Studio-style agent ("Dispute Advisor") for Indian businesses that sell services, subscriptions, travel or digital goods to international customers. When a card dispute arrives for a **non-fraud** reason (service not provided, cancelled subscription, not as described, refund not processed, cancelled service), the agent reads Razorpay's dispute record plus evidence the merchant has (contracts, login logs, emails, vouchers), applies Visa's rules for that reason code, runs the **Fight-or-Fold check** and recommends **Fight / Fold (accept) / Escalate**, and drafts a response in which every sentence cites a document. Fraud reason codes are routed to Razorpay Chargeback Shield. The merchant always approves. Full product context: `docs/PRODUCT.md` and `docs/pm/`.
+An Agent Studio-style agent ("Dispute Advisor") for Indian businesses that sell services, subscriptions, travel or digital goods to international customers. When a card dispute arrives for a **non-fraud** reason (service not provided, cancelled subscription, not as described, refund not processed, cancelled service), the agent reads Razorpay's dispute record plus evidence the merchant has (contracts, login logs, emails, vouchers), applies Visa's rules for that reason code, runs the **Fold-or-Fight check** and recommends **Fight / Fold (accept) / Escalate**, and drafts a response in which every sentence cites a document. Fraud reason codes are routed to Razorpay Chargeback Shield. The merchant always approves. Full product context: `docs/PRODUCT.md` and `docs/pm/`.
 
 ## Read before working
 
 1. `docs/PRODUCT.md`: summary. Full thinking in `docs/pm/03-prd.md` (requirements), `docs/pm/04-screens.md` (screens), `docs/pm/05-data-and-stack.md` (data flow, stack).
 2. `docs/BUILD_PLAN.md`: milestones in order, with the definition of done for each. Work on the current milestone only.
 3. `prompts/dispute-agent-v2.2.md`: the agent prompt and output schema the app must use.
+3b. `prompts/bank-rebuttal-v1.md`: the second prompt and tool (Bank's rebuttal). Saved examples for it are in `data/prerun/bank-rebuttal-examples.json`.
 3a. `docs/design/DESIGN.md` and `docs/design/mock/`: look, layout (Agentic Dashboard top bar, not a left sidebar), colours, components, writing rules.
 4. `data/`: demo cases, the human answer key, and saved model outputs from the kill test. Do not edit these files except where the build plan says so (M4 adds eval cases).
 

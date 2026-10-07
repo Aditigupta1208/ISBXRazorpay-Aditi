@@ -14,7 +14,7 @@ const FLOW = [
   ["2", "It reads your documents", "Four of them, against Visa's rule for that reason: a customer who cancelled but kept using the service loses.", "/disputes/C06", "See the documents"],
   ["3", "It makes the call", "The login log shows use after the claimed cancellation and the billing log shows no cancel. Fight, with high confidence.", "/disputes/C06", "See the reason"],
   ["4", "Seven rules check it", "Code, not the AI, can downgrade a Fight to Escalate if a document is missing or a sentence has no source.", "#rules", "See the rules"],
-  ["5", "You decide, then it learns", "Review the draft and approve. Mark Won or Lost and the next estimate moves.", "/results", "See Results"],
+  ["5", "You test it, decide, then it learns", "Run the draft past a practice bank reviewer and fix its weak spot. Approve. Mark Won or Lost and the next estimate moves.", "/disputes/C06", "Try the test"],
 ];
 
 const RULES = [
@@ -38,7 +38,7 @@ const RULE_CHECK = [
 const ANSWERS = [
   ["What data or signal does it use?", "Razorpay's dispute record and payment facts, plus the evidence you add. Your own terms are read too, but only as your claim, never as proof."],
   ["Why AI and not a fixed rule?", "A checklist only sees which documents are attached. The AI reads what they say, spots contradictions, weighs the money and knows when to stop. On our 15 scored test cases it matched the human answer on 15 and a checklist on 8 (saved v1 run; see Evals)."],
-  ["What action does it take?", "It recommends Fight, Fold or Escalate, maps documents to Razorpay's evidence slots, and drafts a response that cites a document in every sentence. Nothing is sent from this prototype."],
+  ["What action does it take?", "The Fold-or-Fight check recommends Fight, Fold or Escalate, maps documents to Razorpay's evidence slots, and drafts a response that cites a document in every sentence. Before you submit you can test the draft against a practice bank reviewer, which names its weakest sentence and offers a fix. Nothing is sent from this prototype."],
   ["What does the merchant control?", "Everything that matters. Every submit and fold needs approval. You can edit the draft, override the call (your reason goes in the audit trail), or turn the agent off."],
   ["How does it learn?", "In a real product, won and lost outcomes by reason code and evidence type would sharpen advice. In this prototype the outcome is stored in your browser and shown back to you. No model is trained."],
   ["How is accuracy and trust protected?", "The seven safety rules, a saved result when the live check fails, an audit trail, and evidence treated as data, never as instructions. The Evals page shows where it is still weak."],
@@ -64,7 +64,7 @@ export default function HowItWorksPage() {
         </ol>
       </section>
 
-      <Section id="rules" title="The seven safety rules" note="They run in code after every answer. You can see each result on the dispute page.">
+      <Section id="rules" title="The seven safety rules" note="They run in code after every answer. You can see each result on the dispute page. The bank test has four more of its own (RB1 to RB4), shown under its result.">
         <Card>
         <ul className="grid gap-x-10 gap-y-2 md:grid-cols-2">
           {RULES.map(([id, t]) => (
@@ -169,6 +169,7 @@ export default function HowItWorksPage() {
             <li>Exchange rates and fees in the money maths are demo values and are labelled that way.</li>
             <li>Without an API key this demo shows saved results. A new check on added evidence needs the live model.</li>
             <li>Odds on saved results are derived from the confidence level. Live checks give the model&apos;s own estimate. Neither is a promise.</li>
+            <li>The bank test is a simulation. We cannot know how a real issuing bank will read your response, and nobody has yet compared its objections with real bank decisions. The saved examples shown without an API key were written by the builder, not produced by a model.</li>
           </ul></Card>
         </Section>
     </>
@@ -207,11 +208,11 @@ function Pipeline() {
       <ol className="grid items-stretch gap-2 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
         <Box title="What goes in">Razorpay&apos;s dispute record, the documents you add, and your own terms (read as your claim, never as proof).</Box>
         <Arrow />
-        <Box title="The advisor reads">Visa&apos;s rule for that reason, then names the documents that decide it and works out the money.</Box>
+        <Box title="The Fold-or-Fight check">Visa&apos;s rule for that reason, then names the documents that decide it and works out the money.</Box>
         <Arrow />
         <Box title="Seven checks run in code">They can downgrade a Fight to Escalate, and reject anything that is missing a source.</Box>
         <Arrow />
-        <Box title="What you get" tone="border-brand bg-[#F4F8FF]">Fight, Fold or Escalate, and a draft that cites a document in every sentence. You approve.</Box>
+        <Box title="What you get" tone="border-brand bg-[#F4F8FF]">Fight, Fold or Escalate, a draft that cites a document in every sentence, and a practice run against the bank. You approve.</Box>
       </ol>
     </section>
   );

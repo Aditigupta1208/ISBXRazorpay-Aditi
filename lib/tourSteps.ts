@@ -1,4 +1,4 @@
-/** The guided tour. One stop for where it sits, six in the order a merchant asks questions, then two for reviewers. Plain words, no jargon. */
+/** The guided tour. One stop for where it sits, seven in the order a merchant asks questions, then two for reviewers. Plain words, no jargon. */
 export interface TourStep {
   href: string;
   title: string;
@@ -42,35 +42,42 @@ export const TOUR_STEPS: TourStep[] = [
     title: "5. You decide, not the advisor",
     text: "Review response opens a draft where every sentence cites a document. Nothing is sent until you approve, and in this prototype nothing is sent at all.",
     target: "#primary-action",
+    reveal: true,
+  },
+  {
+    href: "/disputes/C06",
+    title: "6. Test it on the bank first",
+    text: "A second AI pass plays the cardholder's bank and attacks your draft. It names the weakest sentence and offers a fix. A practice run, not a bank decision.",
+    target: "#rebuttal",
   },
   {
     href: "/disputes/C15",
-    title: "6. When it is not sure, it says so",
+    title: "7. When it is not sure, it says so",
     text: "Only half of this one is owed and a document is missing. The advisor does not guess: it names the one document to get and writes the message to ask for it.",
     target: "#get-first",
   },
   {
     href: "/results",
-    title: "7. Did the advice turn out right?",
+    title: "8. Did the advice turn out right?",
     text: "After you act, mark the dispute Won or Lost. Results compare the advisor's odds with what really happened, and your record shifts the next estimate. The past disputes here are made up.",
     target: "#advisor-right",
   },
   {
     href: "/agent-studio",
-    title: "8. Teach it your own terms",
+    title: "9. Teach it your own terms",
     text: "A business adds its refund and cancellation terms once. The panel shows exactly what the advisor is told. Your terms count as your claim, never as proof.",
     target: "#advisor-told",
   },
   {
     href: "/evals",
-    title: "9. Can you trust it? The test",
+    title: "10. Can you trust it? The test",
     text: "Before an AI is allowed near money decisions, it is tested. This page scores the advisor on practice disputes against a person's answer, and shows where it is weak.",
     target: "#why-evals",
     audience: "reviewers",
   },
   {
     href: "/how-it-works",
-    title: "10. How it works, in one example",
+    title: "11. How it works, in one example",
     text: "One dispute followed from start to finish in plain words, then the safety rules and how the system learns. That is the tour. Open any dispute to try it yourself.",
     target: "#one-minute",
     audience: "reviewers",

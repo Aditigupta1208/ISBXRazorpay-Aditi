@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import type { Meta } from "./agent";
+import type { RebuttalView } from "./rebuttalCore";
 import type { CheckView } from "./types";
 
 export interface AuditEntry {
@@ -27,6 +28,8 @@ export interface CaseState {
   prevCall?: "fight" | "fold" | "escalate" | "shield";
   /** Evidence changed since the last check. */
   dirty?: boolean;
+  /** The latest practice run against the bank's reviewer (Bank's rebuttal). Cleared when the check is re-run. */
+  rebuttal?: RebuttalView;
   audit: AuditEntry[];
 }
 

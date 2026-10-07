@@ -25,11 +25,12 @@ When a non-fraud dispute arrives, the agent:
 1. Reads Razorpay's dispute record (reason code, amount, deadline) and payment facts (refunds, 3-D Secure, earlier payments).
 2. Reads the evidence the merchant has, from wherever it lives (uploaded or pasted documents).
 3. Applies Visa's rule for that reason code.
-4. Runs the **Fight-or-Fold check**: recommends **Fight**, **Fold** (accept) or **Escalate**, with confidence, the deciding evidence, any contradictions, and what is missing.
+4. Runs the **Fold-or-Fight check**: recommends **Fight**, **Fold** (accept) or **Escalate**, with confidence, the deciding evidence, any contradictions, and what is missing.
 5. Weighs whether fighting is worth it: `p × A > (1 − p) × F + E` (amount, rupee amount taken back, fees at risk, AI estimate of the odds, effort cost).
 6. Maps each document to Razorpay's evidence slots and drafts the response (max 1,000 characters, Razorpay's limit; can cover part of the amount), with a citation on every sentence.
-7. Waits for the merchant to approve, edit, accept or escalate.
-8. Records the outcome, lists next steps (accountant, bank paperwork) and suggests one prevention fix after a loss.
+7. **Bank's rebuttal (optional, on a click):** before the merchant approves, a second AI pass plays the cardholder's bank, names the strongest objection and the weakest sentence, and offers a one-click rewrite or the one document to add. It is a simulation and never changes the call.
+8. Waits for the merchant to approve, edit, accept or escalate.
+9. Records the outcome, lists next steps (accountant, bank paperwork) and suggests one prevention fix after a loss.
 
 Fraud reason codes (10.x) are routed to Chargeback Shield.
 
@@ -59,6 +60,8 @@ Layout follows Razorpay's Agentic Dashboard: black top bar, white sub-tabs (Tran
 7. **Card numbers**: a full card number (Luhn check) in pasted evidence is rejected.
 
 Show each check as a pass, changed or blocked line in the check panel (rule numbers R1 to R7 match `docs/pm/05-data-and-stack.md`).
+
+Bank's rebuttal has four more checks of its own, RB1 to RB4 (the quoted sentence is in the draft; a rewrite cites real documents; a rewrite fits 1,000 characters; only documents in this dispute are named). They only remove something unsafe and are shown under the result.
 
 ## Evidence that this needs AI (the kill test, 4 Oct 2026)
 

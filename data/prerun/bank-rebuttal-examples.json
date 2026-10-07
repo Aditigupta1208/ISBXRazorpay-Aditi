@@ -1,0 +1,86 @@
+{
+  "_note": "Saved examples for Bank's rebuttal, used only when there is no live check. They were written by the builder (drafted with Claude Code), not produced by a model run, and each fits one saved draft. They go through the same code checks (RB1 to RB4) as a live answer. Replace them with real runs of prompts/bank-rebuttal-v1.md once the API key is set.",
+  "label": "Saved example, written by the builder. Not a live check.",
+  "cases": {
+    "C01": {
+      "verdict": "holds_up",
+      "strongest_objection": "A reviewer would likely accept this. The one thing they might still ask is when the final file was handed over, because the draft says 'later viewed' without dates.",
+      "objection_evidence_ids": ["E2", "E3"],
+      "weakest_sentence": null,
+      "why_weak": null,
+      "fix_type": "none",
+      "rewritten_sentence": null,
+      "document_needed": null
+    },
+    "C03": {
+      "verdict": "holds_up",
+      "strongest_objection": "A reviewer would likely accept this. The one point they may query is whether the WhatsApp number belongs to the cardholder, since the draft leans on that message.",
+      "objection_evidence_ids": ["E3"],
+      "weakest_sentence": null,
+      "why_weak": null,
+      "fix_type": "none",
+      "rewritten_sentence": null,
+      "document_needed": null
+    },
+    "C04": {
+      "verdict": "weak_spot",
+      "strongest_objection": "The draft says the customer asked to cancel after the charge, but it never says the customer agreed to annual renewal or was reminded first. A reviewer may ask why the renewal was valid.",
+      "objection_evidence_ids": ["E1", "E2"],
+      "weakest_sentence": "The cancellation request was sent after the 1 May renewal charge, and the customer continued logging in and exporting reports after requesting cancellation.",
+      "why_weak": "It relies on timing alone and leaves out the accepted terms and the reminder.",
+      "fix_type": "reword",
+      "rewritten_sentence": "The customer accepted annual renewal terms on 1 May 2024 [E1], was reminded on 17 Apr 2026 that the plan renews on 1 May [E2], asked to cancel only on 4 May 2026 [E3], and kept logging in until 22 May 2026 [E4].",
+      "document_needed": null
+    },
+    "C06": {
+      "verdict": "weak_spot",
+      "strongest_objection": "On 29 Jul the customer told support they were thinking of cancelling. A reviewer may read that as intent to cancel that the merchant did nothing about.",
+      "objection_evidence_ids": ["E2", "E4"],
+      "weakest_sentence": "The customer was instructed to cancel through Settings > Billing before renewal, but only expressed that they were considering cancellation and no cancellation action was recorded.",
+      "why_weak": "It does not quote the chat, so the reviewer cannot see that the customer never actually asked to cancel.",
+      "fix_type": "reword",
+      "rewritten_sentence": "On 29 Jul 2026 the customer said only that they were 'thinking of cancelling' and support pointed them to Settings > Billing [E2], the billing audit log records no cancellation action [E4], and they had accepted the renewal terms on 3 Aug 2025 [E1].",
+      "document_needed": null
+    },
+    "C07": {
+      "verdict": "weak_spot",
+      "strongest_objection": "The draft does not say what the customer was told when they asked for SSO. A reviewer may think the merchant ignored the complaint.",
+      "objection_evidence_ids": ["E3"],
+      "weakest_sentence": "The customer purchased the Starter plan, whose archived plan description includes dashboards and five users; SSO was listed only with the Business plan.",
+      "why_weak": "It leaves out support's reply, which shows the merchant offered a way to get SSO.",
+      "fix_type": "reword",
+      "rewritten_sentence": "The archived pricing page lists SSO only on the Business plan [E1], the customer ordered Starter [E2], and when they asked for SSO on 20 Apr 2026 support offered a prorated upgrade [E3].",
+      "document_needed": null
+    },
+    "C10": {
+      "verdict": "weak_spot",
+      "strongest_objection": "The customer says the money never arrived. The draft shows the refund was processed but gives the reviewer nothing to trace it with.",
+      "objection_evidence_ids": ["E1"],
+      "weakest_sentence": "The full USD 96 refund was processed on 18 Jun 2026, and the customer was informed that it could take 5 to 10 working days to appear.",
+      "why_weak": "A processed status alone does not prove the money reached the cardholder's bank.",
+      "fix_type": "add_document",
+      "rewritten_sentence": null,
+      "document_needed": "The bank reference number for the USD 96 refund, from your Razorpay dashboard, so the bank can trace it."
+    },
+    "C12": {
+      "verdict": "holds_up",
+      "strongest_objection": "A reviewer would likely accept this. The one gap is that the draft does not mention the customer's regular logins from March to May, which show they used the service.",
+      "objection_evidence_ids": ["E4"],
+      "weakest_sentence": null,
+      "why_weak": null,
+      "fix_type": "none",
+      "rewritten_sentence": null,
+      "document_needed": null
+    },
+    "C13": {
+      "verdict": "weak_spot",
+      "strongest_objection": "The draft shows the guest accepted a no-refund window, but not that the merchant tried to be fair. A reviewer may side with a guest who was refused outright.",
+      "objection_evidence_ids": ["E3"],
+      "weakest_sentence": "The guest accepted that cancellations within seven days of departure are non-refundable and cancelled three days before departure.",
+      "why_weak": "It leaves out the offer to move the guest to a later date at no cost.",
+      "fix_type": "reword",
+      "rewritten_sentence": "The guest ticked 'cancellations within 7 days of departure are non-refundable' on 1 Apr 2026 [E1], cancelled three days before departure [E2], and was offered a free move to a later date [E3].",
+      "document_needed": null
+    }
+  }
+}

@@ -69,7 +69,7 @@ Sources: a 53-second Agentic Dashboard demo video (7 frames) and a third-party 2
 Notification (email / WhatsApp) ─┐
                                  ▼
 [1] Disputes list ──▶ [2] Dispute detail ──┬─▶ [3] Evidence (inside 2) ──▶ re-run
-     (+ call column)       (Fight-or-Fold)  ├─▶ [4] Review and submit (Fight)
+     (+ call column)       (Fold-or-Fight)  ├─▶ [4] Review and submit (Fight)
                                             ├─▶ [5] Fold confirmation
                                             ├─▶ [6] Escalate state (inside 2)
                                             ├─▶ [7] Outcome, next steps and prevention tip
@@ -104,7 +104,7 @@ Every screen carries the banner: "Concept prototype for the Razorpay x ISB AI PM
 - Kept: filters, download, status, row click opens detail.
 - Requirements: FR-1 to FR-5, FR-12.
 
-### [2] Dispute detail: the Fight-or-Fold check
+### [2] Dispute detail: the Fold-or-Fight check
 
 **Job:** let the merchant understand the dispute and decide in under two minutes.
 

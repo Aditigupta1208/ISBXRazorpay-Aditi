@@ -4,11 +4,11 @@ Stage 2 of the product work. Builds on `docs/pm/01-discovery.md` (core pains PP1
 
 ## Name
 
-**Dispute Advisor**, an Agent Studio agent. It follows Razorpay's object + role naming (Dispute Responder, Cashflow Forecaster, Chargeback Shield) and "Advisor" signals that it recommends while the merchant decides. Its star feature is the **Fight-or-Fold check**.
+**Dispute Advisor**, an Agent Studio agent. It follows Razorpay's object + role naming (Dispute Responder, Cashflow Forecaster, Chargeback Shield) and "Advisor" signals that it recommends while the merchant decides. Its star feature is the **Fold-or-Fight check**.
 
 ---
 
-## ⭐ USP: Fight-or-Fold check
+## ⭐ USP: Fold-or-Fight check
 
 For any non-fraud dispute, Dispute Advisor reads the evidence the merchant actually has and tells them whether to **Fight**, **Fold** (accept the dispute and let the money go) or **Escalate** (get one more thing first), with reasons, the money maths and every claim cited.
 
@@ -49,12 +49,12 @@ For any non-fraud dispute, Dispute Advisor reads the evidence the merchant actua
 
 ## 🚀 Moonshot: Service Dispute Shield
 
-Razorpay extends Chargeback Shield to non-fraud disputes. When the Fight-or-Fold check says **Fight** with high confidence and complete evidence, Razorpay guarantees the amount: the merchant is paid even if the bank rules against them, for a fee per covered dispute.
+Razorpay extends Chargeback Shield to non-fraud disputes. When the Fold-or-Fight check says **Fight** with high confidence and complete evidence, Razorpay guarantees the amount: the merchant is paid even if the bank rules against them, for a fee per covered dispute.
 
 **Why it's credible**
 - Razorpay already takes 100% liability on fraud disputes for a fee ([Chargeback Shield](https://razorpay.com/chargeback-shield/)).
 - PayU launched fraud liability cover in Sep 2026 ([MediaNama](https://www.medianama.com/2026/09/223-payu-ai-fraud-protection-cross-border-card-payments/)).
-- Every Fight-or-Fold check, with its evidence and outcome, becomes underwriting data.
+- Every Fold-or-Fight check, with its evidence and outcome, becomes underwriting data.
 
 **Caveats built in**
 1. **Moral hazard:** cover only when the call is Fight, confidence is high and evidence is complete; per-merchant limits; exclude merchants above Visa's early-warning dispute ratio.

@@ -15,3 +15,6 @@ export interface Policy {
   text: string;
   acceptance: Acceptance;
 }
+
+/** Bank's rebuttal asks for a short answer, so it gets a smaller output cap than the main check. */
+export const DEFAULT_REBUTTAL_TOKENS = 1200;

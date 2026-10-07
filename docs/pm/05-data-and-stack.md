@@ -10,7 +10,7 @@ Stage 4, part 2. Describes how data moves through the prototype, what is live vs
 |---|---|---|
 | Dispute record | Loaded from `data/cases.json` (shaped like Razorpay's dispute entity) | Webhook + disputes API |
 | Merchant evidence | Demo documents in each case, plus text or files the visitor adds | Merchant uploads; connectors in v2 |
-| The check (Fight-or-Fold) | **Live Claude call**, with saved result as fallback | Agent Studio agent |
+| The check (Fold-or-Fight) | **Live Claude call**, with saved result as fallback | Agent Studio agent |
 | Safety rules and money maths | **Real code**, run on every result | Same |
 | Submit contest / Fold | **Simulated**: shows the exact request, nothing sent | Disputes API |
 | Outcome (won / lost) | Demo toggle | Outcome webhook |

@@ -3,7 +3,7 @@
 Concept prototype for the **Razorpay x ISB AI PM Build Challenge** (Track 2: Recover and Grow with AI).
 Not an official Razorpay product.
 
-An Agent Studio-style agent for Indian businesses selling services, subscriptions, travel or digital goods to international card customers. For a **non-fraud** card dispute, the **Fight-or-Fold check** reads the merchant's own evidence, applies Visa's rule, recommends Fight, Fold (accept) or Escalate with the money maths, and drafts a response that cites a document in every sentence. The merchant always approves.
+An Agent Studio-style agent for Indian businesses selling services, subscriptions, travel or digital goods to international card customers. For a **non-fraud** card dispute, the **Fold-or-Fight check** reads the merchant's own evidence, applies Visa's rule, recommends Fight, Fold (accept) or Escalate with the money maths, and drafts a response that cites a document in every sentence. The merchant always approves.
 
 - Product thinking: [`docs/pm/`](docs/pm/) (discovery, features, PRD, screens, data and stack)
 - Look and feel: [`docs/design/DESIGN.md`](docs/design/DESIGN.md), mock in [`docs/design/mock/`](docs/design/mock/)

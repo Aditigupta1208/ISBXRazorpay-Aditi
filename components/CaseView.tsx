@@ -15,6 +15,7 @@ import type { CaseData, CheckView } from "@/lib/types";
 import { FILE_TYPES, MAX_FILE_BYTES } from "@/lib/uploadLimits";
 import { evidenceHint } from "@/lib/evidenceHints";
 import { EvidenceChecklist } from "@/components/EvidenceChecklist";
+import { RebuttalPanel } from "@/components/RebuttalPanel";
 import { checklistFor } from "@/lib/evidenceChecklist";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
@@ -263,6 +264,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
       ...s,
       added: [...(s.added ?? []), { id, title, content }],
       dirty: true,
+      rebuttal: undefined,
       audit: [...s.audit, { at: now(), actor: "You", text: `Added evidence ${id}: ${title}` }],
     }));
     setNewTitle("");
@@ -276,6 +278,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
       // Re-number so IDs stay E1...En in order; the server numbers them the same way.
       added: (s.added ?? []).filter((a) => a.id !== id).map((a, i) => ({ ...a, id: `E${c.evidence.length + i + 1}` })),
       dirty: true,
+      rebuttal: undefined,
       audit: [...s.audit, { at: now(), actor: "You", text: `Removed evidence ${id}` }],
     }));
 
@@ -305,6 +308,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           prevCall: finalCall,
           dirty: false,
           draft: undefined,
+          rebuttal: undefined,
           contestAmount: undefined,
           reviewOpen: false,
           audit: [...s.audit, { at: now(), actor: "Advisor", text: `Live check: ${r.view.call}${r.meta.cached ? " (from cache)" : ""}` }],
@@ -469,6 +473,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <CallChip call={finalCall} size="lg" />
             {finalCall !== "shield" && <span className="text-[14px] font-semibold text-[#555]">{view.confidence} confidence</span>}
             {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
+            <span className="ml-auto hidden text-[12px] font-semibold tracking-[.6px] text-helper uppercase sm:inline">Fold-or-Fight check</span>
           </div>
           <h2 className="mt-3 text-2xl leading-8 font-semibold md:text-[28px] md:leading-9">{HEAD[finalCall]}</h2>
           {g.changedReason && finalCall !== "shield" && (
@@ -678,6 +683,18 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               </ul>
             </>
           )}
+
+          <RebuttalPanel
+            caseId={c.id}
+            added={(state.added ?? []).map((a) => ({ title: a.title, content: a.content }))}
+            draft={draft}
+            result={state.rebuttal}
+            onResult={(v) => update((s) => ({ ...s, rebuttal: v }))}
+            onApply={(nd) => update((s) => ({ ...s, draft: nd }))}
+            onAddDocument={openAdd}
+            onFocusEvidence={focusEvidence}
+            onLog={(text) => log("You", text)}
+          />
 
           <H3>Documents by slot</H3>
           {documentsBySlot.size === 0 ? (

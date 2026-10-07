@@ -22,3 +22,21 @@ export function loadPrompt(): PromptParts {
   if (!cached) cached = parsePrompt(readFileSync(path.join(process.cwd(), FILE), "utf8"));
   return cached;
 }
+
+/** Bank's rebuttal: a second prompt file with its own system prompt and tool. */
+export const REBUTTAL_PROMPT_VERSION = "v1";
+export const REBUTTAL_TOOL = "record_bank_rebuttal";
+const REBUTTAL_FILE = "prompts/bank-rebuttal-v1.md";
+
+export function parseRebuttalPrompt(md: string): PromptParts {
+  const sys = md.split("## System prompt")[1]?.match(/```text\n([\s\S]*?)\n```/);
+  const tool = md.split(`## Tool: ${REBUTTAL_TOOL}`)[1]?.match(/```json\n([\s\S]*?)\n```/);
+  if (!sys || !tool) throw new Error("Rebuttal prompt file is missing the system prompt or the tool schema");
+  return { system: sys[1], toolSchema: JSON.parse(tool[1]) };
+}
+
+let cachedRebuttal: PromptParts | undefined;
+export function loadRebuttalPrompt(): PromptParts {
+  if (!cachedRebuttal) cachedRebuttal = parseRebuttalPrompt(readFileSync(path.join(process.cwd(), REBUTTAL_FILE), "utf8"));
+  return cachedRebuttal;
+}

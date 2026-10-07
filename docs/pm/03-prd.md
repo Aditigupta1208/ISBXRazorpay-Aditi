@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | Product | Dispute Advisor, an Agent Studio agent |
-| Star feature | Fight-or-Fold check |
+| Star feature | Fold-or-Fight check |
 | Owner | Aditi Gupta (product) |
 | Status | v1.0, approved for MVP build |
 | Last updated | 5 Oct 2026 |
@@ -27,7 +27,7 @@
 
 Indian businesses that sell services, subscriptions, travel and digital products to international card customers lose money on non-fraud disputes: they miss the 3-business-day deadline, fight disputes they can't win, or give up on ones they could. The evidence that wins these disputes lives in the merchant's own systems, not in Razorpay, and Razorpay's Chargeback Shield covers fraud disputes only.
 
-**Dispute Advisor** runs a **Fight-or-Fold check** as soon as a non-fraud dispute arrives. It reads the merchant's evidence and policy, applies Visa's rule for the reason code, weighs the money at stake, and recommends **Fight**, **Fold** (accept the dispute) or **Escalate** (get one more thing first). For Fight, it drafts a response in which every sentence cites a document. The merchant approves every action.
+**Dispute Advisor** runs a **Fold-or-Fight check** as soon as a non-fraud dispute arrives. It reads the merchant's evidence and policy, applies Visa's rule for the reason code, weighs the money at stake, and recommends **Fight**, **Fold** (accept the dispute) or **Escalate** (get one more thing first). For Fight, it drafts a response in which every sentence cites a document. The merchant approves every action.
 
 It extends Razorpay's existing dispute tools into the disputes they don't cover today, rather than replacing them.
 
@@ -135,7 +135,7 @@ P0 = must have for MVP; P1 = should have; P2 = first to cut.
 
 **Main flow (Fight)**
 1. Customer raises a dispute → Razorpay receives it and sends `payment.dispute.created`.
-2. Dispute Advisor runs the Fight-or-Fold check automatically using Razorpay data and the merchant's policy profile.
+2. Dispute Advisor runs the Fold-or-Fight check automatically using Razorpay data and the merchant's policy profile.
 3. Merchant gets a notification (dashboard, email, WhatsApp via Agent Studio) with the call and time left.
 4. Merchant opens the dispute → sees the claim in plain words, the call, the money maths and what evidence is missing.
 5. Merchant adds evidence → the check re-runs → the call updates.
@@ -162,12 +162,12 @@ Each requirement has an ID, priority and acceptance criteria.
 | ID | Pri | Requirement | Acceptance criteria |
 |---|---|---|---|
 | FR-1 | P0 | Ingest disputes from Razorpay's dispute webhooks and dispute entity (reason code, phase, amount, currency, `respond_by`, status) | New dispute appears within 1 minute of the webhook **[Prototype: loaded from demo data]** |
-| FR-2 | P0 | Run the Fight-or-Fold check automatically on intake for in-scope disputes | Call is ready before the merchant opens the dispute |
+| FR-2 | P0 | Run the Fold-or-Fight check automatically on intake for in-scope disputes | Call is ready before the merchant opens the dispute |
 | FR-3 | P0 | Inbox lists open disputes with amount (original currency and INR), reason (code + plain name), time left, call chip with text | All open disputes shown; chips never rely on colour alone |
 | FR-4 | P0 | Default sort by INR at stake × urgency; disputes with under 24 hours left marked | Sort stable; marking correct at the 24-hour boundary |
 | FR-5 | P1 | Summary strip: disputes needing a decision, total at stake, due within 24 hours | Numbers match the list |
 
-### 6.2 Case view and Fight-or-Fold check
+### 6.2 Case view and Fold-or-Fight check
 
 | ID | Pri | Requirement | Acceptance criteria |
 |---|---|---|---|
@@ -198,6 +198,7 @@ Each requirement has an ID, priority and acceptance criteria.
 | FR-20 | P0 | Every draft sentence ends with a citation ([E2] or [Razorpay]); every cited ID exists; max 1,000 characters with a live counter | Failing sentences highlighted; submit blocked until fixed |
 | FR-21 | P0 | Draft is editable; the citation check re-runs on edit | Check result updates on every edit |
 | FR-22 | P0 | Actions: Approve and submit (Fight), Fold, Escalate (with request text), Re-run check | Each action needs an explicit click; no action runs automatically |
+| FR-22a | P1 | Bank's rebuttal: on a click, a second AI pass plays the cardholder's bank against the draft and returns the strongest objection, the weakest sentence, and a rewrite or a document to add | Never changes the call or the draft by itself; quoted sentence must be in the draft; a rewrite must cite existing documents and fit 1,000 characters; labelled a simulation **[Added 7 Oct]** |
 | FR-23 | P0 | Submit sends the contest request (`PATCH /v1/disputes/{id}/contest`, `action: submit`, summary, evidence documents by slot, contest amount); Fold sends the accept request (`POST /v1/disputes/{id}/accept`) | Submit blocked without at least one document (Razorpay requirement); the exact request is shown **[Prototype: simulated, not sent]** |
 | FR-23a | P1 | Contest amount defaults to the full amount; when the economics note names a defensible part, it is pre-filled as a partial contest the merchant can edit | Amount never exceeds the disputed amount |
 | FR-23b | P1 | When the call is Escalate, the draft is saved to Razorpay as a draft contest (`action: draft`) so it is ready if the merchant later chooses Fight | Draft visible on the dispute; nothing submitted |
@@ -543,7 +544,7 @@ Definitions in `01-discovery.md`, section 7.
 | Date | Milestone |
 |---|---|
 | 6 Oct | Skeleton, demo data, priority inbox, case view; deployed on Vercel |
-| 7 Oct | Fight-or-Fold panel from saved results, safety rules, merchant controls, policy profile |
+| 7 Oct | Fold-or-Fight panel from saved results, safety rules, merchant controls, policy profile |
 | 8 Oct | Live Claude call, evidence locker with re-run, under the hood; PDF and image test |
 | 9 Oct | Evals page and `npm run eval`; outcome and prevention tip; fast lane if time allows |
 | 10 Oct | How-it-works page, README, polish, demo script |
