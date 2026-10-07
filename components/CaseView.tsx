@@ -451,7 +451,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   {(() => {
                     const addedIds = (state.added ?? []).map((a) => a.id);
                     const decided = view.decidingEvidence.filter((id) => addedIds.includes(id));
-                    return decided.length > 0 ? `The new document ${decided.join(", ")} decided it.` : "Your new evidence changed the answer.";
+                    if (decided.length > 0) return `The new document ${decided.join(", ")} decided it.`;
+                    return addedIds.length > 0 ? "Your new evidence changed the answer." : "The AI gave a different answer on this re-run. You added no new evidence.";
                   })()}
                 </span>
               </span>
