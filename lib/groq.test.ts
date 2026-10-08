@@ -192,3 +192,31 @@ test("when a model is skipped, the answer says which one and why", async () => {
   assert.equal(whyFailed(te, 28000), "took longer than 28 s");
   resetModelHealth();
 });
+
+test("a short rate limit is waited out on the same model; a long one moves to the next model", async () => {
+  resetModelHealth();
+  let n = 0;
+  const s = await serve((_q, _b, res) => {
+    if (n++ === 0) { res.statusCode = 429; res.setHeader("retry-after", "0.05"); res.end(JSON.stringify({ error: { message: "rate" } })); return; }
+    ok(res, {});
+  });
+  const r = await makeGroqCallModel("k-123456", s.base, ["m2"])!({ ...P, model: "m1" });
+  s.close();
+  assert.equal(r.model, "m1");
+  assert.equal(r.skipped, undefined);
+  assert.equal(s.seen.length, 2);
+  resetModelHealth();
+  const s2 = await serve((_q, body, res) => {
+    if (body.model === "m1") { res.statusCode = 429; res.setHeader("retry-after", "40"); res.end(JSON.stringify({ error: { message: "rate" } })); return; }
+    ok(res, {});
+  });
+  const r2 = await makeGroqCallModel("k-123456", s2.base, ["m2"])!({ ...P, model: "m1" });
+  s2.close();
+  assert.equal(r2.model, "m2");
+  assert.equal(s2.seen.length, 2);
+  const { retryAfterMs } = await import("./groq");
+  assert.equal(retryAfterMs(null, "Please try again in 2.5s. Need more tokens"), 2600);
+  assert.equal(retryAfterMs(null, "try again in 1m3.2s"), 63300);
+  assert.equal(retryAfterMs(null, "no hint"), null);
+  resetModelHealth();
+});

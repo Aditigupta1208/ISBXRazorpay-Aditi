@@ -22,6 +22,15 @@ const REASONING_HEADROOM = { low: 2000, medium: 4000, high: 8000 } as const;
 const TIMEOUT_MS = { low: 15_000, medium: 20_000, high: 28_000 } as const;
 const FALLBACK_STATUSES = new Set([404, 408, 413, 429, 500, 502, 503, 504]);
 
+const MAX_RATE_WAIT_MS = 6_000;
+/** How long Groq says to wait after a rate limit, from the retry-after header or the "try again in 2.5s" message. Null if unknown. */
+export function retryAfterMs(header: string | null, body: string): number | null {
+  const h = header ? Number(header) : NaN;
+  if (Number.isFinite(h) && h >= 0) return Math.ceil(h * 1000) + 100;
+  const m = /try again in (?:(\d+)m)?\s*([\d.]+)s/i.exec(body);
+  return m ? Math.ceil((Number(m[1] ?? 0) * 60 + Number(m[2])) * 1000) + 100 : null;
+}
+
 /** A short, plain reason a model did not answer, for the "under the hood" panel. */
 export function whyFailed(err: unknown, timeoutMs: number): string {
   if (err instanceof GroqHttpError) {
@@ -62,7 +71,7 @@ export function makeGroqCallModel(
   // gpt-oss and Qwen think before they answer, and that counts against max_tokens, so both get headroom.
   // Only gpt-oss takes a low/medium/high setting; Qwen's own setting uses different values, so it is left alone.
   const thinks = (model: string) => model.startsWith("openai/gpt-oss") || model.startsWith("qwen/");
-  const once = async (p: ModelParams, model: string, sendEffort = model.startsWith("openai/gpt-oss")): Promise<ModelReply> => {
+  const once = async (p: ModelParams, model: string, sendEffort = model.startsWith("openai/gpt-oss"), waited = false): Promise<ModelReply> => {
     const body = {
       model,
       temperature: 0,
@@ -85,7 +94,15 @@ export function makeGroqCallModel(
     if (!res.ok) {
       const raw = await res.text().catch(() => "");
       // A model that rejects the reasoning setting gets one more try without it.
-      if (res.status === 400 && sendEffort && /reasoning/i.test(raw)) return once(p, model, false);
+      if (res.status === 400 && sendEffort && /reasoning/i.test(raw)) return once(p, model, false, waited);
+      // The free plan limits tokens per minute. A short wait is often enough, and is better than dropping to a weaker model.
+      if (res.status === 429 && !waited) {
+        const wait = retryAfterMs(res.headers.get("retry-after"), raw);
+        if (wait !== null && wait <= MAX_RATE_WAIT_MS) {
+          await new Promise((r) => setTimeout(r, wait));
+          return once(p, model, sendEffort, true);
+        }
+      }
       const text = raw.replaceAll(apiKey, "[key]").replace(/\s+/g, " ").slice(0, 300);
       // "tool_use_failed" means the model wrote a malformed tool call: another model may do better.
       const retryable = FALLBACK_STATUSES.has(res.status) || /tool_use_failed/i.test(raw);
