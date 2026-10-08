@@ -286,3 +286,15 @@ test("a fully cited draft is not sent back", async () => {
   await analyze(c, [], deps(calls, [ok(okDraft)]));
   assert.equal(calls.n, 1);
 });
+
+test("the user message states the order of dates, so a model cannot call 1 Aug after 3 Aug", () => {
+  const withDates: CaseData = { ...c, dispute: { ...c.dispute, raised_on: "25 Aug 2026" }, razorpay_facts: "Renewal charged 3 Aug 2026.", evidence: [{ id: "E1", content: "Cancellation email, 1 Aug 2026: please cancel." }] };
+  const m = buildUserMessage(withDates, [], undefined);
+  assert.match(m, /Dates, oldest first/);
+  const lines = m.split("\n").filter((l) => l.startsWith("- "));
+  assert.match(lines[0], /^- 1 Aug 2026: in E1/);
+  assert.match(lines[1], /^- 3 Aug 2026: in Razorpay's record \(2 days after the line above\)/);
+  assert.match(lines[2], /^- 25 Aug 2026: dispute raised \(22 days/);
+  assert.ok(m.indexOf("Dates, oldest first") < m.indexOf("Evidence:"));
+  assert.ok(!buildUserMessage({ ...c, razorpay_facts: "Payment captured.", evidence: [{ id: "E1", content: "no dates" }], dispute: { ...c.dispute, raised_on: "soon" } }, [], undefined).includes("Dates, oldest first"));
+});

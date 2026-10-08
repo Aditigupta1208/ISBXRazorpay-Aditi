@@ -62,3 +62,4 @@ One line per build session: date, milestone, what was built, anything decided or
 2026-10-08 | ai-features | Bank's rebuttal RB1 accepts a quote that is part of exactly one draft sentence (30+ chars); still hides invented quotes.
 2026-10-08 | ai-features | Adding or removing a document re-runs the check automatically (rerun takes the new list). e2e suites updated.
 2026-10-08 | ai-features | After a live re-run: scroll to top, new changed-call banner with before/after chips, glow on the answer card, 'Decided the call' tag on the added doc.
+2026-10-08 | ai-features | Qwen called 1 Aug 'two days after' 3 Aug on C06. The user message now lists dates oldest first, worked out by code (dateOrder in lib/agent.ts).

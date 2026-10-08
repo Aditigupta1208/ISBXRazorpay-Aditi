@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { containsCardNumber, isFraudCode, sentenceHasSource, splitSentences } from "./guardrails";
 import { costUsd } from "./pricing";
+import { buildTimeline, daysBetween, formatIso } from "./timeline";
 import { DEMO_RATE_INR_PER_USD } from "./money";
 import { PROMPT_VERSION } from "./prompt";
 import { decisionSchema, type DecisionOutput } from "./schema";
@@ -87,9 +88,32 @@ export function buildUserMessage(c: CaseData, added: AddedEvidence[], policy?: P
     `Dispute details: ${c.dispute_summary}`,
     `What Razorpay knows: ${c.razorpay_facts}`,
     ...policyBlock(policy),
+    ...dateOrder(c, items),
     "Evidence:",
     ...items.map((e) => `<evidence id="${e.id}">${escapeEvidence(e.content)}</evidence>`),
   ].join("\n");
+}
+
+/**
+ * The dates in the record and the documents, oldest first, worked out by code. Models sometimes get "before" and "after" wrong
+ * when two dates sit a few days apart, so the order is stated for them. Only full dates (day, month, year) count.
+ */
+export function dateOrder(c: CaseData, items: { id: string; content: string }[]): string[] {
+  const all = buildTimeline({
+    raisedOn: c.dispute.raised_on,
+    evidence: [{ id: "Razorpay", content: `${c.razorpay_facts} ${c.dispute_summary}` }, ...items],
+  });
+  // The record often repeats the dispute date; say each date once per source.
+  const events = all.filter((e, i) => !all.slice(0, i).some((p) => p.iso === e.iso && (p.evidenceId === e.evidenceId || e.evidenceId === null)));
+  if (events.length < 2) return [];
+  return [
+    "Dates, oldest first (worked out by code; trust this order):",
+    ...events.slice(0, 14).map((e, i) => {
+      const n = i === 0 ? 0 : daysBetween(events[i - 1].iso, e.iso);
+      const gap = i === 0 ? "" : n === 0 ? " (same day as the line above)" : ` (${n} day${n === 1 ? "" : "s"} after the line above)`;
+      return `- ${formatIso(e.iso)}: ${e.evidenceId === null ? "dispute raised" : e.evidenceId === "Razorpay" ? "in Razorpay's record" : `in ${e.evidenceId}`}${gap}`;
+    }),
+  ];
 }
 
 /** Check pasted evidence before it goes anywhere. */
