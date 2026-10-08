@@ -341,6 +341,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           reviewOpen: false,
           audit: [...s.audit, { at: now(), actor: "Advisor", text: `Live check: ${r.view.call}${r.meta.cached ? " (from cache)" : ""}` }],
         }));
+        // Take the merchant to the new answer; the evidence list they were just working in is far below it.
+        setTimeout(() => window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }), 150);
       } else if (r.status === "saved") {
         update((s) => ({ ...s, dirty: false, audit: [...s.audit, { at: now(), actor: "Advisor", text: `Live check not available (${r.reason}); showing the saved result` }] }));
         setNotice({ kind: "info", text: r.message });
@@ -456,28 +458,35 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         </header>
 
         {state.prevCall && state.prevCall !== finalCall && state.check && (
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-brand bg-[#F4F8FF] px-4 py-3" role="status">
-              <span>
-                <b className="block">The call changed: {CALL_NAME[state.prevCall]} → {CALL_NAME[finalCall]}</b>
-                <span className="text-[14px] text-[#333]">
-                  {(() => {
-                    const addedIds = (state.added ?? []).map((a) => a.id);
-                    const decided = view.decidingEvidence.filter((id) => addedIds.includes(id));
-                    if (decided.length > 0) return `The new document ${decided.join(", ")} decided it.`;
-                    return addedIds.length > 0 ? "Your new evidence changed the answer." : "The AI gave a different answer on this re-run. You added no new evidence.";
-                  })()}
+            <div id="call-changed" className="pop-in mb-4 overflow-hidden rounded-2xl border border-brand bg-[#F4F8FF]" role="status">
+              <div className="flex flex-wrap items-center justify-between gap-3 px-4 pt-3.5">
+                <span className="flex flex-wrap items-center gap-2.5">
+                  <b className="text-[12px] font-semibold tracking-[.6px] text-brand uppercase">The call changed</b>
+                  <span className="flex items-center gap-2" aria-label={`${CALL_NAME[state.prevCall]} to ${CALL_NAME[finalCall]}`}>
+                    <span className="opacity-60"><CallChip call={state.prevCall} /></span>
+                    <span aria-hidden className="text-[16px] font-semibold text-brand">→</span>
+                    <CallChip call={finalCall} size="lg" />
+                  </span>
                 </span>
-              </span>
-              <span className="flex gap-2">
-                {view.decidingEvidence.some((id) => (state.added ?? []).some((a) => a.id === id)) && (
-                  <button className={ghost} onClick={() => focusEvidence(view.decidingEvidence.filter((id) => (state.added ?? []).some((a) => a.id === id)))}>
-                    Show the document
+                <span className="flex gap-2">
+                  {view.decidingEvidence.some((id) => (state.added ?? []).some((a) => a.id === id)) && (
+                    <button className={ghost} onClick={() => focusEvidence(view.decidingEvidence.filter((id) => (state.added ?? []).some((a) => a.id === id)))}>
+                      Show the document
+                    </button>
+                  )}
+                  <button className={ghost} onClick={() => update((s) => ({ ...s, prevCall: undefined }))}>
+                    Dismiss
                   </button>
-                )}
-                <button className={ghost} onClick={() => update((s) => ({ ...s, prevCall: undefined }))}>
-                  Dismiss
-                </button>
-              </span>
+                </span>
+              </div>
+              <p className="px-4 pt-2 pb-3.5 text-[14px] text-[#333]">
+                {(() => {
+                  const addedIds = (state.added ?? []).map((a) => a.id);
+                  const decided = view.decidingEvidence.filter((id) => addedIds.includes(id));
+                  if (decided.length > 0) return `The new document ${decided.join(", ")} decided it.`;
+                  return addedIds.length > 0 ? "Your new evidence changed the answer." : "The AI gave a different answer on this re-run. You added no new evidence.";
+                })()}
+              </p>
             </div>
           )}
           {clearWin && (
@@ -497,7 +506,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             </p>
           )}
 
-        <section id="decision" aria-label="The advisor's call" className={`mb-5 rounded-2xl border border-line border-l-4 bg-white p-4 md:p-6 ${EDGE[finalCall]} ${running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}`}>
+        <section id="decision" aria-label="The advisor's call" className={`mb-5 rounded-2xl border border-line border-l-4 bg-white p-4 md:p-6 ${EDGE[finalCall]} ${state.prevCall && state.prevCall !== finalCall && !running ? "flash-ring" : ""} ${running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}`}>
           <div id="verdict" className="flex flex-wrap items-center gap-3">
             <CallChip call={finalCall} size="lg" />
             {finalCall !== "shield" && <span className="text-[14px] font-semibold text-[#555]">{view.confidence} confidence</span>}
@@ -946,7 +955,12 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 >
                   <div className="flex h-[26px] items-center justify-center rounded-lg bg-shield-soft text-[12px] font-semibold">{e.id}</div>
                   <div>
-                    {addedItem && <p className="text-[12px] font-semibold text-helper">Added by you · {(e as { title: string }).title}</p>}
+                    {addedItem && (
+                      <p className="text-[12px] font-semibold text-helper">
+                        Added by you · {(e as { title: string }).title}
+                        {state.prevCall && state.prevCall !== finalCall && view.decidingEvidence.includes(e.id) && <span className="ml-2 rounded-full bg-brand-soft px-2 py-0.5 text-brand">Decided the call</span>}
+                      </p>
+                    )}
                     <p className="text-sm text-[#555]">{e.content}</p>
                     {keyFactsShown && <KeyFactLines docs={keyFactsShown.docs} id={e.id} />}
                     {slots.map((s) => (

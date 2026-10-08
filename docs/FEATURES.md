@@ -398,3 +398,5 @@ All three use `POST /api/assist` (server only, same key and per-IP limit as the 
 **Limits.** None of the three has run on the real Claude API yet. Key facts on Groq are text only. The learning suggestion on sample data shows how it would work, not what it has learned from real merchants.
 
 **Auto re-run (9 Oct).** Adding or removing a document now re-runs the check on its own. The "Your evidence changed" note and Re-run button stay only as a fallback (for example when the advisor is switched off in Agent setup).
+
+**Changed-call banner (9 Oct).** After a re-run the page scrolls to the top, the banner shows the old call (faded) → the new call as chips, the answer card glows once, and the document that decided it is tagged "Decided the call" in Your evidence.

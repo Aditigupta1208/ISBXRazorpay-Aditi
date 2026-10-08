@@ -31,6 +31,12 @@ b, strong { font-weight: 600; }
 .scroll-fade { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); }
 @media (min-width: 768px) { .scroll-fade { -webkit-mask-image: none; mask-image: none; } }
 
+/* A new answer slides in and its card glows once, so a changed call is noticed. */
+@keyframes pop-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.pop-in { animation: pop-in .35s ease-out both; }
+@keyframes flash-ring { 0% { box-shadow: 0 0 0 0 rgb(47 99 200 / .45); } 100% { box-shadow: 0 0 0 14px rgb(47 99 200 / 0); } }
+.flash-ring { animation: flash-ring 1.2s ease-out 1; }
+
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
