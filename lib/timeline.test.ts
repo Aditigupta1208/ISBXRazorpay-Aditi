@@ -29,3 +29,9 @@ test("partial dates are ignored and every case builds without throwing", () => {
   const t = buildTimeline({ raisedOn: "1 Aug 2026", evidence: [{ id: "E1", content: "Emailed on 22 Jun." }] });
   assert.equal(t.length, 1);
 });
+
+test("a dot inside an email address does not cut the snippet", () => {
+  const ev = [{ id: "E2", content: "Email from mark@brightlinehealth.com, 20 Jun 2026: 'Approved milestone 2. All 12 screens look great.'" }];
+  const t = buildTimeline({ raisedOn: "1 Aug 2026", evidence: ev });
+  assert.ok(t[0].text.startsWith("Email from mark@brightlinehealth.com, 20 Jun 2026"), t[0].text);
+});

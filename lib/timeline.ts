@@ -39,7 +39,9 @@ export function daysBetween(a: string, b: string): number {
 }
 
 function snippet(text: string, at: number): string {
-  const start = Math.max(0, text.lastIndexOf(".", at - 2) + 1);
+  // A sentence starts after ". " (full stop and space), not after the dot inside an address such as mark@brightlinehealth.com.
+  let start = 0;
+  for (const m of text.slice(0, Math.max(0, at - 1)).matchAll(/\.\s/g)) start = (m.index ?? 0) + 1;
   let end = text.indexOf(". ", at);
   if (end < 0) end = text.length;
   let s = text.slice(start, end + 1).trim();

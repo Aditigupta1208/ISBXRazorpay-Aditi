@@ -65,3 +65,4 @@ One line per build session: date, milestone, what was built, anything decided or
 2026-10-08 | ai-features | Qwen called 1 Aug 'two days after' 3 Aug on C06. The user message now lists dates oldest first, worked out by code (dateOrder in lib/agent.ts).
 2026-10-08 | ai-features | Under the hood now says which model was tried first and why it did not answer (skipped on ModelReply and Meta, whyFailed in lib/groq.ts). Qwen fell back to gpt-oss-120b on 3 of 4 live runs; cause not yet known.
 2026-10-08 | ai-features | Qwen hit Groq's rate limit (tokens per minute) and fell back. Groq calls now wait out a short rate limit (6 s or less) on the same model once before using the next model (retryAfterMs in lib/groq.ts).
+2026-10-08 | ai-features | Timeline snippet no longer cut at the dot in an email address. Real-Groq tests passed: add evidence flip (C06), PDF upload and key facts (C15), Shorten (C01), bank rebuttal (C06).
