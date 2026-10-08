@@ -281,6 +281,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     if (containsCardNumber(title) || containsCardNumber(content)) return setAddError("Remove the card number and try again.");
     if ((state.added ?? []).length >= 5) return setAddError("Add at most 5 documents.");
     const id = `E${allEvidence.length + 1}`;
+    const next = [...(state.added ?? []), { id, title, content }];
     update((s) => ({
       ...s,
       added: [...(s.added ?? []), { id, title, content }],
@@ -292,8 +293,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     setNewText("");
     setAddError("");
     setAdding(false);
+    // Check again on its own: the merchant added the document to see what it changes.
+    void rerun(next);
   };
-  const removeEvidence = (id: string) =>
+  const removeEvidence = (id: string) => {
+    const next = (state.added ?? []).filter((a) => a.id !== id).map((a, i) => ({ ...a, id: `E${c.evidence.length + i + 1}` }));
     update((s) => ({
       ...s,
       // Re-number so IDs stay E1...En in order; the server numbers them the same way.
@@ -302,10 +306,13 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
       rebuttal: undefined,
       audit: [...s.audit, { at: now(), actor: "You", text: `Removed evidence ${id}` }],
     }));
+    void rerun(next);
+  };
 
   const steps = [`Reading ${allEvidence.length} documents…`, `Applying Visa rule ${d.reason_code}…`, "Writing the response…"];
-  const rerun = async () => {
+  const rerun = async (list?: { id: string; title: string; content: string }[]) => {
     track("rerun");
+    const sendAdded = list ?? state.added ?? [];
     const profile = readProfile();
     if (!profile.enabled) {
       setNotice({ kind: "info", text: "Dispute Advisor is off in Agent setup. Turn it on to run a new check." });
@@ -319,7 +326,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ caseId: c.id, added: (state.added ?? []).map((a) => ({ title: a.title, content: a.content })), policy: profile.policy.trim() ? { text: profile.policy, acceptance: profile.acceptance } : undefined }),
+        body: JSON.stringify({ caseId: c.id, added: sendAdded.map((a) => ({ title: a.title, content: a.content })), policy: profile.policy.trim() ? { text: profile.policy, acceptance: profile.acceptance } : undefined }),
       });
       const r = (await res.json()) as AnalyzeResult;
       if (r.status === "live") {
@@ -651,7 +658,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 onClick={() => { update((s) => ({ ...s, thumbs: "down" })); log("You", "Marked the call not useful"); }}
               >👎</button>
               {finalCall !== "shield" && !acted && (
-                <button className={`${ghost} whitespace-nowrap`} onClick={rerun} disabled={running}>Re-run check</button>
+                <button className={`${ghost} whitespace-nowrap`} onClick={() => void rerun()} disabled={running}>Re-run check</button>
               )}
               <button onClick={() => setDrawer(true)} className="relative font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">Under the hood ›</button>
             </span>
@@ -985,7 +992,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               <div className="mt-3 rounded-xl border border-brand bg-[#F4F8FF] p-3" role="status">
                 <p className="text-[14px] font-semibold">Your evidence changed.</p>
                 <p className="text-[12px] text-[#555]">Re-run the check to see if it changes the call.</p>
-                <button className={`${primary} mt-2`} onClick={rerun} disabled={running}>
+                <button className={`${primary} mt-2`} onClick={() => void rerun()} disabled={running}>
                   {running ? "Checking…" : "Re-run check"}
                 </button>
               </div>

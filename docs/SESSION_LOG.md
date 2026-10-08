@@ -60,3 +60,4 @@ One line per build session: date, milestone, what was built, anything decided or
 2026-10-08 | ai-features | Safety checks now say '5 passed, 2 not needed yet'; escalate request message reworded from the document to get (requestMessage in lib/agent.ts).
 2026-10-08 | ai-features | If the model's draft has sentences with no citation, ask it once to rewrite (uncitedSentences in lib/agent.ts); kept the first draft if no better. Found on Qwen C06.
 2026-10-08 | ai-features | Bank's rebuttal RB1 accepts a quote that is part of exactly one draft sentence (30+ chars); still hides invented quotes.
+2026-10-08 | ai-features | Adding or removing a document re-runs the check automatically (rerun takes the new list). e2e suites updated.
