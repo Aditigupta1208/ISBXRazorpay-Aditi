@@ -34,13 +34,13 @@ The product is already clearer than most dispute screens. The first screen of a 
 
 | # | Where | What I saw | Fix |
 |---|---|---|---|
-| 6 | Buttons | "Fold" is the button label on a Fight card. A new merchant may not know it means "accept the dispute and take the loss". | "Accept dispute (Fold)". Same for Escalate. |
-| 7 | Evidence cards | Monospace tags like `term_and_conditions`, `access_activity_log`. | Plain labels: "Terms and conditions", "Login and usage log". Keep the raw name in Under the hood. |
-| 8 | Escalate card | "Worth finding? Up to ₹63,360 more is still at risk at today's 55% odds, out of the ₹1,40,800 you could contest. More than the ₹500 effort cost we assume…" is three lines of arithmetic. | One line: "Worth asking: could save up to ₹63,360." Put the working behind "How we got this". |
-| 9 | Phone, Escalate | The actions ("Copy the message", "Add the document", "Fight anyway", "Fold") are about two screens below the call. | A sticky action bar on phones, as many merchants will check on mobile. |
-| 10 | Results | "What to change next" (the actionable part) is at the bottom, under four analytics blocks. | Move it up under the headline sentence. |
-| 11 | Results | Bars are green or brown with no legend. | Add a one-line legend ("green: won 75% or more") or use one colour. |
-| 12 | Safety checks | Rule IDs (R1 to R7) mean nothing to a merchant. | Show the rule in words; keep the IDs for reviewers. |
+| 6 | Buttons | "Fold" is the button label on a Fight card. A new merchant may not know it means "accept the dispute and take the loss". | "Accept dispute (Fold)". Same for Escalate. **Done 9 Oct.** |
+| 7 | Evidence cards | Monospace tags like `term_and_conditions`, `access_activity_log`. | Plain labels: "Terms and conditions", "Login and usage log". Keep the raw name in Under the hood. **Done 9 Oct.** |
+| 8 | Escalate card | "Worth finding? Up to ₹63,360 more is still at risk at today's 55% odds, out of the ₹1,40,800 you could contest. More than the ₹500 effort cost we assume…" is three lines of arithmetic. | One line: "Worth asking: could save up to ₹63,360." Put the working behind "How we got this". **Done 9 Oct.** |
+| 9 | Phone, Escalate | The actions ("Copy the message", "Add the document", "Fight anyway", "Fold") are about two screens below the call. | A sticky action bar on phones, as many merchants will check on mobile. **Done 9 Oct.** |
+| 10 | Results | "What to change next" (the actionable part) is at the bottom, under four analytics blocks. | Move it up under the headline sentence. **Done 9 Oct.** |
+| 11 | Results | Bars are green or brown with no legend. | Add a one-line legend ("green: won 75% or more") or use one colour. **Done 9 Oct.** |
+| 12 | Safety checks | Rule IDs (R1 to R7) mean nothing to a merchant. | Show the rule in words; keep the IDs for reviewers. **Done 9 Oct.** |
 
 ### P3: polish
 

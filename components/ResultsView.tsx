@@ -59,6 +59,8 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
             </p>
           </Card>
 
+          <LearnBox stats={compactStats(m)} usesSample={withSample && youCount === 0} />
+
           <Section id="advisor-right" title="Was the advisor right?" note="The AI estimate is checked against what actually happened.">
             <Card className="!p-0">
               <ul className="md:hidden">
@@ -133,6 +135,7 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
                   );
                 })}
               </ul>
+              <p className="border-t border-line px-4 py-2.5 text-[12px] text-helper md:px-5">Bar colour: green means you won 70% or more of the fights on that reason, brown means less.</p>
               {weakest && (
                 <p className="border-t border-line bg-[#FAFAFA] px-4 py-3 text-[14px] md:px-5">
                   <b className="font-semibold">Weakest:</b> {weakest.code} {reasonNames[weakest.code] ?? ""}, won {weakest.won} of {weakest.fights} fights.
@@ -141,8 +144,6 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
               )}
             </Card>
           </Section>
-
-          <LearnBox stats={compactStats(m)} usesSample={withSample && youCount === 0} />
 
           <details className="mb-6 rounded-2xl border border-line bg-white px-4 py-1 md:px-5">
             <summary className="min-h-10 cursor-pointer py-2.5 text-[14px] font-semibold">How the loop works</summary>

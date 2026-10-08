@@ -19,7 +19,7 @@ import { RebuttalPanel } from "@/components/RebuttalPanel";
 import { ShortenBox } from "@/components/ShortenBox";
 import { KeyFactLines, KeyFactsButton } from "@/components/KeyFactsBox";
 import { VERDICT_LABEL, sameDraft } from "@/lib/rebuttalCore";
-import { checklistFor } from "@/lib/evidenceChecklist";
+import { checklistFor, SLOT_INFO } from "@/lib/evidenceChecklist";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
@@ -49,6 +49,7 @@ const STATUS_CLS: Record<Status, string> = {
   blocked: "text-escalate",
   na: "text-helper",
 };
+const slotLabel = (slot: string) => SLOT_INFO[slot]?.label ?? slot;
 const STATUS_WORD: Record<Status, string> = { pass: "Passed", changed: "Changed the call", blocked: "Blocked", na: "Not needed" };
 
 export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view: CheckView; prev?: string | null; next?: string | null }) {
@@ -581,11 +582,18 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     {(() => {
                       const ceiling = worthFindingCeiling(money.contestInr, oddsAdj.odds);
                       return (
-                        <p data-testid="worth-finding">
-                          <b>Worth finding?</b> Up to {formatInrFull(ceiling)} more is still at risk at today&apos;s {Math.round(oddsAdj.odds * 100)}% odds, out of the {formatInrFull(money.contestInr)} you could contest.{" "}
-                          {ceiling > DEFAULT_EFFORT_COST_INR ? `More than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so it is worth asking.` : `Less than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so chasing it may not pay.`}{" "}
-                          <span className="text-helper">A ceiling, not a forecast.</span>
-                        </p>
+                        <div data-testid="worth-finding">
+                          <p>
+                            <b>Worth asking:</b> {ceiling > DEFAULT_EFFORT_COST_INR ? `could save up to ${formatInrFull(ceiling)}.` : `up to ${formatInrFull(ceiling)}, less than the effort it takes, so chasing it may not pay.`}
+                          </p>
+                          <details className="mt-1 text-[12px] text-helper">
+                            <summary className="min-h-6 cursor-pointer font-semibold text-brand">How we got this</summary>
+                            <p className="mt-1">
+                              Up to {formatInrFull(ceiling)} more is still at risk at today&apos;s {Math.round(oddsAdj.odds * 100)}% odds, out of the {formatInrFull(money.contestInr)} you could contest.{" "}
+                              {ceiling > DEFAULT_EFFORT_COST_INR ? `More than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so it is worth asking.` : `Less than the ${formatInrFull(DEFAULT_EFFORT_COST_INR)} effort cost we assume, so chasing it may not pay.`} A ceiling, not a forecast.
+                            </p>
+                          </details>
+                        </div>
                       );
                     })()}
                     <p>
@@ -599,11 +607,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               )}
 
               {!acted && (
-                <div id="primary-action" className="mt-5 flex flex-wrap items-center gap-2.5">
+                <div id="primary-action" className="sticky bottom-0 z-10 -mx-1 mt-5 flex flex-wrap items-center gap-2.5 border-t border-line bg-white/95 px-1 py-3 backdrop-blur max-md:shadow-[0_-6px_12px_rgba(0,0,0,.05)] md:static md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
                   {finalCall === "fight" && (
                     <>
                       <button className={primary} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>Review response</button>
-                      <button className={ghost} onClick={() => setDialog("fold")}>Fold</button>
+                      <button className={ghost} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
                       <button type="button" data-testid="test-bank-link" className="min-h-11 px-2 text-sm font-semibold text-brand hover:underline" onClick={() => { update((s) => ({ ...s, reviewOpen: true })); goToBankTest(); }}>
                         Test it on the bank first
                       </button>
@@ -611,7 +619,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   )}
                   {finalCall === "fold" && (
                     <>
-                      <button className={primary} onClick={() => setDialog("fold")}>Fold</button>
+                      <button className={primary} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
                       <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>Fight instead</button>
                     </>
                   )}
@@ -624,7 +632,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                       )}
                       {view.requestText && <button className={ghost} onClick={openAdd}>Add the document</button>}
                       <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>Fight anyway</button>
-                      <button className={ghost} onClick={() => setDialog("fold")}>Fold</button>
+                      <button className={ghost} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
                     </>
                   )}
                 </div>
@@ -771,7 +779,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <ul className="text-[14px]">
               {[...documentsBySlot].map(([slot, ids]) => (
                 <li key={slot} className="mb-1.5">
-                  <span className="rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[12px]">{slot}</span>
+                  <span title={slot} className="rounded-md bg-[#F6F6F6] px-[7px] py-0.5 text-[12px]">{slotLabel(slot)}</span>
                   {ids.map((id) => (
                     <button key={id} onClick={() => focusEvidence([id])} className="relative ml-2 inline-flex min-h-6 items-center gap-1.5 rounded-md text-left hover:underline after:absolute after:-inset-2 after:content-['']">
                       <span className="rounded bg-brand-soft px-1.5 text-[12px] font-semibold text-[#2B5BC8]">{id}</span>
@@ -967,8 +975,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     <p className="text-sm text-[#555]">{e.content}</p>
                     {keyFactsShown && <KeyFactLines docs={keyFactsShown.docs} id={e.id} />}
                     {slots.map((s) => (
-                      <span key={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 font-mono text-[12px] text-[#555]">
-                        {s.slot}
+                      <span key={s.slot} title={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 text-[12px] text-[#555]">
+                        {slotLabel(s.slot)}
                       </span>
                     ))}
                     {flags.map((f) => (
@@ -1173,7 +1181,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 {g.lines.map((l) => (
                   <li key={l.id} className={`text-[14px] ${STATUS_CLS[l.status]}`}>
                     <span aria-hidden>{STATUS_ICON[l.status]} </span>
-                    <span className="font-semibold">{l.id} · {STATUS_WORD[l.status]}:</span> <span className="text-[#333]">{l.message}</span>
+                    <span className="font-semibold" title={l.id}>{l.rule} · {STATUS_WORD[l.status]}:</span> <span className="text-[#333]">{l.message}</span>
                   </li>
                 ))}
               </ul>

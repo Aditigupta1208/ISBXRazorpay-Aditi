@@ -18,7 +18,7 @@ export const SLOT_INFO: Record<string, { label: string; what: string }> = {
   proof_of_service: { label: "Proof the service was provided", what: "Shows the service was given to the customer." },
   explanation_letter: { label: "Your explanation letter", what: "A letter from you with anything the bank should know." },
   refund_confirmation: { label: "Refund confirmation", what: "Shows a refund was given to the customer." },
-  access_activity_log: { label: "Access or activity log", what: "Server or activity logs showing the customer used or downloaded the product." },
+  access_activity_log: { label: "Login and usage log", what: "Server or activity logs showing the customer used or downloaded the product." },
   refund_cancellation_policy: { label: "Refund or cancellation policy", what: "Your policy, as shown to the customer." },
   term_and_conditions: { label: "Terms and conditions", what: "Your sales terms, as shown to the customer." },
   others: { label: "Anything else", what: "A document that does not fit the other slots." },
