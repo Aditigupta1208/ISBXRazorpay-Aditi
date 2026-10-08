@@ -236,3 +236,15 @@ test("a 'request too large' answer is retried once on the same model with less r
   assert.equal(s.seen[1].body.max_tokens, 100 + 1500);
   resetModelHealth();
 });
+
+test("a rate-limit reason says which limit and how long Groq says to wait", async () => {
+  resetModelHealth();
+  const s2 = await serve((_q, body, res) => {
+    if (body.model === "m1") { res.statusCode = 429; res.end(JSON.stringify({ error: { message: "Rate limit reached ... tokens per day (TPD) ... Please try again in 3h2m1.5s." } })); return; }
+    ok(res, {});
+  });
+  const r2 = await makeGroqCallModel("k-123456", s2.base, ["m2"])!({ ...P, model: "m1" });
+  s2.close();
+  assert.equal(r2.skipped?.[0], "m1: rate daily limit reached, Groq says try again in 3h2m1.5s");
+  resetModelHealth();
+});

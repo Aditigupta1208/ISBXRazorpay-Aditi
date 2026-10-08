@@ -38,7 +38,12 @@ export function retryAfterMs(header: string | null, body: string): number | null
 /** A short, plain reason a model did not answer, for the "under the hood" panel. */
 export function whyFailed(err: unknown, timeoutMs: number): string {
   if (err instanceof GroqHttpError) {
-    if (err.status === 429) return "rate limit reached";
+    if (err.status === 429) {
+      // Groq says which limit and how long to wait, for example "tokens per day (TPD)" and "try again in 2h3m10s".
+      const per = /per day|\bTPD\b/i.test(err.message) ? "daily limit" : /per minute|\bTPM\b/i.test(err.message) ? "per-minute limit" : "limit";
+      const again = /try again in ([0-9hms.]+)/i.exec(err.message)?.[1]?.replace(/\.$/, "");
+      return `rate ${per} reached${again ? `, Groq says try again in ${again}` : ""}`;
+    }
     if (err.status === 404) return "model not available";
     if (/tool_use_failed/i.test(err.message)) return "did not return a valid answer";
     return `error ${err.status}`;
