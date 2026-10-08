@@ -60,12 +60,37 @@ export function checkFile(f: UploadedFile): string | null {
 export interface ExtractDeps {
   callModel: ((p: ModelParams) => Promise<ModelReply>) | null;
   model: string;
+  /** True when the model cannot read files (Groq): PDFs are read by code instead, and images need a paste. */
+  textOnly?: boolean;
+  /** Reads the text out of a PDF without any AI. Injected so tests do not need a real PDF library call. */
+  readPdfText?: (base64: string) => Promise<string>;
+}
+
+const NO_TEXT = "This PDF has no selectable text, so it may be a scan. Paste the text instead.";
+
+/** A PDF read by code: no model, no cost, and it works with no API key. The merchant still checks the text before it is used. */
+async function readPdfByCode(f: UploadedFile, read: (base64: string) => Promise<string>): Promise<ExtractResult> {
+  let text: string;
+  try {
+    text = await read(f.data);
+  } catch {
+    return { status: "unavailable", message: "We couldn't open this PDF. It may be damaged or password protected. Paste the text instead." };
+  }
+  const clean = text.trim();
+  if (clean.length < 20) return { status: "unreadable", message: NO_TEXT };
+  if (containsCardNumber(clean)) return { status: "rejected", message: "The file shows a full card number. Hide it and upload again, or paste the text without it." };
+  const title = f.name.replace(/\.pdf$/i, "").replace(/[_-]+/g, " ").trim().slice(0, MAX_TITLE_CHARS) || "Uploaded PDF";
+  return { status: "ok", title, text: clean.slice(0, MAX_EVIDENCE_CHARS), truncated: clean.length > MAX_EVIDENCE_CHARS };
 }
 
 export async function extractDocument(f: UploadedFile, deps: ExtractDeps): Promise<ExtractResult> {
   const bad = checkFile(f);
   if (bad) return { status: "rejected", message: bad };
-  if (!deps.callModel) return { status: "unavailable", message: "Reading files needs the live check, which is off in this demo. Paste the text instead." };
+  const isPdf = f.mediaType === "application/pdf";
+  // Code reads text PDFs when the model cannot (Groq) or there is no key at all.
+  if (isPdf && deps.readPdfText && (deps.textOnly || !deps.callModel)) return readPdfByCode(f, deps.readPdfText);
+  if (deps.textOnly) return { status: "unavailable", message: isPdf ? "This demo could not read the PDF. Paste the text instead." : "Reading images needs a model that can see pictures, and this demo is not using one. Paste the text instead." };
+  if (!deps.callModel) return { status: "unavailable", message: isPdf ? "Reading this PDF needs the live AI, which is off in this demo. Paste the text instead." : "Reading images needs the live AI, which is off in this demo. Paste the text instead." };
 
   const block = f.mediaType === "application/pdf" ? { type: "document", source: { type: "base64", media_type: f.mediaType, data: f.data } } : { type: "image", source: { type: "base64", media_type: f.mediaType, data: f.data } };
   let reply: ModelReply;

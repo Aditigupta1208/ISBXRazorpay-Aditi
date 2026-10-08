@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getLlm } from "@/lib/llm";
 import { extractDocument } from "@/lib/extract";
 import { allow } from "@/lib/ratelimit";
+import { pdfToText } from "@/lib/pdfText";
 
 export const runtime = "nodejs";
 export const maxDuration = 60; // confirm Vercel's current limit for the plan
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
   const llm = getLlm();
   const result = await extractDocument(
     { name: typeof body.name === "string" ? body.name : "Uploaded file", mediaType: body.mediaType, data: body.data },
-    { callModel: llm.callModel, model: llm.model },
+    { callModel: llm.callModel, model: llm.model, textOnly: llm.provider === "groq", readPdfText: pdfToText },
   );
   return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });
 }

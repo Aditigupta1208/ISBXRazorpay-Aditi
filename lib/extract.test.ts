@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { checkFile, extractDocument, type ExtractDeps } from "./extract.ts";
 import type { ModelParams } from "./agent.ts";
+import { readFileSync } from "node:fs";
+import { pdfToText } from "./pdfText.ts";
 
 const b64 = (bytes: number[], pad = 40) => Buffer.from([...bytes, ...new Array(pad).fill(0x41)]).toString("base64");
 const pdf = { name: "terms.pdf", mediaType: "application/pdf", data: b64([0x25, 0x50, 0x44, 0x46, 0x2d]) };
@@ -55,4 +57,59 @@ test("unreadable, bad output, a failed call and no key each give a plain message
 test("a full card number read from a file is refused", async () => {
   const r = await extractDocument(pdf, deps({ readable: true, title: "Receipt", text: "Card 4111 1111 1111 1111" }));
   assert.equal(r.status, "rejected");
+});
+
+const fixture = (name: string) => ({ name: `${name}.pdf`, mediaType: "application/pdf", data: readFileSync(`lib/fixtures/${name}.pdf`).toString("base64") });
+const never: ExtractDeps["callModel"] = async () => { throw new Error("the model must not be called"); };
+
+test("text-only model (Groq): a text PDF is read by code, with no model call", async () => {
+  const r = await extractDocument({ ...fixture("terms"), name: "Signed_terms-v3.pdf" }, { model: "m", callModel: never, textOnly: true, readPdfText: pdfToText });
+  assert.equal(r.status, "ok");
+  if (r.status === "ok") {
+    assert.equal(r.title, "Signed terms v3");
+    assert.match(r.text, /Renews annually; cancel in Settings > Billing/);
+    assert.match(r.text, /refund policy, 7 days/); // second page too
+    assert.equal(r.truncated, false);
+  }
+});
+
+test("no key: a text PDF is also read by code", async () => {
+  const r = await extractDocument(fixture("terms"), { model: "m", callModel: null, readPdfText: pdfToText });
+  assert.equal(r.status, "ok");
+});
+
+test("a scanned or blank PDF says so and asks for a paste", async () => {
+  const r = await extractDocument(fixture("blank"), { model: "m", callModel: null, textOnly: true, readPdfText: pdfToText });
+  assert.equal(r.status, "unreadable");
+  assert.match(r.status === "unreadable" ? r.message : "", /no selectable text/);
+});
+
+test("a damaged PDF gives a plain message, not an error", async () => {
+  const bad = { name: "x.pdf", mediaType: "application/pdf", data: Buffer.from("%PDF-1.4 this is not a real pdf at all, just text").toString("base64") };
+  const r = await extractDocument(bad, { model: "m", callModel: null, readPdfText: pdfToText });
+  assert.equal(r.status, "unavailable");
+});
+
+test("a PDF with a full card number is refused when read by code", async () => {
+  const r = await extractDocument(fixture("terms"), { model: "m", callModel: null, readPdfText: async () => "Paid with card 4111 1111 1111 1111 on 3 Aug 2025" });
+  assert.equal(r.status, "rejected");
+});
+
+test("long PDF text is cut to 4,000 characters and flagged", async () => {
+  const r = await extractDocument(fixture("terms"), { model: "m", callModel: null, readPdfText: async () => "Clause text. ".repeat(500) });
+  assert.equal(r.status === "ok" && r.text.length, 4000);
+  assert.equal(r.status === "ok" && r.truncated, true);
+});
+
+test("text-only model: an image is not sent anywhere and the message says to paste", async () => {
+  const r = await extractDocument(png, { model: "m", callModel: never, textOnly: true, readPdfText: pdfToText });
+  assert.equal(r.status, "unavailable");
+  assert.match(r.status === "unavailable" ? r.message : "", /Paste the text/);
+});
+
+test("a model that can read files (Claude, Gemini) still reads PDFs itself, not by code", async () => {
+  let read = 0;
+  const r = await extractDocument(pdf, { ...deps({ readable: true, title: "Terms", text: "Plans renew yearly." }), readPdfText: async () => { read++; return "x"; } });
+  assert.equal(r.status, "ok");
+  assert.equal(read, 0);
 });

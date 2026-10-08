@@ -15,7 +15,7 @@ Deadline: 13 Oct 2026, 11:59 PM IST. No changes after submission. Items marked *
 
 ## 1. Decide (everything else depends on these)
 
-1. **You: which model does the submission link use?** Options: (a) Groq `gpt-oss-120b` at `GROQ_REASONING=high`, free, fast, text only, rate-limited, C06 correct at high but wrong at medium and low; (b) Claude Sonnet, about $5 to $10 of API credit, the model the prompt was written for, accepts PDF and image uploads; (c) saved results only, no live calls. My recommendation: (b) if you will fund it, else (a) with the notice that is already built.
+1. **You: which model does the submission link use?** Options: (a) Groq `gpt-oss-120b` at `GROQ_REASONING=high`, free, fast, reads text PDFs through code but cannot read images or scans, rate-limited, C06 correct at high but wrong at medium and low; (b) Claude Sonnet, about $5 to $10 of API credit, the model the prompt was written for, accepts PDF and image uploads; (c) saved results only, no live calls. My recommendation: (b) if you will fund it, else (a) with the notice that is already built.
 2. **You: say "merge"** when you are happy with `wip/ai-features`. I then merge it to `main` (fast-forward), push, and check the Vercel deploy. Merging also needs the Production environment variables (item 3).
 
 ## 2. Verify on the real model (needs you)
