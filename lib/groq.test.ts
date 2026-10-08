@@ -51,12 +51,12 @@ test("a model that does not think gets no reasoning setting and no extra token h
   assert.equal(s.seen[0].body.max_tokens, 100);
 });
 
-test("a Qwen model gets thinking headroom but no low/medium/high setting", async () => {
+test("a Qwen model gets a fixed thinking headroom (not scaled by the thinking level) but no low/medium/high setting", async () => {
   const s = await serve((_q, _b, res) => ok(res, {}));
   await makeGroqCallModel("k-123456", s.base, [], "high")!({ ...P, model: "qwen/qwen3.8-27b" });
   s.close();
   assert.equal(s.seen[0].body.reasoning_effort, undefined);
-  assert.equal(s.seen[0].body.max_tokens, 100 + 8000);
+  assert.equal(s.seen[0].body.max_tokens, 100 + 3000);
 });
 
 test("the order of models is set in code: the first is the main one, the rest are the backups in order", () => {
@@ -218,5 +218,21 @@ test("a short rate limit is waited out on the same model; a long one moves to th
   assert.equal(retryAfterMs(null, "Please try again in 2.5s. Need more tokens"), 2600);
   assert.equal(retryAfterMs(null, "try again in 1m3.2s"), 63300);
   assert.equal(retryAfterMs(null, "no hint"), null);
+  resetModelHealth();
+});
+
+test("a 'request too large' answer is retried once on the same model with less room reserved", async () => {
+  resetModelHealth();
+  const s = await serve((_q, body, res) => {
+    if (body.max_tokens > 5000) { res.statusCode = 413; res.end(JSON.stringify({ error: { message: "Request too large" } })); return; }
+    ok(res, {});
+  });
+  const r = await makeGroqCallModel("k-123456", s.base, ["m2"], "high")!({ ...P, model: "openai/gpt-oss-120b" });
+  s.close();
+  assert.equal(r.model, "openai/gpt-oss-120b");
+  assert.equal(r.skipped, undefined);
+  assert.equal(s.seen.length, 2);
+  assert.equal(s.seen[0].body.max_tokens, 100 + 8000);
+  assert.equal(s.seen[1].body.max_tokens, 100 + 1500);
   resetModelHealth();
 });

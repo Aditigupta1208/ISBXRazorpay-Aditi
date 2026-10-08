@@ -19,6 +19,10 @@ const BASE = "https://api.groq.com/openai/v1";
 /** The gpt-oss models reason before answering, and that counts against max_tokens. */
 // Room for the model's hidden thinking on top of the answer. Higher thinking needs more, or the answer is cut off.
 const REASONING_HEADROOM = { low: 2000, medium: 4000, high: 8000 } as const;
+/** Qwen does not take a thinking level here, so it should not reserve tokens as if it did. Reserved tokens count against the per-minute allowance. */
+const QWEN_HEADROOM = 3000;
+/** After a "request too large" answer, one more try with this much room, enough for a short think. */
+const TIGHT_HEADROOM = 1500;
 const TIMEOUT_MS = { low: 15_000, medium: 20_000, high: 28_000 } as const;
 const FALLBACK_STATUSES = new Set([404, 408, 413, 429, 500, 502, 503, 504]);
 
@@ -71,11 +75,11 @@ export function makeGroqCallModel(
   // gpt-oss and Qwen think before they answer, and that counts against max_tokens, so both get headroom.
   // Only gpt-oss takes a low/medium/high setting; Qwen's own setting uses different values, so it is left alone.
   const thinks = (model: string) => model.startsWith("openai/gpt-oss") || model.startsWith("qwen/");
-  const once = async (p: ModelParams, model: string, sendEffort = model.startsWith("openai/gpt-oss"), waited = false): Promise<ModelReply> => {
+  const once = async (p: ModelParams, model: string, sendEffort = model.startsWith("openai/gpt-oss"), waited = false, tight = false): Promise<ModelReply> => {
     const body = {
       model,
       temperature: 0,
-      max_tokens: p.maxTokens + (thinks(model) ? REASONING_HEADROOM[effort] : 0),
+      max_tokens: p.maxTokens + (!thinks(model) ? 0 : tight ? TIGHT_HEADROOM : model.startsWith("qwen/") ? QWEN_HEADROOM : REASONING_HEADROOM[effort]),
       messages: [
         { role: "system", content: p.system },
         { role: "user", content: toGroqText(p.user) },
@@ -94,15 +98,17 @@ export function makeGroqCallModel(
     if (!res.ok) {
       const raw = await res.text().catch(() => "");
       // A model that rejects the reasoning setting gets one more try without it.
-      if (res.status === 400 && sendEffort && /reasoning/i.test(raw)) return once(p, model, false, waited);
+      if (res.status === 400 && sendEffort && /reasoning/i.test(raw)) return once(p, model, false, waited, tight);
       // The free plan limits tokens per minute. A short wait is often enough, and is better than dropping to a weaker model.
       if (res.status === 429 && !waited) {
         const wait = retryAfterMs(res.headers.get("retry-after"), raw);
         if (wait !== null && wait <= MAX_RATE_WAIT_MS) {
           await new Promise((r) => setTimeout(r, wait));
-          return once(p, model, sendEffort, true);
+          return once(p, model, sendEffort, true, tight);
         }
       }
+      // 413: the request (what we send plus the room we reserve for the answer) is over this model's per-minute allowance. Ask for less room once.
+      if (res.status === 413 && !tight && thinks(model)) return once(p, model, sendEffort, waited, true);
       const text = raw.replaceAll(apiKey, "[key]").replace(/\s+/g, " ").slice(0, 300);
       // "tool_use_failed" means the model wrote a malformed tool call: another model may do better.
       const retryable = FALLBACK_STATUSES.has(res.status) || /tool_use_failed/i.test(raw);
