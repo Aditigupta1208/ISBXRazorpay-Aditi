@@ -1207,6 +1207,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               <b>Live</b> check. {state.check.meta.model}, prompt {state.check.meta.promptVersion}
               {state.check.meta.cached ? ", served from the cache (no new cost)" : ""}.
             </p>
+            {state.check.meta.skipped && state.check.meta.skipped.length > 0 && (
+              <p className="mt-1 text-[12px] text-helper">Tried first, did not answer: {state.check.meta.skipped.join("; ")}. The next model in the list answered.</p>
+            )}
             <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[14px]">
               <dt className="text-helper">Tokens in / out</dt>
               <dd>

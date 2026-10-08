@@ -22,6 +22,18 @@ const REASONING_HEADROOM = { low: 2000, medium: 4000, high: 8000 } as const;
 const TIMEOUT_MS = { low: 15_000, medium: 20_000, high: 28_000 } as const;
 const FALLBACK_STATUSES = new Set([404, 408, 413, 429, 500, 502, 503, 504]);
 
+/** A short, plain reason a model did not answer, for the "under the hood" panel. */
+export function whyFailed(err: unknown, timeoutMs: number): string {
+  if (err instanceof GroqHttpError) {
+    if (err.status === 429) return "rate limit reached";
+    if (err.status === 404) return "model not available";
+    if (/tool_use_failed/i.test(err.message)) return "did not return a valid answer";
+    return `error ${err.status}`;
+  }
+  if (err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError")) return `took longer than ${Math.round(timeoutMs / 1000)} s`;
+  return "could not be reached";
+}
+
 class GroqHttpError extends Error {
   constructor(public status: number, message: string, public retryable: boolean) {
     super(message);
@@ -98,11 +110,14 @@ export function makeGroqCallModel(
   return async (p) => {
     const models = healthyFirst([p.model, ...fallbacks.filter((m) => m !== p.model)]);
     let last: unknown;
+    const skipped: string[] = [];
     for (const m of models) {
       try {
-        return await once(p, m);
+        const r = await once(p, m);
+        return skipped.length ? { ...r, skipped } : r;
       } catch (err) {
         last = err;
+        skipped.push(`${m}: ${whyFailed(err, TIMEOUT_MS[effort])}`);
         const retryable = err instanceof GroqHttpError ? err.retryable : !(err instanceof Error && /not supported/.test(err.message)); // network errors and timeouts too
         if (retryable) markBad(m);
         console.error(`[llm] ${err instanceof Error ? err.message : String(err)}${retryable && m !== models[models.length - 1] ? " -> trying the next model" : ""}`);

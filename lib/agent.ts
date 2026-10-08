@@ -35,6 +35,8 @@ export interface ModelReply {
   tokensOut: number;
   /** The model that really answered, when it differs from the one asked for (a fallback). */
   model?: string;
+  /** Models tried first that did not answer, each with a short reason (for example "qwen/x: took longer than 28 s"). */
+  skipped?: string[];
 }
 
 export interface Deps {
@@ -49,6 +51,8 @@ export interface Deps {
 }
 
 export interface Meta {
+  /** Models that were tried first and did not answer, with why. Shown under the hood. */
+  skipped?: string[];
   live: true;
   model: string;
   promptVersion: string;
@@ -222,6 +226,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
   let tokensIn = 0;
   let tokensOut = 0;
   let answeredBy = deps.model;
+  let skipped: string[] | undefined;
   let uncitedNote = "";
   let firstGood: DecisionOutput | null = null;
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -243,6 +248,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
     tokensIn += reply.tokensIn;
     tokensOut += reply.tokensOut;
     answeredBy = reply.model ?? deps.model;
+    if (reply.skipped?.length) skipped = reply.skipped;
     const parsed = decisionSchema.safeParse(reply.input);
     if (parsed.success && attempt === 0) {
       // Some models skip citations on a few sentences. Ask once for a rewrite before the merchant has to fix it by hand.
@@ -256,7 +262,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
     const best = parsed.success ? (attempt === 1 && firstGood && uncitedSentences(parsed.data.draft_response).length >= uncitedSentences(firstGood.draft_response).length ? ({ success: true, data: firstGood } as const) : parsed) : firstGood ? ({ success: true, data: firstGood } as const) : parsed;
     if (best.success) {
       const usd = costUsd(tokensIn, tokensOut, answeredBy);
-      const meta: Meta = { live: true, model: answeredBy, promptVersion: PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
+      const meta: Meta = { live: true, ...(skipped ? { skipped } : {}), model: answeredBy, promptVersion: PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
       const value: LiveOk = { status: "live", view: toCheckView(best.data, c, meta), meta };
       deps.cache?.set(key, { at: now(), value });
       if (deps.cache && deps.cache.size > 200) deps.cache.delete(deps.cache.keys().next().value as string);

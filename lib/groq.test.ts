@@ -171,3 +171,24 @@ test("a key pasted with spaces, a newline or quotes still counts as present; a b
   assert.notEqual(getLlm({ LLM_PROVIDER: "groq", GROQ_API_KEY: " gsk_abc123\n" }).callModel, null);
   assert.equal(getLlm({ LLM_PROVIDER: "groq", GROQ_API_KEY: "  " }).callModel, null);
 });
+
+test("when a model is skipped, the answer says which one and why", async () => {
+  resetModelHealth();
+  const s = await serve((_q, body, res) => {
+    if (body.model === "m1") { res.statusCode = 429; res.end(JSON.stringify({ error: { message: "rate" } })); return; }
+    ok(res, {});
+  });
+  const r = await makeGroqCallModel("k-123456", s.base, ["m2"])!({ ...P, model: "m1" });
+  s.close();
+  assert.equal(r.model, "m2");
+  assert.deepEqual(r.skipped, ["m1: rate limit reached"]);
+  resetModelHealth();
+  const s2 = await serve((_q, _b, res) => ok(res, {}));
+  const r2 = await makeGroqCallModel("k-123456", s2.base, ["m2"])!({ ...P, model: "m1" });
+  s2.close();
+  assert.equal(r2.skipped, undefined);
+  const { whyFailed } = await import("./groq");
+  const te = new Error("x"); te.name = "TimeoutError";
+  assert.equal(whyFailed(te, 28000), "took longer than 28 s");
+  resetModelHealth();
+});
