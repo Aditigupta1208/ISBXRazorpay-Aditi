@@ -33,7 +33,19 @@ When a non-fraud dispute arrives, the agent:
 9. On Escalate it also says what finding the missing document is worth (**Worth finding?**: a ceiling, `(1 − odds) × amount`, not a forecast). With 24 hours left, **Deadline rescue** nudges the merchant with the response already drafted and a link that opens it for review (preview only in the prototype).
 10. Records the outcome, lists next steps (accountant, bank paperwork) and suggests one prevention fix after a loss.
 
+Three small helpers use the same rule, **the AI proposes, code checks, the merchant decides**:
+
+- **Shorten**: a draft over 1,000 characters is shortened, keeping a source on every sentence and adding no number.
+- **Key facts**: two or three lines per document, each backed by a quote that must appear word for word in it.
+- **What to change next** (Results): one suggestion from the merchant's own outcomes, with every number checked against their record.
+
+Adding or removing a document re-runs the check by itself and shows what changed.
+
 Fraud reason codes (10.x) are routed to Chargeback Shield.
+
+## What runs the live check
+
+A free Groq model by default (Qwen first, with `gpt-oss-120b` and `gpt-oss-20b` as backups, order set in code), or Claude when an Anthropic key is set. The free plan has limits shared by every visitor, so under heavy use the app shows the saved result and says so. Every result names the model that answered. Text PDFs are read by code; scanned PDFs and images need Claude or pasted text. Real-model check against the answer key: Qwen matched C01, C06, C08 and C15 (see `docs/DEPLOYED.md`, section 11). The full 30-case run on the live model is still to do.
 
 ## Screens
 
@@ -53,8 +65,8 @@ Layout follows Razorpay's Agentic Dashboard: black top bar, white sub-tabs (Tran
 ## Guardrails (run in code after every model answer)
 
 1. **Schema check**: the answer must match the schema in `prompts/dispute-agent-v2.md` (zod). Invalid: retry once, then fall back to the saved result.
-2. **Citation check**: every sentence of the draft must end with at least one citation like `[E2]` or `[Razorpay]`, and every cited ID must exist in the case. Any failure is flagged in red and blocks "Approve and submit" until the merchant edits the draft.
-3. **Evidence check**: every ID in `deciding_evidence` must exist in the case; otherwise the call becomes Escalate.
+2. **Citation check**: every sentence of the draft must end with at least one citation like `[E2]` or `[Razorpay]`, and every cited ID must exist in the case. If a live draft has sentences with no source, the model is asked once to fix them. Any failure left is flagged in red and blocks "Approve and submit" until the merchant edits the draft.
+3. **Evidence check**: every ID in `deciding_evidence` must exist in the case ("Razorpay" counts, for Razorpay's own record); otherwise the call becomes Escalate.
 4. **Decision policy**: Fight with low confidence, or Fight while `missing_evidence` is not empty, is downgraded to Escalate and labelled "Changed by safety rule".
 5. **Scope rule**: any fraud reason code (10.x) is forced to "Route to fraud cover" before any model call.
 6. **Length**: the draft must be 1,000 characters or less.
