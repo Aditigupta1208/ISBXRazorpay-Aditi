@@ -60,12 +60,12 @@ export function LearnBox({ stats, usesSample }: { stats: LearnStats; usesSample:
               <p className="mt-0.5 text-[14px]">{current.output.suggestion.text}</p>
             </div>
             <p className="mt-2 text-[12px] text-helper">
-              Based on {current.output.cites.map((c) => `${c.code}: won ${c.won} of ${c.fights}`).join("; ")}.{" "}
+              {current.output.cites.length > 0 && <>Based on {current.output.cites.map((c) => `${c.code}: won ${c.won} of ${c.fights}`).join("; ")}.{" "}</>}
               {smallSample(current.output) ? "Small sample: treat it as a hint, not a rule. " : ""}
               {current.output.note && !smallSample(current.output) ? `${current.output.note} ` : ""}
             </p>
             <p className="mt-1 text-[12px] text-helper" data-testid="learn-source">
-              {current.status === "live" ? `Suggested by AI (${current.model}, ${current.promptVersion})${current.cached ? ", from the cache" : ""}. Every number was checked against the counts.` : `${current.label}. ${current.message}`} Nothing in your terms changes unless you change it.
+              {current.status === "live" ? `Suggested by AI (${current.model}, ${current.promptVersion})${current.cached ? ", from the cache" : ""}. Every number in it was checked against the counts.` : `${current.label}. ${current.message}`} Nothing in your terms changes unless you change it.
             </p>
             <button className={`${btn} mt-2 border border-[#D6D6D6] bg-white text-[#111]`} onClick={() => setShown(null)}>
               Ask again

@@ -144,6 +144,24 @@ test("a suggestion whose numbers match the counts passes", () => assert.equal(ch
 test("a suggestion with a wrong count is refused", () => assert.match(checkLearning({ ...good, cites: [{ code: "13.7", won: 2, fights: 2 }] }, sample) ?? "", /do not match/));
 test("a suggestion about a reason that is not in the counts is refused", () => assert.match(checkLearning({ ...good, cites: [{ code: "13.1", won: 3, fights: 4 }, { code: "13.9", won: 1, fights: 1 }] }, sample) ?? "", /not in the counts/));
 test("a suggestion that promises a win is refused", () => assert.ok(checkLearning({ ...good, suggestion: { kind: "terms", text: "This guarantees you will win." } }, sample)));
+test("a number in the text that is not in the counts is refused", () => {
+  const r = checkLearning({ ...good, finding: "Won 1 of 2, and 73 percent of disputes are cancellations." }, sample);
+  assert.match(r ?? "", /number 73/);
+});
+test("numbers and percentages that come from the counts are allowed in the text", () => {
+  const out = learnSchema.parse({
+    headline: "Confidence predicts outcomes.",
+    finding: "High confidence disputes (10 cases) were won 9 times (90%), medium confidence (4 cases) won 2 (50%).",
+    cites: [],
+    suggestion: { kind: "fold_rule", text: "Fold medium confidence disputes unless you can add strong evidence." },
+    note: "",
+  });
+  assert.equal(checkLearning(out, sample), null);
+});
+test("a wrong percentage is refused", () => {
+  const out = learnSchema.parse({ headline: "x", finding: "High confidence disputes were won 95% of the time.", cites: [], suggestion: { kind: "terms", text: "Add a tick box." }, note: "" });
+  assert.match(checkLearning(out, sample) ?? "", /number 95/);
+});
 test("small samples are flagged", () => {
   assert.equal(smallSample(good), true);
   assert.equal(smallSample({ ...good, cites: [{ code: "13.2", won: 4, fights: 5 }] }), false);

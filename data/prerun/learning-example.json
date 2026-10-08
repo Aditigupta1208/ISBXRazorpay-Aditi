@@ -61,8 +61,8 @@
   }
  },
  "output": {
-  "headline": "Your weakest reasons are 13.7 and 13.3, where you won 3 of 5 fights.",
-  "finding": "13.7 (cancelled services) was won 1 of 2 and 13.3 (not as described) 2 of 3. The other three reasons were won 10 of 12.",
+  "headline": "Your weakest reasons are 13.7 and 13.3.",
+  "finding": "13.7 (cancelled services) was won 1 of 2 fights, and 13.3 (not as described) 2 of 3.",
   "cites": [
    {
     "code": "13.7",
@@ -79,6 +79,6 @@
    "kind": "checkout",
    "text": "Make customers tick a box that accepts your cancellation and refund terms at checkout, and keep a record of each tick. For 13.7, Visa looks for a policy that was agreed at the time of sale, and a saved tick is the document that shows it."
   },
-  "note": "Small sample: 5 fights across these two reasons. Treat this as a hint, not a rule."
+  "note": "Small sample: only 2 and 3 fights. Treat this as a hint, not a rule."
  }
 }

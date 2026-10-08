@@ -178,7 +178,7 @@ export const KIND_LABEL: Record<(typeof LEARN_KINDS)[number], string> = {
 export const learnSchema = z.object({
   headline: z.string().min(1).max(140),
   finding: z.string().min(1).max(300),
-  cites: z.array(z.object({ code: z.string(), won: z.number().int(), fights: z.number().int() })).min(1).max(3),
+  cites: z.array(z.object({ code: z.string(), won: z.number().int(), fights: z.number().int() })).max(3),
   suggestion: z.object({ kind: z.enum(LEARN_KINDS), text: z.string().min(1).max(320) }),
   note: z.string().max(200),
 });
@@ -192,8 +192,8 @@ export const LEARN_TOOL_SCHEMA = {
     finding: { type: "string", maxLength: 300, description: "What the numbers show, using only the numbers given" },
     cites: {
       type: "array",
-      minItems: 1,
       maxItems: 3,
+      description: "One entry for each reason code you mention, with its exact counts. Empty if you mention none.",
       items: {
         type: "object",
         additionalProperties: false,
@@ -257,14 +257,44 @@ export const learnStatsSchema = z.object({
   escalated: z.object({ n: count, fought: count, won: count }),
 });
 
-/** Why a suggestion is not acceptable, or null. Every number it cites must match the counts it was given. */
+/** Every whole number the counts contain, and the percentages they give. A suggestion may quote these and nothing else. */
+export function allowedNumbers(stats: LearnStats): Set<string> {
+  const set = new Set<string>();
+  const add = (n: number) => set.add(String(n));
+  const pair = (won: number, of: number) => {
+    add(won);
+    add(of);
+    add(of - won);
+    if (of > 0) add(Math.round((100 * won) / of));
+  };
+  pair(stats.won, stats.fights);
+  add(stats.settled);
+  if (stats.onTimeRate !== null) add(Math.round(stats.onTimeRate * 100));
+  for (const c of stats.byCode) {
+    pair(c.won, c.fights);
+    add(c.disputes);
+  }
+  for (const c of stats.byConfidence) pair(c.won, c.n);
+  add(stats.fold.n);
+  add(stats.fold.wrong);
+  pair(stats.escalated.won, stats.escalated.fought);
+  add(stats.escalated.n);
+  add(SMALL_SAMPLE);
+  return set;
+}
+
+/** Why a suggestion is not acceptable, or null. Every reason code it cites must match the counts, and every number in its text must come from them. */
 export function checkLearning(out: LearnOutput, stats: LearnStats): string | null {
   for (const c of out.cites) {
     const row = stats.byCode.find((r) => r.code === c.code);
     if (!row) return `cites ${c.code}, which is not in the counts`;
     if (row.fights !== c.fights || row.won !== c.won) return `cites ${c.code} with numbers that do not match`;
   }
-  if (/\b(guarantee[sd]?|will win|always win|tax advice|legal advice)\b/i.test(`${out.headline} ${out.finding} ${out.suggestion.text} ${out.note}`)) return "promises an outcome or gives advice it should not";
+  const text = `${out.headline} ${out.finding} ${out.suggestion.text} ${out.note}`;
+  if (/\b(guarantee[sd]?|will win|always win|tax advice|legal advice)\b/i.test(text)) return "promises an outcome or gives advice it should not";
+  const allowed = allowedNumbers(stats);
+  const stray = numbersIn(text.replace(/\b1[0-9]\.[0-9]\b/g, " ")).filter((n) => !allowed.has(n));
+  if (stray.length) return `uses the number ${stray[0]}, which is not in the counts`;
   return null;
 }
 
