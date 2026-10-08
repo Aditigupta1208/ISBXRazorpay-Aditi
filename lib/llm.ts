@@ -8,6 +8,8 @@ export interface Llm {
   provider: Provider | null; // null = no key, the app runs on saved results
   callModel: ((p: ModelParams) => Promise<ModelReply>) | null;
   model: string;
+  /** The models tried after `model`, in order, when it fails. */
+  fallbacks?: string[];
 }
 
 /**
@@ -29,8 +31,10 @@ export function getLlm(raw: Record<string, string | undefined> = process.env): L
       ? forced
       : env.ANTHROPIC_API_KEY ? "anthropic" : env.GROQ_API_KEY ? "groq" : env.GEMINI_API_KEY ? "gemini" : null;
   if (provider === "groq") {
+    const fallbacks = env.GROQ_FALLBACK_MODELS ? env.GROQ_FALLBACK_MODELS.split(",").map((m) => m.trim()).filter(Boolean) : GROQ_FALLBACK_MODELS;
     return {
       provider,
+      fallbacks: fallbacks.filter((m) => m !== (env.GROQ_MODEL || GROQ_DEFAULT_MODEL)),
       callModel: makeGroqCallModel(env.GROQ_API_KEY, env.GROQ_API_URL || undefined, env.GROQ_FALLBACK_MODELS ? env.GROQ_FALLBACK_MODELS.split(",").map((m) => m.trim()).filter(Boolean) : GROQ_FALLBACK_MODELS, (["low", "medium", "high"] as const).find((e) => e === env.GROQ_REASONING) ?? "medium"),
       model: env.GROQ_MODEL || GROQ_DEFAULT_MODEL,
     };

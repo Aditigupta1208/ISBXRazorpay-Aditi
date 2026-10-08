@@ -6,9 +6,14 @@ import { healthyFirst, markBad } from "./modelHealth";
  * Same ModelParams in, same ModelReply out as the other providers.
  * Model IDs and prices: https://console.groq.com/docs/models (checked 7 Oct 2026).
  */
-export const GROQ_DEFAULT_MODEL = "openai/gpt-oss-120b";
-// Used when the main model is busy or gone. Checked against the models this key can use on 8 Oct 2026 (llama-3.3-70b-versatile was no longer offered).
-export const GROQ_FALLBACK_MODELS = ["openai/gpt-oss-20b"];
+/**
+ * The models to use, best first. The first is tried first; the next ones are used when it is busy, slow or gone.
+ * Change the order here. (Environment variables GROQ_MODEL and GROQ_FALLBACK_MODELS still override it, but you should not need them.)
+ * Checked against the models the key could use on 8 Oct 2026: llama-3.3-70b-versatile was no longer offered.
+ */
+export const GROQ_MODEL_ORDER = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"];
+export const GROQ_DEFAULT_MODEL = GROQ_MODEL_ORDER[0];
+export const GROQ_FALLBACK_MODELS = GROQ_MODEL_ORDER.slice(1);
 const BASE = "https://api.groq.com/openai/v1";
 /** Three tries at 15 s stay inside the 60 s limit of the routes. */
 /** The gpt-oss models reason before answering, and that counts against max_tokens. */

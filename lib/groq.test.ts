@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
-import { GROQ_FALLBACK_MODELS, makeGroqCallModel, toGroqText } from "./groq";
+import { GROQ_DEFAULT_MODEL, GROQ_FALLBACK_MODELS, GROQ_MODEL_ORDER, makeGroqCallModel, toGroqText } from "./groq";
 import { getLlm } from "./llm";
 import { healthyFirst, markBad, resetModelHealth } from "./modelHealth";
 import { costUsd } from "./pricing";
@@ -59,8 +59,15 @@ test("a Qwen model gets thinking headroom but no low/medium/high setting", async
   assert.equal(s.seen[0].body.max_tokens, 100 + 8000);
 });
 
-test("the default backup model is one the key could list on 8 Oct 2026", () => {
-  assert.deepEqual(GROQ_FALLBACK_MODELS, ["openai/gpt-oss-20b"]);
+test("the order of models is set in code: the first is the main one, the rest are the backups in order", () => {
+  assert.deepEqual(GROQ_MODEL_ORDER, ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]);
+  assert.equal(GROQ_DEFAULT_MODEL, GROQ_MODEL_ORDER[0]);
+  assert.deepEqual(GROQ_FALLBACK_MODELS, GROQ_MODEL_ORDER.slice(1));
+  const llm = getLlm({ GROQ_API_KEY: "g" });
+  assert.equal(llm.model, "openai/gpt-oss-120b");
+  assert.deepEqual(llm.fallbacks, ["openai/gpt-oss-20b", "qwen/qwen3.8-27b"]);
+  // An environment override still works, and the main model never appears twice.
+  assert.deepEqual(getLlm({ GROQ_API_KEY: "g", GROQ_MODEL: "openai/gpt-oss-20b" }).fallbacks, ["qwen/qwen3.8-27b"]);
 });
 
 test("invalid JSON arguments or no tool call give an undefined input, not a crash", async () => {

@@ -21,6 +21,7 @@ export async function GET(req: Request) {
     const raw = process.env[keyName];
     out.keyVariable = { name: keyName, state: raw === undefined ? "missing: not set for this deployment" : cleanKey(raw) ? (raw.trim() !== raw ? "set (stray spaces or a newline were ignored)" : "set") : "empty: the value is blank" };
   }
+  if (llm.fallbacks?.length) out.fallbacks = llm.fallbacks;
   if (llm.provider === "groq") out.thinking = ["low", "medium", "high"].includes(process.env.GROQ_REASONING ?? "") ? process.env.GROQ_REASONING : "medium";
   // ?models=1 lists the model names this key can use on Groq, so a "model not found" can be fixed by picking a real one.
   if (new URL(req.url).searchParams.get("models") === "1" && llm.provider === "groq") {
