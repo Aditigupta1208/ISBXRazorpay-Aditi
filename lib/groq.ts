@@ -7,7 +7,8 @@ import { healthyFirst, markBad } from "./modelHealth";
  * Model IDs and prices: https://console.groq.com/docs/models (checked 7 Oct 2026).
  */
 export const GROQ_DEFAULT_MODEL = "openai/gpt-oss-120b";
-export const GROQ_FALLBACK_MODELS = ["llama-3.3-70b-versatile"];
+// Used when the main model is busy or gone. Checked against the models this key can use on 8 Oct 2026 (llama-3.3-70b-versatile was no longer offered).
+export const GROQ_FALLBACK_MODELS = ["openai/gpt-oss-20b"];
 const BASE = "https://api.groq.com/openai/v1";
 /** Three tries at 15 s stay inside the 60 s limit of the routes. */
 /** The gpt-oss models reason before answering, and that counts against max_tokens. */
@@ -41,18 +42,21 @@ export function makeGroqCallModel(
 ): ((p: ModelParams) => Promise<ModelReply>) | null {
   if (!apiKey) return null;
 
-  const once = async (p: ModelParams, model: string, withReasoning = model.startsWith("openai/gpt-oss")): Promise<ModelReply> => {
+  // gpt-oss and Qwen think before they answer, and that counts against max_tokens, so both get headroom.
+  // Only gpt-oss takes a low/medium/high setting; Qwen's own setting uses different values, so it is left alone.
+  const thinks = (model: string) => model.startsWith("openai/gpt-oss") || model.startsWith("qwen/");
+  const once = async (p: ModelParams, model: string, sendEffort = model.startsWith("openai/gpt-oss")): Promise<ModelReply> => {
     const body = {
       model,
       temperature: 0,
-      max_tokens: p.maxTokens + (withReasoning ? REASONING_HEADROOM[effort] : 0),
+      max_tokens: p.maxTokens + (thinks(model) ? REASONING_HEADROOM[effort] : 0),
       messages: [
         { role: "system", content: p.system },
         { role: "user", content: toGroqText(p.user) },
       ],
       tools: [{ type: "function", function: { name: p.toolName, description: p.toolDescription, parameters: p.toolSchema } }],
       tool_choice: { type: "function", function: { name: p.toolName } },
-      ...(withReasoning ? { reasoning_effort: effort } : {}),
+      ...(sendEffort ? { reasoning_effort: effort } : {}),
     };
     // The key goes in a header, never in the URL or the body.
     const res = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
@@ -64,7 +68,7 @@ export function makeGroqCallModel(
     if (!res.ok) {
       const raw = await res.text().catch(() => "");
       // A model that rejects the reasoning setting gets one more try without it.
-      if (res.status === 400 && withReasoning && /reasoning/i.test(raw)) return once(p, model, false);
+      if (res.status === 400 && sendEffort && /reasoning/i.test(raw)) return once(p, model, false);
       const text = raw.replaceAll(apiKey, "[key]").replace(/\s+/g, " ").slice(0, 300);
       // "tool_use_failed" means the model wrote a malformed tool call: another model may do better.
       const retryable = FALLBACK_STATUSES.has(res.status) || /tool_use_failed/i.test(raw);

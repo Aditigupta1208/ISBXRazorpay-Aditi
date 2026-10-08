@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
-import { makeGroqCallModel, toGroqText } from "./groq";
+import { GROQ_FALLBACK_MODELS, makeGroqCallModel, toGroqText } from "./groq";
 import { getLlm } from "./llm";
 import { healthyFirst, markBad, resetModelHealth } from "./modelHealth";
 import { costUsd } from "./pricing";
@@ -43,12 +43,24 @@ test("the request forces the function, sends the key as a bearer header only, an
   assert.ok(q.body.max_tokens > 100);
 });
 
-test("a model that is not gpt-oss gets no reasoning setting and no extra token headroom", async () => {
+test("a model that does not think gets no reasoning setting and no extra token headroom", async () => {
   const s = await serve((_q, _b, res) => ok(res, {}));
-  await makeGroqCallModel("k-123456", s.base, [])!({ ...P, model: "llama-3.3-70b-versatile" });
+  await makeGroqCallModel("k-123456", s.base, [])!({ ...P, model: "allam-2-7b" });
   s.close();
   assert.equal(s.seen[0].body.reasoning_effort, undefined);
   assert.equal(s.seen[0].body.max_tokens, 100);
+});
+
+test("a Qwen model gets thinking headroom but no low/medium/high setting", async () => {
+  const s = await serve((_q, _b, res) => ok(res, {}));
+  await makeGroqCallModel("k-123456", s.base, [], "high")!({ ...P, model: "qwen/qwen3.8-27b" });
+  s.close();
+  assert.equal(s.seen[0].body.reasoning_effort, undefined);
+  assert.equal(s.seen[0].body.max_tokens, 100 + 8000);
+});
+
+test("the default backup model is one the key could list on 8 Oct 2026", () => {
+  assert.deepEqual(GROQ_FALLBACK_MODELS, ["openai/gpt-oss-20b"]);
 });
 
 test("invalid JSON arguments or no tool call give an undefined input, not a crash", async () => {
@@ -133,7 +145,7 @@ test("provider choice with Groq: Anthropic wins, then Groq, then Gemini; LLM_PRO
   assert.equal(getLlm({ GROQ_API_KEY: "g", GEMINI_API_KEY: "m", LLM_PROVIDER: "gemini" }).provider, "gemini");
   const g = getLlm({ GROQ_API_KEY: "g" });
   assert.equal(g.model, "openai/gpt-oss-120b");
-  assert.equal(getLlm({ GROQ_API_KEY: "g", GROQ_MODEL: "llama-3.3-70b-versatile" }).model, "llama-3.3-70b-versatile");
+  assert.equal(getLlm({ GROQ_API_KEY: "g", GROQ_MODEL: "qwen/qwen3.8-27b" }).model, "qwen/qwen3.8-27b");
   assert.equal(getLlm({ LLM_PROVIDER: "groq" }).callModel, null);
 });
 
