@@ -136,7 +136,7 @@ export function toCheckView(out: DecisionOutput, c: CaseData, meta: Meta): Check
     oddsNote: "AI estimate from this check. It is an estimate, not a promise.",
     defensibleAmount: defensible,
     getFirst: call === "escalate" ? out.missing_evidence ?? undefined : undefined,
-    requestText: call === "escalate" && out.missing_evidence ? `We have a card dispute (${d.id}). Can you send: ${out.missing_evidence}` : undefined,
+    requestText: call === "escalate" && out.missing_evidence ? requestMessage(d.id, out.missing_evidence) : undefined,
     tip: out.prevention_tip ?? "",
     economicsNote: out.economics_note || undefined,
     evidenceFlags: out.evidence_flags.map((f) => ({ evidenceId: f.evidence_id, flag: f.flag })),
@@ -228,4 +228,13 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
     }
   }
   return fallback("invalid_output", "The live answer wasn't usable, so you are seeing the saved result.");
+}
+
+/**
+ * The message the merchant sends to get the missing document. The AI writes "what to get" as an instruction to the merchant
+ * ("Obtain (1) ... This determines ..."), so we keep only the ask, drop the leading verb and the explanation, and word it as a request.
+ */
+export function requestMessage(disputeId: string, missing: string): string {
+  const ask = missing.trim().split(/(?<=[.!?])\s+(?=[A-Z])/)[0].replace(/^(please\s+)?(obtain|get|collect|request|ask for|send|provide)\s+/i, "").replace(/[.\s]+$/, "");
+  return `Hello, we have a card dispute (${disputeId}) and need one thing from you to answer it. Could you send us: ${ask}. Thank you.`;
 }

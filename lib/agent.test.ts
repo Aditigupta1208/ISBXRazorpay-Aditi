@@ -249,3 +249,11 @@ test("prompt v2.2: Escalate keeps a draft, Fold has none, and the tool schema ma
   assert.match(prompt.system, /When the decision is escalate, also write a draft/);
   assert.equal(v21.system.includes("also write a draft"), false);
 });
+
+test("the request message keeps only the ask and reads as a request to the other side", async () => {
+  const { requestMessage } = await import("./agent");
+  const m = requestMessage("disp_demoC15", "Obtain (1) confirmation from the booker that the 1 Mar cancellation was authorised, or (2) the internal record. This determines whether a refund was due.");
+  assert.equal(m, "Hello, we have a card dispute (disp_demoC15) and need one thing from you to answer it. Could you send us: (1) confirmation from the booker that the 1 Mar cancellation was authorised, or (2) the internal record. Thank you.");
+  assert.ok(!/Obtain|determines/.test(m));
+  assert.match(requestMessage("x", "the signed contract"), /Could you send us: the signed contract\. Thank you\.$/);
+});

@@ -99,3 +99,12 @@ test("Submit needs a draft and at least one document", () => {
   assert.ok(r.submitBlockers.includes("Write a response"));
   assert.ok(r.submitBlockers.includes("Attach at least one document"));
 });
+
+test("checks summary says what happened to each check, not '5 of 7'", async () => {
+  const { checksSummary, checksBadge } = await import("./guardrails");
+  const lines = [{ status: "pass" }, { status: "pass" }, { status: "na" }, { status: "na" }];
+  assert.equal(checksSummary(lines), "2 passed, 2 not needed yet");
+  assert.equal(checksBadge(lines), "All clear");
+  assert.equal(checksSummary([{ status: "pass" }, { status: "changed" }, { status: "blocked" }]), "1 passed, 1 changed the answer, 1 need your attention");
+  assert.equal(checksBadge([{ status: "pass" }, { status: "changed" }]), "1 to look at");
+});

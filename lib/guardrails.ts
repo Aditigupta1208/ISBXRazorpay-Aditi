@@ -183,3 +183,20 @@ export function evaluateGuardrails(i: GuardrailInput): GuardrailResult {
   lines.sort((a, b) => a.id.localeCompare(b.id));
   return { lines, finalCall, changedReason, submitBlockers: blockers };
 }
+
+type LineStatus = { status: string };
+
+/** "5 passed, 2 not needed yet" instead of "5 of 7", which reads as if two failed. */
+export function checksSummary(lines: LineStatus[]): string {
+  const n = (s: string) => lines.filter((l) => l.status === s).length;
+  const parts = [`${n("pass")} passed`];
+  if (n("changed")) parts.push(`${n("changed")} changed the answer`);
+  if (n("blocked")) parts.push(`${n("blocked")} need your attention`);
+  if (n("na")) parts.push(`${n("na")} not needed yet`);
+  return parts.join(", ");
+}
+
+export function checksBadge(lines: LineStatus[]): string {
+  const bad = lines.filter((l) => l.status === "changed" || l.status === "blocked").length;
+  return bad ? `${bad} to look at` : "All clear";
+}

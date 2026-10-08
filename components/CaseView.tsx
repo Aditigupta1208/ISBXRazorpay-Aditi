@@ -6,7 +6,7 @@ import { Dialog } from "@/components/Dialog";
 import { Drawer } from "@/components/Drawer";
 import type { AnalyzeResult } from "@/lib/agent";
 import { MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS } from "@/lib/limits";
-import { DRAFT_LIMIT, citedIds, containsCardNumber, evaluateGuardrails, sentenceHasSource, splitSentences, type Status } from "@/lib/guardrails";
+import { DRAFT_LIMIT, citedIds, containsCardNumber, checksBadge, checksSummary, evaluateGuardrails, sentenceHasSource, splitSentences, type Status } from "@/lib/guardrails";
 import { formatInrFull, formatOriginal, timeLeft } from "@/lib/format";
 import { DEFAULT_EFFORT_COST_INR, VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor, worthFindingCeiling } from "@/lib/money";
 import { rateNote, rateWord } from "@/lib/rates";
@@ -1138,8 +1138,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <p className="mt-1 text-[14px] leading-6 text-[#444]">{c.razorpay_facts}</p>
           </Row>
           {finalCall !== "shield" && (
-            <Row id="safety" title="Safety checks" summary={`${passed} of ${g.lines.length} passed. These run in code on every answer.`} open={!!openRows.safety} onToggle={() => toggleRow("safety")}
-              badge={{ text: `${passed} of ${g.lines.length}`, tone: g.lines.some((l) => l.status === "changed" || l.status === "blocked") ? "warn" : "ok" }}>
+            <Row id="safety" title="Safety checks" summary={`${checksSummary(g.lines)}. These run in code on every answer.`} open={!!openRows.safety} onToggle={() => toggleRow("safety")}
+              badge={{ text: checksBadge(g.lines), tone: g.lines.some((l) => l.status === "changed" || l.status === "blocked") ? "warn" : "ok" }}>
               <ul className="space-y-1.5">
                 {g.lines.map((l) => (
                   <li key={l.id} className={`text-[14px] ${STATUS_CLS[l.status]}`}>

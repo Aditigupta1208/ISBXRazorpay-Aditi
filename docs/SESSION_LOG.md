@@ -57,3 +57,4 @@ One line per build session: date, milestone, what was built, anything decided or
 2026-10-08 | wip/ai-features | Groq no longer offered llama-3.3-70b-versatile to the user's key (the backup model was dead). Listed the key's models with /api/llm-status?models=1: gpt-oss-120b, gpt-oss-20b, qwen3.8-27b usable. Backup is now gpt-oss-20b; Qwen gets thinking headroom. 254 tests.
 2026-10-08 | ai-features | Model order for Groq now set in code (GROQ_MODEL_ORDER in lib/groq.ts); env vars optional overrides; /api/llm-status shows fallbacks.
 2026-10-08 | ai-features | Qwen (qwen/qwen3.8-27b) moved to first in GROQ_MODEL_ORDER: matched the key on C01, C06, C08, C15 (C15 twice). Backups: gpt-oss-120b, gpt-oss-20b.
+2026-10-08 | ai-features | Safety checks now say '5 passed, 2 not needed yet'; escalate request message reworded from the document to get (requestMessage in lib/agent.ts).
