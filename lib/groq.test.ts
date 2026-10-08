@@ -142,3 +142,13 @@ test("cost: Groq models use the Groq list price", () => {
   assert.equal(costUsd(0, 1_000_000, "openai/gpt-oss-120b"), 0.6);
   assert.equal(costUsd(1_000_000, 0, "claude-sonnet-5-5"), 2);
 });
+
+test("a key pasted with spaces, a newline or quotes still counts as present; a blank one does not", async () => {
+  const { cleanKey, getLlm } = await import("./llm.ts");
+  assert.equal(cleanKey("  gsk_abc123\n"), "gsk_abc123");
+  assert.equal(cleanKey('"gsk_abc123"'), "gsk_abc123");
+  assert.equal(cleanKey("   "), undefined);
+  assert.equal(cleanKey(undefined), undefined);
+  assert.notEqual(getLlm({ LLM_PROVIDER: "groq", GROQ_API_KEY: " gsk_abc123\n" }).callModel, null);
+  assert.equal(getLlm({ LLM_PROVIDER: "groq", GROQ_API_KEY: "  " }).callModel, null);
+});

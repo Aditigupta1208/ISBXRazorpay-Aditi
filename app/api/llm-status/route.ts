@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getLlm } from "@/lib/llm";
+import { cleanKey, getLlm } from "@/lib/llm";
 import { allow } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
@@ -14,6 +14,13 @@ export async function GET(req: Request) {
   const asked = new URL(req.url).searchParams.get("model");
   const model = asked && /^[\w.\-]{3,60}$/.test(asked) ? asked : llm.model;
   const out: Record<string, unknown> = { provider: llm.provider, model, keyPresent: llm.callModel !== null };
+  // Which deployment is answering, and what the key setting looks like. Never the key itself.
+  out.deployment = { env: process.env.VERCEL_ENV ?? "local", branch: process.env.VERCEL_GIT_COMMIT_REF ?? null, commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? null };
+  const keyName = llm.provider === "groq" ? "GROQ_API_KEY" : llm.provider === "gemini" ? "GEMINI_API_KEY" : llm.provider === "anthropic" ? "ANTHROPIC_API_KEY" : null;
+  if (keyName) {
+    const raw = process.env[keyName];
+    out.keyVariable = { name: keyName, state: raw === undefined ? "missing: not set for this deployment" : cleanKey(raw) ? (raw.trim() !== raw ? "set (stray spaces or a newline were ignored)" : "set") : "empty: the value is blank" };
+  }
   if (llm.provider === "groq") out.thinking = ["low", "medium", "high"].includes(process.env.GROQ_REASONING ?? "") ? process.env.GROQ_REASONING : "medium";
   if (new URL(req.url).searchParams.get("probe") === "1") {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
