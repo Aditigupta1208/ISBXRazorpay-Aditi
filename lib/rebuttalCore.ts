@@ -54,7 +54,14 @@ export function findSentence(draft: string, quoted: string | null | undefined): 
   if (!quoted || !quoted.trim()) return null;
   const q = norm(quoted);
   if (!q) return null;
-  return splitSentences(draft).find((s) => norm(s) === q) ?? null;
+  const sentences = splitSentences(draft);
+  const exact = sentences.find((s) => norm(s) === q);
+  if (exact) return exact;
+  // A model often quotes only part of a sentence (or half of one the draft joins with a quote mark). Accept that when the words are
+  // really inside exactly one sentence of the draft and are long enough to be specific. We still point at the whole sentence.
+  if (q.length < 30) return null;
+  const inside = sentences.filter((s) => norm(s).includes(q));
+  return inside.length === 1 ? inside[0] : null;
 }
 
 /**

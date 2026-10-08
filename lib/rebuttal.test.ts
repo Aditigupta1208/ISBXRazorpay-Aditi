@@ -282,3 +282,11 @@ test("every saved example fits its saved draft and passes the same checks", () =
     assert.ok(getRuleText(cs.dispute.reason_code), `${id} has rule text for the prompt`);
   }
 });
+
+test("a quote that is part of one sentence of the draft is found; a short or invented one is not", async () => {
+  const { findSentence } = await import("./rebuttalCore");
+  const draft = "We sold a plan on 3 Aug 2026 [Razorpay]. The billing settings audit log records no cancellation action, so none preceded the charge [E4]. Terms accepted [E1].";
+  assert.equal(findSentence(draft, "The billing settings audit log records no cancellation action")?.startsWith("The billing settings audit log"), true);
+  assert.equal(findSentence(draft, "audit log"), null);
+  assert.equal(findSentence(draft, "The customer cancelled by phone on 2 Aug and we ignored it"), null);
+});

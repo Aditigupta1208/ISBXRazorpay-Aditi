@@ -59,3 +59,4 @@ One line per build session: date, milestone, what was built, anything decided or
 2026-10-08 | ai-features | Qwen (qwen/qwen3.8-27b) moved to first in GROQ_MODEL_ORDER: matched the key on C01, C06, C08, C15 (C15 twice). Backups: gpt-oss-120b, gpt-oss-20b.
 2026-10-08 | ai-features | Safety checks now say '5 passed, 2 not needed yet'; escalate request message reworded from the document to get (requestMessage in lib/agent.ts).
 2026-10-08 | ai-features | If the model's draft has sentences with no citation, ask it once to rewrite (uncitedSentences in lib/agent.ts); kept the first draft if no better. Found on Qwen C06.
+2026-10-08 | ai-features | Bank's rebuttal RB1 accepts a quote that is part of exactly one draft sentence (30+ chars); still hides invented quotes.
