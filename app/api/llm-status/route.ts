@@ -22,6 +22,21 @@ export async function GET(req: Request) {
     out.keyVariable = { name: keyName, state: raw === undefined ? "missing: not set for this deployment" : cleanKey(raw) ? (raw.trim() !== raw ? "set (stray spaces or a newline were ignored)" : "set") : "empty: the value is blank" };
   }
   if (llm.provider === "groq") out.thinking = ["low", "medium", "high"].includes(process.env.GROQ_REASONING ?? "") ? process.env.GROQ_REASONING : "medium";
+  // ?models=1 lists the model names this key can use on Groq, so a "model not found" can be fixed by picking a real one.
+  if (new URL(req.url).searchParams.get("models") === "1" && llm.provider === "groq") {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+    if (!allow(`probe:${ip}`, Date.now(), 5).ok) return NextResponse.json({ ...out, models: "rate_limited" }, { status: 429 });
+    const key = cleanKey(process.env.GROQ_API_KEY);
+    const base = (process.env.GROQ_API_URL || "https://api.groq.com/openai/v1").replace(/\/$/, "");
+    try {
+      const res = await fetch(`${base}/models`, { headers: { authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(10_000) });
+      const body = (await res.json().catch(() => ({}))) as { data?: { id?: string }[] };
+      out.models = res.ok ? (body.data ?? []).map((m) => m.id).filter((id): id is string => typeof id === "string").sort() : `error ${res.status}`;
+    } catch {
+      out.models = "could not reach Groq";
+    }
+    return NextResponse.json(out, { headers: { "Cache-Control": "no-store" } });
+  }
   if (new URL(req.url).searchParams.get("probe") === "1") {
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
     if (!allow(`probe:${ip}`, Date.now(), 5).ok) return NextResponse.json({ ...out, probe: "rate_limited" }, { status: 429 });
