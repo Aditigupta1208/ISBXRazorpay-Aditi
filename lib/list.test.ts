@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { byUrgency } from "./list.ts";
 
-test("due within 24h first, then the rest, Shield last; biggest rupees first inside each group", () => {
+test("soonest deadline first, Shield last, biggest rupees first on a tie", () => {
   const rows = [
     { id: "big-later", hours: 44, inr: 219000, shield: false },
     { id: "shield", hours: 28, inr: 106000, shield: true },
@@ -11,7 +11,7 @@ test("due within 24h first, then the rest, Shield last; biggest rupees first ins
     { id: "mid-later", hours: 30, inr: 106000, shield: false },
     { id: "edge", hours: 24, inr: 1, shield: false },
   ];
-  assert.deepEqual(rows.sort(byUrgency).map((r) => r.id), ["big-urgent", "small-urgent", "big-later", "mid-later", "edge", "shield"]);
+  assert.deepEqual(rows.sort(byUrgency).map((r) => r.id), ["small-urgent", "big-urgent", "edge", "mid-later", "big-later", "shield"]);
 });
 
 test("a Shield dispute with little time left still goes last", () => {
@@ -23,4 +23,17 @@ test("each in-scope reason code has an evidence hint; fraud codes have none", as
   const { evidenceHint } = await import("./evidenceHints.ts");
   for (const c of ["13.1", "13.2", "13.3", "13.6", "13.7"]) assert.ok(evidenceHint(c), c);
   assert.equal(evidenceHint("10.4"), null);
+});
+
+test("the merchant can sort by deadline or by amount, with Chargeback Shield always last", async () => {
+  const { bySort } = await import("./list");
+  const rows = [
+    { id: "a", hours: 44, inr: 100, shield: false },
+    { id: "b", hours: 8, inr: 10, shield: false },
+    { id: "c", hours: 14, inr: 500, shield: false },
+    { id: "s", hours: 1, inr: 9999, shield: true },
+    { id: "d", hours: 14, inr: 700, shield: false },
+  ];
+  assert.deepEqual([...rows].sort(bySort("deadline")).map((r) => r.id), ["b", "d", "c", "a", "s"]);
+  assert.deepEqual([...rows].sort(bySort("amount")).map((r) => r.id), ["d", "c", "a", "b", "s"]);
 });

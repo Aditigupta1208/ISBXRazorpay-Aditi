@@ -69,3 +69,4 @@ One line per build session: date, milestone, what was built, anything decided or
 2026-10-08 | ai-features | C01 live run: Qwen rate limited, gpt-oss-120b 413 (request too large at GROQ_REASONING=high), gpt-oss-20b answered. Qwen headroom fixed at 3000 (not scaled by thinking level); a 413 is retried once on the same model with 1500 headroom.
 2026-10-08 | ai-features | Rate-limit reason under the hood now says per-minute or daily and how long Groq says to wait.
 2026-10-08 | docs | UX audit of every screen written to docs/UX_AUDIT.md; eval script made safe for the free Groq plan (one at a time, pause, records answering model); PRODUCT, DEPLOYED and BUILD_PLAN brought up to date.
+2026-10-09 | ux | Audit P1 #2-5: saved results marked 'Prepared in advance' with Run live check as primary; welcome card collapses for returning visitors; list sorted by soonest deadline with Sort pills; reviewer accordions grouped under 'For reviewers'. Tour step 3 scroll fixed.

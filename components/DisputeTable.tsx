@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CallChip } from "@/components/CallChip";
 import type { Call } from "@/lib/types";
+import { bySort, type SortKey } from "@/lib/list";
 import { readAction } from "@/lib/useCaseState";
 
 export interface Row {
@@ -38,6 +39,7 @@ const EDGE_LEFT: Record<string, string> = { fight: "border-l-fight", fold: "bord
 
 export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string }) {
   const [filter, setFilter] = useState<"all" | Call>("all");
+  const [sort, setSort] = useState<SortKey>("deadline");
   const [actions, setActions] = useState<Record<string, string>>({});
   const hasActions = Object.keys(actions).length > 0; // the Status column only appears once you have acted on something
 
@@ -50,7 +52,10 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
     setActions(a);
   }, [rows]);
 
-  const shown = rows.filter((r) => filter === "all" || r.call === filter);
+  const order = bySort(sort);
+  const shown = rows
+    .filter((r) => filter === "all" || r.call === filter)
+    .sort((a, b) => order({ hours: a.hours, inr: a.inrNumber, shield: a.call === "shield" }, { hours: b.hours, inr: b.inrNumber, shield: b.call === "shield" }));
 
   const download = () => {
     const head = ["dispute_id", "merchant", "amount", "amount_inr", "reason_code", "reason", "hours_left", "call", "status"];
@@ -80,7 +85,20 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
             </button>
           ))}
         </div>
-        <button onClick={download} className="ml-auto min-h-10 rounded-[10px] border border-[#D6D6D6] px-3.5 text-[12px] font-semibold">
+        <div role="group" aria-label="Sort disputes" className="ml-auto flex items-center gap-2 text-[12px] text-helper">
+          <span aria-hidden>Sort:</span>
+          {([["deadline", "Soonest deadline"], ["amount", "Biggest amount"]] as const).map(([k, label]) => (
+            <button
+              key={k}
+              aria-pressed={sort === k}
+              onClick={() => setSort(k)}
+              className={`min-h-10 rounded-full border px-3 font-semibold ${sort === k ? "border-brand bg-brand-soft text-[#2B5BC8]" : "border-[#D6D6D6] bg-white text-[#333]"}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <button onClick={download} className="min-h-10 rounded-[10px] border border-[#D6D6D6] px-3.5 text-[12px] font-semibold">
           Download CSV
         </button>
       </div>
@@ -115,9 +133,9 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
           <thead>
             <tr className="border-b border-line bg-[#FAFAFA] text-left text-[12px] font-semibold text-helper">
               <th className="px-[18px] py-3.5">Dispute</th>
-              <th className="px-[18px] py-3.5">Amount</th>
+              <th className="px-[18px] py-3.5" aria-sort={sort === "amount" ? "descending" : "none"}><button onClick={() => setSort("amount")} className="font-semibold">Amount{sort === "amount" ? " ▼" : ""}</button></th>
               <th className="px-[18px] py-3.5">Reason</th>
-              <th className="px-[18px] py-3.5 whitespace-nowrap">Time left</th>
+              <th className="px-[18px] py-3.5 whitespace-nowrap" aria-sort={sort === "deadline" ? "ascending" : "none"}><button onClick={() => setSort("deadline")} className="font-semibold">Time left{sort === "deadline" ? " ▲" : ""}</button></th>
               <th className="px-[18px] py-3.5">Call</th>
               {hasActions && <th className="px-[18px] py-3.5">Status</th>}
               <th className="px-[18px] py-3.5">

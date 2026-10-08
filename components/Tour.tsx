@@ -84,7 +84,7 @@ export function Tour() {
           const fitsBelow = r.bottom + 14 + ch <= vh - 12;
           const phone = window.innerWidth < 640;
           // Card will sit at the bottom: keep the target above it when the target is short enough.
-          if ((phone || !fitsBelow) && r.height < vh - ch - 120 && r.bottom > vh - ch - 24) window.scrollBy({ top: r.bottom - (vh - ch - 24) });
+          if ((phone || !fitsBelow) && r.height < vh - ch - 48 && r.bottom > vh - ch - 24) window.scrollBy({ top: r.bottom - (vh - ch - 24) });
           targetRef.current = el;
         });
       }, s.reveal ? 160 : 0);

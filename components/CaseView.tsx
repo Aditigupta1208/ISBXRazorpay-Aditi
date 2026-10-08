@@ -651,7 +651,10 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             </div>
           )}
           <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[12px] text-helper">
-            <span data-tour="source-label">{view.source.label}</span>
+            <span data-tour="source-label" className="flex flex-wrap items-center gap-2">
+              {!view.source.live && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">Prepared in advance</span>}
+              {view.source.label}
+            </span>
             <span className="ml-auto flex flex-wrap items-center justify-end gap-2">
               <span>Was this call useful?</span>
               <button
@@ -667,7 +670,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 onClick={() => { update((s) => ({ ...s, thumbs: "down" })); log("You", "Marked the call not useful"); }}
               >👎</button>
               {finalCall !== "shield" && !acted && (
-                <button className={`${ghost} whitespace-nowrap`} onClick={() => void rerun()} disabled={running}>Re-run check</button>
+                <button className={`${view.source.live ? ghost : primary} whitespace-nowrap`} onClick={() => void rerun()} disabled={running}>{view.source.live ? "Re-run check" : "Run live check"}</button>
               )}
               <button onClick={() => setDrawer(true)} className="relative font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">Under the hood ›</button>
             </span>
@@ -1136,6 +1139,16 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               </div>
             </Row>
           )}
+          <Row id="rule" title="What Visa's rule means" summary={`${d.reason_code} ${d.reason_description}`} open={!!openRows.rule} onToggle={() => toggleRow("rule")}>
+            {view.ruleText && <p className="text-[14px] leading-6 text-[#444]">{view.ruleText}</p>}
+            <p className="mt-3 text-[12px] font-semibold tracking-[.6px] text-helper uppercase">What Razorpay knows</p>
+            <p className="mt-1 text-[14px] leading-6 text-[#444]">{c.razorpay_facts}</p>
+          </Row>
+        </div>
+        {(vsChecklist || finalCall !== "shield") && (
+          <>
+            <p className="mb-2 text-[12px] font-semibold tracking-[.6px] text-helper uppercase">For reviewers: how this answer was checked</p>
+            <div className="mb-5 overflow-hidden rounded-2xl border border-line bg-white" aria-label="How this answer was checked">
           {vsChecklist && (
             <Row id="checklist" title="Why AI, not a fixed checklist?" summary={`A checklist would say ${vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}${vsChecklist.agree ? ", the same" : ", which differs"}`} open={!!openRows.checklist} onToggle={() => toggleRow("checklist")}
               badge={vsChecklist.agree ? { text: "Same call", tone: "ok" } : { text: "Differs", tone: "info" }}>
@@ -1153,11 +1166,6 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   </div>
             </Row>
           )}
-          <Row id="rule" title="What Visa's rule means" summary={`${d.reason_code} ${d.reason_description}`} open={!!openRows.rule} onToggle={() => toggleRow("rule")}>
-            {view.ruleText && <p className="text-[14px] leading-6 text-[#444]">{view.ruleText}</p>}
-            <p className="mt-3 text-[12px] font-semibold tracking-[.6px] text-helper uppercase">What Razorpay knows</p>
-            <p className="mt-1 text-[14px] leading-6 text-[#444]">{c.razorpay_facts}</p>
-          </Row>
           {finalCall !== "shield" && (
             <Row id="safety" title="Safety checks" summary={`${checksSummary(g.lines)}. These run in code on every answer.`} open={!!openRows.safety} onToggle={() => toggleRow("safety")}
               badge={{ text: checksBadge(g.lines), tone: g.lines.some((l) => l.status === "changed" || l.status === "blocked") ? "warn" : "ok" }}>
@@ -1171,7 +1179,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               </ul>
             </Row>
           )}
-        </div>
+            </div>
+          </>
+        )}
       {(prev || next) && (
         <nav aria-label="Other disputes" className="mb-4 flex items-center justify-between gap-3 text-[14px] font-semibold print:hidden">
           {prev ? <Link href={`/disputes/${prev}`} className="rounded-lg border border-line bg-white px-3 py-2.5 text-brand hover:border-brand">← Previous: {prev}</Link> : <span />}

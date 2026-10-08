@@ -77,7 +77,7 @@ export const TOUR_STEPS: TourStep[] = [
   {
     href: "/disputes/C06",
     title: "10. Live or saved, you always know",
-    text: "Re-run check makes a real call to a free AI model. If it is busy or slow, you get the saved result from an earlier test run, and this label says which one you are looking at.",
+    text: "Run live check (or Re-run check) makes a real call to a free AI model. If it is busy or slow, you get the saved result from an earlier test run, and this label says which one you are looking at.",
     target: '[data-tour="source-label"]',
     audience: "reviewers",
   },

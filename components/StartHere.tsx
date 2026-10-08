@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { TourLink } from "./TourLink";
 
 const KEY = "da:v1:tips-hidden";
+/** Set after the first visit, so a returning merchant sees the queue first and the welcome as one short line. */
+const SEEN = "da:v1:tips-seen";
 
 const EXAMPLES = [
   { id: "C06", label: "a Fight call" },
@@ -14,17 +16,24 @@ const EXAMPLES = [
 /** The first thing a new visitor sees: what this is, and two ways in (the tour, or an example). Can be hidden. */
 export function StartHere() {
   const [hidden, setHidden] = useState(false);
+  const [returning, setReturning] = useState(false);
   useEffect(() => {
-    try { setHidden(localStorage.getItem(KEY) === "1"); } catch { /* storage may be blocked */ }
+    try {
+      setHidden(localStorage.getItem(KEY) === "1");
+      setReturning(localStorage.getItem(SEEN) === "1");
+      localStorage.setItem(SEEN, "1");
+    } catch { /* storage may be blocked */ }
   }, []);
   const set = (v: boolean) => {
     setHidden(v);
+    setReturning(false);
     try { localStorage.setItem(KEY, v ? "1" : "0"); } catch { /* ignore */ }
   };
-  if (hidden) {
+  if (hidden || returning) {
     return (
-      <p className="mb-4 text-[12px] text-helper">
-        <button type="button" onClick={() => set(false)} className="-my-3 inline-block py-3 font-semibold text-brand hover:underline">Show the welcome</button>
+      <p className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-helper">
+        <TourLink className="inline-block min-h-10 py-2 font-semibold text-brand hover:underline" label="Take the 2-minute tour" />
+        <button type="button" onClick={() => set(false)} className="min-h-10 py-2 font-semibold text-brand hover:underline">Show the welcome</button>
       </p>
     );
   }
