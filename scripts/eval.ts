@@ -1,4 +1,5 @@
-/** npm run eval: runs every case through the live agent and writes the results. Needs ANTHROPIC_API_KEY or GEMINI_API_KEY. */
+/** npm run eval: runs every case through the live agent and writes the results. Needs ANTHROPIC_API_KEY, GROQ_API_KEY or GEMINI_API_KEY.
+ * On Groq it runs one case at a time with a pause (EVAL_CONCURRENCY and EVAL_PAUSE_MS override), so the free plan's per-minute limit is not hit. */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { getLlm } from "../lib/llm";
@@ -7,9 +8,9 @@ import { PROMPT_VERSION, loadPrompt } from "../lib/prompt";
 import type { CaseData } from "../lib/types";
 
 async function main() {
-  const { callModel, model } = getLlm();
+  const { callModel, model, provider } = getLlm();
   if (!callModel) {
-    console.error("No API key. Put ANTHROPIC_API_KEY or GEMINI_API_KEY in .env.local and run again. Nothing was written.");
+    console.error("No API key. Put ANTHROPIC_API_KEY, GROQ_API_KEY or GEMINI_API_KEY in .env.local and run again. Nothing was written.");
     process.exit(1);
   }
   const cases = (JSON.parse(readFileSync("data/cases.json", "utf8")) as { cases: CaseData[] }).cases;
@@ -19,13 +20,17 @@ async function main() {
   // EVAL_OUT_DIR lets a test run against a stand-in server write somewhere that is not eval/results.
   const dir = process.env.EVAL_OUT_DIR || "eval/results";
 
-  console.log(`Running ${cases.length} cases: prompt ${PROMPT_VERSION}, model ${model}`);
+  const slow = provider === "groq" || provider === "gemini";
+  const concurrency = Math.max(1, Number(process.env.EVAL_CONCURRENCY) || (slow ? 1 : 4));
+  const pauseMs = Number.isFinite(Number(process.env.EVAL_PAUSE_MS)) && process.env.EVAL_PAUSE_MS ? Number(process.env.EVAL_PAUSE_MS) : slow ? 20_000 : 0;
+  console.log(`Running ${cases.length} cases: prompt ${PROMPT_VERSION}, model ${model}${slow ? `, one at a time with a ${pauseMs / 1000} s pause (about ${Math.round((cases.length * (pauseMs / 1000 + 10)) / 60)} minutes)` : ""}`);
   const rows = await runAll(
     cases,
     labels,
     { callModel, model, system: prompt.system, toolSchema: prompt.toolSchema, getSaved: () => undefined },
-    4,
-    (r) => console.log(`  ${r.id}: label ${r.label}, model ${r.raw ?? "none"}, final ${r.final ?? "none"}`),
+    concurrency,
+    (r) => console.log(`  ${r.id}: label ${r.label}, model said ${r.raw ?? "none"}, final ${r.final ?? "none"}${r.answeredBy && r.answeredBy !== model ? ` (answered by backup ${r.answeredBy})` : ""}`),
+    pauseMs,
   );
   const summary = summarize(rows);
   const run = { prompt: PROMPT_VERSION, model, date };

@@ -33,6 +33,8 @@ export interface EvalRow {
   tokensOut: number;
   ms: number;
   costUsd: number;
+  /** The model that really answered (with a free plan, a backup may have answered instead of the first choice). */
+  answeredBy?: string;
 }
 
 const ids = (s: string) => s.split(/missing:/i)[0].match(/E\d+/g) ?? [];
@@ -97,11 +99,12 @@ export async function runCase(c: CaseData, l: LabelRow, deps: Deps): Promise<Eva
     tokensOut: r.meta.tokensOut,
     ms: r.meta.ms,
     costUsd: r.meta.costUsd,
+    answeredBy: r.meta.model,
   };
 }
 
 /** Run every case, a few at a time, keeping the order of the input. */
-export async function runAll(cases: CaseData[], labels: LabelRow[], deps: Deps, concurrency = 4, onDone?: (r: EvalRow) => void): Promise<EvalRow[]> {
+export async function runAll(cases: CaseData[], labels: LabelRow[], deps: Deps, concurrency = 4, onDone?: (r: EvalRow) => void, pauseMs = 0): Promise<EvalRow[]> {
   const out: EvalRow[] = new Array(cases.length);
   let next = 0;
   const worker = async () => {
@@ -111,6 +114,8 @@ export async function runAll(cases: CaseData[], labels: LabelRow[], deps: Deps, 
       if (!l) throw new Error(`No label for ${cases[i].id}`);
       out[i] = await runCase(cases[i], l, deps);
       onDone?.(out[i]);
+      // A free plan limits tokens per minute, so a long run waits between cases instead of failing on the limit.
+      if (pauseMs > 0 && next < cases.length) await new Promise((r) => setTimeout(r, pauseMs));
     }
   };
   await Promise.all(Array.from({ length: Math.min(concurrency, cases.length) }, worker));
@@ -227,6 +232,15 @@ export function releaseGate(s: Summary): { pass: boolean; lines: GateLine[] } {
   return { pass: lines.every((l) => l.ok), lines };
 }
 
+/** Which models really answered. Empty when every answer came from the model the run was started with. */
+export function modelsLine(rows: EvalRow[], first: string): string {
+  const counts = new Map<string, number>();
+  for (const r of rows) if (r.answeredBy) counts.set(r.answeredBy, (counts.get(r.answeredBy) ?? 0) + 1);
+  const others = [...counts.keys()].filter((m) => m !== first);
+  if (others.length === 0) return "";
+  return `Models that answered: ${[...counts].map(([m, n]) => `${m} ${n}`).join(", ")}. The first choice was ${first}; a backup answered when it was busy or over its limit, so this is a mixed-model result.\n`;
+}
+
 export function toMarkdown(run: { prompt: string; model: string; date: string }, rows: EvalRow[], s: Summary): string {
   const p = (v: number | null) => (v === null ? "n/a" : `${Math.round(v * 100)}%`);
   const L = [
@@ -234,6 +248,7 @@ export function toMarkdown(run: { prompt: string; model: string; date: string },
     "",
     `${s.cases} cases (${s.failed} without a usable answer, counted as wrong). Agreement is scored on the cases that are not the fraud scope test.`,
     "",
+    modelsLine(rows, run.model),
     "| Metric | Result |",
     "|---|---|",
     `| Agrees with the human answer | ${p(s.agreement)} (checklist: ${p(s.agreementChecklist)}) |`,

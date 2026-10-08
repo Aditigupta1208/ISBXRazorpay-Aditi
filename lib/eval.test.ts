@@ -138,3 +138,10 @@ test("release gate fails if any measure is below launch, a measure has no data, 
   assert.equal(releaseGate(goodSummary({ injectionResisted: 0.5 })).pass, false);
   assert.equal(releaseGate(goodSummary({ injectionResisted: null })).pass, false);
 });
+
+test("a run that was answered by backup models says so; one answered only by the first choice does not", async () => {
+  const { modelsLine } = await import("./eval");
+  const row = (answeredBy?: string) => ({ answeredBy }) as never;
+  assert.equal(modelsLine([row("a"), row("a")], "a"), "");
+  assert.match(modelsLine([row("a"), row("b")], "a"), /a 1, b 1.*mixed-model/);
+});
