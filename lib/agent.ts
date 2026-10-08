@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { containsCardNumber, isFraudCode } from "./guardrails";
+import { containsCardNumber, isFraudCode, sentenceHasSource, splitSentences } from "./guardrails";
 import { costUsd } from "./pricing";
 import { DEMO_RATE_INR_PER_USD } from "./money";
 import { PROMPT_VERSION } from "./prompt";
@@ -198,13 +198,15 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
   let tokensIn = 0;
   let tokensOut = 0;
   let answeredBy = deps.model;
+  let uncitedNote = "";
+  let firstGood: DecisionOutput | null = null;
   for (let attempt = 0; attempt < 2; attempt++) {
     let reply: ModelReply;
     try {
       reply = await deps.callModel({
         model: deps.model,
         system: deps.system,
-        user: buildUserMessage(c, added, policy),
+        user: buildUserMessage(c, added, policy) + uncitedNote,
         toolName: "record_dispute_decision",
         toolDescription: "Record your recommendation for this dispute.",
         toolSchema: deps.toolSchema,
@@ -218,10 +220,20 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
     tokensOut += reply.tokensOut;
     answeredBy = reply.model ?? deps.model;
     const parsed = decisionSchema.safeParse(reply.input);
-    if (parsed.success) {
+    if (parsed.success && attempt === 0) {
+      // Some models skip citations on a few sentences. Ask once for a rewrite before the merchant has to fix it by hand.
+      const bare = uncitedSentences(parsed.data.draft_response);
+      if (bare.length > 0) {
+        firstGood = parsed.data;
+        uncitedNote = `\n\nYour draft_response had ${bare.length} sentence${bare.length > 1 ? "s" : ""} with no citation at the end: ${bare.map((x) => `"${x}"`).join(" ")} Answer again. Every sentence must end with [E#] or [Razorpay]. Merge a sentence into one that has a source, or drop it. Do not invent a source.`;
+        continue;
+      }
+    }
+    const best = parsed.success ? (attempt === 1 && firstGood && uncitedSentences(parsed.data.draft_response).length >= uncitedSentences(firstGood.draft_response).length ? ({ success: true, data: firstGood } as const) : parsed) : firstGood ? ({ success: true, data: firstGood } as const) : parsed;
+    if (best.success) {
       const usd = costUsd(tokensIn, tokensOut, answeredBy);
       const meta: Meta = { live: true, model: answeredBy, promptVersion: PROMPT_VERSION, tokensIn, tokensOut, ms: now() - started, costUsd: usd, costInr: usd * (deps.inrPerUsd ?? DEMO_RATE_INR_PER_USD), cached: false };
-      const value: LiveOk = { status: "live", view: toCheckView(parsed.data, c, meta), meta };
+      const value: LiveOk = { status: "live", view: toCheckView(best.data, c, meta), meta };
       deps.cache?.set(key, { at: now(), value });
       if (deps.cache && deps.cache.size > 200) deps.cache.delete(deps.cache.keys().next().value as string);
       return value;
@@ -237,4 +249,9 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
 export function requestMessage(disputeId: string, missing: string): string {
   const ask = missing.trim().split(/(?<=[.!?])\s+(?=[A-Z])/)[0].replace(/^(please\s+)?(obtain|get|collect|request|ask for|send|provide)\s+/i, "").replace(/[.\s]+$/, "");
   return `Hello, we have a card dispute (${disputeId}) and need one thing from you to answer it. Could you send us: ${ask}. Thank you.`;
+}
+
+/** Draft sentences that do not end with a citation. The safety check R2 blocks submitting these. */
+export function uncitedSentences(draft: string | null | undefined): string[] {
+  return draft ? splitSentences(draft).filter((x) => !sentenceHasSource(x)) : [];
 }

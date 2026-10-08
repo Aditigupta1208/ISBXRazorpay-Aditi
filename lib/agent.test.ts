@@ -257,3 +257,32 @@ test("the request message keeps only the ask and reads as a request to the other
   assert.ok(!/Obtain|determines/.test(m));
   assert.match(requestMessage("x", "the signed contract"), /Could you send us: the signed contract\. Thank you\.$/);
 });
+
+test("a draft with uncited sentences is sent back once; the cited rewrite is used", async () => {
+  const calls: { n: number; params?: unknown } = { n: 0 };
+  const bad = { ...good, decision: "fight", draft_response: "We sold a plan [Razorpay]. The customer disputes it. The terms were accepted [E1]." };
+  const fixed = { ...good, decision: "fight", draft_response: "We sold a plan and the customer disputes it [Razorpay]. The terms were accepted [E1]." };
+  const r = await analyze(c, [], deps(calls, [ok(bad), ok(fixed)]));
+  assert.equal(calls.n, 2);
+  assert.equal(r.status, "live");
+  if (r.status !== "live") return;
+  assert.equal(r.view.draft, fixed.draft_response);
+  assert.match((calls.params as { user: string }).user, /The customer disputes it\./);
+});
+
+test("if the rewrite is no better, the first draft is kept and the safety check will flag it", async () => {
+  const calls: { n: number; params?: unknown } = { n: 0 };
+  const bad = { ...good, decision: "fight", draft_response: "We sold a plan [Razorpay]. The customer disputes it." };
+  const r = await analyze(c, [], deps(calls, [ok(bad), ok(bad)]));
+  assert.equal(calls.n, 2);
+  assert.equal(r.status, "live");
+  if (r.status !== "live") return;
+  assert.equal(r.view.draft, bad.draft_response);
+});
+
+test("a fully cited draft is not sent back", async () => {
+  const calls: { n: number; params?: unknown } = { n: 0 };
+  const okDraft = { ...good, decision: "fight", draft_response: "We sold a plan [Razorpay]. Terms accepted [E1]." };
+  await analyze(c, [], deps(calls, [ok(okDraft)]));
+  assert.equal(calls.n, 1);
+});
