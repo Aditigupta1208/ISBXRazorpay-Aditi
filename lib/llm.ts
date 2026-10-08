@@ -22,7 +22,7 @@ export function cleanKey(v: string | undefined): string | undefined {
 }
 
 export function getLlm(raw: Record<string, string | undefined> = process.env): Llm {
-  const env = { ...raw, ANTHROPIC_API_KEY: cleanKey(raw.ANTHROPIC_API_KEY), GROQ_API_KEY: cleanKey(raw.GROQ_API_KEY), GEMINI_API_KEY: cleanKey(raw.GEMINI_API_KEY) };
+  const env: Record<string, string | undefined> = { ...raw, ANTHROPIC_API_KEY: cleanKey(raw.ANTHROPIC_API_KEY), GROQ_API_KEY: cleanKey(raw.GROQ_API_KEY), GEMINI_API_KEY: cleanKey(raw.GEMINI_API_KEY) };
   const forced = env.LLM_PROVIDER?.trim().toLowerCase();
   const provider: Provider | null =
     forced === "gemini" || forced === "groq" || forced === "anthropic"
