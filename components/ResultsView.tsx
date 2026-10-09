@@ -40,16 +40,14 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
         )}
       </div>
 
-      <RatioTile />
-
       {m.settled === 0 ? (
         <Card>
           <p className="text-[14px] text-ink-soft">No results yet. Turn on the sample history above, or open a dispute, act on it, then mark Won or Lost.</p>
         </Card>
       ) : (
         <>
-          <Card className="mb-6 !p-0">
-            <p id="results-headline" className="border-b border-line px-4 py-4 text-[16px] font-semibold md:px-5">
+          <Card className="mb-6 !p-0 border-t-4 border-t-green">
+            <p id="results-headline" className="border-b border-line px-4 py-4 text-[17px] font-semibold md:px-5">
               {high ? <>When the advisor said Fight with high confidence, you won {high.won} of {high.n}.</> : <>You won {m.won} of {m.fights} fights.</>}
             </p>
             <div className="grid grid-cols-3 divide-x divide-line">
@@ -62,64 +60,56 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
             </p>
           </Card>
 
-          <LearnBox stats={compactStats(m)} usesSample={withSample && youCount === 0} />
-
-          <Section id="advisor-right" title="Was the advisor right?" note="The AI estimate is checked against what actually happened.">
-            <Card className="!p-0">
-              <ul className="md:hidden">
-                {[
-                  ...m.byConfidence.map((r) => ({ k: r.confidence, title: `Fight, ${r.confidence.toLowerCase()} confidence`, sub: `${r.n} cases · AI estimate ${Math.round(ODDS_BY_CONFIDENCE[r.confidence] * 100)}%`, what: `Won ${r.won} of ${r.n} (${pct(r.won / r.n)})` })),
-                  { k: "fold", title: "Fold", sub: `${m.foldCalls.n} cases`, what: `${m.foldCalls.wrong} would have won (you fought anyway)` },
-                  { k: "esc", title: "Escalate", sub: `${m.escalated.n} cases`, what: `${m.escalated.fought} fought later, ${m.escalated.won} won` },
-                ].map((r) => (
-                  <li key={r.k} className="border-b border-line px-4 py-3 last:border-0">
-                    <div className="flex items-baseline justify-between gap-3"><b className="font-semibold">{r.title}</b><span className="text-[13px] text-helper">{r.sub}</span></div>
-                    <div className="text-[14px]">{r.what}</div>
-                  </li>
-                ))}
-              </ul>
-              <div className="hidden md:block">
-                <table className="w-full text-[14px]">
-                  <thead className="text-left text-[13px] text-helper">
-                    <tr className="border-b border-line">
-                      <th className="px-4 py-2.5 font-normal md:px-5">The advisor said</th>
-                      <th className="px-2 py-2.5 font-normal">Cases</th>
-                      <th className="px-2 py-2.5 font-normal">AI estimate</th>
-                      <th className="px-4 py-2.5 font-normal md:px-5">What happened</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {m.byConfidence.map((r) => (
-                      <tr key={r.confidence} className="border-b border-line last:border-0">
-                        <td className="px-4 py-3 font-semibold md:px-5">Fight, {r.confidence.toLowerCase()} confidence</td>
-                        <td className="px-2 py-3">{r.n}</td>
-                        <td className="px-2 py-3">{Math.round(ODDS_BY_CONFIDENCE[r.confidence] * 100)}%</td>
-                        <td className="px-4 py-3 md:px-5">
-                          Won <b className="font-semibold">{r.won} of {r.n}</b> ({pct(r.won / r.n)})
-                          <div className="mt-1.5 space-y-1" role="img" aria-label={`AI estimate ${Math.round(ODDS_BY_CONFIDENCE[r.confidence] * 100)}%, actual ${pct(r.won / r.n)}`}>
-                            <div className="h-1.5 w-40 overflow-hidden rounded-full bg-[#EDEDED]"><div className="h-full rounded-full bg-[#9DB4E8]" style={{ width: `${Math.round(ODDS_BY_CONFIDENCE[r.confidence] * 100)}%` }} /></div>
-                            <div className="h-1.5 w-40 overflow-hidden rounded-full bg-[#EDEDED]"><div className="h-full rounded-full bg-fight" style={{ width: `${Math.round((r.won / r.n) * 100)}%` }} /></div>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    <tr className="border-b border-line">
-                      <td className="px-4 py-3 font-semibold md:px-5">Fold</td>
-                      <td className="px-2 py-3">{m.foldCalls.n}</td>
-                      <td className="px-2 py-3 text-helper">n/a</td>
-                      <td className="px-4 py-3 md:px-5">{m.foldCalls.wrong} would have won (you fought anyway)</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-3 font-semibold md:px-5">Escalate</td>
-                      <td className="px-2 py-3">{m.escalated.n}</td>
-                      <td className="px-2 py-3 text-helper">n/a</td>
-                      <td className="px-4 py-3 md:px-5">{m.escalated.fought} fought later, {m.escalated.won} won</td>
-                    </tr>
-                  </tbody>
-                </table>
-                <p className="border-t border-line px-4 py-2.5 text-[13px] text-helper md:px-5">Under each fight row: the light blue bar is the AI estimate, the green bar is what happened.</p>
+          <Section id="advisor-right" title="Was the advisor right?" note="For every Fight call: what the advisor expected, against what actually happened.">
+            <Card>
+              <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-1 text-[13px] text-ink-soft" aria-hidden>
+                <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-5 rounded-full bg-[#9DB4E8]" /> What the advisor expected</span>
+                <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-5 rounded-full bg-fight" /> What actually happened</span>
               </div>
+              <ul className="space-y-5">
+                {m.byConfidence.map((r) => {
+                  const est = Math.round(ODDS_BY_CONFIDENCE[r.confidence] * 100);
+                  const act = Math.round((r.won / r.n) * 100);
+                  const v = act - est > 10 ? { t: "Better than expected", c: "bg-fight-soft text-fight" } : est - act > 10 ? { t: "Worse than expected", c: "bg-fold-soft text-fold" } : { t: "About as expected", c: "bg-[#F1F3F6] text-ink-soft" };
+                  return (
+                    <li key={r.confidence} data-testid="calibration-row">
+                      <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <b className="text-[15px] font-semibold">Fight, {r.confidence.toLowerCase()} confidence</b>
+                        <span className="text-[13px] text-helper">{r.n} cases</span>
+                        <span className={`ml-auto rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${v.c}`}>{v.t}</span>
+                      </div>
+                      <div className="space-y-1.5" role="img" aria-label={`Advisor expected ${est}%, actually won ${act}%`}>
+                        <div className="grid grid-cols-[72px_1fr_auto] items-center gap-2.5 text-[13px]">
+                          <span className="text-helper">Expected</span>
+                          <div className="h-3 overflow-hidden rounded-full bg-[#EDEDED]"><div className="h-full rounded-full bg-[#9DB4E8]" style={{ width: `${est}%` }} /></div>
+                          <b className="w-[132px] text-right font-semibold">{est}%</b>
+                        </div>
+                        <div className="grid grid-cols-[72px_1fr_auto] items-center gap-2.5 text-[13px]">
+                          <span className="text-helper">Won</span>
+                          <div className="h-3 overflow-hidden rounded-full bg-[#EDEDED]"><div className="h-full rounded-full bg-fight" style={{ width: `${act}%` }} /></div>
+                          <span className="w-[132px] text-right whitespace-nowrap">Won <b className="font-semibold">{r.won} of {r.n}</b> ({act}%)</span>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-4 text-[12px] text-helper">&ldquo;About as expected&rdquo; means within 10 points. With a handful of cases, treat the gap as a hint, not a measurement.</p>
             </Card>
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              <Card>
+                <p className="text-[13px] text-helper">When the advisor said <b className="font-semibold text-ink">Fold</b> · {m.foldCalls.n} cases</p>
+                <p className="mt-1 text-[15px]">
+                  {m.foldCalls.n - m.foldCalls.wrong} were right to fold. <b className="font-semibold">{m.foldCalls.wrong} would have won</b> (you fought anyway).
+                </p>
+              </Card>
+              <Card>
+                <p className="text-[13px] text-helper">When the advisor said <b className="font-semibold text-ink">Escalate</b> · {m.escalated.n} cases</p>
+                <p className="mt-1 text-[15px]">
+                  {m.escalated.fought} fought later, <b className="font-semibold">{m.escalated.won} won</b>.
+                </p>
+              </Card>
+            </div>
           </Section>
 
           <Section title="By reason" note="Where fights are won and lost.">
@@ -155,6 +145,8 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
             </Card>
           </Section>
 
+          <LearnBox stats={compactStats(m)} usesSample={withSample && youCount === 0} />
+
           <details className="mb-6 rounded-2xl border border-line bg-white px-4 py-1 md:px-5">
             <summary className="min-h-10 cursor-pointer py-2.5 text-[14px] font-semibold">How the loop works</summary>
             <ol className="mb-3 list-decimal space-y-1 pl-5 text-[14px] text-ink-soft">
@@ -165,6 +157,8 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
           </details>
         </>
       )}
+
+      <RatioTile />
     </div>
   );
 }

@@ -13,7 +13,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | F4 | Merchant controls | ✅ | Dispute detail |
 | F5 | Safety checks (R1 to R9) | ✅ | Check panel, drawer, API route |
 | F21 | Worth finding? (value of the missing document) | ✅ | Dispute detail, Escalate "Get this first" box |
-| F22 | Deadline rescue (24-hour nudge, preview only) | ✅ preview and one-tap link; 🟡 no message is ever sent | `/agent-studio`, and `?review=1` on a dispute |
+| F22 | Deadline rescue (24-hour nudge, preview only) | ✅ preview and one-tap link (moved to the Alerts page on 10 Oct: an urgent Fight alert has "Review and approve"); 🟡 no message is ever sent | `/alerts`, and `?review=1` on a dispute |
 | F20 | Bank's rebuttal (practice run against the bank) | ✅ saved examples and checks; 🟡 live call tested against a stand-in model only | Dispute detail, "Review your response" |
 | F23 | Shorten for me (AI shortens a draft over 1,000 characters; code trims if the AI cannot) | ✅ tested on a stand-in model; not yet on the real model | Dispute detail, under the draft |
 | F24 | Key facts per document (up to 3 lines each, each backed by a word-for-word quote) | ✅ saved examples for C01, C06, C15; live tested on a stand-in model | Dispute detail, Your evidence |

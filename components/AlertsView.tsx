@@ -198,9 +198,18 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
                       </div>
                       <p className="whitespace-pre-line text-[#222]">{alertBody(r, d)}</p>
                       <p className="mt-2 rounded-lg bg-[#F6F7F9] px-2.5 py-1.5 text-[12px] text-helper">Why you got this: {d.why}</p>
-                      <Link href={`/disputes/${r.id}`} className="mt-2.5 inline-flex min-h-10 items-center rounded-[10px] border border-brand px-3.5 text-[14px] font-semibold text-brand hover:bg-brand-soft">
-                        Open {r.id}
-                      </Link>
+                      {r.call === "fight" && r.hours <= 24 ? (
+                        <>
+                          <Link href={`/disputes/${r.id}?review=1`} data-testid="review-link" className="mt-2.5 inline-flex min-h-11 items-center rounded-[10px] bg-brand px-5 text-[14px] font-semibold text-white hover:bg-brand-focus">
+                            Review and approve
+                          </Link>
+                          <p className="mt-1.5 text-[12px] text-helper">Your response is drafted. Nothing is submitted until you approve it.</p>
+                        </>
+                      ) : (
+                        <Link href={`/disputes/${r.id}`} className="mt-2.5 inline-flex min-h-10 items-center rounded-[10px] border border-brand px-3.5 text-[14px] font-semibold text-brand hover:bg-brand-soft">
+                          Open {r.id}
+                        </Link>
+                      )}
                     </li>
                   ))}
                   {alerts.length === 0 && <li className="rounded-xl bg-white p-4 text-[14px] text-helper">No alerts under these rules.</li>}
