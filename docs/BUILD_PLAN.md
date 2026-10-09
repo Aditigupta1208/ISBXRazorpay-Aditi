@@ -79,7 +79,7 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 ## M7: Free live model, three AI helpers, hardening (8 to 9 Oct)
 
 - [x] Groq provider (`lib/groq.ts`): forced tool call, thinking headroom, timeouts, text only; Gemini kept as a second free option; Anthropic wins if its key is set
-- [x] Model order set in code (`GROQ_MODEL_ORDER`: Qwen, gpt-oss-120b, gpt-oss-20b); environment variables are optional overrides
+- [x] Model order set in code (`GROQ_MODEL_ORDER`: Qwen, then gpt-oss-120b; gpt-oss-20b dropped 9 Oct); environment variables are optional overrides
 - [x] Backup behaviour: wait out a short rate limit, retry a "request too large" with less room, move to the next model; a model that just failed is tried last for 60 s; "Under the hood" says which model was skipped and why
 - [x] Check on real Groq models against the answer key: Qwen got C01, C06, C08 and C15 right (C15 twice); gpt-oss-120b at high thinking got C15 wrong
 - [x] Fixes found by those runs: R3 allows "Razorpay" as a source; one rewrite request when a draft has uncited sentences; dates listed oldest first (a model called 1 Aug "after" 3 Aug); timeline snippet no longer cut at an email address dot; safety check summary reads "5 passed, 2 not needed yet"

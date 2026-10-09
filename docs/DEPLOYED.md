@@ -119,7 +119,7 @@ The counter stores only counts per fixed event name and per demo dispute ID, no 
 ## Milestone 7: live on a free model, helpers and hardening (8 to 9 Oct)
 
 ### 11. What the live check runs on
-- [x] **Free Groq models by default.** The order is set in code (`GROQ_MODEL_ORDER` in `lib/groq.ts`): `qwen/qwen3.8-27b`, then `openai/gpt-oss-120b`, then `openai/gpt-oss-20b`. Every result says which model answered ("Live: qwen/qwen3.8-27b, prompt v2.2") and "Under the hood" says which model was tried first and why it did not answer (rate limit, too slow, too large, not available)
+- [x] **Free Groq models by default.** The order is set in code (`GROQ_MODEL_ORDER` in `lib/groq.ts`): `qwen/qwen3.8-27b`, then `openai/gpt-oss-120b`. `openai/gpt-oss-20b` was dropped on 9 Oct 2026: in the 30-case run it answered 12 cases and overrode the stricter Escalate wording on C11 and C12, so a saved result is shown instead of its answer. Every result says which model answered ("Live: qwen/qwen3.8-27b, prompt v2.2") and "Under the hood" says which model was tried first and why it did not answer (rate limit, too slow, too large, not available)
 - [x] Backups: a short rate limit (6 s or less) is waited out on the same model; a "request too large" is retried once with less room; otherwise the next model answers; a model that just failed is tried last for 60 s; if none answers, the saved result shows with a plain note
 - [x] An Anthropic key, if set, wins over Groq; `LLM_PROVIDER` forces one. Claude has not been run live
 - [x] The free plan has per-minute and daily token limits shared by every visitor. Under heavy use the app falls back to saved results and says so (tour, How it works, failure messages)

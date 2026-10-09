@@ -60,14 +60,14 @@ test("a Qwen model gets a fixed thinking headroom (not scaled by the thinking le
 });
 
 test("the order of models is set in code: the first is the main one, the rest are the backups in order", () => {
-  assert.deepEqual(GROQ_MODEL_ORDER, ["qwen/qwen3.8-27b", "openai/gpt-oss-120b", "openai/gpt-oss-20b"]);
+  assert.deepEqual(GROQ_MODEL_ORDER, ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"]);
   assert.equal(GROQ_DEFAULT_MODEL, GROQ_MODEL_ORDER[0]);
   assert.deepEqual(GROQ_FALLBACK_MODELS, GROQ_MODEL_ORDER.slice(1));
   const llm = getLlm({ GROQ_API_KEY: "g" });
   assert.equal(llm.model, "qwen/qwen3.8-27b");
-  assert.deepEqual(llm.fallbacks, ["openai/gpt-oss-120b", "openai/gpt-oss-20b"]);
+  assert.deepEqual(llm.fallbacks, ["openai/gpt-oss-120b"]);
   // An environment override still works, and the main model never appears twice.
-  assert.deepEqual(getLlm({ GROQ_API_KEY: "g", GROQ_MODEL: "openai/gpt-oss-20b" }).fallbacks, ["openai/gpt-oss-120b"]);
+  assert.deepEqual(getLlm({ GROQ_API_KEY: "g", GROQ_MODEL: "openai/gpt-oss-120b" }).fallbacks, []);
 });
 
 test("invalid JSON arguments or no tool call give an undefined input, not a crash", async () => {
