@@ -22,7 +22,7 @@ Done 9 Oct: audit P1 to P3, 30-case live eval, prompt v2.3, no-key message, save
 
 Left, only if time: another live eval run after the freeze fixes (do not tune on C15, C18, C23); more saved cases.
 
-## Backlog to build together (agreed 9 Oct; nothing here is built)
+## Backlog (agreed 9 Oct). Built 9 Oct: items 1 to 11 (see `docs/PRODUCT.md`, "Added 9 Oct"). Item 12 waits for the second eval run
 
 Ordered by how many of the three merchants asked for it.
 

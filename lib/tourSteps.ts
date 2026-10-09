@@ -33,7 +33,7 @@ export const TOUR_STEPS: TourStep[] = [
     href: "/disputes/C06",
     title: "3. The answer comes first",
     text: "The call, the reason in one sentence, the money at stake, your chance of winning and the time you have. This one says Fight.",
-    target: "#decision",
+    target: "#decision-top",
   },
   {
     href: "/disputes/C06",

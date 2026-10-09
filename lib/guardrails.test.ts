@@ -144,3 +144,14 @@ test("R8: for refund not processed (13.6), accepted terms count as the key docum
   assert.equal(r.finalCall, "fight");
   assert.equal(status(r, "R8"), "pass");
 });
+
+test("R9: an unchecked figure blocks submit but does not change the call; ticking it clears it", () => {
+  const figures = [{ key: "count:18", supported: false }, { key: "amount:usd 1,200", supported: true }];
+  const r = evaluateGuardrails({ ...base, figures });
+  assert.equal(r.finalCall, "fight");
+  assert.equal(status(r, "R9"), "blocked");
+  assert.ok(r.submitBlockers.some((b) => /Check 1 figure/.test(b)));
+  const ok = evaluateGuardrails({ ...base, figures, confirmedFigures: ["count:18"] });
+  assert.equal(status(ok, "R9"), "pass");
+  assert.equal(status(evaluateGuardrails(base), "R9"), "na");
+});

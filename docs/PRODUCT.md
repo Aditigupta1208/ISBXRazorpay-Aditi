@@ -72,7 +72,7 @@ Layout follows Razorpay's Agentic Dashboard: black top bar, white sub-tabs (Tran
 6. **Length**: the draft must be 1,000 characters or less.
 7. **Card numbers**: a full card number (Luhn check) in pasted evidence is rejected.
 
-Show each check as a pass, changed or blocked line in the check panel (rule numbers R1 to R8 match `docs/pm/05-data-and-stack.md`).
+Show each check as a pass, changed or blocked line in the check panel (rule numbers R1 to R9 match `docs/pm/05-data-and-stack.md`).
 
 Bank's rebuttal has four more checks of its own, RB1 to RB4 (the quoted sentence is in the draft; a rewrite cites real documents; a rewrite fits 1,000 characters; only documents in this dispute are named). They only remove something unsafe and are shown under the result.
 
@@ -94,7 +94,7 @@ Bank's rebuttal has four more checks of its own, RB1 to RB4 (the quoted sentence
 
 ## Out of scope (say so in the product note)
 
-Fraud disputes (Chargeback Shield covers them), pre-dispute alerts, live Razorpay API calls (requests are shown, not sent), connectors to booking or product systems (v1 takes pasted or uploaded evidence), contacting customers, arbitration, login and multi-merchant support, mobile app.
+Fraud disputes (Chargeback Shield covers them), pre-dispute network alerts (such as Visa's or Ethoca's, which stop a dispute before it is raised; the Alerts preview only tells the merchant about disputes that have already arrived), live Razorpay API calls (requests are shown, not sent), connectors to booking or product systems (v1 takes pasted or uploaded evidence), contacting customers, arbitration, login and multi-merchant support, mobile app.
 
 ## Track 2 questions, answered
 
@@ -119,3 +119,15 @@ Fraud disputes (Chargeback Shield covers them), pre-dispute alerts, live Razorpa
 - Visa Dispute Management Guidelines: https://usa.visa.com/content/dam/VCOM/global/support-legal/documents/merchants-dispute-management-guidelines.pdf
 - Antom Copilot chargeback assistant: https://fintechnews.sg/114081/ai/ant-international-antom-copilot-ai-upgrade/
 - Razorpay Agent Studio: https://razorpay.com/agent-studio/
+
+
+## Added 9 Oct 2026, from the merchant conversations (all code or copy, no extra model calls)
+
+- Every call leads with a named gap ("Missing: ..." or "Decided by: ..."); "Chance to win" is smaller and labelled a rough estimate; customer history is read from Razorpay's record only.
+- "Check these before you approve": each amount, date and count in the draft with the document that holds it; rule R9 blocks Submit until an unmatched figure is fixed or ticked by the merchant.
+- "Copy a summary for a colleague"; "will never" list now includes refunding or folding for the merchant.
+- Evidence packet: print-ready cover summary, contents and numbered exhibits (`/disputes/<id>/packet`).
+- What-if evidence on Escalate: a deadline check (how long to get the document against the time left) and what each outcome would likely do. A guide, not a prediction.
+- Dispute ratio tile on Results from two typed numbers, with Razorpay's blog figures attributed (0.5% recommended, 0.75% emergency controls, Visa 1.5% from April 2026) and the point that a won dispute may still count.
+- Policy patch after a dispute is acted on: checkout wording, emails and records to keep, by reason code (a fixed template).
+- Alerts (preview only): choose Slack, WhatsApp or email and set rules (amount, always-alert reasons, urgent hours, morning digest, Fold suggestion). Nothing is sent and no channel is connected.

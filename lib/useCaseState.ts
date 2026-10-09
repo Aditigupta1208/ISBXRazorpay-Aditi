@@ -32,6 +32,8 @@ export interface CaseState {
   /** The latest practice run against the bank's reviewer (Bank's rebuttal). Cleared when the check is re-run. */
   rebuttal?: RebuttalView;
   /** Key facts read from the documents, with a signature of the documents they were read from. Hidden when the documents change. */
+  /** Figures in the draft the merchant ticked as checked by hand (keys from lib/factCheck.ts). */
+  confirmedFigures?: string[];
   keyFacts?: { sig: string; result: KeyFactsResult };
   audit: AuditEntry[];
 }

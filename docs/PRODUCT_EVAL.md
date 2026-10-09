@@ -13,7 +13,7 @@ Scores (my judgement, 1 to 5): substance 4.5, function 4, usability 4.5, merchan
 What works (verified):
 - Decision first. Each dispute opens on one call, one sentence, three numbers (at stake in rupees, chance to win, time left) and two buttons. The call chip is visible without scrolling on a phone.
 - Fold and Escalate are first-class, not fall-throughs. C15 (accepted policy meant only half was owed) is the proof case and the saved and v2.3 runs both Escalate it.
-- Every draft sentence cites a document; eight checks run in code and change the call (R1 to R8); results are shown and reviewer material sits apart from merchant material.
+- Every draft sentence cites a document; nine checks run in code (R1 to R9; R3, R4, R5 and R8 change the call); results are shown and reviewer material sits apart from merchant material.
 - Merchant control: nothing is sent without a click; Accept (Fold) and Submit have confirmation dialogs that say the action is simulated; terms the merchant writes are read as a claim, never as proof.
 - Add or remove evidence re-runs the check, scrolls to the new answer and shows a "call changed" banner. Card numbers are refused, text is capped at 4,000 characters, hidden instructions were resisted in all eval cases.
 - Bank's rebuttal (practice run against the likely bank objection) is a real differentiator: it makes Fight a tested call.

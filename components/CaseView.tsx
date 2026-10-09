@@ -20,6 +20,12 @@ import { ShortenBox } from "@/components/ShortenBox";
 import { KeyFactLines, KeyFactsButton } from "@/components/KeyFactsBox";
 import { VERDICT_LABEL, sameDraft } from "@/lib/rebuttalCore";
 import { checklistFor, SLOT_INFO } from "@/lib/evidenceChecklist";
+import { customerHistory } from "@/lib/customerHistory";
+import { checkFigures, recordText } from "@/lib/factCheck";
+import { namedGap } from "@/lib/namedGap";
+import { buildSummary } from "@/lib/summary";
+import { PolicyPatch } from "@/components/PolicyPatch";
+import { WAIT_OPTIONS, deadlineVerdict, whatItChanges, type WaitKey } from "@/lib/whatIf";
 import { readProfile } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
@@ -70,6 +76,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState(0);
   const [notice, setNotice] = useState<{ kind: "info" | "error"; text: string } | null>(null);
+  const [wait, setWait] = useState<WaitKey>("unsure");
   const [openRows, setOpenRows] = useState<Record<string, boolean>>({});
   const toggleRow = (k: string) => setOpenRows((o) => ({ ...o, [k]: !o[k] }));
   const showRow = (k: string) => setOpenRows((o) => ({ ...o, [k]: true }));
@@ -90,6 +97,12 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const contestSubunits = Math.min(state.contestAmount ?? view.defensibleAmount ?? d.amount, d.amount);
   const documentCount = view.slots.filter((s) => evidenceIds.includes(s.evidenceId)).length;
 
+  const figures = useMemo(
+    () => checkFigures(draft, allEvidence.map((e) => ({ id: e.id, content: `${"title" in e ? e.title : ""} ${e.content}` })), recordText(c)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [draft, state.added],
+  );
+
   const g = useMemo(
     () =>
       evaluateGuardrails({
@@ -103,10 +116,12 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         draft,
         documentCount,
         slots: view.slots,
+        figures,
+        confirmedFigures: state.confirmedFigures,
         schemaOk: true,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [draft, view, d.reason_code, documentCount],
+    [draft, view, d.reason_code, documentCount, figures, state.confirmedFigures],
   );
   const finalCall = g.finalCall;
   const vsChecklist = useMemo(
@@ -418,6 +433,14 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const EDGE: Record<typeof finalCall, string> = { fight: "border-l-fight", fold: "border-l-fold", escalate: "border-l-escalate", shield: "border-l-shield" };
   const passed = g.lines.filter((l) => l.status === "pass").length;
   const keyDocs = finalCall !== "shield" ? checklistFor(d.reason_code, documentsBySlot) : null;
+  const gap = namedGap({
+    call: finalCall,
+    getFirst: view.getFirst,
+    missingEvidence: view.missingEvidence,
+    uncoveredKeyNeeds: (keyDocs?.key ?? []).filter((r) => !r.covered).map((r) => r.need),
+    decidingEvidence: view.decidingEvidence,
+  });
+  const history = customerHistory(c.razorpay_facts);
 
   return (
     <>
@@ -426,7 +449,36 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         <Link href="/disputes" className="relative mb-2.5 inline-block font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">
           ← All disputes
         </Link>
-        <button type="button" onClick={() => window.print()} className="mb-2.5 ml-auto mr-3 min-h-10 text-[13px] font-semibold text-helper underline print:hidden md:min-h-0">
+        <button
+          type="button"
+          data-testid="copy-summary"
+          onClick={() =>
+            copy(
+              "summary",
+              buildSummary({
+                disputeId: d.id,
+                merchant: c.merchant,
+                amountOriginal: formatOriginal(d.amount, d.currency),
+                amountInr: formatInrFull(money.atStakeInr),
+                reasonCode: d.reason_code,
+                reasonDescription: d.reason_description,
+                customerClaim: c.customer_claim,
+                timeLeft: t.text,
+                call: finalCall,
+                confidence: view.confidence,
+                reasonLine: view.reason,
+                gap,
+                history: history.known ? `${history.payments}. ${history.disputes}.` : null,
+                documents: allEvidence.map((e) => ({ id: e.id, name: docName(e.id) })),
+                actionTaken: acted ? (acted.type === "submit" ? "Submitted (simulated)" : "Folded (simulated)") : undefined,
+              }),
+            )
+          }
+          className="mb-2.5 ml-auto mr-3 min-h-10 text-[13px] font-semibold text-brand underline print:hidden md:min-h-0"
+        >
+          {copied === "summary" ? "Copied" : "Copy a summary for a colleague"}
+        </button>
+        <button type="button" onClick={() => window.print()} className="mb-2.5 mr-3 min-h-10 text-[13px] font-semibold text-helper underline print:hidden md:min-h-0">
           Print or save as PDF
         </button>
         {(state.action || state.audit.length > 0 || state.draft !== undefined) && (
@@ -509,6 +561,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           )}
 
         <section id="decision" aria-label="The advisor's call" className={`mb-5 rounded-2xl border border-line border-l-4 bg-white p-4 md:p-6 ${EDGE[finalCall]} ${state.prevCall && state.prevCall !== finalCall && !running ? "flash-ring" : ""} ${running ? "opacity-60" : state.dirty && !acted ? "opacity-75" : ""}`}>
+          <div id="decision-top">
           <div id="verdict" className="flex flex-wrap items-center gap-3">
             <CallChip call={finalCall} size="lg" />
             {finalCall !== "shield" && <span className="text-[14px] font-semibold text-[#555]">{view.confidence} confidence</span>}
@@ -524,6 +577,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <p className="mt-2 text-[16px] leading-7 text-[#333]">Reason code {d.reason_code} is a fraud code. Dispute Advisor only covers non-fraud disputes, so no check was run and there is nothing to submit here.</p>
           ) : (
             <>
+              {gap && (
+                <p data-testid="named-gap" className="mt-3 rounded-[10px] bg-[#F4F6FA] px-3 py-2 text-[15px]">
+                  <span className="font-semibold">{gap.label}:</span> {gap.text}
+                </p>
+              )}
               <p className="mt-2 text-[16px] leading-7 text-[#222]">{view.reason}</p>
 
               <dl className="mt-5 grid grid-cols-3 gap-3 border-y border-line py-4">
@@ -534,8 +592,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 </div>
                 <div>
                   <dt className="text-[13px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
-                  <dd className="text-[16px] font-semibold sm:text-[24px]">{Math.round(oddsAdj.odds * 100)}%</dd>
-                  <dd className="text-[13px] text-helper">an estimate</dd>
+                  <dd className="text-[16px] font-medium text-[#555]">{Math.round(oddsAdj.odds * 100)}%</dd>
+                  <dd className="text-[13px] text-helper">a rough estimate</dd>
                 </div>
                 <div>
                   <dt className="text-[13px] text-helper">Time left</dt>
@@ -543,6 +601,17 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <dd className="text-[13px] text-helper">to respond</dd>
                 </div>
               </dl>
+            </>
+          )}
+          </div>
+          {finalCall !== "shield" && (
+            <>
+              {history.known && (
+                <p data-testid="customer-history" className="mt-3 text-[14px] text-[#444]">
+                  <span className="font-semibold">Customer history:</span> {history.payments}. {history.disputes}.{" "}
+                  <span className="text-helper">From Razorpay&apos;s record.</span>
+                </p>
+              )}
                 {finalCall === "fight" || finalCall === "fold" ? (
                   (() => {
                     const agrees = finalCall === "fight" ? money.worthFighting : !money.worthFighting;
@@ -569,7 +638,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {finalCall === "escalate" && !acted && (
                 <div id="get-first" className="mt-4 rounded-xl bg-escalate-soft p-4">
                   <p className="text-[12px] font-semibold tracking-[.6px] text-escalate uppercase">Get this first</p>
-                  <p className="mt-1 text-[16px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
+                  {!(gap?.label === "Missing" && view.getFirst && gap.text === view.getFirst.replace(/\.$/, "")) && (
+                    <p className="mt-1 text-[16px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
+                  )}
                   {view.requestText && (
                     <div className="mt-3">
                       <p className="text-[13px] font-semibold text-helper">Message to send</p>
@@ -602,6 +673,27 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                         ? "No time to gather more: choose Fight or Fold."
                         : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
                     </p>
+                    <div data-testid="what-if" className="rounded-xl bg-white p-3">
+                      <p className="font-semibold">What if you get it?</p>
+                      <label htmlFor="wait" className="mt-1 block text-[13px] text-helper">How long would it take to get this document?</label>
+                      <select id="wait" value={wait} onChange={(e) => setWait(e.target.value as WaitKey)} className="mt-1 min-h-10 rounded-[10px] border border-line bg-white px-2 text-[14px]">
+                        {WAIT_OPTIONS.map((o) => (
+                          <option key={o.key} value={o.key}>{o.label}</option>
+                        ))}
+                      </select>
+                      {(() => {
+                        const v = deadlineVerdict(d.respond_by_hours_left, wait);
+                        const w = whatItChanges(gap?.text ?? "the missing document");
+                        return (
+                          <>
+                            <p data-testid="deadline-verdict" className={`mt-2 font-semibold ${v.verdict === "too_late" ? "text-danger" : v.verdict === "tight" ? "text-warn" : "text-[#333]"}`}>{v.text}</p>
+                            <p className="mt-2 text-[13px] text-[#444]">{w.supports}</p>
+                            <p className="mt-1 text-[13px] text-[#444]">{w.against}</p>
+                            <p className="mt-1 text-[13px] text-helper">A guide only. Add the document and re-run the check to get the real answer.</p>
+                          </>
+                        );
+                      })()}
+                    </div>
                     {view.draft && <p className="text-[13px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
                   </div>
                 </div>
@@ -792,6 +884,51 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             </ul>
           )}
 
+          <H3>Check these before you approve</H3>
+          <div data-testid="figure-check">
+            {figures.length === 0 ? (
+              <p className="text-[14px] text-helper">The draft has no amounts, dates or counts to check.</p>
+            ) : (
+              <>
+                <p className="mb-2 text-[13px] text-helper">Each amount, date and count in your response, with the document that holds it. A wrong figure is the quickest way to lose.</p>
+                <ul className="space-y-2 text-[14px]">
+                  {figures.map((f) => {
+                    const ticked = (state.confirmedFigures ?? []).includes(f.key);
+                    return (
+                      <li key={f.key} className={`rounded-xl border px-3 py-2 ${f.supported || ticked ? "border-line" : "border-[#F0C36D] bg-fold-soft"}`}>
+                        <div className="flex flex-wrap items-baseline gap-x-2">
+                          <b>{f.text}</b>
+                          <span className="text-[12px] text-helper">{f.kind === "amount" ? "amount" : f.kind === "date" ? "date" : "count"}</span>
+                          {f.supported ? (
+                            <span className="text-green-ink">✓ Found in {f.supportedBy.join(", ")}</span>
+                          ) : ticked ? (
+                            <span className="text-[#555]">Checked by you</span>
+                          ) : (
+                            <span className="font-semibold text-fold">⚠ Not in a cited document</span>
+                          )}
+                        </div>
+                        <p className="mt-0.5 text-[13px] text-[#555]">{f.sentence}</p>
+                        {!f.supported && f.foundElsewhere.length > 0 && <p className="mt-0.5 text-[13px]">It is in {f.foundElsewhere.join(", ")}. Cite it in that sentence, or fix the figure.</p>}
+                        {!f.supported && (
+                          <label className="mt-1 flex min-h-8 items-center gap-2 text-[13px]">
+                            <input
+                              type="checkbox"
+                              checked={ticked}
+                              onChange={(e) =>
+                                update((s) => ({ ...s, confirmedFigures: e.target.checked ? [...(s.confirmedFigures ?? []), f.key] : (s.confirmedFigures ?? []).filter((k) => k !== f.key) }))
+                              }
+                            />
+                            I checked this figure myself
+                          </label>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
+            )}
+          </div>
+
           <H3>Amount to contest</H3>
           <div className="flex items-center gap-2">
             <label htmlFor="amt" className="sr-only">
@@ -847,7 +984,10 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: false }))}>
               Close
             </button>
-            <button className={`${ghost} !border-brand !text-brand ml-auto`} onClick={() => copy("draft", draft)}>
+            <Link href={`/disputes/${c.id}/packet`} data-testid="packet-link" className={`${ghost} !border-brand !text-brand ml-auto`}>
+              Evidence packet (print or PDF)
+            </Link>
+            <button className={`${ghost} !border-brand !text-brand`} onClick={() => copy("draft", draft)}>
               {copied === "draft" ? "Copied" : "Copy response"}
             </button>
             <p className="w-full text-[13px] text-helper">Simulated: nothing is sent to Razorpay.</p>
@@ -935,6 +1075,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <p className="text-[14px]">{view.tip}</p>
                 </>
               )}
+              <PolicyPatch code={d.reason_code} />
               {state.outcome === "lost" && (
                 <>
                   <H3>Next steps</H3>

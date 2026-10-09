@@ -1,10 +1,10 @@
-/** Safety rules R1 to R8 (docs/pm/05-data-and-stack.md). Pure functions: run on the server and in the browser. */
+/** Safety rules R1 to R9 (docs/pm/05-data-and-stack.md). Pure functions: run on the server and in the browser. */
 import { CHECKLISTS } from "./evidenceChecklist";
 export type Status = "pass" | "changed" | "blocked" | "na";
 export type FinalCall = "fight" | "fold" | "escalate" | "shield";
 
 export interface GuardrailLine {
-  id: "R1" | "R2" | "R3" | "R4" | "R5" | "R6" | "R7" | "R8";
+  id: "R1" | "R2" | "R3" | "R4" | "R5" | "R6" | "R7" | "R8" | "R9";
   rule: string;
   status: Status;
   message: string;
@@ -20,6 +20,8 @@ export interface GuardrailInput {
   evidenceTexts: string[];
   draft: string;
   documentCount: number; // evidence items mapped to a Razorpay slot
+  figures?: { key: string; supported: boolean }[]; // amounts, dates and counts in the draft (lib/factCheck.ts), for R9
+  confirmedFigures?: string[]; // figures the merchant ticked as checked
   slots?: { evidenceId: string; slot: string }[]; // which slot each document was placed in (needed for R8)
   schemaOk: boolean;
 }
@@ -200,6 +202,19 @@ export function evaluateGuardrails(i: GuardrailInput): GuardrailResult {
       lines.push({ id: "R8", rule: R8_RULE, status: "changed", message: "Your evidence does not include the key document for this reason. Changed from Fight to Escalate." });
     } else {
       lines.push({ id: "R8", rule: R8_RULE, status: "pass", message: `The draft cites ${[...new Set(cites)].join(", ")}, a key document for this reason.` });
+    }
+  }
+
+  // R9 every amount, date and count in the draft is in a cited document or the dispute record, or the merchant has checked it
+  if (!i.figures || i.draft.trim().length === 0) {
+    lines.push({ id: "R9", rule: "Numbers and dates in the draft are in the documents", status: "na", message: "No draft to check yet." });
+  } else {
+    const open = i.figures.filter((f) => !f.supported && !(i.confirmedFigures ?? []).includes(f.key));
+    if (open.length > 0) {
+      lines.push({ id: "R9", rule: "Numbers and dates in the draft are in the documents", status: "blocked", message: `${open.length} figure${open.length > 1 ? "s" : ""} in the draft ${open.length > 1 ? "are" : "is"} not in a cited document. Check ${open.length > 1 ? "them" : "it"} or edit the draft.` });
+      blockers.push(`Check ${open.length} figure${open.length > 1 ? "s" : ""} in the draft`);
+    } else {
+      lines.push({ id: "R9", rule: "Numbers and dates in the draft are in the documents", status: "pass", message: i.figures.length === 0 ? "The draft has no amounts, dates or counts." : `${i.figures.length} figure${i.figures.length > 1 ? "s" : ""} checked against the documents.` });
     }
   }
 

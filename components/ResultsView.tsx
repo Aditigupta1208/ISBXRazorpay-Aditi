@@ -7,6 +7,7 @@ import { ODDS_BY_CONFIDENCE } from "@/lib/results";
 import type { Rates } from "@/lib/rates";
 import { Card, Section, Stat } from "@/components/ui";
 import { LearnBox } from "@/components/LearnBox";
+import { RatioTile } from "@/components/RatioTile";
 import { compactStats } from "@/lib/assistCore";
 
 const pct = (n: number | null) => (n === null ? "n/a" : `${Math.round(n * 100)}%`);
@@ -38,6 +39,8 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
           </button>
         )}
       </div>
+
+      <RatioTile />
 
       {m.settled === 0 ? (
         <Card>

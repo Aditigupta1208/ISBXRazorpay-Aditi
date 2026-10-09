@@ -107,6 +107,7 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
                 <h3 className="mb-1.5 font-semibold">What it will never do</h3>
                 <ul className="space-y-1.5 text-ink-soft">
                   <li>Send anything to Razorpay, Visa or your customer without your click.</li>
+                  <li>Refund your customer, or accept (Fold) a dispute for you. A Fold is always your click.</li>
                   <li>Treat your own terms as proof.</li>
                   <li>Handle fraud disputes. Those go to Chargeback Shield.</li>
                 </ul>

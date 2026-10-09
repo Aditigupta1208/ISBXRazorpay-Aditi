@@ -2,6 +2,7 @@
 import { analyze, type AnalyzeResult, type Deps } from "./agent";
 import { evaluateGuardrails, citedIds, splitSentences, sentenceHasSource, type FinalCall } from "./guardrails";
 import { toCall } from "./data";
+import { checkFigures, recordText } from "./factCheck";
 import type { CaseData } from "./types";
 
 export interface LabelRow {
@@ -80,6 +81,7 @@ export async function runCase(c: CaseData, l: LabelRow, deps: Deps): Promise<Eva
     evidenceTexts: c.evidence.map((e) => e.content),
     draft: v.draft,
     documentCount: v.slots.length,
+    figures: checkFigures(v.draft, c.evidence, recordText(c)),
     slots: v.slots,
     schemaOk: true,
   });

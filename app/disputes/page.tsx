@@ -23,6 +23,9 @@ export default async function DisputesPage() {
     <>
       <h1 className="mb-4 text-2xl leading-8 font-semibold">Disputes</h1>
       <StartHere />
+      <p className="mb-4 text-[14px] text-ink-soft">
+        Want these to come to you? <a href="/alerts" className="font-semibold text-brand hover:underline">Choose Slack, WhatsApp or email and set your alert rules</a> (preview).
+      </p>
       <div className="mb-4 grid grid-cols-3 gap-2 md:gap-4">
         <Stat label="Need a decision" value={String(needDecision.length)} />
         <Stat label={`At stake (${rateWord(rates)})`} value={formatInr(atStake)} />

@@ -11,7 +11,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | F2 | Policy profile | ✅ (terms are sent as the merchant's claim, not proof; tested on a stand-in model) | `/agent-studio` |
 | F3 | Cited response draft | ✅ | Dispute detail, "Review your response" |
 | F4 | Merchant controls | ✅ | Dispute detail |
-| F5 | Safety checks (R1 to R8) | ✅ | Check panel, drawer, API route |
+| F5 | Safety checks (R1 to R9) | ✅ | Check panel, drawer, API route |
 | F21 | Worth finding? (value of the missing document) | ✅ | Dispute detail, Escalate "Get this first" box |
 | F22 | Deadline rescue (24-hour nudge, preview only) | ✅ preview and one-tap link; 🟡 no message is ever sent | `/agent-studio`, and `?review=1` on a dispute |
 | F20 | Bank's rebuttal (practice run against the bank) | ✅ saved examples and checks; 🟡 live call tested against a stand-in model only | Dispute detail, "Review your response" |
@@ -400,3 +400,5 @@ All three use `POST /api/assist` (server only, same key and per-IP limit as the 
 **Auto re-run (9 Oct).** Adding or removing a document now re-runs the check on its own. The "Your evidence changed" note and Re-run button stay only as a fallback (for example when the advisor is switched off in Agent setup).
 
 **Changed-call banner (9 Oct).** After a re-run the page scrolls to the top, the banner shows the old call (faded) → the new call as chips, the answer card glows once, and the document that decided it is tagged "Decided the call" in Your evidence.
+
+**Section B (9 Oct).** Merchant-driven features from the three conversations, all code or copy. Named gap and customer history on every call (`lib/namedGap.ts`, `lib/customerHistory.ts`); number-and-date check R9 and the "Check these before you approve" list (`lib/factCheck.ts`); "Copy a summary for a colleague" (`lib/summary.ts`); evidence packet page (`/disputes/<id>/packet`, `lib/packet.ts`); what-if evidence with a deadline check (`lib/whatIf.ts`); ratio tile on Results (`lib/ratio.ts`); policy patch (`lib/policyPatch.ts`); Alerts preview with rules (`lib/alertRules.ts`, `/alerts`). The tour's step 3 now points at `#decision-top` because the decision card grew. Tests: `npm test` (302), `e2e_figures.py`, `e2e_b1.py`, `e2e_b2.py` in the scratchpad.

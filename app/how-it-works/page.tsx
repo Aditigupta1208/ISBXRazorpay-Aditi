@@ -32,6 +32,7 @@ const RULES = [
   ["R6", "The draft is 1,000 characters or less."],
   ["R7", "Full card numbers are rejected."],
   ["R8", "A Fight must cite a key document for its reason. Otherwise it becomes Escalate."],
+  ["R9", "Every amount, date and count in the draft is in a document it cites or in Razorpay's record. If not, you check it by hand before you can submit."],
 ];
 
 const RULE_CHECK = [
@@ -48,7 +49,7 @@ const ANSWERS = [
   ["What action does it take?", "The Fold-or-Fight check recommends Fight, Fold or Escalate, maps documents to Razorpay's evidence slots, and drafts a response that cites a document in every sentence. Before you submit you can test the draft against a practice bank reviewer, which names its weakest sentence and offers a fix. With 24 hours left it can nudge you with the response already drafted (a preview is in Agent setup). Nothing is sent from this prototype."],
   ["What does the merchant control?", "Everything that matters. Every submit and fold needs approval. You can edit the draft, override the call (your reason goes in the audit trail), or turn the agent off."],
   ["How does it learn?", "In a real product, won and lost outcomes by reason code and evidence type would sharpen advice. In this prototype the outcome is stored in your browser and shown back to you. No model is trained."],
-  ["How is accuracy and trust protected?", "The eight safety rules, a saved result when the live check fails, an audit trail, and evidence treated as data, never as instructions. The Evals page shows where it is still weak."],
+  ["How is accuracy and trust protected?", "The nine safety rules, a saved result when the live check fails, an audit trail, and evidence treated as data, never as instructions. The Evals page shows where it is still weak."],
   ["What business result does it aim at?", "More money recovered per rupee disputed, more disputes answered before the deadline, less time per dispute, and fewer repeat disputes after prevention fixes."],
 ];
 
@@ -71,7 +72,7 @@ export default function HowItWorksPage() {
         </ol>
       </section>
 
-      <Section id="rules" title="The eight safety rules" note="They run in code after every answer. You can see each result on the dispute page. The bank test has four more of its own (RB1 to RB4), shown under its result.">
+      <Section id="rules" title="The nine safety rules" note="They run in code after every answer. You can see each result on the dispute page. The bank test has four more of its own (RB1 to RB4), shown under its result.">
         <Card>
         <ul className="grid gap-x-10 gap-y-2 md:grid-cols-2">
           {RULES.map(([id, t]) => (
