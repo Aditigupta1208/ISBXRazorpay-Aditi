@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CallChip } from "@/components/CallChip";
 import type { Call } from "@/lib/types";
@@ -41,6 +42,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
   const [filter, setFilter] = useState<"all" | Call>("all");
   const [sort, setSort] = useState<SortKey>("deadline");
   const [actions, setActions] = useState<Record<string, string>>({});
+  const router = useRouter();
   const [confirmReset, setConfirmReset] = useState(false);
   const resetAll = () => {
     if (!confirmReset) return setConfirmReset(true);
@@ -153,9 +155,16 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
           </thead>
           <tbody>
             {shown.map((r) => (
-              <tr key={r.id} className="relative border-b border-[#F1F1F1] hover:bg-[#FAFCFF]">
+              <tr
+                key={r.id}
+                className="cursor-pointer border-b border-[#F1F1F1] hover:bg-[#FAFCFF]"
+                onClick={(e) => {
+                  if ((e.target as HTMLElement).closest("a,button")) return;
+                  router.push(`/disputes/${r.id}`);
+                }}
+              >
                 <td className={`px-[18px] py-4 ${r.call ? EDGE_BAR[r.call] : ""}`}>
-                  <Link href={`/disputes/${r.id}`} className="font-mono text-[12px] text-[#555] after:absolute after:inset-0 after:content-['']">
+                  <Link href={`/disputes/${r.id}`} className="font-mono text-[12px] text-[#555]">
                     {r.disputeId}
                   </Link>
                   <div className="text-[13px] text-helper">{r.merchant}</div>
@@ -173,7 +182,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
                 </td>
                 <td className="px-[18px] py-4">{r.call ? <CallChip call={r.call} /> : <span className="text-helper">Not checked</span>}</td>
                 {hasActions && <td className="px-[18px] py-4 text-[14px] whitespace-nowrap">{actions[r.id] ?? <span className="text-helper">Open</span>}</td>}
-                <td className="px-[18px] py-4 font-semibold text-brand">Details</td>
+                <td className="px-[18px] py-4 font-semibold text-brand"><Link href={`/disputes/${r.id}`}>Details<span className="sr-only"> for {r.disputeId}</span></Link></td>
               </tr>
             ))}
             {shown.length === 0 && (
