@@ -32,7 +32,7 @@ const FILTERS: { key: "all" | Call; label: string }[] = [
 const EDGE_BAR: Record<string, string> = {
   fight: "shadow-[inset_4px_0_0_#0F7B4F]",
   fold: "shadow-[inset_4px_0_0_#8A4B08]",
-  escalate: "shadow-[inset_4px_0_0_#B42318]",
+  escalate: "shadow-[inset_4px_0_0_#5B3DB5]",
   shield: "shadow-[inset_4px_0_0_#475569]",
 };
 const EDGE_LEFT: Record<string, string> = { fight: "border-l-fight", fold: "border-l-fold", escalate: "border-l-escalate", shield: "border-l-shield" };

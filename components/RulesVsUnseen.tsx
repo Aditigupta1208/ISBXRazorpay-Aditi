@@ -15,8 +15,18 @@ export function RulesVsUnseen({ s, agentKnown, agentLive }: { s: Scoreboard; age
   );
   const u = s.unseen;
   return (
-    <section className="mb-6 rounded-2xl border border-line bg-white p-4 md:p-5" aria-labelledby="rules">
-      <h2 id="rules" className="text-[16px] font-semibold">Why not just write smarter rules?</h2>
+    <details className="group mb-6 rounded-2xl border border-line bg-white p-4 md:p-5" id="rules-details">
+      <summary className="flex min-h-11 cursor-pointer list-none items-start justify-between gap-3">
+        <div>
+          <h2 id="rules" className="text-[16px] font-semibold">Why not just write smarter rules?</h2>
+          <span className="mt-1 block max-w-[760px] text-[14px] text-ink-soft">
+            Rules written for known cases get {s.known.tuned} of {s.known.n}, then {u.tuned} of {u.n} on cases they had never seen, fewer than the simple checklist ({u.simple} of {u.n}).
+          </span>
+        </div>
+        <span className="mt-1 shrink-0 text-[14px] font-semibold text-brand group-open:hidden">Show details</span>
+        <span className="mt-1 hidden shrink-0 text-[14px] font-semibold text-brand group-open:inline">Hide</span>
+      </summary>
+      <div className="mt-3" />
       <p className="mt-1 mb-3 max-w-[760px] text-[14px] text-ink-soft">
         We wrote the best fixed rules we could by reading the {s.known.n} known cases. {s.rulesAdded} extra rules get {s.known.tuned} of {s.known.n} right. On {u.n} cases they had never seen they get {u.tuned} of {u.n},
         {u.tuned < u.simple ? " fewer than" : u.tuned === u.simple ? " the same as" : " more than"} the simple checklist ({u.simple} of {u.n}).
@@ -52,6 +62,6 @@ export function RulesVsUnseen({ s, agentKnown, agentLive }: { s: Scoreboard; age
         <li>The rules were frozen and committed before the {u.n} unseen cases were written, and were not changed after scoring.</li>
         </ul>
       </details>
-    </section>
+    </details>
   );
 }

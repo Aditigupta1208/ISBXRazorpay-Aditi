@@ -40,7 +40,7 @@ export function UsageReport() {
         <input id="tok" type="password" autoComplete="off" value={token} onChange={(e) => setToken(e.target.value)} placeholder="Admin token" className="min-h-11 flex-1 rounded-lg border border-line px-3 text-[14px]" />
         <button type="submit" disabled={!token || busy} className="min-h-11 rounded-lg bg-brand px-4 text-[14px] font-medium text-white disabled:opacity-50">{busy ? "Loading…" : "Show counts"}</button>
       </form>
-      <p role="status" className="mb-3 text-[14px] text-escalate">{msg}</p>
+      <p role="status" className="mb-3 text-[14px] text-danger">{msg}</p>
       {h && (
         <>
           <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">

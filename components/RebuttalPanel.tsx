@@ -12,7 +12,7 @@ const ghostBrand = `${btn} border border-brand bg-white text-brand`;
 const VERDICT_CHIP: Record<Verdict, string> = {
   holds_up: "bg-fight-soft text-fight",
   weak_spot: "bg-fold-soft text-fold",
-  likely_to_lose: "bg-escalate-soft text-escalate",
+  likely_to_lose: "bg-danger-soft text-danger",
 };
 const VERDICT_LINE: Record<Verdict, string> = {
   holds_up: "A reviewer would probably accept this.",
@@ -125,7 +125,7 @@ export function RebuttalPanel({
       )}
 
       {notice && (
-        <p className={`mt-3 rounded-[10px] px-3 py-2 text-[14px] ${notice.kind === "error" ? "bg-escalate-soft text-escalate" : "bg-[#F4F8FF] text-[#2B5BC8]"}`} role="status">
+        <p className={`mt-3 rounded-[10px] px-3 py-2 text-[14px] ${notice.kind === "error" ? "bg-danger-soft text-danger" : "bg-[#F4F8FF] text-[#2B5BC8]"}`} role="status">
           {notice.text}
         </p>
       )}

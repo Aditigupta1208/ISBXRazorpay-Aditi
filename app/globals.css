@@ -16,8 +16,10 @@
   --color-fight-soft: #E3F5EC;
   --color-fold: #8A4B08;
   --color-fold-soft: #FDF0DC;
-  --color-escalate: #B42318;
-  --color-escalate-soft: #FDE8E6;
+  --color-escalate: #5B3DB5;
+  --color-escalate-soft: #EFEAFB;
+  --color-danger: #B42318;
+  --color-danger-soft: #FDE8E6;
   --color-shield: #475569;
   --color-shield-soft: #EEF2F6;
   --color-warn: #B54708;

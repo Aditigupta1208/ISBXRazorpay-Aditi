@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 
 const pct = (v: number | null) => (v === null ? "n/a" : `${Math.round(v * 100)}%`);
 const TIER_TEXT: Record<Tier, string> = { below: "Below launch bar", launch: "Meets launch", target: "Meets target", stretch: "Meets stretch" };
-const TIER_CLS: Record<Tier, string> = { below: "bg-escalate-soft text-escalate", launch: "bg-fold-soft text-fold", target: "bg-fight-soft text-fight", stretch: "bg-fight-soft text-fight" };
+const TIER_CLS: Record<Tier, string> = { below: "bg-danger-soft text-danger", launch: "bg-fold-soft text-fold", target: "bg-fight-soft text-fight", stretch: "bg-fight-soft text-fight" };
 
 function valueFor(key: (typeof THRESHOLDS)[number]["key"], s: Summary | null, scored: number): { text: string; v: number | null } {
   if (!s) return { text: "n/a", v: null };
@@ -67,7 +67,7 @@ export default function EvalsPage() {
       <span className="inline-flex flex-wrap items-center gap-1.5">
         <CallChip call={call} short />
         {call !== label && (
-          <span className="text-escalate" title="Differs from the human answer">
+          <span className="text-danger" title="Differs from the human answer">
             <span aria-hidden>✗</span>
             <span className="sr-only">differs from the human answer</span>
           </span>
@@ -121,7 +121,7 @@ export default function EvalsPage() {
       </Card>
 
       <nav aria-label="On this page" className="mb-5 flex flex-wrap gap-2 text-[14px] font-semibold">
-        {[["#c15", "The case that matters"], ["#cases", "Each case"], ["#rules", "Rules vs unseen cases"], ["#limits", "What the numbers do not show"]].map(([href, label]) => (
+        {[["#c15", "The case that matters"], ["#cases", "Each case"], ["#rules-details", "Rules vs unseen cases"], ["#limits", "What the numbers do not show"]].map(([href, label]) => (
           <a key={href} href={href} className="inline-flex min-h-10 items-center rounded-full border border-line bg-white px-3.5 text-brand hover:border-brand">{label}</a>
         ))}
       </nav>

@@ -49,7 +49,8 @@ Values marked **sampled** were measured from the pixels of Razorpay's Agentic Da
 | `home-mint` | `#EBF9E5` to `#F4FBF2` | sampled | Soft gradient on the home screen only |
 | `fight` / `fight-soft` | `#0F7B4F` / `#E3F5EC` | ours | Fight chip |
 | `fold` / `fold-soft` | `#8A4B08` / `#FDF0DC` | ours | Fold chip |
-| `escalate` / `escalate-soft` | `#B42318` / `#FDE8E6` | ours | Escalate chip |
+| `escalate` / `escalate-soft` | `#5B3DB5` / `#EFEAFB` | ours (indigo, changed 9 Oct so Escalate does not read as an error) | Escalate chip, "Get this first" box |
+| `danger` / `danger-soft` | `#B42318` / `#FDE8E6` | ours | Errors and blocked states only |
 | `shield` / `shield-soft` | `#475569` / `#EEF2F6` | ours | "Chargeback Shield" (not our call) |
 | `warn` | `#B54708` | ours | Under 24 hours left |
 | `proto-banner` | `#FFF4CC` on `#5C4400` text | ours | Prototype disclaimer bar |

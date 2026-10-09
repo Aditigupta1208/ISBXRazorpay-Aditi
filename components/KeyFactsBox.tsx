@@ -46,7 +46,7 @@ export function KeyFactsButton({
           Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see a saved example where one exists.
         </p>
       )}
-      {error && <p className="mt-2 text-[14px] text-escalate" role="alert">{error}</p>}
+      {error && <p className="mt-2 text-[14px] text-danger" role="alert">{error}</p>}
       {result && !running && (
         <p className="mt-2 text-[13px] text-helper" data-testid="keyfacts-source">
           {result.status === "live"

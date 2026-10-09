@@ -46,7 +46,7 @@ const STATUS_ICON: Record<Status, string> = { pass: "✓", changed: "↻", block
 const STATUS_CLS: Record<Status, string> = {
   pass: "text-green-ink",
   changed: "text-fold",
-  blocked: "text-escalate",
+  blocked: "text-danger",
   na: "text-helper",
 };
 const slotLabel = (slot: string) => SLOT_INFO[slot]?.label ?? slot;
@@ -454,7 +454,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           </p>
           {acted && <p className="mt-1 text-[12px] font-semibold text-green-ink">{acted.type === "submit" ? "Contested (simulated)" : "Folded (simulated)"}</p>}
           {d.respond_by_hours_left < 6 && !acted && (
-            <p className="mt-3 rounded-[10px] bg-escalate-soft px-3 py-2 font-semibold text-escalate">Respond now. Less than 6 hours left.</p>
+            <p className="mt-3 rounded-[10px] bg-danger-soft px-3 py-2 font-semibold text-danger">Respond now. Less than 6 hours left.</p>
           )}
         </header>
 
@@ -502,7 +502,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             </div>
           )}
           {notice && (
-            <p role="status" className={`mb-4 rounded-2xl px-4 py-3 font-semibold ${notice.kind === "error" ? "bg-escalate-soft text-escalate" : "bg-shield-soft text-shield"}`}>
+            <p role="status" className={`mb-4 rounded-2xl px-4 py-3 font-semibold ${notice.kind === "error" ? "bg-danger-soft text-danger" : "bg-shield-soft text-shield"}`}>
               {notice.text}
             </p>
           )}
@@ -566,8 +566,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               )}
 
               {finalCall === "escalate" && !acted && (
-                <div id="get-first" className="mt-4 rounded-xl bg-[#FFF8E6] p-4">
-                  <p className="text-[12px] font-semibold tracking-[.6px] text-fold uppercase">Get this first</p>
+                <div id="get-first" className="mt-4 rounded-xl bg-escalate-soft p-4">
+                  <p className="text-[12px] font-semibold tracking-[.6px] text-escalate uppercase">Get this first</p>
                   <p className="mt-1 text-[16px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
                   {view.requestText && (
                     <div className="mt-3">
@@ -575,7 +575,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                       <p className="mt-1 rounded-xl bg-white p-3 text-[14px]">{view.requestText}</p>
                     </div>
                   )}
-                  <div className="mt-3 space-y-1.5 border-t border-[#F0E3BE] pt-3 text-[14px]">
+                  <div className="mt-3 space-y-1.5 border-t border-[#DDD3F5] pt-3 text-[14px]">
                     {view.defensibleAmount !== null && (
                       <p className="text-[#555]">Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).</p>
                     )}
@@ -718,7 +718,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           />
           <div id="draft-help" className="mt-1 flex justify-between text-[12px]">
             <span className="text-helper">Use [E1] style tags to cite a document, or [Razorpay] for Razorpay's records.</span>
-            <span className={draft.trim().length > DRAFT_LIMIT ? "font-semibold text-escalate" : "text-helper"}>
+            <span className={draft.trim().length > DRAFT_LIMIT ? "font-semibold text-danger" : "text-helper"}>
               {draft.trim().length} / {DRAFT_LIMIT}
             </span>
           </div>
@@ -751,7 +751,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                           </button>
                         ))
                       ) : (
-                        <span className="text-[12px] font-semibold text-escalate">Add a source or remove this sentence</span>
+                        <span className="text-[12px] font-semibold text-danger">Add a source or remove this sentence</span>
                       )}
                     </li>
                   );
@@ -774,7 +774,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
           <H3>Documents by slot</H3>
           {documentsBySlot.size === 0 ? (
-            <p className="text-[14px] text-escalate">No documents attached. Razorpay needs at least one to submit.</p>
+            <p className="text-[14px] text-danger">No documents attached. Razorpay needs at least one to submit.</p>
           ) : (
             <ul className="text-[14px]">
               {[...documentsBySlot].map(([slot, ids]) => (
@@ -818,7 +818,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           </p>
 
           {blockers.length > 0 && (
-            <p className="mt-4 rounded-[10px] bg-escalate-soft px-3 py-2 text-[14px] text-escalate" role="status">
+            <p className="mt-4 rounded-[10px] bg-danger-soft px-3 py-2 text-[14px] text-danger" role="status">
               <span className="font-semibold">You can't submit yet:</span> {blockers.join(". ")}.
             </p>
           )}
@@ -874,7 +874,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <li aria-hidden>→</li>
             <li className="rounded-full bg-shield-soft px-3 py-1">Under review</li>
             <li aria-hidden>→</li>
-            <li className={`rounded-full px-3 py-1 font-semibold ${state.outcome === "won" ? "bg-fight-soft text-fight" : state.outcome === "lost" ? "bg-escalate-soft text-escalate" : "bg-shield-soft"}`}>
+            <li className={`rounded-full px-3 py-1 font-semibold ${state.outcome === "won" ? "bg-fight-soft text-fight" : state.outcome === "lost" ? "bg-danger-soft text-danger" : "bg-shield-soft"}`}>
               {state.outcome === "won" ? "Won" : state.outcome === "lost" ? (acted.type === "fold" ? "Lost (accepted)" : "Lost") : "Won or lost"}
             </li>
           </ol>
@@ -985,7 +985,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                       </span>
                     ))}
                     {addedItem && !acted && (
-                      <button onClick={() => removeEvidence(e.id)} className="relative after:absolute after:-inset-2 after:content-['']  mt-1.5 block min-h-6 text-[12px] font-semibold text-escalate underline">
+                      <button onClick={() => removeEvidence(e.id)} className="relative after:absolute after:-inset-2 after:content-['']  mt-1.5 block min-h-6 text-[12px] font-semibold text-danger underline">
                         Remove
                       </button>
                     )}
@@ -1053,12 +1053,12 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 <textarea id="ev-text" rows={4} value={newText} onChange={(e) => setNewText(e.target.value)} placeholder="Paste the text of the document." className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] focus:border-brand-focus focus:outline-none" aria-describedby="ev-help" />
                 <div id="ev-help" className="mt-1 flex justify-between text-[12px]">
                   <span className="text-helper">Made-up or masked text only. No card numbers.</span>
-                  <span className={newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-escalate" : "text-helper"}>
+                  <span className={newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-danger" : "text-helper"}>
                     {newText.length} / {MAX_EVIDENCE_CHARS.toLocaleString()}
                   </span>
                 </div>
                 {addError && (
-                  <p role="alert" className="mt-2 text-[14px] font-semibold text-escalate">
+                  <p role="alert" className="mt-2 text-[14px] font-semibold text-danger">
                     {addError}
                   </p>
                 )}
@@ -1090,7 +1090,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   const isDispute = ev.evidenceId === null;
                   return (
                     <li key={`${ev.iso}-${ev.evidenceId ?? "d"}-${i}`} className="relative pb-3 last:pb-0">
-                      <span aria-hidden className={`absolute top-1.5 -left-[21px] h-2.5 w-2.5 rounded-full border-2 border-white ${isDispute ? "bg-escalate" : "bg-brand"}`} />
+                      <span aria-hidden className={`absolute top-1.5 -left-[21px] h-2.5 w-2.5 rounded-full border-2 border-white ${isDispute ? "bg-danger" : "bg-brand"}`} />
                       <p className="text-[12px] font-semibold">
                         {ev.label}
                         {i > 0 && gap > 0 && <span className="ml-2 font-normal text-helper">+{gap} day{gap === 1 ? "" : "s"}</span>}

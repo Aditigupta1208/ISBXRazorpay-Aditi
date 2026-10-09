@@ -48,7 +48,7 @@ export function LearnBox({ stats, usesSample }: { stats: LearnStats; usesSample:
                 Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see a saved example.
               </p>
             )}
-            {error && <p className="mt-2 text-[14px] text-escalate" role="alert">{error}</p>}
+            {error && <p className="mt-2 text-[14px] text-danger" role="alert">{error}</p>}
           </>
         )}
         {current && (current.status === "live" || current.status === "saved") && (

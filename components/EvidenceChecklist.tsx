@@ -29,7 +29,7 @@ export function EvidenceChecklist({ code, documentsBySlot, stale, docName }: { c
     <details className="group mt-3 rounded-xl border border-line">
       <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 px-3 py-2 text-[14px] font-semibold">
         <span>
-          What {code} needs: <span className={c.keyCovered === c.keyTotal ? "text-fight" : "text-escalate"}>{c.keyCovered} of {c.keyTotal} key documents in place</span>
+          What {code} needs: <span className={c.keyCovered === c.keyTotal ? "text-fight" : "text-danger"}>{c.keyCovered} of {c.keyTotal} key documents in place</span>
         </span>
         <span aria-hidden className="text-brand transition-transform group-open:rotate-90">›</span>
       </summary>

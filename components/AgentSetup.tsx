@@ -59,8 +59,8 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
               className={FIELD}
             />
             <div id="policy-help" className="mt-1 flex justify-between text-[12px]">
-              <span className={error ? "text-escalate" : "text-helper"}>{error ?? "Plain text. No card numbers."}</span>
-              <span className={over ? "text-escalate" : "text-helper"}>{profile.policy.length} / {MAX_POLICY_CHARS.toLocaleString()}</span>
+              <span className={error ? "text-danger" : "text-helper"}>{error ?? "Plain text. No card numbers."}</span>
+              <span className={over ? "text-danger" : "text-helper"}>{profile.policy.length} / {MAX_POLICY_CHARS.toLocaleString()}</span>
             </div>
             <label htmlFor="acceptance" className="mt-4 mb-1 block text-[14px] font-semibold">How do customers accept these terms?</label>
             <select id="acceptance" value={profile.acceptance} onChange={(e) => set("acceptance", e.target.value as Acceptance)} className={FIELD}>
@@ -69,7 +69,7 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
               ))}
             </select>
             <p className="mt-1 text-[13px] text-helper">For cancelled services (13.7), Visa wants the terms shown and agreed at the time of sale. A footer link alone usually does not count.</p>
-            <p role="status" className={`mt-4 text-[14px] ${over || error ? "text-escalate" : saved ? "text-fight" : "text-helper"}`}>
+            <p role="status" className={`mt-4 text-[14px] ${over || error ? "text-danger" : saved ? "text-fight" : "text-helper"}`}>
               {over || error
                 ? "Not used yet: fix the terms above."
                 : saved
