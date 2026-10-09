@@ -1,0 +1,36 @@
+name: Run the 30-case eval
+# Manual only. Click "Run workflow" on the Actions tab. Needs the repo secret GROQ_API_KEY.
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to run on and commit the results to
+        default: wip/eval-groq
+
+permissions:
+  contents: write
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run all cases on the live model
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          LLM_PROVIDER: groq
+        run: npm run eval
+      - name: Commit the results
+        run: |
+          git config user.name "eval-bot"
+          git config user.email "eval-bot@users.noreply.github.com"
+          git add eval/results
+          git diff --cached --quiet && echo "No new results" || (git commit -m "Add live model eval results" && git push)
