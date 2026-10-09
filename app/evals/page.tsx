@@ -238,7 +238,20 @@ export default function EvalsPage() {
       </p>
       </details>
 
-      <RulesVsUnseen s={rules} agentKnown={{ agree: agreeCount(v1Rows), n: n(v1Rows) }} />
+      <RulesVsUnseen
+        s={rules}
+        agentKnown={{ agree: agreeCount(v1Rows), n: n(v1Rows) }}
+        agentLive={
+          latest
+            ? (() => {
+                const unseenIds = new Set(rules.unseen.ids);
+                const inU = latest.rows.filter((r) => unseenIds.has(r.id));
+                const inK = latest.rows.filter((r) => !unseenIds.has(r.id));
+                return { name: latestName, known: { agree: agreeCount(inK), n: n(inK) }, unseen: { agree: agreeCount(inU), n: n(inU) } };
+              })()
+            : null
+        }
+      />
 
       <h2 id="limits" className="mb-2 scroll-mt-4 text-[16px] font-semibold">What these numbers do not show</h2>
       <ul className="mb-1 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">

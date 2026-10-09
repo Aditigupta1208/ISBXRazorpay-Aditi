@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { containsCardNumber, isFraudCode, sentenceHasSource, splitSentences } from "./guardrails";
+import { containsCardNumber, dedupeSentences, isFraudCode, sentenceHasSource, splitSentences } from "./guardrails";
 import { costUsd } from "./pricing";
 import { buildTimeline, daysBetween, formatIso } from "./timeline";
 import { DEMO_RATE_INR_PER_USD } from "./money";
@@ -157,7 +157,7 @@ export function toCheckView(out: DecisionOutput, c: CaseData, meta: Meta): Check
     decidingEvidence: out.deciding_evidence,
     missingEvidence: missing,
     contradictions: [...out.contradictions, ...flagged],
-    draft: call === "fight" || call === "escalate" ? out.draft_response ?? "" : "",
+    draft: call === "fight" || call === "escalate" ? dedupeSentences(out.draft_response ?? "") : "",
     slots: out.evidence_slots.map((s) => ({ evidenceId: s.evidence_id, slot: s.slot })),
     ruleText: out.rule_applied,
     odds: out.win_probability_estimate,
@@ -213,7 +213,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
   const fallback = (reason: string, message: string): AnalyzeResult =>
     added.length === 0 && deps.getSaved(c.id)
       ? { status: "saved", reason, message }
-      : { status: "unavailable", reason, message: reason === "no_key" ? "We couldn't run the check. Decide manually." : "We couldn't run the check. Decide manually. The AI model was busy or too slow, so you can also try Re-run check again in a moment." };
+      : { status: "unavailable", reason, message: reason === "no_key" ? "The live check is off in this demo, so your new document was not read. The call above is the saved result and does not include it. Decide manually." : "We couldn't run the check. Decide manually. The AI model was busy or too slow, so you can also try Re-run check again in a moment." };
 
   if (!deps.callModel) return fallback("no_key", "The live check is off in this demo, so you are seeing the saved result.");
 

@@ -59,6 +59,22 @@ export function splitSentences(draft: string): string[] {
   return merged.filter((s) => s.replace(/\[[^\]]*\]/g, "").trim().length > 0);
 }
 
+/**
+ * Drop sentences that repeat an earlier one word for word (ignoring case, spacing and the citation).
+ * Small live models sometimes loop on a sentence. This only removes exact repeats, so it never adds or changes a claim.
+ */
+export function dedupeSentences(draft: string): string {
+  const seen = new Set<string>();
+  const kept: string[] = [];
+  for (const sent of splitSentences(draft)) {
+    const key = sent.replace(/\[[^\]]*\]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    if (key && seen.has(key)) continue;
+    seen.add(key);
+    kept.push(sent);
+  }
+  return kept.join(" ");
+}
+
 export function citedIds(text: string): string[] {
   const ids: string[] = [];
   for (const m of text.matchAll(ANY_CITE)) {

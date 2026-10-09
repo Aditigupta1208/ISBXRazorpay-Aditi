@@ -556,7 +556,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     return <p className={`mt-4 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
                   })()
                 ) : null}
-                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.</p>}
+                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.{finalCall === "fold" ? " The reason above is what decides it: the evidence does not support a win." : ""}</p>}
 
               {(view.missingEvidence.length > 0 || view.contradictions.length > 0) && finalCall !== "escalate" && (
                 <p className="mt-3 text-[14px]">

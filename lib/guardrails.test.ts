@@ -108,3 +108,12 @@ test("checks summary says what happened to each check, not '5 of 7'", async () =
   assert.equal(checksSummary([{ status: "pass" }, { status: "changed" }, { status: "blocked" }]), "1 passed, 1 changed the answer, 1 need your attention");
   assert.equal(checksBadge([{ status: "pass" }, { status: "changed" }]), "1 to look at");
 });
+
+test("dedupeSentences removes exact repeats and keeps everything else", async () => {
+  const { dedupeSentences } = await import("./guardrails.ts");
+  const a = "The customer accepted the terms on 3 May. [E1]";
+  const b = "The audit log shows no cancel request. [E2]";
+  assert.equal(dedupeSentences(`${a} ${b} ${a.toLowerCase()} ${a}`), `${a} ${b}`);
+  assert.equal(dedupeSentences(`${a} ${b}`), `${a} ${b}`);
+  assert.equal(dedupeSentences(""), "");
+});

@@ -97,6 +97,22 @@ function missingFrom(s?: string): string[] {
 }
 
 /** The full view for the check panel, from the saved result plus the builder-authored supplements. */
+/**
+ * Placeholder win chance for a saved result. Confidence is confidence in the call, so on a Fold a high confidence
+ * means the fight is unlikely to win; reading it as the chance to win showed 80% beside a Fold. Not model output.
+ */
+/** One saved sentence read awkwardly on screen; the saved file is untouched and Under the hood still shows it as the model wrote it. */
+const READABLE_REASON: Record<string, string> = {
+  C06: "Thinking about cancelling is not the same as cancelling. The audit log shows no completed cancellation request.",
+};
+
+const FOLD_ODDS: Record<string, number> = { High: 0.15, Medium: 0.3, Low: 0.4 };
+export function savedOdds(call: string, confidence: string): number {
+  if (call === "fold") return FOLD_ODDS[confidence] ?? 0.3;
+  if (call === "escalate") return 0.5;
+  return SUPP.odds_from_confidence[confidence] ?? 0.5;
+}
+
 export function getCheckView(caseId: string): CheckView | undefined {
   const c = getCase(caseId);
   const s = saved.get(caseId);
@@ -108,15 +124,15 @@ export function getCheckView(caseId: string): CheckView | undefined {
     caseId,
     call: s.call,
     confidence,
-    reason: s.reason ?? "",
+    reason: READABLE_REASON[caseId] ?? s.reason ?? "",
     decidingEvidence: s.decidingEvidence,
     missingEvidence: missingFrom(raw.deciding_evidence),
     contradictions: [],
     draft: s.draft ?? "",
     slots: s.slots,
     ruleText: getRuleText(c.dispute.reason_code) ?? "",
-    odds: SUPP.odds_from_confidence[confidence] ?? 0.5,
-    oddsNote: "The saved result has no estimate, so this is set from its confidence. A live check gives its own.",
+    odds: savedOdds(s.call, confidence),
+    oddsNote: "The saved result has no estimate, so this is set from its call and confidence. A live check gives its own.",
     defensibleAmount: sup.defensible_amount ?? null,
     getFirst: sup.get_first,
     requestText: sup.request_text,
