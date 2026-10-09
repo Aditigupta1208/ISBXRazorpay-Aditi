@@ -31,7 +31,8 @@ Left, only if time: another live eval run after the freeze fixes (do not tune on
 5. Rule R8: a Fight with no key document becomes Escalate (frozen definition in `docs/HELDOUT_TEST.md`; build after the held-out labels).
 6. A short line on dispute ratio and "setting a precedent" in the money section (open question).
 7. Held-out run: your labels for C31 to C40, then one run on prompt v2.3.
+8. Deadline rescue channel: let the merchant choose Slack (merchant A already uses a Slack webhook) as well as WhatsApp. Preview only; nothing is sent. Raise its priority: a winnable USD 99 dispute was lost to the clock.
 
 ## Waiting on you
 
-- Next merchant calls: ask "Tell me about a dispute you accepted or lost", then run the prototype test (Part 3 of `docs/MERCHANT_CONVERSATIONS.md`).
+- Next merchant calls: run the prototype test (Part 3 of `docs/MERCHANT_CONVERSATIONS.md`). The accepted-or-lost follow-up is done for all three.

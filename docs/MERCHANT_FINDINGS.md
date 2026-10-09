@@ -1,6 +1,6 @@
 # Merchant conversations: findings (9 Oct 2026)
 
-Three conversations by the builder, using the question set in `docs/MERCHANT_CONVERSATIONS.md` (Parts 1 and 2; the prototype test was not run). Names and businesses are removed. The transcripts are held by the builder, not in this repo. n = 3, so these are signals that shaped choices, not evidence of how most merchants behave.
+Three conversations by the builder, using the question set in `docs/MERCHANT_CONVERSATIONS.md`, plus a short follow-up round on a dispute each had accepted or lost (the prototype test is still to run). Names and businesses are removed. The transcripts are held by the builder, not in this repo. n = 3, so these are signals that shaped choices, not evidence of how most merchants behave.
 
 | | Merchant A | Merchant B | Merchant C |
 |---|---|---|---|
@@ -25,14 +25,26 @@ Three conversations by the builder, using the question set in `docs/MERCHANT_CON
 | C: no assigning, no internal notes, no history of similar disputes. A Google Sheet is used instead. | Team features are out of scope. History is partly covered by Results. | Not built, named as next |
 | After the dispute they changed checkout and process: 3D Secure, a terms tick box, a monthly usage summary email, milestone approvals, photos of sealed packages. | This is what the prevention tip and the proposed policy patch should suggest, in the merchant's own terms. A's monthly usage email ("that email is gold") and C's milestone approvals are the strongest. | Tips built; policy patch proposed |
 
-## What the conversations did not test, and one thing that surprised us
+## Follow-up round: a dispute they accepted or lost
 
-- All three won. Nobody told a story about a Fold, an Escalate, or a loss. The Fold-or-Fight and Escalate calls were not tested by these conversations. A follow-up on "a dispute you accepted or lost" is the missing piece.
-- A fought partly to protect his dispute ratio: "If I lose, chargeback ratio goes up. Card networks start watching." B fought to avoid "setting a precedent". The advisor's money line prices only the amount and the fee. It does not mention either reason. Earlier research (in the build log) found that winning a dispute does not lower the card network's ratio, so A's belief may be wrong, and the advisor should explain that. Whether to add a line for this is open.
+| Merchant | What happened | What it supports |
+|---|---|---|
+| A | **Accepted** a USD 12 renewal dispute: zero logins in 60 days and no pre-renewal reminder sent. "For twelve dollars, I'm not spending three days pulling logs." | Fold on a small, no-usage dispute is what he does by hand. It also points to a prevention fix: a renewal reminder. |
+| A | **Lost** a USD 99 "unauthorized" dispute without responding: he was travelling, missed the 3-day deadline and it closed as a loss, although he had 3D Secure and login logs. He now sends a webhook to Slack. | The strongest evidence for Deadline rescue: a winnable dispute lost to the clock, not to the evidence. Note the reason was "unauthorized", a fraud-type reason that this prototype routes to Chargeback Shield, so the point is about the deadline, not the call. The channel that worked for him was Slack, not WhatsApp. |
+| B | **Lost** a USD 120 goods dispute: "delivered" but no name or signature ("delivered to reception"), and the bank sided with the customer. Now requires a signature and photographs every box. Outside the target segment (physical goods). | Proof that exists only if it is captured before the dispute, so thin evidence loses. Supports the thin-evidence rule and the idea of proof at checkout. |
+| C | **Accepted** a USD 450 "services not rendered" dispute because the agency failed: a staff member left, two weeks of work were missed, "we had access logs but no real deliverables". The client left. | Fold is right when the merchant's own record admits the problem. Access logs alone are not enough, which is the thin-evidence case. The loss of the client is a cost the money line does not show. |
+
+## What the conversations still do not test
+
 - The prototype test (Part 3) has not been run with any of them.
+- Nobody was asked whether they would act on a message with the response already drafted, or what they would do if the advisor said Fold on a dispute they were sure they could win.
+- A's belief that losing pushes his dispute ratio up, and B's "setting a precedent", are reasons to fight that the money line does not price. Earlier research found that winning does not lower the card network's ratio, so the advisor could say so. Open.
+- n = 3, one outside the segment, and two of the five stories are about fraud-type or physical-goods disputes.
 
 ## Quotes available (ask each person before using)
 
 - "Auto-compile the evidence packet. Pull my logs, emails, usage into one PDF when the dispute hits. I'll review. But 80% done." (Merchant A)
 - "Bank wants the same things every time. Checklist and template PDF. Cut time in half. Right now reinventing the wheel." (Merchant C)
 - "$5 and $500 hit the same way." (Merchant A)
+- "By the time I opened email, window gone... I had 3DS and login logs. I could have won." (Merchant A)
+- "We had access logs but no real deliverables... better to accept and move on." (Merchant C)
