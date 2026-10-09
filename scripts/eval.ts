@@ -22,7 +22,7 @@ async function main() {
 
   const slow = provider === "groq" || provider === "gemini";
   const concurrency = Math.max(1, Number(process.env.EVAL_CONCURRENCY) || (slow ? 1 : 4));
-  const pauseMs = Number.isFinite(Number(process.env.EVAL_PAUSE_MS)) && process.env.EVAL_PAUSE_MS ? Number(process.env.EVAL_PAUSE_MS) : slow ? 20_000 : 0;
+  const pauseMs = Number.isFinite(Number(process.env.EVAL_PAUSE_MS)) && process.env.EVAL_PAUSE_MS ? Number(process.env.EVAL_PAUSE_MS) : slow ? 45_000 : 0;
   console.log(`Running ${cases.length} cases: prompt ${PROMPT_VERSION}, model ${model}${slow ? `, one at a time with a ${pauseMs / 1000} s pause (about ${Math.round((cases.length * (pauseMs / 1000 + 10)) / 60)} minutes)` : ""}`);
   const rows = await runAll(
     cases,
@@ -32,13 +32,40 @@ async function main() {
     (r) => console.log(`  ${r.id}: label ${r.label}, model said ${r.raw ?? "none"}, final ${r.final ?? "none"}${r.answeredBy && r.answeredBy !== model ? ` (answered by backup ${r.answeredBy})` : ""}`),
     pauseMs,
   );
+  // Free plans run out of tokens partway through a long run. Cases with no answer are tried again after a wait,
+  // and a run that still has blanks is NOT written as a result, so a partial run can never pass as a score.
+  const retryRounds = Number.isFinite(Number(process.env.EVAL_RETRY_ROUNDS)) && process.env.EVAL_RETRY_ROUNDS ? Number(process.env.EVAL_RETRY_ROUNDS) : slow ? 5 : 0;
+  const retryWaitMs = Number.isFinite(Number(process.env.EVAL_RETRY_WAIT_MS)) && process.env.EVAL_RETRY_WAIT_MS ? Number(process.env.EVAL_RETRY_WAIT_MS) : 8 * 60_000;
+  for (let round = 1; round <= retryRounds; round++) {
+    const blank = rows.map((r, i) => (r.status === "failed" ? i : -1)).filter((i) => i >= 0);
+    if (blank.length === 0) break;
+    console.log(`Round ${round}: ${blank.length} case(s) got no answer (${blank.map((i) => rows[i].id).join(", ")}). Waiting ${Math.round(retryWaitMs / 60000)} min, then trying them again.`);
+    await new Promise((r) => setTimeout(r, retryWaitMs));
+    const again = await runAll(
+      blank.map((i) => cases[i]),
+      labels,
+      { callModel, model, system: prompt.system, toolSchema: prompt.toolSchema, getSaved: () => undefined },
+      concurrency,
+      (r) => console.log(`  retry ${r.id}: label ${r.label}, model said ${r.raw ?? "none"}, final ${r.final ?? "none"}${r.answeredBy && r.answeredBy !== model ? ` (answered by backup ${r.answeredBy})` : ""}`),
+      pauseMs,
+    );
+    blank.forEach((i, k) => (rows[i] = again[k]));
+  }
+  const stillBlank = rows.filter((r) => r.status === "failed").map((r) => r.id);
   const summary = summarize(rows);
   const run = { prompt: PROMPT_VERSION, model, date };
-  mkdirSync(dir, { recursive: true });
-  const base = path.join(dir, `${PROMPT_VERSION}-${model.replace(/[^A-Za-z0-9._-]/g, "-")}-${date}`); // model ids can contain "/"
+  // An incomplete run goes beside the results, never into them: the Evals page and the gate read eval/results only.
+  const outDir = stillBlank.length > 0 ? path.join(path.dirname(dir), "incomplete") : dir;
+  mkdirSync(outDir, { recursive: true });
+  const base = path.join(outDir, `${PROMPT_VERSION}-${model.replace(/[^A-Za-z0-9._-]/g, "-")}-${date}`); // model ids can contain "/"
   writeFileSync(`${base}.json`, JSON.stringify({ run, summary, rows }, null, 2) + "\n");
   writeFileSync(`${base}.md`, toMarkdown(run, rows, summary));
   console.log(`Wrote ${base}.json and ${base}.md`);
+  if (stillBlank.length > 0) {
+    console.log(`INCOMPLETE: ${stillBlank.length} of ${rows.length} cases still have no answer (${stillBlank.join(", ")}). Saved to ${outDir}, not to ${dir}. This is not a score.`);
+    process.exitCode = 3;
+    return;
+  }
   // Release gate: a prompt or model change ships only if nothing is below its launch bar. Use --gate to fail the command when it is.
   const gate = releaseGate(summary);
   console.log(gate.pass ? "Release gate: PASS" : "Release gate: FAIL");

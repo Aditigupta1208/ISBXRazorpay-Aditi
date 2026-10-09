@@ -83,3 +83,10 @@ Full text of each case is in the JSON file. Open it, or ask me to print them as 
 1. Send me the filled sheet. I add the cases to `data/cases.json` and your labels to `data/labels.json` as "Held-out, confirmed by the builder".
 2. I build R8, then you start the GitHub Action once for prompt v2.3 as it is.
 3. We read the result together and decide what, if anything, to change. Anything I change is reported as tuned.
+
+
+## Attempt 1 (9 Oct, about 23:00 IST): incomplete, not a score
+
+The first GitHub Action run of all 40 cases on prompt v2.3 (R8 built) ended with 17 of 40 cases unanswered. Groq's free limits ran out: `gpt-oss-120b` hit its daily token cap (200,000) and Qwen its per-minute output cap, so the backup chain returned nothing. The held-out cases C31 to C37 and C39 got no answer. The three that were answered were correct (C33 Accept, C38 Accept, C40 routed to fraud cover). The "55% agreement" in that log counts the blanks as misses, so it measures the quota, not the agent.
+
+What was done: the run is kept in `eval/incomplete/` as evidence and is not shown on the Evals page. The earlier 30-case v2.3 result (86%), which that run had overwritten, was restored. The prompt, labels and rules were not changed. The runner now waits and retries unanswered cases (up to 5 rounds of 8 minutes), pauses 45 seconds between cases on Groq, and refuses to write a run with any blank cases into `eval/results/`. Attempt 2 is the first valid run. Both attempts are disclosed.
