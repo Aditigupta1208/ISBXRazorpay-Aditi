@@ -69,7 +69,7 @@ export function Breadcrumb() {
     : null;
   if (!trail) return null;
   return (
-    <nav aria-label="Breadcrumb" className="mb-3 flex flex-wrap items-center gap-x-1.5 text-[13px] text-helper print:hidden">
+    <nav aria-label="Breadcrumb" className={`mb-3 flex flex-wrap items-center gap-x-1.5 text-[13px] text-helper print:hidden ${path.startsWith("/disputes/") ? "mx-auto max-w-[820px]" : ""}`}>
       {trail.map(([label, href], i) => (
         <span key={label} className="flex items-center gap-1.5">
           {i > 0 && <span aria-hidden>›</span>}

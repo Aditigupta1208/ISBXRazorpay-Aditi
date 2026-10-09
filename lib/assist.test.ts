@@ -113,7 +113,7 @@ test("results come back in document order", () => {
 });
 
 test("every saved key fact is word for word in its document (nothing is dropped on load)", () => {
-  for (const id of ["C01", "C06", "C15"]) {
+  for (const id of ["C01", "C04", "C06", "C08", "C13", "C14", "C15"]) {
     const saved = getSavedKeyFacts(id);
     assert.ok(saved, id);
     const raw = (JSON.parse(JSON.stringify(require_json())) as { cases: Record<string, { facts: unknown[] }[]> }).cases[id];

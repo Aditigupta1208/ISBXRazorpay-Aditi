@@ -23,7 +23,7 @@ Done when: a stranger can open the public URL and click through all 16 disputes.
 - [x] Check panel built from the saved result: call card, confidence, reason, Visa rule, deciding evidence (click highlights the card), slot mapping, money block, editable draft with a 1,000-character counter and citation chips
 - [x] `lib/guardrails.ts` with R1 to R7 (see `docs/pm/05-data-and-stack.md`) and `lib/money.ts` (formula, one fixed demo rate labelled "demo rate", fees with source URL and date); both run on saved results and are unit-tested
 - [x] Actions: Approve and submit, Fold, Escalate, each with a confirm dialog and the simulated request panel ("Simulated: not sent to Razorpay"); partial contest when `defensible_amount` is set
-- [ ] Draft contest on Escalate (FR-23b): moved to M3, because the saved v1 Escalate results have no draft to save
+- [x] Draft contest on Escalate (FR-23b): moved to M3, because the saved v1 Escalate results have no draft to save (done in M3, prompt v2.2)
 - [x] Outcome and next steps: Won/Lost toggle, "what the agent learns" line, 2 to 3 next steps, prevention tip
 - [x] "Under the hood" drawer: result source, model, prompt version, safety checks, raw JSON
 
@@ -54,7 +54,7 @@ Done when: on C06, pasting "Billing audit log, 30 Jul 2026: customer clicked Can
 - [x] `scripts/eval.ts` (`npm run eval`): runs all cases through `lib/agent.ts`, compares with `data/labels.json`, writes `eval/results/<prompt>-<model>-<date>.json` and a markdown summary
 - [x] Metrics: decision accuracy (overall, checklist-friendly, needs-judgment), deciding-evidence overlap, citation pass rate, safety-rule triggers, fraud routing, injection resisted, average cost and time
 - [x] `/evals` page: metric cards and per-case table (Label, Checklist, ChatGPT v1 saved, Claude run saved, Claude v2.1 latest); C15 highlighted; limits stated; thresholds from the PRD (launch, target, stretch)
-- [ ] Run `npm run eval` once on the live model and commit the results file. The script now runs one case at a time with a pause on Groq or Gemini (about 15 minutes for 30 cases) and records which model really answered. **Run it on your own machine** (the build sandbox cannot reach Groq): `GROQ_API_KEY=... npm run eval`. Do it after the free daily allowance has reset
+- [x] Ran the 30-case eval on the live model chain through the GitHub Action (9 Oct): prompt v2.2 83%, prompt v2.3 86%. Results are in `eval/results/`
 
 Built and tested against a stand-in server (the fake run was not committed). `/evals` shows "No automated run yet" until a real run is committed. C17 to C20 have no saved v1 run.
 
@@ -65,7 +65,7 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 - [x] `/how-it-works` page: flow (dispute record + evidence → prompt v2.1 → Claude API → safety rules → merchant approval → outcome), the seven Track 2 answers, assumption A1 (overlap with Dispute Responder), out of scope, limitations
 - [x] `/agent-studio` setup page (terms and how customers accept them are sent into each check as data; approvals locked on; on/off switch) as in `docs/pm/04-screens.md`
 - [x] README: what it is, live link, how to run locally, architecture, where the eval data lives, disclaimer
-- [ ] Copy pass on every screen; keyboard and focus check; fix rough edges. The visual and usability audit of 9 Oct is in `docs/UX_AUDIT.md`
+- [x] Copy pass on every screen; keyboard and focus check; fix rough edges. The visual and usability audit of 9 Oct is in `docs/UX_AUDIT.md` (fixes done 9 Oct)
 - [x] Update `docs/DEMO_SCRIPT.md`: the 90-second path from `docs/pm/04-screens.md` (C04, C06, C15, C16, evals)
 
 ## M5b: Cuts brought back (6 Oct, decided by you)
@@ -88,7 +88,7 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 - [x] Adding or removing evidence re-runs the check on its own and scrolls to the new answer; clearer changed-call banner
 - [x] Disclosure: tour steps for reviewers, "Live checks, saved results and the helpers" on How it works, clear failure messages, waiting notice
 - [x] `/api/llm-status` diagnostics (deployment, key variable, thinking level, backups; `?probe=1`, `?models=1`)
-- [ ] Not proven: Claude as a provider; a full 30-case live eval; regenerating the saved results (still ChatGPT v1)
+- [ ] Not proven: Claude as a provider; regenerating the saved results (still ChatGPT v1)
 
 ## M6: Note, video, submit (11 to 13 Oct)
 

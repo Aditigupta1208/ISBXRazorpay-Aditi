@@ -55,7 +55,7 @@ export default function EvalsPage() {
     { name: "Agent, prompt v1", sub: `saved, ChatGPT, ${n(v1Rows)} cases`, s: v1, n: n(v1Rows), agent: true },
     ...(latest
       ? [
-          { name: `Agent, prompt ${latestName}`, sub: `${answeredByShort(latest.rows, latest.run.model)}, ${latest.run.date}, ${n(latest.rows)} cases`, s: latest.summary, n: n(latest.rows), agent: true },
+          { name: `Agent, prompt ${latestName}`, sub: `${answeredByShort(latest.rows, latest.run.model).replace("openai/gpt-oss-20b", "openai/gpt-oss-20b (since removed)")}, ${latest.run.date}, ${n(latest.rows)} cases`, s: latest.summary, n: n(latest.rows), agent: true },
         ]
       : []),
   ];
@@ -99,6 +99,20 @@ export default function EvalsPage() {
           ) : (
             <Stat label={`Agent ${PROMPT_VERSION} (automated)`} value="Not run yet" note="run on the live model" muted />
           )}
+        </div>
+        <div className="space-y-2 border-t border-line px-4 py-4 md:px-5" role="img" aria-label="Agreement with the human answer, as bars">
+          {[
+            { name: "Fixed checklist", v: agreeCount(only(v1Ids)) / Math.max(1, n(only(v1Ids))), cls: "bg-[#9AA3B5]" },
+            { name: "Agent v1 (saved)", v: agreeCount(v1Rows) / Math.max(1, n(v1Rows)), cls: "bg-brand" },
+            ...(latest ? [{ name: `Agent ${latestName} (live)`, v: agreeCount(latest.rows) / Math.max(1, n(latest.rows)), cls: "bg-fight" }] : []),
+          ].map((b) => (
+            <div key={b.name} className="grid grid-cols-[130px_1fr_44px] items-center gap-3 text-[13px] md:grid-cols-[170px_1fr_48px]">
+              <span>{b.name}</span>
+              <span className="h-2 overflow-hidden rounded-full bg-[#EDEDED]"><span className={`block h-full rounded-full ${b.cls}`} style={{ width: `${Math.round(b.v * 100)}%` }} /></span>
+              <b className="text-right font-semibold">{Math.round(b.v * 100)}%</b>
+            </div>
+          ))}
+          <p className="text-[13px] text-helper">Share of cases where the call matched the human answer. The three runs cover different case sets, so compare each with its checklist, not with each other.</p>
         </div>
         <p className="border-t border-line px-4 py-3 text-[13px] text-helper md:px-5">
           The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases) {latest ? "were not in the old saved run; the newer run below covers them" : "have no saved agent run"}. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.

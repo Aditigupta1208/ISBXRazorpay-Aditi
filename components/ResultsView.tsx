@@ -91,7 +91,13 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
                         <td className="px-4 py-3 font-semibold md:px-5">Fight, {r.confidence.toLowerCase()} confidence</td>
                         <td className="px-2 py-3">{r.n}</td>
                         <td className="px-2 py-3">{Math.round(ODDS_BY_CONFIDENCE[r.confidence] * 100)}%</td>
-                        <td className="px-4 py-3 md:px-5">Won <b className="font-semibold">{r.won} of {r.n}</b> ({pct(r.won / r.n)})</td>
+                        <td className="px-4 py-3 md:px-5">
+                          Won <b className="font-semibold">{r.won} of {r.n}</b> ({pct(r.won / r.n)})
+                          <div className="mt-1.5 space-y-1" role="img" aria-label={`AI estimate ${Math.round(ODDS_BY_CONFIDENCE[r.confidence] * 100)}%, actual ${pct(r.won / r.n)}`}>
+                            <div className="h-1.5 w-40 overflow-hidden rounded-full bg-[#EDEDED]"><div className="h-full rounded-full bg-[#9DB4E8]" style={{ width: `${Math.round(ODDS_BY_CONFIDENCE[r.confidence] * 100)}%` }} /></div>
+                            <div className="h-1.5 w-40 overflow-hidden rounded-full bg-[#EDEDED]"><div className="h-full rounded-full bg-fight" style={{ width: `${Math.round((r.won / r.n) * 100)}%` }} /></div>
+                          </div>
+                        </td>
                       </tr>
                     ))}
                     <tr className="border-b border-line">
@@ -108,6 +114,7 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
                     </tr>
                   </tbody>
                 </table>
+                <p className="border-t border-line px-4 py-2.5 text-[13px] text-helper md:px-5">Under each fight row: the light blue bar is the AI estimate, the green bar is what happened.</p>
               </div>
             </Card>
           </Section>

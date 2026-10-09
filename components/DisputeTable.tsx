@@ -41,6 +41,14 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
   const [filter, setFilter] = useState<"all" | Call>("all");
   const [sort, setSort] = useState<SortKey>("deadline");
   const [actions, setActions] = useState<Record<string, string>>({});
+  const [confirmReset, setConfirmReset] = useState(false);
+  const resetAll = () => {
+    if (!confirmReset) return setConfirmReset(true);
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith("da:v1:") && k !== "da:v1:tips-hidden" && k !== "da:v1:tips-seen").forEach((k) => localStorage.removeItem(k));
+    } catch { /* storage blocked: nothing was saved anyway */ }
+    window.location.reload();
+  };
   const hasActions = Object.keys(actions).length > 0; // the Status column only appears once you have acted on something
 
   useEffect(() => {
@@ -178,7 +186,10 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
           </tbody>
         </table>
       </div>
-      <p className="px-[18px] py-3.5 text-[13px] text-helper">These calls were prepared in advance. Open a dispute to run a live check. {rateNote}</p>
+      <p className="px-[18px] py-3.5 text-[13px] text-helper">
+        These calls were prepared in advance. Open a dispute to run a live check. {rateNote}{" "}
+        <button type="button" onClick={resetAll} className="-my-3 min-h-10 py-3 font-semibold text-helper underline md:min-h-0">{confirmReset ? "Click again to clear everything you did in this browser" : "Reset the demo"}</button>
+      </p>
     </div>
   );
 }
