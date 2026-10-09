@@ -31,3 +31,14 @@ test("digest lists each dispute", () => {
   assert.match(digestText([row(), row({ disputeId: "disp_demoC05" })]), /2 disputes/);
   assert.equal(digestText([]), "No disputes in today's digest.");
 });
+
+test("alert body drops what the chip and badge already show", () => {
+  const b = alertBodyForTest();
+  assert.ok(!/Advisor's call/.test(b) && !/left to respond/.test(b));
+  assert.match(b, /Decided by: E3, E4/);
+});
+import { alertBody } from "./alertRules.ts";
+function alertBodyForTest() {
+  const r = row();
+  return alertBody(r, decide(r, DEFAULT_RULES));
+}

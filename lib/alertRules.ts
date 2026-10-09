@@ -65,6 +65,14 @@ export function alertText(r: AlertRow, d: Decision): string {
   return lines.join("\n");
 }
 
+/** The body of an alert bubble. The call and the time left are shown beside it as a chip and a badge, so they are not repeated here. */
+export function alertBody(r: AlertRow, d: Decision): string {
+  const lines = [`${r.amountText} (${r.inrText}) · Visa ${r.reasonCode} ${r.reason}`, r.merchant];
+  if (r.gap) lines.push(r.gap);
+  if (d.suggestFold) lines.push("The advisor suggests Fold. You decide: nothing is accepted for you.");
+  return lines.join("\n");
+}
+
 export function digestText(rows: AlertRow[]): string {
   if (rows.length === 0) return "No disputes in today's digest.";
   return [`Today's digest: ${rows.length} dispute${rows.length > 1 ? "s" : ""} below your alert rules`, ...rows.map((r) => `- ${r.disputeId}: ${r.amountText}, ${r.reasonCode}, ${r.timeText} left, ${r.call ? CALL_WORD[r.call] : "not checked"}`)].join("\n");
