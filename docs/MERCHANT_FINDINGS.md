@@ -63,6 +63,17 @@ Three conversations by the builder, using the question set in `docs/MERCHANT_CON
 
 His other point: "The warning email didn't change my behaviour. The loss did. Warnings don't work. Losses work." That supports showing the money consequence at the moment of decision, which the advisor already does, more than sending warnings.
 
+**Reply received from Razorpay support (9 Oct, pasted by the builder).** The email is signed "The Razorpay Team" with no named person or ticket number, and says its answers rest on "public documentation and standard industry practices". Treat it as indicative until the original (with headers and a ticket number) is saved.
+
+| Question | The reply | How far to rely on it |
+|---|---|---|
+| Does a submitted contest accept more evidence? | No. After `action=submit` the case is `under_review`; evidence can only be changed before, using `action=draft`. | High: it agrees with Razorpay's contest API page. Safe to build on: "save as a draft, get the document, then submit". |
+| Own ratio limit? | Yes, Razorpay monitors dispute rates separately from the card networks, publishes no single limit, and "often recommends" staying under 0.5%. It says networks flag merchants at about 1%. Ratio is disputes divided by successful transactions. | Medium-low: the 0.5% figure is not in any public page I found. Do not state it in the product. |
+| Counts when raised or when lost? | "Generally" when raised. On whether a win changes the ratio, it says to contact support with account details. | Medium: matches the secondary sources, but the reply does not answer the win question. |
+| Above the limit? | A warning first, then possibly settlement holds, a rolling reserve, a more frequent review, or suspension. | Medium-low: generic. |
+
+So the facts we can use are: a submitted contest is final, and a dispute counts when it is raised. Still not established: whether a win changes the ratio, and Razorpay's own limit. The ratio tile and any ratio advice stay on hold. To make this citable, save the original email with its headers and ticket number, and reply asking the two open points ("does a won dispute remain in the ratio?" and "where is the 0.5% guidance published?").
+
 What this means: "submit now, mark this pending" is not safe advice, because a submitted contest cannot be added to. The advisor should say "save as a draft, get the document, then submit" while the deadline allows it, and "submit what you have" only as a clear last resort. And the advisor should not tell a merchant that fighting protects their ratio, or that it does not, until Razorpay or Visa confirms it for them. The next step is the redacted warning email from merchant C (he has agreed to send one if emailed) and Razorpay's own answer on their thresholds.
 
 ## What the conversations still do not test

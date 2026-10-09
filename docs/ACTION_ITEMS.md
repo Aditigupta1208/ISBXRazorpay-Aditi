@@ -41,7 +41,7 @@ Ordered by how many of the three merchants asked for it.
 | 11 | What-if evidence, with a deadline check on "Get this first" | B | Code only |
 | 12 | Held-out run: your labels for C31 to C40, then one run on prompt v2.3 | n/a | Waiting on you |
 
-Facts checked 9 Oct (see `docs/MERCHANT_FINDINGS.md`): a submitted contest cannot be added to (draft first, then submit), so do not suggest "submit now, mark pending". The ratio is counted when a dispute is raised (secondary sources); Razorpay's own thresholds are not public. Merchant C remembers a 2023 Razorpay email quoting 0.9% against a 1% network threshold and will send a redacted copy if emailed (his ops manager must agree; give him a day; say who you are and that his name will not be used). Ask Razorpay support for their limit before putting a ratio tile or any ratio advice in the product.
+Razorpay support replied on 9 Oct (unsigned, no ticket number): a submitted contest is final (matches the API docs); a dispute "generally" counts when raised; a 0.5% guidance figure is unconfirmed. Save the original email with headers and ask the two open points. Facts checked 9 Oct (see `docs/MERCHANT_FINDINGS.md`): a submitted contest cannot be added to (draft first, then submit), so do not suggest "submit now, mark pending". The ratio is counted when a dispute is raised (secondary sources); Razorpay's own thresholds are not public. Merchant C remembers a 2023 Razorpay email quoting 0.9% against a 1% network threshold and will send a redacted copy if emailed (his ops manager must agree; give him a day; say who you are and that his name will not be used). Ask Razorpay support for their limit before putting a ratio tile or any ratio advice in the product.
 
 ## Waiting on you
 
