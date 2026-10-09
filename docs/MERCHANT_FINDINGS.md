@@ -34,11 +34,29 @@ Three conversations by the builder, using the question set in `docs/MERCHANT_CON
 | B | **Lost** a USD 120 goods dispute: "delivered" but no name or signature ("delivered to reception"), and the bank sided with the customer. Now requires a signature and photographs every box. Outside the target segment (physical goods). | Proof that exists only if it is captured before the dispute, so thin evidence loses. Supports the thin-evidence rule and the idea of proof at checkout. |
 | C | **Accepted** a USD 450 "services not rendered" dispute because the agency failed: a staff member left, two weeks of work were missed, "we had access logs but no real deliverables". The client left. | Fold is right when the merchant's own record admits the problem. Access logs alone are not enough, which is the thin-evidence case. The loss of the client is a cost the money line does not show. |
 
+## Round 3: how they would use it (questions on alerts, trust, Fold and why they fight)
+
+| What we heard | Who | What it means for the product |
+|---|---|---|
+| The way in is an alert, not a tab. A and C want Slack, B wants WhatsApp (or a call for a big one). "Nobody clicks tabs." Email is ignored. | A, B, C | Deadline rescue is the front door, not a side feature. It needs a channel choice (Slack or WhatsApp). The dashboard entry alone will not be opened. |
+| Alert rules are by amount and by reason, not one cutoff: A, over USD 50 or any fraud-type reason, else a daily digest; B, everything (2 to 3 a month); C, over USD 1,000, plus "services not rendered" always. | A, B, C | A small "Your rules" panel: alert above an amount, always alert for chosen reasons, digest for the rest. |
+| A Fold has to name the missing document or the rule, not a probability. A: "the reason has to name the missing document... the gap." B: "tell me the rule." C: "'confidence: low' is a black box. I've seen enough dashboards with made-up percentages." | A, B, C | The Fold and Escalate reasons are right to name documents. The large "Chance to win" figure is the weak point: lead with the named gap and keep the estimate small and labelled. Do not invent statistics like "12% win rate". But A also decides by odds ("give me 30%, I'll spend a day"), so keep the number, smaller. |
+| What they check before approving a draft: transaction ID and amount, dates, any number in it (A: "47 logins, I'll verify"), the tracking number (B), SOW scope, whether the logs cover the month and the approval email (C). | A, B, C | A short "Check these before you approve" list built by code from the draft: each amount, date and count, with the document it came from. |
+| One wrong fact (a date, a name, an amount), slowness (4 seconds), long paragraphs ("three lines"), or an unasked refund ends their trust. | A, B, C | Supports the code checks. A new code check that every number and date in a draft appears in a cited document or in the dispute record would be the most direct defence. |
+| Never send, never contact the customer, never refund, and never accept for me. C: "Don't accept on my behalf. Ever." | A, B, C | Matches the design. The "will never do" list should say refund and accept explicitly. |
+| Thin evidence stories: A, support email in personal Gmail and logs kept only 90 days; C, client revoked ad-account access so the logs were gone, email reports alone lost; B, no signature. | A, B, C | Evidence expires or is never captured. Prevention tips and the policy patch should say "export logs before access ends" and "keep the approval emails in one place". |
+| "Get this document first": yes if it takes a day. If it cannot arrive in time they would submit what they have and say the rest is pending (A, B), or ask the client to restore access for 24 hours (C). B: "tell me if it is even worth getting." | A, B, C | Worth asking already answers B. "Get this first" should check the deadline, and offer "submit now, mark this pending" only after we confirm Razorpay accepts a contest that is later added to. Not confirmed. B says a sent response cannot be changed. |
+| Why they fight: A and C, to protect their record and ratio; B, precedent (it happened once, with a repeat customer, and she now checks a customer's history first). All three: if they expect to lose, they fold, because losing does not protect the record. | A, B, C | The Fold call matches how they already think. Show customer history (the Razorpay facts already hold "earlier disputes") on the card. |
+| None of them can see their dispute ratio. A: "If there was a number on my dashboard I'd check it weekly." C: "I'm estimating." C once got a warning email. | A, C | A ratio tile in Results from numbers the merchant types in (card payments last month and disputes). The thresholds must be verified before any number is stated. |
+| They fold or fight by personal thresholds: A, 30% chance is worth a day; B, about INR 5,000; C, fold under USD 200, fight over USD 2,000. | A, B, C | "Your rules" can include a fight threshold: below it the advisor suggests Fold (suggests only). |
+| C forwards the message to his operations manager before approving. | C | A "copy a summary to send to a colleague" button. |
+
+A to-do on facts: A and C believe a lost dispute raises their ratio. Earlier research (build log) found that winning does not lower it, because the dispute counts when it is raised. Check this against Razorpay and the card network before the advisor says anything about it.
+
 ## What the conversations still do not test
 
 - The prototype test (Part 3) has not been run with any of them.
-- Nobody was asked whether they would act on a message with the response already drafted, or what they would do if the advisor said Fold on a dispute they were sure they could win.
-- A's belief that losing pushes his dispute ratio up, and B's "setting a precedent", are reasons to fight that the money line does not price. Earlier research found that winning does not lower the card network's ratio, so the advisor could say so. Open.
+- They answered about a described message, not the product. Intent is weaker than behaviour.
 - n = 3, one outside the segment, and two of the five stories are about fraud-type or physical-goods disputes.
 
 ## Quotes available (ask each person before using)
@@ -48,3 +66,7 @@ Three conversations by the builder, using the question set in `docs/MERCHANT_CON
 - "$5 and $500 hit the same way." (Merchant A)
 - "By the time I opened email, window gone... I had 3DS and login logs. I could have won." (Merchant A)
 - "We had access logs but no real deliverables... better to accept and move on." (Merchant C)
+- "The reason has to name the missing document. Not the probability. The gap." (Merchant A)
+- "I've seen enough dashboards with made-up percentages." (Merchant C)
+- "Nobody clicks tabs." (Merchant A)
+- "If there was a number on my dashboard I'd check it weekly." (Merchant A, on his dispute ratio)

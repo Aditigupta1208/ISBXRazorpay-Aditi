@@ -22,16 +22,26 @@ Done 9 Oct: audit P1 to P3, 30-case live eval, prompt v2.3, no-key message, save
 
 Left, only if time: another live eval run after the freeze fixes (do not tune on C15, C18, C23); more saved cases.
 
-## Backlog to build together (agreed 9 Oct, nothing here is built)
+## Backlog to build together (agreed 9 Oct; nothing here is built)
 
-1. Evidence packet export: cover summary, contents list, numbered exhibits (3 of 3 merchants asked for it).
-2. Amount threshold on Deadline rescue and the list.
-3. Policy patch: checkout wording for the weakest reason code, from Results (code template first, model rewrite optional).
-4. What-if evidence: recompute the ceiling as if a missing document existed (code only).
-5. Rule R8: a Fight with no key document becomes Escalate (frozen definition in `docs/HELDOUT_TEST.md`; build after the held-out labels).
-6. A short line on dispute ratio and "setting a precedent" in the money section (open question).
-7. Held-out run: your labels for C31 to C40, then one run on prompt v2.3.
-8. Deadline rescue channel: let the merchant choose Slack (merchant A already uses a Slack webhook) as well as WhatsApp. Preview only; nothing is sent. Raise its priority: a winnable USD 99 dispute was lost to the clock.
+Ordered by how many of the three merchants asked for it.
+
+| # | Item | Asked by | Notes |
+|---|---|---|---|
+| 1 | Alerts as the front door: Slack or WhatsApp preview with a channel choice, and "Your rules" (alert above an amount, always alert for chosen reasons, digest for the rest, fold-suggestion threshold). Preview only; nothing sent | 3 of 3 | Merges earlier items 2 and 8 |
+| 2 | Evidence packet export: cover summary, contents, numbered exhibits | 3 of 3 | Print-ready; code only |
+| 3 | Lead with the named gap on every call; make "Chance to win" smaller and labelled; show customer history (earlier disputes) from the Razorpay facts | 3 of 3 | Small UI change |
+| 4 | "Check these before you approve": each amount, date and count in the draft with its source document | 3 of 3 | Code only |
+| 5 | New code check: every number and date in a draft appears in a cited document or in the dispute record | 3 of 3 | Defends the "one wrong fact" trust-killer. Add after item 4 |
+| 6 | Rule R8: a Fight with no key document becomes Escalate | A, C stories | Frozen in `docs/HELDOUT_TEST.md`; build after the held-out labels |
+| 7 | Policy patch (checkout wording, usage emails, milestone approvals, "export logs before access ends") | all three changed their process | Code template first; model rewrite optional |
+| 8 | Dispute ratio tile on Results from numbers the merchant types in | A, C | Verify the thresholds first |
+| 9 | "Will never" list: add refund and accept-for-you | 3 of 3 | Copy change |
+| 10 | "Copy a summary to send to a colleague" | C | Small |
+| 11 | What-if evidence, with a deadline check on "Get this first" | B | Code only |
+| 12 | Held-out run: your labels for C31 to C40, then one run on prompt v2.3 | n/a | Waiting on you |
+
+Open facts to verify before building: whether Razorpay lets a contest be added to after it is sent (merchants say no); how the dispute ratio is counted and the thresholds that apply.
 
 ## Waiting on you
 
