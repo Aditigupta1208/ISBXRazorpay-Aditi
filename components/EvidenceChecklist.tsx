@@ -12,11 +12,11 @@ function Line({ r, docName }: { r: Row; docName: (id: string) => string }) {
         {r.covered ? (
           <span className="block text-[12px] text-ink-soft">{r.evidenceIds.map((id) => `${id} ${docName(id)}`).join(", ")}</span>
         ) : (
-          <span className="block text-[12px] text-helper">
+          <span className="block text-[13px] text-helper">
             Not yet. Goes in: {r.slots.map((s) => SLOT_INFO[s]?.label ?? s).join(" or ")}.
           </span>
         )}
-        <span className="block text-[12px] text-helper">{r.why}</span>
+        <span className="block text-[13px] text-helper">{r.why}</span>
       </span>
     </li>
   );
@@ -39,7 +39,7 @@ export function EvidenceChecklist({ code, documentsBySlot, stale, docName }: { c
         <ul>{c.key.map((r) => <Line key={r.need} r={r} docName={docName} />)}</ul>
         <h4 className="mt-2 text-[12px] font-semibold text-ink-soft">Helps</h4>
         <ul>{c.helpful.map((r) => <Line key={r.need} r={r} docName={docName} />)}</ul>
-        <p className="mt-2 text-[12px] text-helper">
+        <p className="mt-2 text-[13px] text-helper">
           A checklist, not a guarantee. From <a className="relative text-brand underline after:absolute after:-inset-x-1 after:-inset-y-3 after:content-['']" href={SOURCES.visa.url} target="_blank" rel="noreferrer">Visa&apos;s merchant dispute guide</a> and <a className="relative text-brand underline after:absolute after:-inset-x-1 after:-inset-y-3 after:content-['']" href={SOURCES.razorpay.url} target="_blank" rel="noreferrer">Razorpay&apos;s contest API</a>.
         </p>
       </div>

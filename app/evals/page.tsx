@@ -72,7 +72,7 @@ export default function EvalsPage() {
             <span className="sr-only">differs from the human answer</span>
           </span>
         )}
-        {note && <span className="text-[12px] text-helper">{note}</span>}
+        {note && <span className="text-[13px] text-helper">{note}</span>}
       </span>
     );
 
@@ -100,7 +100,7 @@ export default function EvalsPage() {
             <Stat label={`Agent ${PROMPT_VERSION} (automated)`} value="Not run yet" note="needs the API key" muted />
           )}
         </div>
-        <p className="border-t border-line px-4 py-3 text-[12px] text-helper md:px-5">
+        <p className="border-t border-line px-4 py-3 text-[13px] text-helper md:px-5">
           The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases) have no saved agent run. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
           {!latest && <> Run <code className="text-[12px]">npm run eval</code> to score the agent on all of them.</>}
         </p>
@@ -138,7 +138,7 @@ export default function EvalsPage() {
         <table className="w-full min-w-[640px] text-left text-[14px]">
           <caption className="sr-only">Results against the PRD bars</caption>
           <thead>
-            <tr className="border-b border-line text-[12px] text-helper">
+            <tr className="border-b border-line text-[13px] text-helper">
               <th scope="col" className="px-4 py-3 font-medium">Measure</th>
               <th scope="col" className="px-4 py-3 font-medium">Launch / target / stretch</th>
               {cols.map((c) => (
@@ -202,7 +202,7 @@ export default function EvalsPage() {
         <table className="w-full text-left text-[14px]">
           <caption className="sr-only">Each case: the human answer and what each method said. A cross means it differs from the human answer.</caption>
           <thead>
-            <tr className="border-b border-line text-[12px] text-helper">
+            <tr className="border-b border-line text-[13px] text-helper">
               <th scope="col" className="px-1 py-3 font-medium md:px-4">Case</th>
               <th scope="col" className="hidden px-4 py-3 font-medium md:table-cell">Type</th>
               <th scope="col" className="px-1 py-3 font-medium md:px-4"><span className="md:hidden">Human</span><span className="hidden md:inline">Human answer</span></th>
@@ -233,7 +233,7 @@ export default function EvalsPage() {
           </tbody>
         </table>
       </div>
-      <p className="mb-6 max-w-[760px] text-[12px] text-helper">
+      <p className="mb-6 max-w-[760px] text-[13px] text-helper">
         A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C30 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run yet (needs the API key)`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
       </p>
       </details>

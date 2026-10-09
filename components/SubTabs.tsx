@@ -62,17 +62,18 @@ export function ReviewerNav() {
 export function Breadcrumb() {
   const path = usePathname() ?? "";
   const trail: [string, string?][] | null =
-    path === "/disputes" ? [["Razorpay Dashboard", "/"], ["Transactions"], ["Disputes"], ["Dispute Advisor"]]
+    path === "/disputes" ? [["Razorpay Dashboard", "/"], ["Dispute Advisor", "/disputes"], ["Disputes"]]
+    : path.startsWith("/disputes/") ? [["Razorpay Dashboard", "/"], ["Dispute Advisor", "/disputes"], ["Disputes", "/disputes"], [path.split("/")[2].toUpperCase()]]
     : path === "/results" ? [["Razorpay Dashboard", "/"], ["Dispute Advisor", "/disputes"], ["Results"]]
-    : path === "/agent-studio" ? [["Razorpay Dashboard", "/"], ["Agent Studio"], ["Dispute Advisor setup"]]
+    : path === "/agent-studio" ? [["Razorpay Dashboard", "/"], ["Dispute Advisor", "/disputes"], ["Agent setup"]]
     : null;
   if (!trail) return null;
   return (
-    <nav aria-label="Breadcrumb" className="mb-3 flex flex-wrap items-center gap-x-1.5 text-[12px] text-helper print:hidden">
+    <nav aria-label="Breadcrumb" className="mb-3 flex flex-wrap items-center gap-x-1.5 text-[13px] text-helper print:hidden">
       {trail.map(([label, href], i) => (
         <span key={label} className="flex items-center gap-1.5">
           {i > 0 && <span aria-hidden>›</span>}
-          {href ? <Link href={href} className="-my-2 inline-block py-2 font-semibold text-brand hover:underline">{label}</Link> : <span className={i === trail.length - 1 ? "font-semibold text-ink" : ""}>{label}</span>}
+          {href ? <Link href={href} className="-my-3 inline-block py-3 font-semibold text-brand hover:underline">{label}</Link> : <span className={i === trail.length - 1 ? "font-semibold text-ink" : ""}>{label}</span>}
         </span>
       ))}
     </nav>

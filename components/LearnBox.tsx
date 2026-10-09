@@ -35,7 +35,7 @@ export function LearnBox({ stats, usesSample }: { stats: LearnStats; usesSample:
   return (
     <section id="what-next" className="mb-6 scroll-mt-4" data-testid="learn-box">
       <h2 className="text-[16px] font-semibold">What to change next</h2>
-      <p className="mb-2 text-[12px] text-helper">The advisor reads the counts above and suggests one change. It sees counts only: no names, amounts or documents.</p>
+      <p className="mb-2 text-[13px] text-helper">The advisor reads the counts above and suggests one change. It sees counts only: no names, amounts or documents.</p>
       <Card>
         {!current && (
           <>
@@ -44,7 +44,7 @@ export function LearnBox({ stats, usesSample }: { stats: LearnStats; usesSample:
               {running ? "Reading your results…" : "Suggest a change"}
             </button>
             {running && (
-              <p className="mt-2 text-[12px] text-helper" data-testid="wait-note">
+              <p className="mt-2 text-[13px] text-helper" data-testid="wait-note">
                 Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see a saved example.
               </p>
             )}
@@ -56,15 +56,15 @@ export function LearnBox({ stats, usesSample }: { stats: LearnStats; usesSample:
             <p className="text-[16px] font-semibold">{current.output.headline}</p>
             <p className="mt-1 text-[14px] text-ink-soft">{current.output.finding}</p>
             <div className="mt-3 rounded-xl bg-[#F4F8FF] p-3">
-              <p className="text-[12px] font-semibold tracking-[.6px] text-helper uppercase">{KIND_LABEL[current.output.suggestion.kind]}</p>
+              <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">{KIND_LABEL[current.output.suggestion.kind]}</p>
               <p className="mt-0.5 text-[14px]">{current.output.suggestion.text}</p>
             </div>
-            <p className="mt-2 text-[12px] text-helper">
+            <p className="mt-2 text-[13px] text-helper">
               {current.output.cites.length > 0 && <>Based on {current.output.cites.map((c) => `${c.code}: won ${c.won} of ${c.fights}`).join("; ")}.{" "}</>}
               {smallSample(current.output) ? "Small sample: treat it as a hint, not a rule. " : ""}
               {current.output.note && !smallSample(current.output) ? `${current.output.note} ` : ""}
             </p>
-            <p className="mt-1 text-[12px] text-helper" data-testid="learn-source">
+            <p className="mt-1 text-[13px] text-helper" data-testid="learn-source">
               {current.status === "live" ? `Suggested by AI (${current.model}, ${current.promptVersion})${current.cached ? ", from the cache" : ""}. Every number in it was checked against the counts.` : `${current.label}. ${current.message}`} Nothing in your terms changes unless you change it.
             </p>
             <button className={`${btn} mt-2 border border-[#D6D6D6] bg-white text-[#111]`} onClick={() => setShown(null)}>

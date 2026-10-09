@@ -47,7 +47,7 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
         <div className="space-y-4">
           <Card label="Your terms">
             <h2 className="text-[16px] font-semibold">Your terms</h2>
-            <p className="mb-3 text-[12px] text-helper">Your refund, cancellation and renewal rules, in your own words.</p>
+            <p className="mb-3 text-[13px] text-helper">Your refund, cancellation and renewal rules, in your own words.</p>
             <label htmlFor="policy" className="mb-1 block text-[14px] font-semibold">Refund, cancellation and renewal terms</label>
             <textarea
               id="policy"
@@ -68,7 +68,7 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
                 <option key={o.value} value={o.value}>{o.label}</option>
               ))}
             </select>
-            <p className="mt-1 text-[12px] text-helper">For cancelled services (13.7), Visa wants the terms shown and agreed at the time of sale. A footer link alone usually does not count.</p>
+            <p className="mt-1 text-[13px] text-helper">For cancelled services (13.7), Visa wants the terms shown and agreed at the time of sale. A footer link alone usually does not count.</p>
             <p role="status" className={`mt-4 text-[14px] ${over || error ? "text-escalate" : saved ? "text-fight" : "text-helper"}`}>
               {over || error
                 ? "Not used yet: fix the terms above."
@@ -80,7 +80,7 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
 
           <Card label="Agent settings">
             <h2 className="text-[16px] font-semibold">Agent settings</h2>
-            <p className="mb-3 text-[12px] text-helper">Demo only: your choices are saved in this browser, but no email or WhatsApp is ever sent.</p>
+            <p className="mb-3 text-[13px] text-helper">Demo only: your choices are saved in this browser, but no email or WhatsApp is ever sent.</p>
             <SettingRow title={profile.enabled ? "Dispute Advisor is on" : "Dispute Advisor is off"} caption={profile.enabled ? "New checks can run." : "Checks are paused. Saved results still show."} htmlFor="agent-on">
               <input id="agent-on" type="checkbox" role="switch" checked={profile.enabled} onChange={(e) => set("enabled", e.target.checked)} className="h-5 w-5 shrink-0 accent-[#2F63C8]" />
             </SettingRow>
@@ -94,7 +94,7 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
 
           <Card label="What the agent does">
             <h2 className="text-[16px] font-semibold">What the agent does</h2>
-            <p className="mb-3 text-[12px] text-helper">You decide what it may touch. Every submit and fold needs your approval, always.</p>
+            <p className="mb-3 text-[13px] text-helper">You decide what it may touch. Every submit and fold needs your approval, always.</p>
             <div className="grid gap-4 text-[14px] md:grid-cols-2">
               <div>
                 <h3 className="mb-1.5 font-semibold">It will</h3>
@@ -112,7 +112,7 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
                 </ul>
               </div>
             </div>
-            <p className="mt-4 border-t border-line pt-3 text-[12px] text-helper">
+            <p className="mt-4 border-t border-line pt-3 text-[13px] text-helper">
               Covers Visa reasons {CODES.join(", ")}. Fraud reasons (10.x) go to Chargeback Shield.
             </p>
           </Card>
@@ -121,7 +121,7 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
         <div className="space-y-4 md:sticky md:top-4">
           <Card id="advisor-told" label="What the advisor is told" className="!border-brand !bg-[#F4F8FF]">
             <h2 className="text-[16px] font-semibold">What the advisor is told</h2>
-            <p className="mb-3 text-[12px] text-helper">Added to every live check, beside the dispute record and the documents.</p>
+            <p className="mb-3 text-[13px] text-helper">Added to every live check, beside the dispute record and the documents.</p>
             {!told ? (
               <p className="rounded-xl bg-white p-3 text-[14px] text-ink-soft">No terms yet. The advisor will rely on the documents alone.</p>
             ) : (
@@ -132,16 +132,16 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
                 <p className="mt-1 text-ink-soft">{ACCEPTANCE_OPTIONS.find((o) => o.value === profile.acceptance)?.label ?? "Not sure"}</p>
               </div>
             )}
-            <p className="mt-3 text-[12px] text-helper">It is also told that these terms are what you say, and that only a document can show what the customer saw or agreed to.</p>
+            <p className="mt-3 text-[13px] text-helper">It is also told that these terms are what you say, and that only a document can show what the customer saw or agreed to.</p>
           </Card>
           {rescue && (
             <Card id="deadline-rescue" label="Deadline rescue">
-              <h2 className="text-[16px] font-semibold">Deadline rescue</h2>
-              <p className="mb-3 text-[12px] text-helper">
-                {profile.notifyWhatsapp ? "What you would get with 24 hours left." : "Off. Turn on Deadline rescue to get this."} Nothing is sent in this demo.
+              <h2 className="flex items-center gap-2 text-[16px] font-semibold">Deadline rescue <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[12px] font-semibold text-brand">Preview</span></h2>
+              <p className="mb-3 text-[13px] text-helper">
+                {profile.notifyWhatsapp ? "What you would get with 24 hours left." : "Off. Turn on Deadline rescue to get this. The message below is a preview."} Nothing is sent in this demo.
               </p>
               <div className={`rounded-xl border border-line bg-white p-3 text-[14px] leading-5 ${profile.notifyWhatsapp ? "" : "opacity-60"}`} data-testid="rescue-message" aria-label="Sample message">
-                <p className="text-[12px] font-semibold text-helper">Dispute Advisor · WhatsApp</p>
+                <p className="text-[13px] font-semibold text-helper">Dispute Advisor · WhatsApp</p>
                 <p className="mt-1">
                   <b>{rescue.hoursLeft} hours left.</b> A {rescue.amount} dispute ({rescue.code}, {rescue.reason}) closes soon. If you do nothing it is treated as accepted and {rescue.inr} is taken back.
                 </p>
@@ -152,14 +152,14 @@ export function AgentSetup({ rescue }: { rescue: RescueSample | null }) {
                   Review and approve
                 </Link>
               </div>
-              <p className="mt-2 text-[12px] text-helper">The link opens the response for review. Nothing is submitted until you approve it there.</p>
+              <p className="mt-2 text-[13px] text-helper">The link opens the response for review. Nothing is submitted until you approve it there.</p>
             </Card>
           )}
           <Card label="Try it">
             <p className="text-[14px]">
               <span className="font-semibold">See it work.</span> Open <Link href="/disputes/C13" className="font-semibold text-brand hover:underline">dispute C13</Link> (a cancelled service, reason 13.7), add a document and re-run the check. The call can change when your terms change.
             </p>
-            <p className="mt-2 text-[12px] text-helper">Without an API key the demo shows a saved result, so your terms only take effect on a live check.</p>
+            <p className="mt-2 text-[13px] text-helper">Without an API key the demo shows a saved result, so your terms only take effect on a live check.</p>
           </Card>
         </div>
       </div>

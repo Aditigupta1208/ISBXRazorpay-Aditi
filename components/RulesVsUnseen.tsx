@@ -7,7 +7,7 @@ export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { 
     <tr className="border-t border-line">
       <th scope="row" className="py-2.5 pr-3 text-left font-semibold">
         {name}
-        <span className="block text-[12px] font-normal text-helper">{sub}</span>
+        <span className="block text-[13px] font-normal text-helper">{sub}</span>
       </th>
       <td className="px-2 py-2.5 whitespace-nowrap md:px-4">{known}</td>
       <td className={`px-2 py-2.5 whitespace-nowrap md:px-4 ${strong ? "font-semibold" : ""}`}>{unseen}</td>
@@ -23,7 +23,7 @@ export function RulesVsUnseen({ s, agentKnown }: { s: Scoreboard; agentKnown: { 
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-[14px]">
-          <thead className="text-[12px] text-helper">
+          <thead className="text-[13px] text-helper">
             <tr>
               <th scope="col" className="py-2 pr-3 font-medium">System</th>
               <th scope="col" className="px-2 py-2 font-medium md:px-4">{s.known.n} known<span className="hidden md:inline"> cases</span></th>

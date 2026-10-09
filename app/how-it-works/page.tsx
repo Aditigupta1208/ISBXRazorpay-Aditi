@@ -101,7 +101,7 @@ export default function HowItWorksPage() {
               ))}
               <li>Hidden instructions resisted: all of them</li>
             </ul>
-            <p className="mt-2 text-[12px] text-helper">The gate is a command we run before changing the live prompt, not an automatic block on deploys.</p>
+            <p className="mt-2 text-[13px] text-helper">The gate is a command we run before changing the live prompt, not an automatic block on deploys.</p>
           </div>
         </div>
         </Card>
@@ -113,7 +113,7 @@ export default function HowItWorksPage() {
             <Card key={t}>
               <h3 className="text-[14px] font-semibold">{t}</h3>
               <p className="mt-1 text-[14px] text-ink-soft">{d}</p>
-              <p className="mt-2 text-[12px] text-helper">{c}</p>
+              <p className="mt-2 text-[13px] text-helper">{c}</p>
             </Card>
           ))}
         </div>
@@ -162,7 +162,7 @@ export default function HowItWorksPage() {
           <div className="overflow-x-auto rounded-2xl border border-line bg-white">
             <table className="w-full text-left text-[14px]">
               <caption className="sr-only">Each rule compared with Visa&apos;s merchant guide</caption>
-              <thead className="text-[12px] text-helper"><tr><th scope="col" className="px-3 py-2 font-semibold">Code</th><th scope="col" className="px-3 py-2 font-semibold">Visa guide page</th><th scope="col" className="px-3 py-2 font-semibold">Result of the check</th></tr></thead>
+              <thead className="text-[13px] text-helper"><tr><th scope="col" className="px-3 py-2 font-semibold">Code</th><th scope="col" className="px-3 py-2 font-semibold">Visa guide page</th><th scope="col" className="px-3 py-2 font-semibold">Result of the check</th></tr></thead>
               <tbody>
                 {RULE_CHECK.map(([code, page, note]) => (
                   <tr key={code} className="border-t border-line align-top"><th scope="row" className="px-3 py-2 font-semibold">{code}</th><td className="px-3 py-2 whitespace-nowrap">{page}</td><td className="px-3 py-2 text-ink-soft">{note}</td></tr>
@@ -170,7 +170,7 @@ export default function HowItWorksPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-2 text-[12px] text-helper">The guide is the June 2024 edition, so a newer one may differ. Everything here is a reading of public documents, not legal or Visa advice. Razorpay&apos;s response windows (3 business days for the first stage, then 2, then 1) are shown in its guide; this demo uses hours left and the first stage only.</p>
+          <p className="mt-2 text-[13px] text-helper">The guide is the June 2024 edition, so a newer one may differ. Everything here is a reading of public documents, not legal or Visa advice. Razorpay&apos;s response windows (3 business days for the first stage, then 2, then 1) are shown in its guide; this demo uses hours left and the first stage only.</p>
         </Section>
 
         <Section title="What this demo counts">

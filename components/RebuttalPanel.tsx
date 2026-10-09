@@ -106,12 +106,12 @@ export function RebuttalPanel({
       <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
         <div className="min-w-0 flex-1 basis-72">
           <h3 className="text-[16px] font-semibold">Test it on the bank first</h3>
-          <p className="mt-0.5 text-[12px] text-helper">
+          <p className="mt-0.5 text-[13px] text-helper">
             A practice run, not a real bank decision. A second AI pass reads your response like the cardholder&apos;s bank and tells you where it is weakest. It never changes your call or edits your draft.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
-          {!hasDraft && <span className="text-[12px] text-helper">Write a response first.</span>}
+          {!hasDraft && <span className="text-[13px] text-helper">Write a response first.</span>}
           <button className={ghostBrand} onClick={() => run()} disabled={running || !hasDraft} data-testid="rebuttal-run">
             {running ? "Testing…" : result ? "Test again" : "Test this response"}
           </button>
@@ -120,7 +120,7 @@ export function RebuttalPanel({
       {running && (
         <div className="mt-3" role="status" aria-live="polite">
           <p className="text-[14px] font-semibold text-brand">Reading it as the bank would…</p>
-          <p className="mt-0.5 text-[12px] text-helper" data-testid="wait-note">Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see the saved result.</p>
+          <p className="mt-0.5 text-[13px] text-helper" data-testid="wait-note">Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see the saved result.</p>
         </div>
       )}
 
@@ -163,17 +163,17 @@ export function RebuttalPanel({
 
           {result.weakSentence && (
             <div className="mt-3" data-testid="rebuttal-weak">
-              <p className="text-[12px] font-semibold tracking-[.6px] text-helper uppercase">Weakest sentence in your response</p>
+              <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">Weakest sentence in your response</p>
               <blockquote className="mt-1 border-l-4 border-fold bg-white px-3 py-2 text-[14px]">{result.weakSentence}</blockquote>
-              {result.whyWeak && <p className="mt-1 text-[12px] text-helper">{result.whyWeak}</p>}
+              {result.whyWeak && <p className="mt-1 text-[13px] text-helper">{result.whyWeak}</p>}
             </div>
           )}
 
           {result.fix?.kind === "reword" && (
             <div className="mt-3" data-testid="rebuttal-fix">
-              <p className="text-[12px] font-semibold tracking-[.6px] text-helper uppercase">Suggested rewrite</p>
+              <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">Suggested rewrite</p>
               <p className="mt-1 rounded-[10px] border border-line bg-white px-3 py-2 text-[14px]">{result.fix.sentence}</p>
-              <p className="mt-1 text-[12px] text-helper">Built from your documents. Check every fact before you use it.</p>
+              <p className="mt-1 text-[13px] text-helper">Built from your documents. Check every fact before you use it.</p>
               <div className="mt-2 flex flex-wrap items-center gap-2.5">
                 <button
                   className={`${btn} bg-brand text-white`}
@@ -187,14 +187,14 @@ export function RebuttalPanel({
                 >
                   Use this rewrite
                 </button>
-                {!rewrite && <span className="text-[12px] text-helper">Test again to get a rewrite for the current draft.</span>}
+                {!rewrite && <span className="text-[13px] text-helper">Test again to get a rewrite for the current draft.</span>}
               </div>
             </div>
           )}
 
           {result.fix?.kind === "add_document" && (
             <div className="mt-3" data-testid="rebuttal-fix">
-              <p className="text-[12px] font-semibold tracking-[.6px] text-helper uppercase">A document that would answer it</p>
+              <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">A document that would answer it</p>
               <p className="mt-1 rounded-[10px] border border-line bg-white px-3 py-2 text-[14px]">{result.fix.document}</p>
               <div className="mt-2">
                 <button className={ghost} onClick={onAddDocument}>
@@ -224,7 +224,7 @@ export function RebuttalPanel({
             </ul>
           </details>
 
-          <p className="mt-3 text-[12px] text-helper">{result.source.label}</p>
+          <p className="mt-3 text-[13px] text-helper">{result.source.label}</p>
         </div>
       )}
     </div>

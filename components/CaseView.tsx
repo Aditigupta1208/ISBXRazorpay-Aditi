@@ -35,7 +35,7 @@ const Card = ({ children, className = "", id }: { children: ReactNode; className
   </section>
 );
 const H3 = ({ children }: { children: ReactNode }) => (
-  <h3 className="mt-4 mb-1.5 text-[12px] font-semibold tracking-[.6px] text-helper uppercase first:mt-0">{children}</h3>
+  <h3 className="mt-4 mb-1.5 text-[13px] font-semibold tracking-[.6px] text-helper uppercase first:mt-0">{children}</h3>
 );
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
 const CALL_NAME = { fight: "Fight", fold: "Fold", escalate: "Escalate", shield: "Chargeback Shield" } as const;
@@ -425,11 +425,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         <Link href="/disputes" className="relative mb-2.5 inline-block font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">
           ← All disputes
         </Link>
-        <button type="button" onClick={() => window.print()} className="mb-2.5 ml-auto mr-3 min-h-10 text-[12px] font-semibold text-helper underline print:hidden md:min-h-0">
+        <button type="button" onClick={() => window.print()} className="mb-2.5 ml-auto mr-3 min-h-10 text-[13px] font-semibold text-helper underline print:hidden md:min-h-0">
           Print or save as PDF
         </button>
         {(state.action || state.audit.length > 0 || state.draft !== undefined) && (
-          <button onClick={reset} className="mb-2.5 text-[12px] font-semibold text-helper underline">
+          <button onClick={reset} className="mb-2.5 text-[13px] font-semibold text-helper underline">
             Reset this demo
           </button>
         )}
@@ -437,7 +437,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
 
         <header className="mb-5">
-          <p className="text-[12px] text-helper">{c.merchant}</p>
+          <p className="text-[13px] text-helper">{c.merchant}</p>
           <div className="mt-1 flex flex-wrap items-start justify-between gap-x-6 gap-y-1">
             <h1 className="text-2xl leading-8 font-semibold">
               {formatOriginal(d.amount, d.currency)} · {d.network} {d.reason_code} {d.reason_description}
@@ -450,7 +450,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             )}
           </div>
           <p className="mt-1 text-[14px] text-[#444]">
-            The customer says: &ldquo;{c.customer_claim}&rdquo; <span className="font-mono text-[12px] text-helper">{d.id}</span>
+            The customer says: &ldquo;{c.customer_claim}&rdquo; <span className="font-mono text-[13px] text-helper">{d.id}</span>
           </p>
           {acted && <p className="mt-1 text-[12px] font-semibold text-green-ink">{acted.type === "submit" ? "Contested (simulated)" : "Folded (simulated)"}</p>}
           {d.respond_by_hours_left < 6 && !acted && (
@@ -512,7 +512,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <CallChip call={finalCall} size="lg" />
             {finalCall !== "shield" && <span className="text-[14px] font-semibold text-[#555]">{view.confidence} confidence</span>}
             {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
-            {finalCall !== "shield" && <span className="ml-auto hidden text-[12px] font-semibold tracking-[.6px] text-helper uppercase sm:inline">Fold-or-Fight check</span>}
+            {finalCall !== "shield" && <span className="ml-auto hidden text-[13px] font-semibold tracking-[.6px] text-helper uppercase sm:inline">Fold-or-Fight check</span>}
           </div>
           <h2 className="mt-3 text-2xl leading-8 font-semibold md:text-[28px] md:leading-9">{HEAD[finalCall]}</h2>
           {g.changedReason && finalCall !== "shield" && (
@@ -527,19 +527,19 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
               <dl className="mt-5 grid grid-cols-3 gap-3 border-y border-line py-4">
                 <div>
-                  <dt className="text-[12px] text-helper">At stake</dt>
+                  <dt className="text-[13px] text-helper">At stake</dt>
                   <dd className="text-[16px] font-semibold sm:text-[24px]">{formatInrFull(money.atStakeInr)}</dd>
-                  <dd className="text-[12px] text-helper">{formatOriginal(d.amount, d.currency)}</dd>
+                  <dd className="text-[13px] text-helper">{formatOriginal(d.amount, d.currency)}</dd>
                 </div>
                 <div>
-                  <dt className="text-[12px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
+                  <dt className="text-[13px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
                   <dd className="text-[16px] font-semibold sm:text-[24px]">{Math.round(oddsAdj.odds * 100)}%</dd>
-                  <dd className="text-[12px] text-helper">an estimate</dd>
+                  <dd className="text-[13px] text-helper">an estimate</dd>
                 </div>
                 <div>
-                  <dt className="text-[12px] text-helper">Time left</dt>
+                  <dt className="text-[13px] text-helper">Time left</dt>
                   <dd className={`text-[16px] font-semibold sm:text-[24px] ${t.warn ? "text-warn" : ""}`}>{t.text}</dd>
-                  <dd className="text-[12px] text-helper">to respond</dd>
+                  <dd className="text-[13px] text-helper">to respond</dd>
                 </div>
               </dl>
                 {finalCall === "fight" || finalCall === "fold" ? (
@@ -556,7 +556,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     return <p className={`mt-4 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
                   })()
                 ) : null}
-                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[12px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.</p>}
+                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.</p>}
 
               {(view.missingEvidence.length > 0 || view.contradictions.length > 0) && finalCall !== "escalate" && (
                 <p className="mt-3 text-[14px]">
@@ -571,7 +571,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <p className="mt-1 text-[16px] font-semibold">{view.getFirst ?? "More evidence is needed before you can decide."}</p>
                   {view.requestText && (
                     <div className="mt-3">
-                      <p className="text-[12px] font-semibold text-helper">Message to send</p>
+                      <p className="text-[13px] font-semibold text-helper">Message to send</p>
                       <p className="mt-1 rounded-xl bg-white p-3 text-[14px]">{view.requestText}</p>
                     </div>
                   )}
@@ -586,7 +586,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                           <p>
                             <b>Worth asking:</b> {ceiling > DEFAULT_EFFORT_COST_INR ? `could save up to ${formatInrFull(ceiling)}.` : `up to ${formatInrFull(ceiling)}, less than the effort it takes, so chasing it may not pay.`}
                           </p>
-                          <details className="mt-1 text-[12px] text-helper">
+                          <details className="mt-1 text-[13px] text-helper">
                             <summary className="min-h-6 cursor-pointer font-semibold text-brand">How we got this</summary>
                             <p className="mt-1">
                               Up to {formatInrFull(ceiling)} more is still at risk at today&apos;s {Math.round(oddsAdj.odds * 100)}% odds, out of the {formatInrFull(money.contestInr)} you could contest.{" "}
@@ -601,7 +601,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                         ? "No time to gather more: choose Fight or Fold."
                         : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
                     </p>
-                    {view.draft && <p className="text-[12px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
+                    {view.draft && <p className="text-[13px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
                   </div>
                 </div>
               )}
@@ -655,10 +655,10 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           {running && (
             <div className="mt-3" role="status" aria-live="polite">
               <p className="text-[14px] font-semibold text-brand">{steps[step]}</p>
-              <p className="mt-0.5 text-[12px] text-helper" data-testid="wait-note">Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see the saved result.</p>
+              <p className="mt-0.5 text-[13px] text-helper" data-testid="wait-note">Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see the saved result.</p>
             </div>
           )}
-          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[12px] text-helper">
+          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-3 text-[13px] text-helper">
             <span data-tour="source-label" className="flex flex-wrap items-center gap-2">
               {!view.source.live && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">Prepared in advance</span>}
               {view.source.label}
@@ -670,13 +670,13 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 aria-pressed={state.thumbs === "up"}
                 className={`min-h-11 min-w-11 rounded-[10px] border text-[16px] ${state.thumbs === "up" ? "border-brand bg-brand-soft" : "border-[#D6D6D6]"}`}
                 onClick={() => { update((s) => ({ ...s, thumbs: "up" })); log("You", "Marked the call useful"); }}
-              >👍</button>
+              ><svg aria-hidden width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto"><path d="M7 11v9H4v-9h3zm0 0 4-8a2 2 0 0 1 2 2v4h5.5a2 2 0 0 1 2 2.3l-1.2 7a2 2 0 0 1-2 1.7H7" /></svg></button>
               <button
                 aria-label="Thumbs down"
                 aria-pressed={state.thumbs === "down"}
                 className={`min-h-11 min-w-11 rounded-[10px] border text-[16px] ${state.thumbs === "down" ? "border-brand bg-brand-soft" : "border-[#D6D6D6]"}`}
                 onClick={() => { update((s) => ({ ...s, thumbs: "down" })); log("You", "Marked the call not useful"); }}
-              >👎</button>
+              ><svg aria-hidden width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto"><path d="M17 13V4h3v9h-3zm0 0-4 8a2 2 0 0 1-2-2v-4H5.5a2 2 0 0 1-2-2.3l1.2-7A2 2 0 0 1 6.700 3H17" /></svg></button>
               {finalCall !== "shield" && !acted && (
                 <button className={`${view.source.live ? ghost : primary} whitespace-nowrap`} onClick={() => void rerun()} disabled={running}>{view.source.live ? "Re-run check" : "Run live check"}</button>
               )}
@@ -688,7 +688,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         {showResponse && (
         <Card id="response">
           <h2 className="mb-1 text-[16px] font-semibold">Review your response</h2>
-          <p className="mb-3 text-[12px] text-helper">Every sentence needs a source. You can edit anything. Nothing is sent until you approve.</p>
+          <p className="mb-3 text-[13px] text-helper">Every sentence needs a source. You can edit anything. Nothing is sent until you approve.</p>
           {state.dirty && (
             <p className="mb-3 rounded-xl bg-fold-soft px-3 py-2 text-[14px] font-semibold text-fold">You added or removed evidence after the last check. Re-run it before you submit.</p>
           )}
@@ -811,9 +811,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               }}
               className="w-32 rounded-[10px] border border-line px-3 py-2 focus:border-brand-focus focus:outline-none"
             />
-            <span className="text-[12px] text-helper">of {formatOriginal(d.amount, d.currency)}</span>
+            <span className="text-[13px] text-helper">of {formatOriginal(d.amount, d.currency)}</span>
           </div>
-          <p className="mt-1 text-[12px] text-helper">
+          <p className="mt-1 text-[13px] text-helper">
             {view.defensibleAmount !== null ? "Pre-filled with the part the check found defensible. " : "Full amount by default. "}You can contest a smaller part.
           </p>
 
@@ -849,7 +849,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <button className={`${ghost} !border-brand !text-brand ml-auto`} onClick={() => copy("draft", draft)}>
               {copied === "draft" ? "Copied" : "Copy response"}
             </button>
-            <p className="w-full text-[12px] text-helper">Simulated: nothing is sent to Razorpay.</p>
+            <p className="w-full text-[13px] text-helper">Simulated: nothing is sent to Razorpay.</p>
           </div>
         </Card>
       )}
@@ -857,7 +857,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         {acted && (
         <Card>
           <h2 className="mb-1 text-[16px] font-semibold">{acted.type === "submit" ? "Response submitted (simulated)" : "Dispute folded (simulated)"}</h2>
-          <p className="mb-2 text-[12px] font-semibold text-helper">Simulated: nothing was sent to Razorpay.</p>
+          <p className="mb-2 text-[13px] font-semibold text-helper">Simulated: nothing was sent to Razorpay.</p>
           <p className="text-[14px]">
             {acted.type === "submit"
               ? `You contested ${formatOriginal(contestSubunits, d.currency)} of ${formatOriginal(d.amount, d.currency)} with ${[...documentsBySlot.values()].flat().length} documents. In the real app this goes to Razorpay and the bank decides. The status below then moves from Under review to Won or Lost.`
@@ -880,7 +880,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           </ol>
           {acted.type === "submit" && (
             <div className="mt-3 flex flex-wrap items-center gap-2.5">
-              <span className="text-[12px] text-helper">Demo: set the outcome</span>
+              <span className="text-[13px] text-helper">Demo: set the outcome</span>
               {(["won", "lost"] as const).map((o) => (
                 <button
                   key={o}
@@ -937,7 +937,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {state.outcome === "lost" && (
                 <>
                   <H3>Next steps</H3>
-                  <p className="text-[12px] text-helper">Things to confirm, not advice.</p>
+                  <p className="text-[13px] text-helper">Things to confirm, not advice.</p>
                   <ol className="mt-1 list-decimal space-y-1.5 pl-5 text-[14px]">
                     <li>Ask your bank about reducing the export value recorded for this payment. Razorpay can supply the dispute documents.</li>
                     <li>Ask your accountant whether a GST credit note applies.</li>
@@ -967,7 +967,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <div className="flex h-[26px] items-center justify-center rounded-lg bg-shield-soft text-[12px] font-semibold">{e.id}</div>
                   <div>
                     {addedItem && (
-                      <p className="text-[12px] font-semibold text-helper">
+                      <p className="text-[13px] font-semibold text-helper">
                         Added by you · {(e as { title: string }).title}
                         {state.prevCall && state.prevCall !== finalCall && view.decidingEvidence.includes(e.id) && <span className="ml-2 rounded-full bg-brand-soft px-2 py-0.5 text-brand">Decided the call</span>}
                       </p>
@@ -1042,7 +1042,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 <label htmlFor="ev-file" className={`${ghost} cursor-pointer !border-brand !text-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand peer-disabled:opacity-50`}>
                   {reading ? "Reading…" : "Upload a PDF or image"}
                 </label>
-                <p id="ev-file-help" className="mt-1 text-[12px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
+                <p id="ev-file-help" className="mt-1 text-[13px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
                 <label htmlFor="ev-title" className="mt-3 block text-sm font-semibold">
                   Title
                 </label>
@@ -1131,9 +1131,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).
                   </p>
                 )}
-                <p className="mt-2 text-[12px] text-helper">{view.oddsNote}</p>
+                <p className="mt-2 text-[13px] text-helper">{view.oddsNote}</p>
                 {oddsAdj.adjusted && (
-                  <p className="mt-1 text-[12px] text-helper" data-testid="odds-adjusted">
+                  <p className="mt-1 text-[13px] text-helper" data-testid="odds-adjusted">
                     Adjusted by your record: {oddsAdj.won} of {oddsAdj.n} fights the advisor called Fight at {view.confidence} confidence were won. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check uses this number.
                   </p>
                 )}
@@ -1149,13 +1149,13 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           )}
           <Row id="rule" title="What Visa's rule means" summary={`${d.reason_code} ${d.reason_description}`} open={!!openRows.rule} onToggle={() => toggleRow("rule")}>
             {view.ruleText && <p className="text-[14px] leading-6 text-[#444]">{view.ruleText}</p>}
-            <p className="mt-3 text-[12px] font-semibold tracking-[.6px] text-helper uppercase">What Razorpay knows</p>
+            <p className="mt-3 text-[13px] font-semibold tracking-[.6px] text-helper uppercase">What Razorpay knows</p>
             <p className="mt-1 text-[14px] leading-6 text-[#444]">{c.razorpay_facts}</p>
           </Row>
         </div>
         {(vsChecklist || finalCall !== "shield") && (
           <>
-            <p className="mb-2 text-[12px] font-semibold tracking-[.6px] text-helper uppercase">For reviewers: how this answer was checked</p>
+            <p className="mb-2 text-[13px] font-semibold tracking-[.6px] text-helper uppercase">For reviewers: how this answer was checked</p>
             <div className="mb-5 overflow-hidden rounded-2xl border border-line bg-white" aria-label="How this answer was checked">
           {vsChecklist && (
             <Row id="checklist" title="Why AI, not a fixed checklist?" summary={`A checklist would say ${vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}${vsChecklist.agree ? ", the same" : ", which differs"}`} open={!!openRows.checklist} onToggle={() => toggleRow("checklist")}
@@ -1226,7 +1226,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {state.check.meta.cached ? ", served from the cache (no new cost)" : ""}.
             </p>
             {state.check.meta.skipped && state.check.meta.skipped.length > 0 && (
-              <p className="mt-1 text-[12px] text-helper">Tried first, did not answer: {state.check.meta.skipped.join("; ")}. The next model in the list answered.</p>
+              <p className="mt-1 text-[13px] text-helper">Tried first, did not answer: {state.check.meta.skipped.join("; ")}. The next model in the list answered.</p>
             )}
             <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[14px]">
               <dt className="text-helper">Tokens in / out</dt>
@@ -1240,18 +1240,18 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 ${state.check.meta.costUsd.toFixed(4)} · ₹{state.check.meta.costInr.toFixed(2)}
               </dd>
             </dl>
-            <p className="mt-1 text-[12px] text-helper">Cost uses the token prices in the repo and the rate below.</p>
+            <p className="mt-1 text-[13px] text-helper">Cost uses the token prices in the repo and the rate below.</p>
           </>
         ) : (
           <>
             <p>
               <b>Saved result</b>, not a live call. {view.source.model}, prompt {view.source.promptVersion}, run on {view.source.date}.
             </p>
-            <p className="mt-1 text-[12px] text-helper">Tokens, response time and cost appear here after a live check.</p>
-            <p className="mt-1 text-[12px] text-helper">Odds, the defensible amount, the request text and the prevention tip on saved results come from the builder&apos;s supplement file, not the model.</p>
+            <p className="mt-1 text-[13px] text-helper">Tokens, response time and cost appear here after a live check.</p>
+            <p className="mt-1 text-[13px] text-helper">Odds, the defensible amount, the request text and the prevention tip on saved results come from the builder&apos;s supplement file, not the model.</p>
           </>
         )}
-        <p className="mt-1 text-[12px] text-helper">{rateNote(rates)}</p>
+        <p className="mt-1 text-[13px] text-helper">{rateNote(rates)}</p>
 
         <H3>Safety checks</H3>
         <ul className="space-y-1.5">
@@ -1291,9 +1291,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="rounded-xl border border-[#F1F1F1] bg-[#FAFAFA] px-3 py-2.5">
-      <span className="block text-[12px] text-helper">{label}</span>
+      <span className="block text-[13px] text-helper">{label}</span>
       <b className="block text-[16px] font-semibold">{value}</b>
-      <em className="text-[12px] text-helper not-italic">{sub}</em>
+      <em className="text-[13px] text-helper not-italic">{sub}</em>
     </div>
   );
 }
@@ -1329,7 +1329,7 @@ function Row({ id, title, summary, open, onToggle, children, badge }: { id: stri
       <button type="button" aria-expanded={open} aria-controls={`row-${id}`} onClick={onToggle} className="flex min-h-14 w-full items-center gap-3 px-5 py-3 text-left hover:bg-[#FAFAFA]">
         <span className="min-w-0 flex-1">
           <b className="block text-[14px] font-semibold">{title}</b>
-          <span className="block text-[12px] text-helper">{summary}</span>
+          <span className="block text-[13px] text-helper">{summary}</span>
         </span>
         {badge && <span className={`shrink-0 rounded-full px-2 py-0.5 text-[12px] font-semibold ${BADGE_CLS[badge.tone]}`}>{badge.text}</span>}
         <span aria-hidden className={`text-brand transition-transform ${open ? "rotate-90" : ""}`}>›</span>

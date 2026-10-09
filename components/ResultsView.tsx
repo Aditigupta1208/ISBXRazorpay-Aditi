@@ -54,7 +54,7 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
               <Stat label="Won when fought" value={pct(m.winRate)} note={`${m.won} of ${m.fights} fights`} />
               <Stat label="Answered on time" value={pct(m.onTimeRate)} note={`${Math.round((m.onTimeRate ?? 0) * m.settled)} of ${m.settled}`} />
             </div>
-            <p className="border-t border-line px-4 py-3 text-[12px] text-helper md:px-5">
+            <p className="border-t border-line px-4 py-3 text-[13px] text-helper md:px-5">
               {formatInr(m.lostInr)} was lost or accepted. Recovered counts only the part you contested and won. Arbitration fees are not included in this demo.
             </p>
           </Card>
@@ -70,14 +70,14 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
                   { k: "esc", title: "Escalate", sub: `${m.escalated.n} cases`, what: `${m.escalated.fought} fought later, ${m.escalated.won} won` },
                 ].map((r) => (
                   <li key={r.k} className="border-b border-line px-4 py-3 last:border-0">
-                    <div className="flex items-baseline justify-between gap-3"><b className="font-semibold">{r.title}</b><span className="text-[12px] text-helper">{r.sub}</span></div>
+                    <div className="flex items-baseline justify-between gap-3"><b className="font-semibold">{r.title}</b><span className="text-[13px] text-helper">{r.sub}</span></div>
                     <div className="text-[14px]">{r.what}</div>
                   </li>
                 ))}
               </ul>
               <div className="hidden md:block">
                 <table className="w-full text-[14px]">
-                  <thead className="text-left text-[12px] text-helper">
+                  <thead className="text-left text-[13px] text-helper">
                     <tr className="border-b border-line">
                       <th className="px-4 py-2.5 font-normal md:px-5">The advisor said</th>
                       <th className="px-2 py-2.5 font-normal">Cases</th>
@@ -121,7 +121,7 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
                     <li key={r.code} className="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1.5 border-b border-line px-4 py-3 last:border-0 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_96px] md:px-5">
                       <div className="min-w-0">
                         <b className="font-semibold">{r.code}</b> <span className="text-[14px]">{reasonNames[r.code] ?? ""}</span>
-                        <div className="text-[12px] text-helper">{r.disputes} {r.disputes === 1 ? "dispute" : "disputes"} · {r.fights} fought, {r.won} won</div>
+                        <div className="text-[13px] text-helper">{r.disputes} {r.disputes === 1 ? "dispute" : "disputes"} · {r.fights} fought, {r.won} won</div>
                       </div>
                       <div className="order-3 col-span-2 md:order-none md:col-span-1" aria-hidden={rate === null}>
                         {rate !== null && (
@@ -130,12 +130,12 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
                           </div>
                         )}
                       </div>
-                      <div className="text-right text-[14px]"><b className="font-semibold">{pct(rate)}</b><div className="text-[12px] text-helper">{formatInr(r.recoveredInr)} back</div></div>
+                      <div className="text-right text-[14px]"><b className="font-semibold">{pct(rate)}</b><div className="text-[13px] text-helper">{formatInr(r.recoveredInr)} back</div></div>
                     </li>
                   );
                 })}
               </ul>
-              <p className="border-t border-line px-4 py-2.5 text-[12px] text-helper md:px-5">Bar colour: green means you won 70% or more of the fights on that reason, brown means less.</p>
+              <p className="border-t border-line px-4 py-2.5 text-[13px] text-helper md:px-5">Bar colour: green means you won 70% or more of the fights on that reason, brown means less.</p>
               {weakest && (
                 <p className="border-t border-line bg-[#FAFAFA] px-4 py-3 text-[14px] md:px-5">
                   <b className="font-semibold">Weakest:</b> {weakest.code} {reasonNames[weakest.code] ?? ""}, won {weakest.won} of {weakest.fights} fights.

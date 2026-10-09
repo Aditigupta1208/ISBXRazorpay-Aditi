@@ -59,7 +59,7 @@ export function ShortenBox({
             {running ? "Shortening…" : "Shorten it for me"}
           </button>
           {running && (
-            <p className="mt-2 text-[12px] text-helper" data-testid="wait-note">
+            <p className="mt-2 text-[13px] text-helper" data-testid="wait-note">
               Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, the last sentences are dropped instead.
             </p>
           )}
@@ -68,7 +68,7 @@ export function ShortenBox({
       )}
       {shown && shown.status === "ok" && (
         <div className="mt-2" data-testid="shorten-result">
-          <p className="text-[12px] font-semibold text-helper">
+          <p className="text-[13px] font-semibold text-helper">
             {shown.method === "ai" ? `Shorter version by AI (${shown.model}${shown.cached ? ", from the cache" : ""}). ${shown.draft.length} characters.` : `Shorter version made by code, no AI. ${shown.draft.length} characters.`}
           </p>
           <p className="mt-1 rounded-lg bg-white p-2.5 text-[14px] leading-[1.6]">{shown.draft}</p>

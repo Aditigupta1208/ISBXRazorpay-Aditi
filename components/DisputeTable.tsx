@@ -85,7 +85,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
             </button>
           ))}
         </div>
-        <div role="group" aria-label="Sort disputes" className="ml-auto flex items-center gap-2 text-[12px] text-helper">
+        <div role="group" aria-label="Sort disputes" className="ml-auto flex items-center gap-2 text-[13px] text-helper">
           <span aria-hidden>Sort:</span>
           {([["deadline", "Soonest deadline"], ["amount", "Biggest amount"]] as const).map(([k, label]) => (
             <button
@@ -121,7 +121,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
               </div>
               <div className="mt-2 flex items-center justify-between gap-3">
                 {r.call ? <CallChip call={r.call} /> : <span className="text-helper">Not checked</span>}
-                <span className="text-[12px] text-helper">{actions[r.id] ?? r.merchant}</span>
+                <span className="text-[13px] text-helper">{actions[r.id] ?? r.merchant}</span>
               </div>
             </Link>
           </li>
@@ -131,7 +131,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
       <div className="relative hidden overflow-x-auto lg:block">
         <table className="w-full min-w-[820px] border-collapse text-[14px]">
           <thead>
-            <tr className="border-b border-line bg-[#FAFAFA] text-left text-[12px] font-semibold text-helper">
+            <tr className="border-b border-line bg-[#FAFAFA] text-left text-[13px] font-semibold text-helper">
               <th className="px-[18px] py-3.5">Dispute</th>
               <th className="px-[18px] py-3.5" aria-sort={sort === "amount" ? "descending" : "none"}><button onClick={() => setSort("amount")} className="font-semibold">Amount{sort === "amount" ? " ▼" : ""}</button></th>
               <th className="px-[18px] py-3.5">Reason</th>
@@ -150,7 +150,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
                   <Link href={`/disputes/${r.id}`} className="font-mono text-[12px] text-[#555] after:absolute after:inset-0 after:content-['']">
                     {r.disputeId}
                   </Link>
-                  <div className="text-[12px] text-helper">{r.merchant}</div>
+                  <div className="text-[13px] text-helper">{r.merchant}</div>
                 </td>
                 <td className="px-[18px] py-4 font-semibold whitespace-nowrap">
                   {r.amount}
@@ -178,7 +178,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
           </tbody>
         </table>
       </div>
-      <p className="px-[18px] py-3.5 text-[12px] text-helper">Calls are saved results from an earlier test run, so this list works without an API key. {rateNote}</p>
+      <p className="px-[18px] py-3.5 text-[13px] text-helper">These calls were prepared in advance. Open a dispute to run a live check. {rateNote}</p>
     </div>
   );
 }

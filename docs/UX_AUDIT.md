@@ -67,3 +67,7 @@ The product is already clearer than most dispute screens. The first screen of a 
 ## What I would do with the remaining time
 
 Fix P1 #1 first (it needs your machine and the free daily allowance), then #2, #3, #4 and #5, which are code-only and low risk. P2 and P3 only if there is time after the note and video.
+
+### P3 status (9 Oct)
+
+Done: one breadcrumb pattern (Razorpay Dashboard › Dispute Advisor › page, now also on a dispute), helper text 12 to 13 px, "Preview" tag on Deadline rescue, thumbs emoji replaced by icons, plain list footer. Left as is on purpose: the list and dispute page widths (the dispute page is narrower for reading) and the Escalate colour (a brand-palette decision for the builder).

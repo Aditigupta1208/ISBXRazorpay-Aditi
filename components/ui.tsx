@@ -13,7 +13,7 @@ export function Section({ id, title, note, children }: { id?: string; title: str
   return (
     <section id={id} className="mb-6 scroll-mt-4">
       <h2 className="text-[16px] font-semibold">{title}</h2>
-      {note && <p className="mb-2 text-[12px] text-helper">{note}</p>}
+      {note && <p className="mb-2 text-[13px] text-helper">{note}</p>}
       <div className={note ? "" : "mt-2"}>{children}</div>
     </section>
   );
@@ -22,7 +22,7 @@ export function Section({ id, title, note, children }: { id?: string; title: str
 export function PageTitle({ title, children, eyebrow }: { title: string; children?: ReactNode; eyebrow?: string }) {
   return (
     <header className="mb-5">
-      {eyebrow && <p className="text-[12px] font-semibold tracking-[.6px] text-helper uppercase">{eyebrow}</p>}
+      {eyebrow && <p className="text-[13px] font-semibold tracking-[.6px] text-helper uppercase">{eyebrow}</p>}
       <h1 className="text-2xl leading-8 font-semibold">{title}</h1>
       {children && <p className="mt-1 max-w-[720px] text-[14px] text-ink-soft">{children}</p>}
     </header>
@@ -35,7 +35,7 @@ export function SettingRow({ title, caption, children, htmlFor }: { title: strin
     <div className="flex items-center justify-between gap-4 border-b border-line py-3 first:pt-0 last:border-0 last:pb-0">
       <label htmlFor={htmlFor} className="min-w-0 cursor-pointer">
         <span className="block text-[14px] font-semibold">{title}</span>
-        {caption && <span className="block text-[12px] text-helper">{caption}</span>}
+        {caption && <span className="block text-[13px] text-helper">{caption}</span>}
       </label>
       {children}
     </div>
@@ -45,9 +45,9 @@ export function SettingRow({ title, caption, children, htmlFor }: { title: strin
 export function Stat({ label, value, note, muted }: { label: string; value: string; note?: string; muted?: boolean }) {
   return (
     <div className="px-3 py-3 md:px-5 md:py-4">
-      <div className="text-[12px] text-helper">{label}</div>
+      <div className="text-[13px] text-helper">{label}</div>
       <div className={`font-semibold ${value.length > 6 ? "text-[16px] leading-6 sm:text-[24px] sm:leading-8" : "text-[24px] leading-8"} ${muted ? "text-helper" : ""}`}>{value}</div>
-      {note && <div className="text-[12px] text-helper">{note}</div>}
+      {note && <div className="text-[13px] text-helper">{note}</div>}
     </div>
   );
 }

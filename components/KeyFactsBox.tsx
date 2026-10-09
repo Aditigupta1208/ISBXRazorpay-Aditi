@@ -42,13 +42,13 @@ export function KeyFactsButton({
         {running ? "Reading your documents…" : result ? "Read again" : "Read key facts"}
       </button>
       {running && (
-        <p className="mt-2 text-[12px] text-helper" data-testid="wait-note">
+        <p className="mt-2 text-[13px] text-helper" data-testid="wait-note">
           Connecting to the AI model. On this demo it can take up to a minute. If it cannot answer, you will see a saved example where one exists.
         </p>
       )}
       {error && <p className="mt-2 text-[14px] text-escalate" role="alert">{error}</p>}
       {result && !running && (
-        <p className="mt-2 text-[12px] text-helper" data-testid="keyfacts-source">
+        <p className="mt-2 text-[13px] text-helper" data-testid="keyfacts-source">
           {result.status === "live"
             ? `Key facts by AI (${result.model}, ${result.promptVersion})${result.cached ? ", from the cache" : ""}. Each line is backed by a quote from the document; hover or tap a line to see it.${result.dropped ? ` ${result.dropped} line${result.dropped === 1 ? "" : "s"} could not be matched to the document and ${result.dropped === 1 ? "was" : "were"} left out.` : ""}`
             : result.status === "saved"

@@ -19,7 +19,7 @@ export default function NotFound() {
         <Link href="/how-it-works" className="rounded-lg border border-line px-4 py-2 text-sm font-semibold hover:border-brand">How it works</Link>
       </div>
       {first.length > 0 && (
-        <p className="mt-5 text-[12px] text-helper">
+        <p className="mt-5 text-[13px] text-helper">
           Open a dispute:{" "}
           {first.map((c, i) => (
             <span key={c.id}>

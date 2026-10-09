@@ -52,7 +52,7 @@ export default async function DashboardEntry() {
       </ol>
 
       <section id="dashboard-frame" aria-label="Concept view of the Razorpay Dashboard" className="overflow-hidden rounded-2xl border border-line bg-white">
-        <div className="flex items-center justify-between gap-3 border-b border-line bg-[#F6F7F9] px-4 py-2 text-[12px] text-helper">
+        <div className="flex items-center justify-between gap-3 border-b border-line bg-[#F6F7F9] px-4 py-2 text-[13px] text-helper">
           <span className="font-semibold text-ink-soft">Razorpay Dashboard · Transactions · Disputes</span>
           <span>Concept view, not the real dashboard</span>
         </div>
@@ -78,7 +78,7 @@ export default async function DashboardEntry() {
                 );
               })}
             </ul>
-            <p className="mt-4 px-3 text-[12px] text-helper">Greyed items are not part of this concept.</p>
+            <p className="mt-4 px-3 text-[13px] text-helper">Greyed items are not part of this concept.</p>
           </nav>
 
           <div className="min-w-0 p-4 md:p-5">
@@ -103,7 +103,7 @@ export default async function DashboardEntry() {
                   <Link href={`/disputes/${r.id}`} className="block py-3">
                     <div className="flex items-baseline justify-between gap-3">
                       <span className="font-semibold">{r.amount} <span className="font-normal text-helper">· {r.inr}</span></span>
-                      <span className={`text-[12px] font-semibold ${r.warn ? "text-warn" : "text-helper"}`}>{r.timeText} left</span>
+                      <span className={`text-[13px] font-semibold ${r.warn ? "text-warn" : "text-helper"}`}>{r.timeText} left</span>
                     </div>
                     <div className="text-[12px] text-ink-soft">{r.reasonCode} {r.reason}</div>
                     <div className="mt-1.5">{r.call && <CallChip call={r.call} />}</div>
@@ -116,7 +116,7 @@ export default async function DashboardEntry() {
               <table className="w-full text-left text-[14px]">
                 <caption className="sr-only">Disputes as Razorpay lists them, with the Dispute Advisor call added</caption>
                 <thead>
-                  <tr className="border-b border-line text-[12px] text-helper">
+                  <tr className="border-b border-line text-[13px] text-helper">
                     <th scope="col" className="py-2 pr-3 font-normal">Dispute</th>
                     <th scope="col" className="px-3 py-2 font-normal">Reason</th>
                     <th scope="col" className="px-3 py-2 font-normal">Amount</th>
@@ -130,7 +130,7 @@ export default async function DashboardEntry() {
                     <tr key={r.id} className="relative border-b border-line last:border-0 hover:bg-[#FAFCFF]">
                       <td className="py-3 pr-3">
                         <Link href={`/disputes/${r.id}`} className="font-mono text-[12px] text-ink-soft after:absolute after:inset-0 after:content-['']">{r.disputeId}</Link>
-                        <div className="text-[12px] text-helper">{r.merchant}</div>
+                        <div className="text-[13px] text-helper">{r.merchant}</div>
                       </td>
                       <td className="px-3 py-3"><span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-[12px]">{r.reasonCode}</span> <span className="text-ink-soft">{r.reason}</span></td>
                       <td className="px-3 py-3 font-semibold whitespace-nowrap">{r.amount}<span className="font-normal text-helper"> · {r.inr}</span></td>
@@ -143,7 +143,7 @@ export default async function DashboardEntry() {
               </table>
             </div>
 
-            <p className="mt-3 text-[12px] text-helper">
+            <p className="mt-3 text-[13px] text-helper">
               Showing {shown.length} of {tableRows.length} · {formatInr(need.reduce((s, r) => s + r.inrNumber, 0))} at stake.{" "}
               <Link href="/disputes" className="-my-2 inline-block py-2 font-semibold text-brand hover:underline">See all in Dispute Advisor</Link>
             </p>

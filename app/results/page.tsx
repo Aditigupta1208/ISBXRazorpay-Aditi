@@ -21,7 +21,7 @@ export default async function ResultsPage() {
     <>
       <PageTitle title="Results">What happened to the disputes you acted on, and whether the advisor was right.</PageTitle>
       <ResultsView rates={rates} tips={tips} reasonNames={REASONS} />
-      <p className="mt-6 text-[12px] text-helper">{rateNote(rates)} Sample history is not real data and not Razorpay data. What you record stays in this browser.</p>
+      <p className="mt-6 text-[13px] text-helper">{rateNote(rates)} Sample history is not real data and not Razorpay data. What you record stays in this browser.</p>
     </>
   );
 }
