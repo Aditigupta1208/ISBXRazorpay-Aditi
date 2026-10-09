@@ -28,6 +28,13 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY || secrets.EVAL }}
           LLM_PROVIDER: groq
         run: npm run eval
+      - name: Keep a copy of the results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: eval/results
+          if-no-files-found: ignore
       - name: Commit the results
         run: |
           git config user.name "eval-bot"

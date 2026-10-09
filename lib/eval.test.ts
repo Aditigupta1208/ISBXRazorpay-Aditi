@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { runCase, summarize, tier, THRESHOLDS, labelEvidence, type EvalRow, type LabelRow } from "./eval.ts";
+import { runCase, answeredByShort, summarize, tier, THRESHOLDS, labelEvidence, type EvalRow, type LabelRow } from "./eval.ts";
 import { parsePrompt } from "./prompt.ts";
 import type { Deps } from "./agent.ts";
 import type { CaseData } from "./types.ts";
@@ -144,4 +144,11 @@ test("a run that was answered by backup models says so; one answered only by the
   const row = (answeredBy?: string) => ({ answeredBy }) as never;
   assert.equal(modelsLine([row("a"), row("a")], "a"), "");
   assert.match(modelsLine([row("a"), row("b")], "a"), /a 1, b 1.*mixed-model/);
+});
+
+test("answeredByShort lists who answered, most first, and falls back for old files", () => {
+  const row = (m?: string) => ({ answeredBy: m }) as EvalRow;
+  assert.equal(answeredByShort([row("a/x"), row("b/y"), row("b/y")], "a/x"), "b/y 2, a/x 1");
+  assert.equal(answeredByShort([row("a/x")], "a/x"), "a/x");
+  assert.equal(answeredByShort([row()], "old/model"), "old/model");
 });

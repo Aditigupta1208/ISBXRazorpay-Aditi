@@ -35,7 +35,7 @@ async function main() {
   const summary = summarize(rows);
   const run = { prompt: PROMPT_VERSION, model, date };
   mkdirSync(dir, { recursive: true });
-  const base = path.join(dir, `${PROMPT_VERSION}-${model}-${date}`);
+  const base = path.join(dir, `${PROMPT_VERSION}-${model.replace(/[^A-Za-z0-9._-]/g, "-")}-${date}`); // model ids can contain "/"
   writeFileSync(`${base}.json`, JSON.stringify({ run, summary, rows }, null, 2) + "\n");
   writeFileSync(`${base}.md`, toMarkdown(run, rows, summary));
   console.log(`Wrote ${base}.json and ${base}.md`);

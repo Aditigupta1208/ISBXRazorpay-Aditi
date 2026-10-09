@@ -3,7 +3,7 @@ import { Card, PageTitle, Stat } from "@/components/ui";
 import { RulesVsUnseen } from "@/components/RulesVsUnseen";
 import { scoreRules, type KeyRow } from "@/lib/ruleScoreboard";
 import labelsFileData from "@/data/labels.json";
-import { THRESHOLDS, summarize, tier, type EvalRow, type Summary, type Tier } from "@/lib/eval";
+import { THRESHOLDS, answeredByShort, summarize, tier, type EvalRow, type Summary, type Tier } from "@/lib/eval";
 import { claudeEarlyCall, evalLabels, loadLatestRun, savedV1Rows } from "@/lib/evalView";
 import { getCases } from "@/lib/data";
 import { toCall } from "@/lib/data";
@@ -55,7 +55,7 @@ export default function EvalsPage() {
     { name: "Agent, prompt v1", sub: `saved, ChatGPT, ${n(v1Rows)} cases`, s: v1, n: n(v1Rows), agent: true },
     ...(latest
       ? [
-          { name: `Agent, prompt ${latestName}`, sub: `${latest.run.model}, ${latest.run.date}, ${n(latest.rows)} cases`, s: latest.summary, n: n(latest.rows), agent: true },
+          { name: `Agent, prompt ${latestName}`, sub: `${answeredByShort(latest.rows, latest.run.model)}, ${latest.run.date}, ${n(latest.rows)} cases`, s: latest.summary, n: n(latest.rows), agent: true },
         ]
       : []),
   ];

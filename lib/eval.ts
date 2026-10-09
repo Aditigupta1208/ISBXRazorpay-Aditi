@@ -241,6 +241,15 @@ export function modelsLine(rows: EvalRow[], first: string): string {
   return `Models that answered: ${[...counts].map(([m, n]) => `${m} ${n}`).join(", ")}. The first choice was ${first}; a backup answered when it was busy or over its limit, so this is a mixed-model result.\n`;
 }
 
+/** Short list of who answered, for the Evals page: "openai/gpt-oss-120b 24, qwen/qwen3.8-27b 6". Falls back to the run's model for older files. */
+export function answeredByShort(rows: EvalRow[], fallback: string): string {
+  const counts = new Map<string, number>();
+  for (const r of rows) if (r.answeredBy) counts.set(r.answeredBy, (counts.get(r.answeredBy) ?? 0) + 1);
+  if (counts.size === 0) return fallback;
+  if (counts.size === 1) return [...counts.keys()][0];
+  return [...counts].sort((a, b) => b[1] - a[1]).map(([m, n]) => `${m} ${n}`).join(", ");
+}
+
 export function toMarkdown(run: { prompt: string; model: string; date: string }, rows: EvalRow[], s: Summary): string {
   const p = (v: number | null) => (v === null ? "n/a" : `${Math.round(v * 100)}%`);
   const L = [
