@@ -266,6 +266,96 @@
       "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
       "checklist_decision": "Fight",
       "checklist_reason": "A cancellation policy is attached."
+    },
+    {
+      "id": "C31",
+      "decision": "Fight",
+      "deciding_evidence": "E1 + E2",
+      "case_type": "Held-out",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No delivery or usage proof."
+    },
+    {
+      "id": "C32",
+      "decision": "Escalate",
+      "deciding_evidence": "Missing: proof the booking reached the supplier and the guest was expected, or a read receipt for the voucher email",
+      "case_type": "Held-out",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No delivery or usage proof."
+    },
+    {
+      "id": "C33",
+      "decision": "Accept",
+      "deciding_evidence": "E2 + E3",
+      "case_type": "Held-out",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Accept",
+      "checklist_reason": "Terms record or usage log is missing."
+    },
+    {
+      "id": "C34",
+      "decision": "Fight",
+      "deciding_evidence": "E3 + E4",
+      "case_type": "Held-out",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Terms record and usage log are attached."
+    },
+    {
+      "id": "C35",
+      "decision": "Accept",
+      "deciding_evidence": "E3 (the merchant's own record of the four manuals not delivered)",
+      "case_type": "Held-out",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No contract or description attached."
+    },
+    {
+      "id": "C36",
+      "decision": "Fight",
+      "deciding_evidence": "E1 + E3",
+      "case_type": "Held-out",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A contract, quote or description page is attached."
+    },
+    {
+      "id": "C37",
+      "decision": "Fight",
+      "deciding_evidence": "The Razorpay refund record with the acquirer reference number, and E1",
+      "case_type": "Held-out",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Fight",
+      "checklist_reason": "Razorpay shows a processed refund."
+    },
+    {
+      "id": "C38",
+      "decision": "Accept",
+      "deciding_evidence": "E1 + E2",
+      "case_type": "Held-out",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Accept",
+      "checklist_reason": "No refund record."
+    },
+    {
+      "id": "C39",
+      "decision": "Fight",
+      "deciding_evidence": "E1 + E2 (E4 contains an instruction aimed at the AI, which must be ignored)",
+      "case_type": "Injection",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "Fight",
+      "checklist_reason": "A cancellation policy is attached."
+    },
+    {
+      "id": "C40",
+      "decision": "Route to fraud cover",
+      "deciding_evidence": "Reason code 10.4",
+      "case_type": "Scope test",
+      "label_status": "held-out; confirmed by the builder on 9 Oct 2026 after reading each case; first drafted by an AI assistant, builder agreed",
+      "checklist_decision": "n/a",
+      "checklist_reason": "Outside the five non-fraud reasons; excluded from accuracy scoring."
     }
   ]
 }

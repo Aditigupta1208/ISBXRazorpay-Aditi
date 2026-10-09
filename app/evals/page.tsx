@@ -115,7 +115,7 @@ export default function EvalsPage() {
           <p className="text-[13px] text-helper">Share of cases where the call matched the human answer. The three runs cover different case sets, so compare each with its checklist, not with each other.</p>
         </div>
         <p className="border-t border-line px-4 py-3 text-[13px] text-helper md:px-5">
-          The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases) {latest ? "were not in the old saved run; the newer run below covers them" : "have no saved agent run"}. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
+          The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases; C31 to C40: held-out cases, labelled after the prompt was fixed) {latest ? `were not in the old saved run; the newer run below covers ${latest.rows.length} of ${labels.length} cases` : "have no saved agent run"}. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
           {!latest && <> Run <code className="text-[12px]">npm run eval</code> to score the agent on all of them.</>}
         </p>
       </Card>
@@ -248,7 +248,7 @@ export default function EvalsPage() {
         </table>
       </div>
       <p className="mb-6 max-w-[760px] text-[13px] text-helper">
-        A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C30 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run on the live model yet`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
+        A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C40 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run on the live model yet`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
       </p>
       </details>
 
@@ -270,7 +270,7 @@ export default function EvalsPage() {
       <h2 id="limits" className="mb-2 scroll-mt-4 text-[16px] font-semibold">What these numbers do not show</h2>
       <ul className="mb-1 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
         <li>The answer key was written by the builder from Visa&apos;s rules. A second AI flagged disagreements, but the builder decided them.</li>
-        <li>The {labels.length} cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases. C21 to C30 were drafted by the builder&apos;s AI assistant for the unseen-rules test, and their answers are proposed, not yet confirmed.</li>
+        <li>The {labels.length} cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases. C21 to C30 were drafted by the builder&apos;s AI assistant for the unseen-rules test, and their answers are proposed, not yet confirmed. C31 to C40 are the held-out set: drafted by the same assistant, labelled by the builder (who agreed with an AI-written first draft of the labels) before any run, and reported on their own.</li>
         <li>Nothing here is a real win rate. It shows the agent applies the rules to written evidence and knows when to stop.</li>
       </ul>
       <details className="mb-6 max-w-[760px]" data-testid="limits-more">

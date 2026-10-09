@@ -82,36 +82,36 @@ const count = (p: string, k: string) => (JSON.parse(readFileSync(p, "utf8"))[k] 
 test("add parks the file as pending and changes nothing in the eval set", () => {
   const { root, file } = sandbox();
   const r = addPending(root, file);
-  assert.equal(r.id, "C31");
+  assert.equal(r.id, "C41");
   assert.equal(r.proposed, "Accept");
-  assert.deepEqual(listPending(root), ["C31"]);
-  assert.equal(count(path.join(root, "data", "cases.json"), "cases"), 30);
-  assert.equal(count(path.join(root, "data", "labels.json"), "labels"), 30);
+  assert.deepEqual(listPending(root), ["C41"]);
+  assert.equal(count(path.join(root, "data", "cases.json"), "cases"), 40);
+  assert.equal(count(path.join(root, "data", "labels.json"), "labels"), 40);
 });
 
 test("a second add gets the next number", () => {
   const { root, file } = sandbox();
   addPending(root, file);
-  assert.equal(addPending(root, file).id, "C32");
+  assert.equal(addPending(root, file).id, "C42");
 });
 
 test("confirm adds the case and label, moves the file, and cannot be repeated", () => {
   const { root, file } = sandbox();
   addPending(root, file);
-  confirmPending(root, "C31", "Accept", "E1 + E3", { amountUsd: 1200, today: "2026-10-07" });
-  assert.equal(count(path.join(root, "data", "cases.json"), "cases"), 31);
-  assert.equal(count(path.join(root, "data", "labels.json"), "labels"), 31);
+  confirmPending(root, "C41", "Accept", "E1 + E3", { amountUsd: 1200, today: "2026-10-07" });
+  assert.equal(count(path.join(root, "data", "cases.json"), "cases"), 41);
+  assert.equal(count(path.join(root, "data", "labels.json"), "labels"), 41);
   assert.deepEqual(listPending(root), []);
-  assert.ok(existsSync(path.join(root, "data", "eval-candidates", "added", "C31.json")));
-  assert.throws(() => confirmPending(root, "C31", "Accept", "E1"), /No pending/);
+  assert.ok(existsSync(path.join(root, "data", "eval-candidates", "added", "C41.json")));
+  assert.throws(() => confirmPending(root, "C41", "Accept", "E1"), /No pending/);
 });
 
 test("confirm refuses a bad label or an unknown candidate, and leaves the files alone", () => {
   const { root, file } = sandbox();
   addPending(root, file);
-  assert.throws(() => confirmPending(root, "C31", "Win", "E1"), /label must be/);
+  assert.throws(() => confirmPending(root, "C41", "Win", "E1"), /label must be/);
   assert.throws(() => confirmPending(root, "C99", "Accept", "E1"), /No pending/);
-  assert.equal(count(path.join(root, "data", "cases.json"), "cases"), 30);
+  assert.equal(count(path.join(root, "data", "cases.json"), "cases"), 40);
 });
 
 test("add refuses a file that still has an email in it", () => {

@@ -9,7 +9,7 @@ const labels = (JSON.parse(readFileSync("data/labels.json", "utf8")) as { labels
 const input = (c: CaseData) => ({ reasonCode: c.dispute.reason_code, razorpayFacts: c.razorpay_facts, evidence: c.evidence });
 
 test("the coded checklist reproduces the stored checklist answer on every case", () => {
-  assert.equal(cases.length, 30);
+  assert.equal(cases.length, 40);
   for (const c of cases) {
     const l = labels.find((x) => x.id === c.id)!;
     assert.equal(fixedChecklist(input(c)).call, l.checklist_decision, `${c.id}`);

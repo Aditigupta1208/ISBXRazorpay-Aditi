@@ -88,3 +88,4 @@ One line per build session: date, milestone, what was built, anything decided or
 2026-10-09 | merchants | Merchant C recalled the Razorpay ratio warning (early 2023, 0.9% against a 1% network threshold); will send a redacted email if asked. Recorded as recollection, not verified.
 2026-10-09 | research | Razorpay support reply recorded (contest final after submit; disputes counted when raised; 0.5% figure and win effect unconfirmed). Source needs ticket number before it is cited.
 2026-10-09 | research | Merchant C's actual warning email (14 Mar 2023, 0.87%, 1% threshold, silent on wins); informal Razorpay colleague's answers; checked Razorpay blog for the 0.5% and 1.5% figures. Ratio tile unblocked with attributed wording.
+2026-10-09 | Eval set | Added held-out cases C31 to C40 (labels confirmed by user; notes AI-drafted, user agreed) to cases.json and labels.json; scoreboard treats them as unseen; tests updated to 40 cases. Next: R8 thin-evidence rule.

@@ -28,6 +28,8 @@ export function scoreRules(cases: CaseData[], key: KeyRow[]): Scoreboard {
   for (const k of key) {
     const c = cases.find((x) => x.id === k.id);
     if (!c) continue;
+    // Held-out cases were written after the rules were frozen and are reported on their own, not here.
+    if (k.label_status && /held-out/i.test(k.label_status)) continue;
     const input: BaselineInput = { reasonCode: c.dispute.reason_code, razorpayFacts: c.razorpay_facts, evidence: c.evidence };
     const w = want(k.decision);
     const s = simpleCall(fixedChecklist(input).call) === w;
