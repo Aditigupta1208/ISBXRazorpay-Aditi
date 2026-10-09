@@ -23,7 +23,7 @@ test("every in-scope reason code has a checklist, and fraud has none", () => {
 
 test("the prompt's slot list matches the checklist's slots", async () => {
   const { readFileSync } = await import("node:fs");
-  const text = readFileSync(new URL("../prompts/dispute-agent-v2.2.md", import.meta.url), "utf8");
+  const text = readFileSync(new URL("../prompts/dispute-agent-v2.3.md", import.meta.url), "utf8");
   for (const s of RAZORPAY_SLOTS) assert.ok(text.includes(`"${s}"`), s);
 });
 

@@ -6,7 +6,7 @@ import { parsePrompt } from "./prompt.ts";
 import type { Deps } from "./agent.ts";
 import type { CaseData } from "./types.ts";
 
-const prompt = parsePrompt(readFileSync("prompts/dispute-agent-v2.2.md", "utf8"));
+const prompt = parsePrompt(readFileSync("prompts/dispute-agent-v2.3.md", "utf8"));
 const cases = (JSON.parse(readFileSync("data/cases.json", "utf8")) as { cases: CaseData[] }).cases;
 const labels = (JSON.parse(readFileSync("data/labels.json", "utf8")) as { labels: LabelRow[] }).labels;
 const get = (id: string) => ({ c: cases.find((x) => x.id === id)!, l: labels.find((x) => x.id === id)! });

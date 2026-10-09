@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/** Mirrors the tool schema in prompts/dispute-agent-v2.2.md. A test keeps the two in step. */
+/** Mirrors the tool schema in prompts/dispute-agent-v2.3.md. A test keeps the two in step. */
 export const SLOTS = [
   "shipping_proof",
   "billing_proof",

@@ -7,7 +7,7 @@ import { SLOTS, decisionSchema } from "./schema.ts";
 import { allow, resetRateLimit } from "./ratelimit.ts";
 import type { CaseData, CheckView } from "./types.ts";
 
-const md = readFileSync("prompts/dispute-agent-v2.2.md", "utf8");
+const md = readFileSync("prompts/dispute-agent-v2.3.md", "utf8");
 const prompt = parsePrompt(md);
 
 const c: CaseData = {
@@ -234,7 +234,7 @@ test("terms over the cap or holding a card number are rejected before any call",
   assert.equal(calls.n, 0);
 });
 
-test("prompt v2.2: Escalate keeps a draft, Fold has none, and the tool schema matches v2.1", async () => {
+test("prompt v2.3: Escalate keeps a draft, Fold has none, and the tool schema matches v2.1", async () => {
   const esc = await analyze(c, [], deps({ n: 0 }, [async () => reply({ ...good, decision: "escalate", missing_evidence: "the signed terms", draft_response: "The customer was charged on 1 Jun. [E1]" })]));
   assert.equal(esc.status, "live");
   if (esc.status === "live") {
