@@ -51,7 +51,15 @@ Three conversations by the builder, using the question set in `docs/MERCHANT_CON
 | They fold or fight by personal thresholds: A, 30% chance is worth a day; B, about INR 5,000; C, fold under USD 200, fight over USD 2,000. | A, B, C | "Your rules" can include a fight threshold: below it the advisor suggests Fold (suggests only). |
 | C forwards the message to his operations manager before approving. | C | A "copy a summary to send to a colleague" button. |
 
-A to-do on facts: A and C believe a lost dispute raises their ratio. Earlier research (build log) found that winning does not lower it, because the dispute counts when it is raised. Check this against Razorpay and the card network before the advisor says anything about it.
+## Two facts checked on 9 Oct 2026
+
+| Question | What the sources say | Confidence |
+|---|---|---|
+| Does losing raise the ratio, or winning lower it? | Visa's merchant program (VAMP) is described by two secondary sources (Checkout.com, Chargebacks Gurus) as (fraud reports + disputes) divided by settled card-absent transactions, counted monthly. Disputes count when raised. The only ways out are being resolved before they become a chargeback (Rapid Dispute Resolution, Compelling Evidence 3.0, alerts such as CDRN or Ethoca). Neither source says a won dispute is removed. The merchant threshold is 1.5% from 1 April 2026 (2.2% before), and a merchant is only identified with at least 1,500 fraud or dispute cases a month. | Medium: secondary sources, not Visa's own document; they do not state "winning does not remove it" in words. |
+| What the merchants' fear may really be | At one to a few disputes a month, A, B and C are far below the 1,500-case minimum for Visa's merchant enforcement. C did get a warning email from Razorpay, so Razorpay may apply its own limit. Razorpay's public fees page states no ratio or threshold. | Unverified for Razorpay's own policy. |
+| Can a contest be changed after it is sent? | Razorpay's contest API: `action=draft` saves evidence without sending and can be updated repeatedly; `action=submit` moves the dispute from `open` to `under_review`; actions on a dispute under review are rejected ("cannot perform any action on a dispute under review"). The page does not say in words that evidence cannot be added after submit. | Medium-high: it matches what the merchants said. |
+
+What this means: "submit now, mark this pending" is not safe advice, because a submitted contest cannot be added to. The advisor should say "save as a draft, get the document, then submit" while the deadline allows it, and "submit what you have" only as a clear last resort. And the advisor should not tell a merchant that fighting protects their ratio, or that it does not, until Razorpay or Visa confirms it for them. A good next step is to ask merchant C for the warning email, and to ask Razorpay support for their monitoring thresholds.
 
 ## What the conversations still do not test
 

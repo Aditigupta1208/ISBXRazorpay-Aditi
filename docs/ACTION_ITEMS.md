@@ -41,7 +41,7 @@ Ordered by how many of the three merchants asked for it.
 | 11 | What-if evidence, with a deadline check on "Get this first" | B | Code only |
 | 12 | Held-out run: your labels for C31 to C40, then one run on prompt v2.3 | n/a | Waiting on you |
 
-Open facts to verify before building: whether Razorpay lets a contest be added to after it is sent (merchants say no); how the dispute ratio is counted and the thresholds that apply.
+Facts checked 9 Oct (see `docs/MERCHANT_FINDINGS.md`): a submitted contest cannot be added to (draft first, then submit), so do not suggest "submit now, mark pending". The ratio is counted when a dispute is raised (secondary sources); Razorpay's own thresholds are not public. Ask merchant C for his warning email and ask Razorpay support for their limit before putting a ratio tile or any ratio advice in the product.
 
 ## Waiting on you
 
