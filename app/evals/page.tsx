@@ -101,7 +101,7 @@ export default function EvalsPage() {
           )}
         </div>
         <p className="border-t border-line px-4 py-3 text-[13px] text-helper md:px-5">
-          The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases) have no saved agent run. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
+          The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases) {latest ? "were not in the old saved run; the newer run below covers them" : "have no saved agent run"}. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
           {!latest && <> Run <code className="text-[12px]">npm run eval</code> to score the agent on all of them.</>}
         </p>
       </Card>

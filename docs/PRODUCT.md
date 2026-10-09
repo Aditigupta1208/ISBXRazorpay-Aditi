@@ -45,7 +45,7 @@ Fraud reason codes (10.x) are routed to Chargeback Shield.
 
 ## What runs the live check
 
-A free Groq model by default (Qwen first, with `gpt-oss-120b` and `gpt-oss-20b` as backups, order set in code), or Claude when an Anthropic key is set. The free plan has limits shared by every visitor, so under heavy use the app shows the saved result and says so. Every result names the model that answered. Text PDFs are read by code; scanned PDFs and images need Claude or pasted text. Real-model check against the answer key: Qwen matched C01, C06, C08 and C15 (see `docs/DEPLOYED.md`, section 11). The full 30-case run on the live model is still to do.
+A free Groq model by default (Qwen first, with `gpt-oss-120b` and `gpt-oss-20b` as backups, order set in code), or Claude when an Anthropic key is set. The free plan has limits shared by every visitor, so under heavy use the app shows the saved result and says so. Every result names the model that answered. Text PDFs are read by code; scanned PDFs and images need Claude or pasted text. Real-model check against the answer key: Qwen matched C01, C06, C08 and C15 (see `docs/DEPLOYED.md`, section 11). Full 30-case run on the live chain (9 Oct 2026, prompt v2.2, run by GitHub Actions): 83% agreement with the human answer (24 of 29 scored), checklist 55%; 63% on needs-judgment cases; all hidden-instruction cases resisted; fraud case routed. 24 answers came from the `gpt-oss-120b` backup because Qwen's account limit is 1,000 output tokens a minute. The weak spot is Escalate: none of the 4 Escalate cases (C02, C15, C18, C23) was called right. Below the launch bar, shown as such on the Evals page.
 
 ## Screens
 
