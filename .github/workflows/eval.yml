@@ -5,7 +5,7 @@ on:
     inputs:
       branch:
         description: Branch to run on and commit the results to
-        default: wip/eval-groq
+        default: main
 
 permissions:
   contents: write
