@@ -21,3 +21,17 @@ Deadline: 13 Oct 2026, 11:59 PM IST. Freeze 10 Oct (tag `submission`). Everythin
 Done 9 Oct: audit P1 to P3, 30-case live eval, prompt v2.3, no-key message, saved Fold odds, repeat-sentence check, readable C06 headline, key facts for eight cases, charts on Results and Evals, reset on the list, breadcrumb alignment.
 
 Left, only if time: another live eval run after the freeze fixes (do not tune on C15, C18, C23); more saved cases.
+
+## Backlog to build together (agreed 9 Oct, nothing here is built)
+
+1. Evidence packet export: cover summary, contents list, numbered exhibits (3 of 3 merchants asked for it).
+2. Amount threshold on Deadline rescue and the list.
+3. Policy patch: checkout wording for the weakest reason code, from Results (code template first, model rewrite optional).
+4. What-if evidence: recompute the ceiling as if a missing document existed (code only).
+5. Rule R8: a Fight with no key document becomes Escalate (frozen definition in `docs/HELDOUT_TEST.md`; build after the held-out labels).
+6. A short line on dispute ratio and "setting a precedent" in the money section (open question).
+7. Held-out run: your labels for C31 to C40, then one run on prompt v2.3.
+
+## Waiting on you
+
+- Next merchant calls: ask "Tell me about a dispute you accepted or lost", then run the prototype test (Part 3 of `docs/MERCHANT_CONVERSATIONS.md`).
