@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { Card, PageTitle, Section } from "@/components/ui";
+import { FlowCards, Hero, Ico, LearnLoop, Pipeline, RuleGroups } from "@/components/HowVisuals";
 import { HowTabs } from "@/components/HowTabs";
 import { PROMPT_VERSION } from "@/lib/prompt";
 import { SOURCES } from "@/lib/evidenceChecklist";
@@ -13,27 +13,45 @@ const FLOW = [
   ["1", "The dispute arrives", "Razorpay's record: $480, reason 13.2 (cancelled recurring transaction), 14 hours left.", "/disputes/C06", "Open it"],
   ["2", "It reads your documents", "Four of them, against Visa's rule for that reason: a customer who cancelled but kept using the service loses.", "/disputes/C06", "See the documents"],
   ["3", "It makes the call", "The login log shows use after the claimed cancellation and the billing log shows no cancel. Fight, with high confidence.", "/disputes/C06", "See the reason"],
-  ["4", "Seven rules check it", "Code, not the AI, can downgrade a Fight to Escalate if a document is missing or a sentence has no source.", "#rules", "See the rules"],
+  ["4", "Nine checks run on it", "Code, not the AI, can downgrade a Fight to Escalate if a document is missing or a sentence has no source.", "#rules", "See the rules"],
   ["5", "You test it, decide, then it learns", "Run the draft past a practice bank reviewer and fix its weak spot. Approve. Mark Won or Lost and the next estimate moves.", "/disputes/C06", "Try the test"],
 ];
 
 const NEXT = [
-  ["Odds from Razorpay's own data", "Today the win odds are the model's estimate, nudged by your own record. Razorpay sees every dispute and its outcome across merchants, so it could replace the guess with a real rate by reason code and evidence type.", "Needs months of outcomes and a privacy review. Only the platform has this data."],
-  ["Proof captured at checkout", "The documents that win a dispute (accepted terms, usage, delivery) are made at the time of sale, mostly outside Razorpay. Capturing them at checkout would mean a dispute arrives with its proof attached.", "Not built: pre-dispute is out of scope here, and in a prototype it could only be a mock."],
-  ["Cover for clear wins", "Chargeback Shield covers fraud disputes only. When the check says Fight with high confidence and complete evidence, Razorpay could guarantee the amount for a fee, priced from the check's odds and its record of outcomes.", "Risks: merchants gaming it, and service disputes are fuzzier than fraud. Needs outcome data first."],
+  ["Odds from Razorpay's own data", "Today the win odds are the model's estimate, nudged by your own record. Razorpay sees every dispute and its outcome across merchants, so it could replace the guess with a real rate by reason code and evidence type.", "Needs months of outcomes and a privacy review. Only the platform has this data.", "chart"],
+  ["Proof captured at checkout", "The documents that win a dispute (accepted terms, usage, delivery) are made at the time of sale, mostly outside Razorpay. Capturing them at checkout would mean a dispute arrives with its proof attached.", "Not built: pre-dispute is out of scope here, and in a prototype it could only be a mock.", "box"],
+  ["Cover for clear wins", "Chargeback Shield covers fraud disputes only. When the check says Fight with high confidence and complete evidence, Razorpay could guarantee the amount for a fee, priced from the check's odds and its record of outcomes.", "Risks: merchants gaming it, and service disputes are fuzzier than fraud. Needs outcome data first.", "shield"],
 ];
 
-const RULES = [
-  ["R1", "The answer has every expected field."],
-  ["R2", "Every sentence of the draft cites a document. Cited documents must exist."],
-  ["R3", "The deciding documents exist. If not, the call becomes Escalate."],
-  ["R4", "Fight needs good confidence and nothing missing. Otherwise it becomes Escalate."],
-  ["R5", "Fraud reasons (10.x) go to Chargeback Shield before any AI call."],
-  ["R6", "The draft is 1,000 characters or less."],
-  ["R7", "Full card numbers are rejected."],
-  ["R8", "A Fight must cite a key document for its reason. Otherwise it becomes Escalate."],
-  ["R9", "Every amount, date and count in the draft is in a document it cites or in Razorpay's record. If not, you check it by hand before you can submit."],
-];
+const RULE_GROUPS = [
+  {
+    title: "They can change the call",
+    note: "If a rule fails, a Fight is downgraded or the dispute is routed away.",
+    icon: "scale",
+    ink: "text-escalate",
+    tone: "bg-escalate-soft",
+    rules: [
+      ["R3", "The deciding documents exist. If not, the call becomes Escalate."],
+      ["R4", "Fight needs good confidence and nothing missing. Otherwise it becomes Escalate."],
+      ["R8", "A Fight must cite a key document for its reason. Otherwise it becomes Escalate."],
+      ["R5", "Fraud reasons (10.x) go to Chargeback Shield before any AI call."],
+    ],
+  },
+  {
+    title: "They stop a bad answer or draft",
+    note: "The call stays. You fix the draft before you can submit.",
+    icon: "shield",
+    ink: "text-shield",
+    tone: "bg-shield-soft",
+    rules: [
+      ["R1", "The answer has every expected field. If not, you see the saved result."],
+      ["R2", "Every sentence of the draft cites a document, and the document exists."],
+      ["R9", "Every amount, date and count in the draft is in a cited document or Razorpay's record. If not, you check it by hand before you can submit."],
+      ["R6", "The draft is 1,000 characters or less."],
+      ["R7", "Full card numbers are rejected."],
+    ],
+  },
+] as { title: string; note: string; icon: string; ink: string; tone: string; rules: [string, string][] }[];
 
 const RULE_CHECK = [
   ["13.1", "37", "Matches. Visa also lets you answer if the delivery date has not passed or the customer cancelled before delivery; the advisor does not model those."],
@@ -44,76 +62,73 @@ const RULE_CHECK = [
 ];
 
 const ANSWERS = [
-  ["What data or signal does it use?", "Razorpay's dispute record and payment facts, plus the evidence you add. Your own terms are read too, but only as your claim, never as proof."],
-  ["Why AI and not a fixed rule?", "A checklist only sees which documents are attached. The AI reads what they say, spots contradictions, weighs the money and knows when to stop. On our 15 scored test cases it matched the human answer on 15 and a checklist on 8 (saved v1 run; see Evals)."],
-  ["What action does it take?", "The Fold-or-Fight check recommends Fight, Fold or Escalate, maps documents to Razorpay's evidence slots, and drafts a response that cites a document in every sentence. Before you submit you can test the draft against a practice bank reviewer, which names its weakest sentence and offers a fix. With 24 hours left it can nudge you with the response already drafted (a preview is in Agent setup). Nothing is sent from this prototype."],
-  ["What does the merchant control?", "Everything that matters. Every submit and fold needs approval. You can edit the draft, override the call (your reason goes in the audit trail), or turn the agent off."],
-  ["How does it learn?", "In a real product, won and lost outcomes by reason code and evidence type would sharpen advice. In this prototype the outcome is stored in your browser and shown back to you. No model is trained."],
-  ["How is accuracy and trust protected?", "The nine safety rules, a saved result when the live check fails, an audit trail, and evidence treated as data, never as instructions. The Evals page shows where it is still weak."],
-  ["What business result does it aim at?", "More money recovered per rupee disputed, more disputes answered before the deadline, less time per dispute, and fewer repeat disputes after prevention fixes."],
+  ["What data or signal does it use?", "Razorpay's dispute record plus the documents you add.", "Your own terms are read too, but only as your claim, never as proof.", "docs"],
+  ["Why AI and not a fixed rule?", "A checklist only sees which documents are attached. The AI reads what they say.", "It spots contradictions, weighs the money and knows when to stop. On our 15 scored test cases it matched the human answer on 15 and a checklist on 8 (saved v1 run; see Evals).", "scale"],
+  ["What action does it take?", "It recommends Fight, Fold or Escalate and drafts a response that cites a document in every sentence.", "It maps documents to Razorpay's evidence slots and can test the draft against a practice bank reviewer. With 24 hours left it can nudge you with the response already drafted (set on Alerts). Nothing is sent from this prototype.", "flag"],
+  ["What does the merchant control?", "Everything that matters.", "Every submit and fold needs approval. You can edit the draft, override the call (your reason goes in the audit trail), or turn the agent off.", "hand"],
+  ["How does it learn?", "In a real product, outcomes would sharpen the advice. Here, your record adjusts the odds.", "The outcome is stored in your browser and shown back to you. No model is trained.", "loop"],
+  ["How is accuracy and trust protected?", "Nine safety rules, a saved result when the live check fails, and an audit trail.", "Evidence is treated as data, never as instructions. The Evals page shows where it is still weak.", "shield"],
+  ["What business result does it aim at?", "More money recovered per rupee disputed.", "More disputes answered before the deadline, less time per dispute, and fewer repeat disputes after prevention fixes.", "chart"],
 ];
 
 export default function HowItWorksPage() {
   const product = (
     <>
+      <Hero />
       <Pipeline />
       <section id="one-minute" aria-labelledby="one-minute-h" className="mb-8 scroll-mt-4">
         <h2 id="one-minute-h" className="text-[16px] font-semibold">One dispute, start to finish</h2>
-        <p className="mb-3 text-[14px] text-ink-soft">A customer in Ireland disputes a $480 subscription charge. They say: &ldquo;I cancelled this.&rdquo;</p>
-        <ol className="grid gap-3 md:grid-cols-5" aria-label="Flow">
-          {FLOW.map(([n, t, d, href, cta]) => (
-            <li key={n} className="relative rounded-2xl border border-line bg-white p-4 focus-within:ring-2 focus-within:ring-brand-soft hover:border-brand">
-              <span aria-hidden className="mb-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-soft text-[12px] font-semibold text-brand">{n}</span>
-              <b className="block text-[14px]">{t}</b>
-              <span className="block text-[12px] text-ink-soft">{d}</span>
-              <Link href={href} className="mt-2 inline-block text-[12px] font-semibold text-brand after:absolute after:inset-0 after:content-[''] hover:underline">{cta} →</Link>
-            </li>
-          ))}
-        </ol>
+        <p className="mb-3 text-[13px] text-helper">A customer in Ireland disputes a $480 subscription charge. They say: &ldquo;I cancelled this.&rdquo; Each step opens the real screen.</p>
+        <FlowCards steps={FLOW} />
       </section>
 
-      <Section id="rules" title="The nine safety rules" note="They run in code after every answer. You can see each result on the dispute page. The bank test has four more of its own (RB1 to RB4), shown under its result.">
-        <Card>
-        <ul className="grid gap-x-10 gap-y-2 md:grid-cols-2">
-          {RULES.map(([id, t]) => (
-            <li key={id} className="flex gap-3 text-[14px]"><b className="w-8 shrink-0 text-brand">{id}</b><span>{t}</span></li>
-          ))}
-        </ul>
-        </Card>
+      <Section id="rules" title="The nine safety rules" note="They run in code after every answer, and you can see each result on the dispute page. The bank test has four more of its own (RB1 to RB4), shown under its result.">
+        <RuleGroups groups={RULE_GROUPS} />
       </Section>
 
       <Section id="learning" title="How it learns, and how a change ships" note="What this prototype does today, and what a real launch would add.">
         <Card>
-        <div className="grid gap-x-10 gap-y-5 md:grid-cols-2">
-          <div>
-            <h3 className="text-[14px] font-semibold">After an outcome (built)</h3>
-            <ul className="mt-1 list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
-              <li>Marking a dispute won or lost updates your record on the Results page.</li>
-              <li>Your record shifts the odds shown on the next dispute where the advisor was equally confident. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check then uses the adjusted odds.</li>
-              <li>A miss (the advisor said Fight and it was lost, or said Fold and you won) can be downloaded as a candidate eval case, with names and numbers masked and a proposed answer a person must confirm.</li>
-              <li>Here all of this stays in your browser. A real launch would store outcomes per merchant, queue misses for review and recalibrate on all merchants together.</li>
-            </ul>
+          <LearnLoop />
+          <div className="grid gap-x-10 gap-y-5 md:grid-cols-2">
+            <div>
+              <h3 className="flex items-center gap-2 text-[14px] font-semibold"><span className="text-brand"><Ico name="loop" className="h-4 w-4" /></span>After an outcome (built)</h3>
+              <ul className="mt-1 list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
+                <li>Marking a dispute won or lost updates your record on the Results page.</li>
+                <li>Your record shifts the odds on the next dispute where the advisor was equally confident. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over.</li>
+                <li>A miss can be downloaded as a candidate eval case, with names and numbers masked and a proposed answer a person must confirm.</li>
+                <li>Here all of this stays in your browser. A real launch would store outcomes per merchant and recalibrate on all merchants together.</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="flex items-center gap-2 text-[14px] font-semibold"><span className="text-brand"><Ico name="chart" className="h-4 w-4" /></span>Before a prompt or model change ships (the gate)</h3>
+              <p className="mt-1 text-[14px] text-ink-soft">The change is run on every case in the eval set ({getCases().length} today) with <code>npm run eval -- --gate</code>. It ships only if no measure is below its launch bar and every hidden-instruction case is resisted. The previous prompt (v2.1) is kept as the baseline.</p>
+              <ul className="mt-2 space-y-1.5 text-[14px]">
+                {THRESHOLDS.map((t) => (
+                  <li key={t.key} className="flex items-center justify-between gap-3 rounded-lg bg-[#F6F7F9] px-3 py-1.5">
+                    <span className="text-ink-soft">{t.label}</span>
+                    <b className="shrink-0 font-semibold whitespace-nowrap">{t.dir === "min" ? "at least" : "at most"} {Math.round(t.launch * 100)}%</b>
+                  </li>
+                ))}
+                <li className="flex items-center justify-between gap-3 rounded-lg bg-[#F6F7F9] px-3 py-1.5">
+                  <span className="text-ink-soft">Hidden instructions resisted</span>
+                  <b className="shrink-0 font-semibold">all of them</b>
+                </li>
+              </ul>
+              <p className="mt-2 text-[13px] text-helper">The gate is a command we run before changing the live prompt, not an automatic block on deploys.</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-[14px] font-semibold">Before a prompt or model change ships (the gate)</h3>
-            <p className="mt-1 text-[14px] text-ink-soft">The change is run on every case in the eval set ({getCases().length} today) with <code>npm run eval -- --gate</code>. It ships only if no measure is below its launch bar and every hidden-instruction case is resisted. The previous prompt (v2.1) is kept as the baseline to compare against.</p>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-[14px] text-ink-soft">
-              {THRESHOLDS.map((t) => (
-                <li key={t.key}>{t.label}: {t.dir === "min" ? "at least" : "at most"} {Math.round(t.launch * 100)}%</li>
-              ))}
-              <li>Hidden instructions resisted: all of them</li>
-            </ul>
-            <p className="mt-2 text-[13px] text-helper">The gate is a command we run before changing the live prompt, not an automatic block on deploys.</p>
-          </div>
-        </div>
         </Card>
       </Section>
 
       <Section id="next" title="Where it could go next (not built)" note="Ideas that follow from the same check. None is in this prototype.">
         <div className="grid gap-4 md:grid-cols-3">
-          {NEXT.map(([t, d, c]) => (
-            <Card key={t}>
-              <h3 className="text-[14px] font-semibold">{t}</h3>
+          {NEXT.map(([t, d, c, icon]) => (
+            <Card key={t} className="border-dashed">
+              <div className="flex items-center justify-between gap-2">
+                <span className="grid h-9 w-9 place-items-center rounded-lg bg-[#F1F3F6] text-ink-soft"><Ico name={icon} /></span>
+                <span className="rounded-full bg-[#F1F3F6] px-2.5 py-0.5 text-[12px] font-semibold text-ink-soft">Not built</span>
+              </div>
+              <h3 className="mt-2 text-[14px] font-semibold">{t}</h3>
               <p className="mt-1 text-[14px] text-ink-soft">{d}</p>
               <p className="mt-2 text-[13px] text-helper">{c}</p>
             </Card>
@@ -125,16 +140,17 @@ export default function HowItWorksPage() {
   const answers = (
     <>
         <Section title="The seven questions in the challenge brief">
-          <Card>
-          <dl className="grid gap-x-10 gap-y-4 md:grid-cols-2">
-            {ANSWERS.map(([q, a]) => (
-              <div key={q}>
-                <dt className="text-[14px] font-semibold">{q}</dt>
-                <dd className="text-[14px] text-ink-soft">{a}</dd>
+          <dl className="grid gap-3 md:grid-cols-2">
+            {ANSWERS.map(([q, lead, detail, icon], i) => (
+              <div key={q} className="flex gap-3 rounded-2xl border border-line bg-white p-4">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-soft text-brand"><Ico name={icon} /></span>
+                <div className="min-w-0">
+                  <dt className="text-[12px] font-semibold tracking-[.6px] text-helper uppercase">{i + 1}. {q}</dt>
+                  <dd className="mt-1 text-[14px]"><b className="font-semibold">{lead}</b> <span className="text-ink-soft">{detail}</span></dd>
+                </div>
               </div>
             ))}
           </dl>
-          </Card>
         </Section>
 
         <div className="grid gap-x-4 md:grid-cols-2">
@@ -182,9 +198,17 @@ export default function HowItWorksPage() {
         </Section>
 
         <Section title="Live checks, saved results and the helpers">
+          <div className="mb-3 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-fight/30 bg-fight-soft p-4">
+              <span className="rounded-full bg-white px-2.5 py-0.5 text-[12px] font-semibold text-fight">Live</span>
+              <p className="mt-2 text-[14px]">Re-run check, Add evidence, the bank test and the helpers below make a real call to a free-tier AI model. It can take up to a minute, and a busy model can refuse it.</p>
+            </div>
+            <div className="rounded-2xl border border-line bg-[#F6F7F9] p-4">
+              <span className="rounded-full bg-white px-2.5 py-0.5 text-[12px] font-semibold text-ink-soft">Saved result</span>
+              <p className="mt-2 text-[14px]">The answer from an earlier test run, shown when a call fails or no key is set. The label under every answer says Live or Saved result and names the model.</p>
+            </div>
+          </div>
           <Card><ul className="list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
-            <li><b className="font-semibold text-ink">Live.</b> Re-run check, Add evidence, the bank test and the three helpers below make a real call to an AI model. This demo runs on a free-tier model, so a call can take up to a minute, and a busy model can refuse it.</li>
-            <li><b className="font-semibold text-ink">Saved.</b> If a call fails or no key is set, you see the saved result from an earlier test run instead. The label under every answer says <i>Live</i> or <i>Saved result</i> and names the model, so you always know which you are looking at.</li>
             <li><b className="font-semibold text-ink">Same question, same answer.</b> Repeating a check with the same case and evidence returns the first answer from a one-hour cache. Add evidence to get a fresh one.</li>
             <li><b className="font-semibold text-ink">Shorten.</b> If your response is over Razorpay&apos;s 1,000 characters, the advisor offers a shorter version. Code checks that every sentence still has a source and no new numbers appear. If the AI cannot answer, code drops the last sentences instead. You choose whether to use it.</li>
             <li><b className="font-semibold text-ink">Key facts.</b> The advisor lists up to three facts per document. Each one comes with a quote, and a fact is shown only if its quote is word for word in the document.</li>
@@ -218,33 +242,5 @@ export default function HowItWorksPage() {
         ]}
       />
     </>
-  );
-}
-
-function Pipeline() {
-  const Box = ({ title, children, tone = "" }: { title: string; children: React.ReactNode; tone?: string }) => (
-    <li className={`rounded-2xl border border-line bg-white p-4 ${tone}`}>
-      <b className="block text-[14px]">{title}</b>
-      <span className="block text-[12px] text-ink-soft">{children}</span>
-    </li>
-  );
-  const Arrow = () => (
-    <li aria-hidden className="flex items-center justify-center text-[16px] text-helper md:px-1">
-      <span className="md:hidden">↓</span>
-      <span className="hidden md:inline">→</span>
-    </li>
-  );
-  return (
-    <section aria-label="The pipeline" className="mb-8">
-      <ol className="grid items-stretch gap-2 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr]">
-        <Box title="What goes in">Razorpay&apos;s dispute record, the documents you add, and your own terms (read as your claim, never as proof).</Box>
-        <Arrow />
-        <Box title="The Fold-or-Fight check">Visa&apos;s rule for that reason, then names the documents that decide it and works out the money.</Box>
-        <Arrow />
-        <Box title="Seven checks run in code">They can downgrade a Fight to Escalate, and reject anything that is missing a source.</Box>
-        <Arrow />
-        <Box title="What you get" tone="border-brand bg-[#F4F8FF]">Fight, Fold or Escalate, a draft that cites a document in every sentence, and a practice run against the bank. You approve.</Box>
-      </ol>
-    </section>
   );
 }
