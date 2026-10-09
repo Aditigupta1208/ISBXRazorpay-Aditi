@@ -71,7 +71,7 @@ export const CHECKLISTS: Record<string, CodeChecklist> = {
   },
   "13.6": {
     key: [
-      { need: "Proof the refund was already given, or that none was due", slots: ["refund_confirmation", "refund_cancellation_policy"], why: "Visa lets you show the credit was processed, or that the sale was valid and no credit was due.", src: "visa" },
+      { need: "Proof the refund was already given, or that none was due", slots: ["refund_confirmation", "refund_cancellation_policy", "term_and_conditions"], why: "Visa lets you show the credit was processed, or that the sale was valid and no credit was due. Terms the customer accepted at checkout count when they include the refund policy.", src: "visa" },
     ],
     helpful: [
       { need: "Order confirmation", slots: ["billing_proof"], why: "Shows the original sale." },

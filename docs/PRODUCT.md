@@ -72,7 +72,7 @@ Layout follows Razorpay's Agentic Dashboard: black top bar, white sub-tabs (Tran
 6. **Length**: the draft must be 1,000 characters or less.
 7. **Card numbers**: a full card number (Luhn check) in pasted evidence is rejected.
 
-Show each check as a pass, changed or blocked line in the check panel (rule numbers R1 to R7 match `docs/pm/05-data-and-stack.md`).
+Show each check as a pass, changed or blocked line in the check panel (rule numbers R1 to R8 match `docs/pm/05-data-and-stack.md`).
 
 Bank's rebuttal has four more checks of its own, RB1 to RB4 (the quoted sentence is in the draft; a rewrite cites real documents; a rewrite fits 1,000 characters; only documents in this dispute are named). They only remove something unsafe and are shown under the result.
 

@@ -11,7 +11,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | F2 | Policy profile | ✅ (terms are sent as the merchant's claim, not proof; tested on a stand-in model) | `/agent-studio` |
 | F3 | Cited response draft | ✅ | Dispute detail, "Review your response" |
 | F4 | Merchant controls | ✅ | Dispute detail |
-| F5 | Safety checks (R1 to R7) | ✅ | Check panel, drawer, API route |
+| F5 | Safety checks (R1 to R8) | ✅ | Check panel, drawer, API route |
 | F21 | Worth finding? (value of the missing document) | ✅ | Dispute detail, Escalate "Get this first" box |
 | F22 | Deadline rescue (24-hour nudge, preview only) | ✅ preview and one-tap link; 🟡 no message is ever sent | `/agent-studio`, and `?review=1` on a dispute |
 | F20 | Bank's rebuttal (practice run against the bank) | ✅ saved examples and checks; 🟡 live call tested against a stand-in model only | Dispute detail, "Review your response" |

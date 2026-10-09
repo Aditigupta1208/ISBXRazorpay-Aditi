@@ -80,6 +80,7 @@ export async function runCase(c: CaseData, l: LabelRow, deps: Deps): Promise<Eva
     evidenceTexts: c.evidence.map((e) => e.content),
     draft: v.draft,
     documentCount: v.slots.length,
+    slots: v.slots,
     schemaOk: true,
   });
   const draft = v.draft.trim();

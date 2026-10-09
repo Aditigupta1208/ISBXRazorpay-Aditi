@@ -14,6 +14,8 @@ Purpose: measure the advisor on cases that were never used to write or tune a pr
 
 If the call is Fight and none of the documents the draft cites is a key document for that reason code (the per-reason list already in the app), the call becomes Escalate with the message "Your evidence does not include the key document for this reason." Key documents per reason are in `lib/evidenceChecklist.ts`. The rule only lowers a Fight. It never creates one and never changes Accept or Escalate.
 
+Built 9 Oct, before any live run. First scan of the saved demo cases: only C12 (a correct Fight) was lowered, because the saved answer filed the checkout acceptance under Terms and Conditions. The 13.6 key list was widened to count accepted terms (a known case, not a held-out one), which can only turn a lowering into a pass. After that change R8 lowers none of the 16 saved results.
+
 ## What you need to label (skills)
 
 No payments or legal expertise is needed. You need to read about 6 short documents per case and apply four questions. Allow 5 minutes a case, about 50 minutes in total. If you can, ask one other person (a friend, a merchant) to label the same ten blind, and note where you disagree. That is useful evidence in itself.

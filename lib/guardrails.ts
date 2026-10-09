@@ -1,9 +1,10 @@
-/** Safety rules R1 to R7 (docs/pm/05-data-and-stack.md). Pure functions: run on the server and in the browser. */
+/** Safety rules R1 to R8 (docs/pm/05-data-and-stack.md). Pure functions: run on the server and in the browser. */
+import { CHECKLISTS } from "./evidenceChecklist";
 export type Status = "pass" | "changed" | "blocked" | "na";
 export type FinalCall = "fight" | "fold" | "escalate" | "shield";
 
 export interface GuardrailLine {
-  id: "R1" | "R2" | "R3" | "R4" | "R5" | "R6" | "R7";
+  id: "R1" | "R2" | "R3" | "R4" | "R5" | "R6" | "R7" | "R8";
   rule: string;
   status: Status;
   message: string;
@@ -19,6 +20,7 @@ export interface GuardrailInput {
   evidenceTexts: string[];
   draft: string;
   documentCount: number; // evidence items mapped to a Razorpay slot
+  slots?: { evidenceId: string; slot: string }[]; // which slot each document was placed in (needed for R8)
   schemaOk: boolean;
 }
 
@@ -112,6 +114,12 @@ export function containsCardNumber(text: string): boolean {
   });
 }
 
+/** R8: slots that hold a key document for this reason code. Empty when the code has no checklist. */
+export function keySlotsFor(code: string): string[] {
+  const c = CHECKLISTS[code];
+  return c ? [...new Set(c.key.flatMap((r) => r.slots))] : [];
+}
+
 export function isFraudCode(code: string): boolean {
   return code.startsWith("10.");
 }
@@ -174,6 +182,24 @@ export function evaluateGuardrails(i: GuardrailInput): GuardrailResult {
       blockers.push("Every sentence needs a source");
     } else {
       lines.push({ id: "R2", rule: "Every draft sentence cites a document", status: "pass", message: `${sents.length} sentence${sents.length > 1 ? "s" : ""}, all cited.` });
+    }
+  }
+
+  // R8 a Fight must rest on at least one key document for this reason code
+  // Only lowers a Fight. Never creates one and never changes Accept or Escalate. Frozen in docs/HELDOUT_TEST.md.
+  const R8_RULE = "A Fight cites a key document for this reason";
+  const keySlots = keySlotsFor(i.reasonCode);
+  if (finalCall !== "fight" || !i.slots || keySlots.length === 0 || i.draft.trim().length === 0) {
+    lines.push({ id: "R8", rule: R8_RULE, status: "na", message: finalCall === "fight" ? "Not checked: no draft, slots or key list for this reason." : "Only checked when the call is Fight." });
+  } else {
+    const keyIds = new Set(i.slots.filter((s) => keySlots.includes(s.slot)).map((s) => s.evidenceId));
+    const cites = citedIds(i.draft).filter((id) => keyIds.has(id));
+    if (cites.length === 0) {
+      finalCall = "escalate";
+      changedReason = "Your evidence does not include the key document for this reason.";
+      lines.push({ id: "R8", rule: R8_RULE, status: "changed", message: "Your evidence does not include the key document for this reason. Changed from Fight to Escalate." });
+    } else {
+      lines.push({ id: "R8", rule: R8_RULE, status: "pass", message: `The draft cites ${[...new Set(cites)].join(", ")}, a key document for this reason.` });
     }
   }
 

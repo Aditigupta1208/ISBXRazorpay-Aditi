@@ -102,6 +102,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         evidenceTexts: allEvidence.map((e) => `${"title" in e ? e.title : ""} ${e.content}`),
         draft,
         documentCount,
+        slots: view.slots,
         schemaOk: true,
       }),
     // eslint-disable-next-line react-hooks/exhaustive-deps

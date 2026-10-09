@@ -117,3 +117,30 @@ test("dedupeSentences removes exact repeats and keeps everything else", async ()
   assert.equal(dedupeSentences(`${a} ${b}`), `${a} ${b}`);
   assert.equal(dedupeSentences(""), "");
 });
+
+test("R8: a Fight with no key document cited becomes Escalate", () => {
+  // 13.2 key slots include cancellation_proof and access_activity_log; here the cited E1 is only an explanation letter
+  const r = evaluateGuardrails({ ...base, slots: [{ evidenceId: "E1", slot: "explanation_letter" }, { evidenceId: "E3", slot: "access_activity_log" }], draft: "We explained the charge. [E1]" });
+  assert.equal(r.finalCall, "escalate");
+  assert.equal(status(r, "R8"), "changed");
+  assert.equal(r.changedReason, "Your evidence does not include the key document for this reason.");
+});
+
+test("R8: a Fight citing a key document passes", () => {
+  const r = evaluateGuardrails({ ...base, slots: [{ evidenceId: "E3", slot: "access_activity_log" }] });
+  assert.equal(r.finalCall, "fight");
+  assert.equal(status(r, "R8"), "pass");
+});
+
+test("R8: never changes Accept or Escalate, and is not checked without slots", () => {
+  const slots = [{ evidenceId: "E1", slot: "explanation_letter" }];
+  assert.equal(evaluateGuardrails({ ...base, call: "fold", slots, draft: "x [E1]" }).finalCall, "fold");
+  assert.equal(evaluateGuardrails({ ...base, call: "escalate", slots, draft: "x [E1]" }).finalCall, "escalate");
+  assert.equal(status(evaluateGuardrails(base), "R8"), "na");
+});
+
+test("R8: for refund not processed (13.6), accepted terms count as the key document", () => {
+  const r = evaluateGuardrails({ ...base, reasonCode: "13.6", slots: [{ evidenceId: "E1", slot: "term_and_conditions" }], draft: "The customer accepted the 14-day refund policy. [E1]" });
+  assert.equal(r.finalCall, "fight");
+  assert.equal(status(r, "R8"), "pass");
+});

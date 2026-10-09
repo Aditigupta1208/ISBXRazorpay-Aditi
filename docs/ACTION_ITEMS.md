@@ -33,13 +33,13 @@ Ordered by how many of the three merchants asked for it.
 | 3 | Lead with the named gap on every call; make "Chance to win" smaller and labelled; show customer history (earlier disputes) from the Razorpay facts | 3 of 3 | Small UI change |
 | 4 | "Check these before you approve": each amount, date and count in the draft with its source document | 3 of 3 | Code only |
 | 5 | New code check: every number and date in a draft appears in a cited document or in the dispute record | 3 of 3 | Defends the "one wrong fact" trust-killer. Add after item 4 |
-| 6 | Rule R8: a Fight with no key document becomes Escalate | A, C stories | Frozen in `docs/HELDOUT_TEST.md`; build after the held-out labels |
+| 6 | Rule R8: a Fight with no key document becomes Escalate | A, C stories | **Built 9 Oct** (see `docs/HELDOUT_TEST.md`) |
 | 7 | Policy patch (checkout wording, usage emails, milestone approvals, "export logs before access ends") | all three changed their process | Code template first; model rewrite optional |
 | 8 | Dispute ratio tile on Results from numbers the merchant types in | A, C | Unblocked 9 Oct: use Razorpay's published blog figures (0.5% recommended, 0.75% emergency controls, Visa 1.5% from April 2026), attributed; say a win may still count because Razorpay does not publish it |
 | 9 | "Will never" list: add refund and accept-for-you | 3 of 3 | Copy change |
 | 10 | "Copy a summary to send to a colleague" | C | Small |
 | 11 | What-if evidence, with a deadline check on "Get this first" | B | Code only |
-| 12 | Held-out run: your labels for C31 to C40, then one run on prompt v2.3 | n/a | Waiting on you |
+| 12 | Held-out run: labels for C31 to C40 are in; one run on prompt v2.3 | n/a | Waiting on you to start the GitHub Action |
 
 Razorpay support replied on 9 Oct (unsigned, no ticket number): a submitted contest is final (matches the API docs); a dispute "generally" counts when raised; a 0.5% guidance figure is unconfirmed. No further Razorpay follow-up (decided 9 Oct: a reply will not arrive in time, so it is dropped). The two open points stay open and are stated as such in the product and write-up. Facts checked 9 Oct (see `docs/MERCHANT_FINDINGS.md`): a submitted contest cannot be added to (draft first, then submit), so do not suggest "submit now, mark pending". The ratio is counted when a dispute is raised (secondary sources); Razorpay's own thresholds are not public. Merchant C remembers a 2023 Razorpay email quoting 0.9% against a 1% network threshold and will send a redacted copy if emailed (his ops manager must agree; give him a day; say who you are and that his name will not be used). The ratio tile (if built) shows only attributed figures and says the effect of a win is not published.
 
