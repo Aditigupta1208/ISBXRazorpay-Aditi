@@ -88,7 +88,7 @@ export default function EvalsPage() {
         <div className="px-4 py-4 md:px-5">
           <h2 className="text-[16px] font-semibold">The result so far</h2>
           <p className="mt-1 max-w-[760px] text-[14px] text-ink-soft">
-            {labels.length} practice disputes, each with an answer written by a person, and a plain fixed checklist beside the agent so you can see what the AI adds. The saved agent run matched the person on {agreeCount(v1Rows)} of {n(v1Rows)}; the checklist on {agreeCount(only(v1Ids))}. {latest ? "A newer run is below." : "The new Claude run is not done yet."}
+            {labels.length} practice disputes, each with an answer written by a person, and a plain fixed checklist beside the agent so you can see what the AI adds. The saved agent run matched the person on {agreeCount(v1Rows)} of {n(v1Rows)}; the checklist on {agreeCount(only(v1Ids))}. {latest ? "A newer run is below." : "The run on the live model is not done yet."}
           </p>
         </div>
         <div className="grid grid-cols-3 divide-x divide-line border-t border-line">
@@ -97,7 +97,7 @@ export default function EvalsPage() {
           {latest ? (
             <Stat label={`Agent ${latestName} (automated)`} value={`${agreeCount(latest.rows)} of ${n(latest.rows)}`} note={`checklist: ${agreeCount(only(latestIds))} of ${n(only(latestIds))}`} />
           ) : (
-            <Stat label={`Agent ${PROMPT_VERSION} (automated)`} value="Not run yet" note="needs the API key" muted />
+            <Stat label={`Agent ${PROMPT_VERSION} (automated)`} value="Not run yet" note="run on the live model" muted />
           )}
         </div>
         <p className="border-t border-line px-4 py-3 text-[13px] text-helper md:px-5">
@@ -234,7 +234,7 @@ export default function EvalsPage() {
         </table>
       </div>
       <p className="mb-6 max-w-[760px] text-[13px] text-helper">
-        A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C30 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run yet (needs the API key)`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
+        A cross means it differs from the human answer. &quot;Not run&quot;: C17 to C30 have no saved agent run{latest ? "" : `, and the ${PROMPT_VERSION} agent has not been run on the live model yet`}. *The early Claude run came from a chat that knew the test design, so it is kept for comparison only.
       </p>
       </details>
 
