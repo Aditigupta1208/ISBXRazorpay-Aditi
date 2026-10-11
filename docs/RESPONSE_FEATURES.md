@@ -1,0 +1,21 @@
+# 3. Response and approval
+
+- **Cited response draft:** every sentence cites a document, and it's editable.
+- **Shorten for me:** AI shortens a draft over 1,000 characters, or code trims it if the AI can't.
+- **Check these before you approve:** each amount, date and count in the draft with the document it came from.
+- **Bank's rebuttal (practice run):** the bank's strongest objection, a verdict, the weak sentence (Before) beside a suggested rewrite (After), and an "add a document" suggestion.
+- **Approve and submit:** a confirm step, then the exact contest request, labelled "Simulated: not sent to Razorpay".
+- **Fold flow:** a dialog with ₹ amount and reasons, then the accept request, also simulated.
+- **Override:** choosing against the call asks "Why?" (optional) and logs it.
+- **Copy a summary** for a colleague.
+- **Evidence packet:** a print-ready page at `/disputes/<id>/packet` with a cover summary, contents and numbered exhibits.
+- **Print or save as PDF** on a dispute.
+- **After you act:**
+  - A status timeline from Open to Won or Lost.
+  - What the agent learns from the outcome.
+  - A prevention tip.
+  - Next-step prompts after a loss or fold.
+  - A policy patch: suggested wording for your terms, from fixed templates by reason code.
+  - A download of the dispute as an eval case, if the advisor was wrong.
+- **Thumbs up or down** on the call.
+- **Reset this demo,** per dispute.
