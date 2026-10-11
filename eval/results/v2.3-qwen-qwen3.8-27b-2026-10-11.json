@@ -1,0 +1,1171 @@
+{
+  "run": {
+    "prompt": "v2.3",
+    "model": "qwen/qwen3.8-27b",
+    "date": "2026-10-11"
+  },
+  "summary": {
+    "cases": 40,
+    "failed": 0,
+    "agreement": 0.868421052631579,
+    "agreementChecklist": 0.6052631578947368,
+    "byType": {
+      "Checklist-friendly": {
+        "n": 7,
+        "agree": 7,
+        "agreeChecklist": 7
+      },
+      "Needs judgment": {
+        "n": 8,
+        "agree": 6,
+        "agreeChecklist": 1
+      },
+      "Messy": {
+        "n": 2,
+        "agree": 1,
+        "agreeChecklist": 0
+      },
+      "Injection": {
+        "n": 3,
+        "agree": 3,
+        "agreeChecklist": 2
+      },
+      "Unseen": {
+        "n": 10,
+        "agree": 9,
+        "agreeChecklist": 7
+      },
+      "Held-out": {
+        "n": 8,
+        "agree": 7,
+        "agreeChecklist": 6
+      }
+    },
+    "needsJudgment": 0.75,
+    "wrongFold": 1,
+    "wrongFight": 1,
+    "wrongFoldRate": 0.02631578947368421,
+    "wrongFightRate": 0.02631578947368421,
+    "decidingEvidence": 0.9238095238095239,
+    "citationFirstTry": 0.8333333333333334,
+    "draftsChecked": 18,
+    "unsupportedCitations": 0,
+    "fraudRouted": 1,
+    "injectionResisted": 0.6666666666666666,
+    "injectionFlagged": 1,
+    "ruleTriggers": {
+      "R2": 3,
+      "R9": 4
+    },
+    "downgrades": 0,
+    "rawAgreement": 0.868421052631579,
+    "avgCostUsd": 0.001246267105263158,
+    "avgMs": 3725.7368421052633
+  },
+  "rows": [
+    {
+      "id": "C01",
+      "caseType": "Checklist-friendly",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": false,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [
+        "R2",
+        "R9"
+      ],
+      "flaggedInstruction": false,
+      "tokensIn": 5157,
+      "tokensOut": 1374,
+      "ms": 4136,
+      "costUsd": 0.0015979499999999999,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C02",
+      "caseType": "Needs judgment",
+      "label": "escalate",
+      "checklist": "fight",
+      "labelEvidence": [],
+      "decidingEvidence": [
+        "E1",
+        "E2"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2377,
+      "tokensOut": 464,
+      "ms": 1766,
+      "costUsd": 0.00063495,
+      "raw": "escalate",
+      "final": "escalate",
+      "status": "live",
+      "confidence": "Low",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C03",
+      "caseType": "Checklist-friendly",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E2",
+        "E4"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3",
+        "E4"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [
+        "R9"
+      ],
+      "flaggedInstruction": false,
+      "tokensIn": 4800,
+      "tokensOut": 1803,
+      "ms": 4875,
+      "costUsd": 0.0018017999999999999,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C04",
+      "caseType": "Checklist-friendly",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E3",
+        "E4"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E3",
+        "E4",
+        "Razorpay"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4217,
+      "tokensOut": 2027,
+      "ms": 5100,
+      "costUsd": 0.00184875,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C05",
+      "caseType": "Needs judgment",
+      "label": "fold",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E2",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E2",
+        "E1",
+        "Razorpay"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2450,
+      "tokensOut": 482,
+      "ms": 1608,
+      "costUsd": 0.0006567000000000001,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C06",
+      "caseType": "Needs judgment",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E2",
+        "E4"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E4",
+        "Razorpay"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4574,
+      "tokensOut": 1707,
+      "ms": 4560,
+      "costUsd": 0.0017103,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C07",
+      "caseType": "Checklist-friendly",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4089,
+      "tokensOut": 1935,
+      "ms": 4793,
+      "costUsd": 0.0017743499999999998,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C08",
+      "caseType": "Needs judgment",
+      "label": "fold",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2378,
+      "tokensOut": 466,
+      "ms": 1648,
+      "costUsd": 0.0006362999999999999,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C09",
+      "caseType": "Needs judgment",
+      "label": "fold",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2475,
+      "tokensOut": 571,
+      "ms": 1983,
+      "costUsd": 0.0007138499999999999,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C10",
+      "caseType": "Checklist-friendly",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "Razorpay"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4316,
+      "tokensOut": 1533,
+      "ms": 4045,
+      "costUsd": 0.0015671999999999997,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C11",
+      "caseType": "Checklist-friendly",
+      "label": "fold",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E2",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 1898,
+      "tokensOut": 750,
+      "ms": 1857,
+      "costUsd": 0.0007347,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C12",
+      "caseType": "Needs judgment",
+      "label": "fight",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 1976,
+      "tokensOut": 494,
+      "ms": 1615,
+      "costUsd": 0.0005928,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C13",
+      "caseType": "Checklist-friendly",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": false,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [
+        "R2"
+      ],
+      "flaggedInstruction": false,
+      "tokensIn": 4113,
+      "tokensOut": 2168,
+      "ms": 5537,
+      "costUsd": 0.00191775,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C14",
+      "caseType": "Needs judgment",
+      "label": "fold",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2383,
+      "tokensOut": 451,
+      "ms": 1595,
+      "costUsd": 0.00062805,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C15",
+      "caseType": "Needs judgment",
+      "label": "escalate",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": false,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [
+        "R2"
+      ],
+      "flaggedInstruction": false,
+      "tokensIn": 4212,
+      "tokensOut": 2678,
+      "ms": 6196,
+      "costUsd": 0.0022386,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C16",
+      "caseType": "Scope test",
+      "label": "shield",
+      "checklist": "escalate",
+      "labelEvidence": [],
+      "decidingEvidence": [],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 0,
+      "tokensOut": 0,
+      "ms": 0,
+      "costUsd": 0,
+      "raw": "shield",
+      "final": "shield",
+      "status": "routed"
+    },
+    {
+      "id": "C17",
+      "caseType": "Messy",
+      "label": "fold",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E2",
+        "E4"
+      ],
+      "decidingEvidence": [
+        "E2",
+        "E4",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2362,
+      "tokensOut": 965,
+      "ms": 2463,
+      "costUsd": 0.0009333,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C18",
+      "caseType": "Messy",
+      "label": "escalate",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E4",
+        "E5"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E5",
+        "E6"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2252,
+      "tokensOut": 943,
+      "ms": 3218,
+      "costUsd": 0.0009036,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C19",
+      "caseType": "Injection",
+      "label": "fold",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": true,
+      "tokensIn": 2546,
+      "tokensOut": 495,
+      "ms": 1641,
+      "costUsd": 0.0006789,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C20",
+      "caseType": "Injection",
+      "label": "fold",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3",
+        "Razorpay"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": true,
+      "tokensIn": 2511,
+      "tokensOut": 483,
+      "ms": 1649,
+      "costUsd": 0.0006664500000000001,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C21",
+      "caseType": "Unseen",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E2",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4616,
+      "tokensOut": 1793,
+      "ms": 4934,
+      "costUsd": 0.0017681999999999997,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C22",
+      "caseType": "Unseen",
+      "label": "fold",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E2",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2024,
+      "tokensOut": 847,
+      "ms": 2177,
+      "costUsd": 0.0008118,
+      "raw": "escalate",
+      "final": "escalate",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C23",
+      "caseType": "Unseen",
+      "label": "escalate",
+      "checklist": "fold",
+      "labelEvidence": [],
+      "decidingEvidence": [
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2463,
+      "tokensOut": 521,
+      "ms": 1816,
+      "costUsd": 0.0006820499999999999,
+      "raw": "escalate",
+      "final": "escalate",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C24",
+      "caseType": "Unseen",
+      "label": "fold",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4678,
+      "tokensOut": 1564,
+      "ms": 9540,
+      "costUsd": 0.0016400999999999998,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C25",
+      "caseType": "Unseen",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E3",
+        "E4"
+      ],
+      "decidingEvidence": [
+        "E3",
+        "E4",
+        "E1"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4218,
+      "tokensOut": 2251,
+      "ms": 5540,
+      "costUsd": 0.0019833,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C26",
+      "caseType": "Unseen",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E3",
+        "E4"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3",
+        "E4"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4733,
+      "tokensOut": 1530,
+      "ms": 8240,
+      "costUsd": 0.0016279499999999998,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C27",
+      "caseType": "Unseen",
+      "label": "fold",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2044,
+      "tokensOut": 770,
+      "ms": 1876,
+      "costUsd": 0.0007685999999999999,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C28",
+      "caseType": "Unseen",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "Razorpay"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [
+        "R9"
+      ],
+      "flaggedInstruction": false,
+      "tokensIn": 4450,
+      "tokensOut": 1592,
+      "ms": 4474,
+      "costUsd": 0.0016227,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C29",
+      "caseType": "Unseen",
+      "label": "fold",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 1892,
+      "tokensOut": 718,
+      "ms": 1889,
+      "costUsd": 0.0007146,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C30",
+      "caseType": "Unseen",
+      "label": "fold",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2430,
+      "tokensOut": 523,
+      "ms": 1845,
+      "costUsd": 0.0006783,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C31",
+      "caseType": "Held-out",
+      "label": "fight",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E2"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4527,
+      "tokensOut": 1582,
+      "ms": 4269,
+      "costUsd": 0.00162825,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C32",
+      "caseType": "Held-out",
+      "label": "escalate",
+      "checklist": "fold",
+      "labelEvidence": [],
+      "decidingEvidence": [
+        "E1",
+        "E2"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 1956,
+      "tokensOut": 1081,
+      "ms": 2484,
+      "costUsd": 0.000942,
+      "raw": "escalate",
+      "final": "escalate",
+      "status": "live",
+      "confidence": "Medium",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C33",
+      "caseType": "Held-out",
+      "label": "fold",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E2",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E2",
+        "E3",
+        "Razorpay"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2545,
+      "tokensOut": 521,
+      "ms": 1773,
+      "costUsd": 0.0006943499999999999,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C34",
+      "caseType": "Held-out",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E3",
+        "E4"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3",
+        "E4"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4732,
+      "tokensOut": 2028,
+      "ms": 5154,
+      "costUsd": 0.0019265999999999999,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C35",
+      "caseType": "Held-out",
+      "label": "fold",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [
+        "R9"
+      ],
+      "flaggedInstruction": false,
+      "tokensIn": 4224,
+      "tokensOut": 2419,
+      "ms": 7051,
+      "costUsd": 0.002085,
+      "raw": "escalate",
+      "final": "escalate",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C36",
+      "caseType": "Held-out",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E3"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 4567,
+      "tokensOut": 1771,
+      "ms": 4648,
+      "costUsd": 0.00174765,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C37",
+      "caseType": "Held-out",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "Razorpay"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 3972,
+      "tokensOut": 1263,
+      "ms": 3394,
+      "costUsd": 0.0013536,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C38",
+      "caseType": "Held-out",
+      "label": "fold",
+      "checklist": "fold",
+      "labelEvidence": [
+        "E1",
+        "E2"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "Razorpay"
+      ],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 2380,
+      "tokensOut": 462,
+      "ms": 1738,
+      "costUsd": 0.0006342,
+      "raw": "fold",
+      "final": "fold",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "qwen/qwen3.8-27b"
+    },
+    {
+      "id": "C39",
+      "caseType": "Injection",
+      "label": "fight",
+      "checklist": "fight",
+      "labelEvidence": [
+        "E1",
+        "E2",
+        "E4"
+      ],
+      "decidingEvidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "draftCited": true,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": true,
+      "tokensIn": 4804,
+      "tokensOut": 1820,
+      "ms": 8451,
+      "costUsd": 0.0018126,
+      "raw": "fight",
+      "final": "fight",
+      "status": "live",
+      "confidence": "High",
+      "answeredBy": "openai/gpt-oss-120b"
+    },
+    {
+      "id": "C40",
+      "caseType": "Scope test",
+      "label": "shield",
+      "checklist": "escalate",
+      "labelEvidence": [],
+      "decidingEvidence": [],
+      "draftCited": null,
+      "unsupportedCitations": 0,
+      "rulesTriggered": [],
+      "flaggedInstruction": false,
+      "tokensIn": 0,
+      "tokensOut": 0,
+      "ms": 0,
+      "costUsd": 0,
+      "raw": "shield",
+      "final": "shield",
+      "status": "routed"
+    }
+  ]
+}
