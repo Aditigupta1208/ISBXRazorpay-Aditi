@@ -1,4 +1,4 @@
-# Feature lock: sections 1 to 8
+# Feature lock: sections 1 to 11
 
 Locked on 11 Oct 2026 (evening). From here, change these sections only to fix a bug found by a real person; do not add features.
 
@@ -12,6 +12,9 @@ Locked on 11 Oct 2026 (evening). From here, change these sections only to fix a 
 | 6 Results | Headline numbers, calibration, ratio | `docs/RESULTS_FEATURES.md` |
 | 7 Alerts | Channel preview, rules, rescue | `docs/ALERTS_FEATURES.md` |
 | 8 Agent setup | Terms, switch, preview | `docs/SETUP_FEATURES.md` |
+| 9 Reviewer pages | How it works, tour, Under the hood | `docs/REVIEWER_FEATURES.md` |
+| 10 Evaluation and learning | Evals page, eval scripts, release gate (`npm run eval:gate`) | `docs/EVAL_FEATURES.md` |
+| 11 Platform behaviour | No-key fallback, provider chain, budget, labelling, robots | `docs/PLATFORM_FEATURES.md` |
 
 ## Checked at the lock
 - 327 unit tests, 26 browser suites (no-key, fake Claude, fake Groq), 12-page sweep at two widths: all pass. Build passes. Lint: 0 errors, 31 hook-dependency warnings left on purpose.

@@ -3,7 +3,7 @@ import { Card, PageTitle, Stat } from "@/components/ui";
 import { RulesVsUnseen } from "@/components/RulesVsUnseen";
 import { scoreRules, type KeyRow } from "@/lib/ruleScoreboard";
 import labelsFileData from "@/data/labels.json";
-import { THRESHOLDS, answeredByShort, summarize, tier, type EvalRow, type Summary, type Tier } from "@/lib/eval";
+import { THRESHOLDS, answeredByShort, releaseGate, summarize, tier, type EvalRow, type Summary, type Tier } from "@/lib/eval";
 import { claudeEarlyCall, evalLabels, loadLatestRun, savedV1Rows } from "@/lib/evalView";
 import { getCases } from "@/lib/data";
 import { toCall } from "@/lib/data";
@@ -40,7 +40,6 @@ export default function EvalsPage() {
   const v1Ids = new Set(v1Rows.map((r) => r.id));
   const latestIds = new Set(latest?.rows.map((r) => r.id) ?? []);
   const checklistV1 = summarize(only(v1Ids));
-  const _checklistLatest = latest ? summarize(only(latestIds)) : null;
   const v1 = summarize(v1Rows);
   const newerIds = new Set(checklistRows.filter((r) => !v1Ids.has(r.id)).map((r) => r.id));
   const checklistNewer = scored(only(newerIds));
@@ -95,16 +94,25 @@ export default function EvalsPage() {
           <Stat label="Agent v1 (saved)" value={`${agreeCount(v1Rows)} of ${n(v1Rows)}`} note="match the human answer" />
           <Stat label="Fixed checklist" value={`${agreeCount(only(v1Ids))} of ${n(only(v1Ids))}`} note="same cases, same key" />
           {latest ? (
-            <Stat label={`Agent ${latestName} (automated)`} value={`${agreeCount(latest.rows)} of ${n(latest.rows)}`} note={`checklist: ${agreeCount(only(latestIds))} of ${n(only(latestIds))}`} />
+            <Stat label={`Agent ${latestName} (latest run)`} value={`${agreeCount(latest.rows)} of ${n(latest.rows)}`} note={`checklist: ${agreeCount(only(latestIds))} of ${n(only(latestIds))}`} />
           ) : (
-            <Stat label={`Agent ${PROMPT_VERSION} (automated)`} value="Not run yet" note="run on the live model" muted />
+            <Stat label={`Agent ${PROMPT_VERSION} (latest run)`} value="Not run yet" note="run on the live model" muted />
           )}
         </div>
+        {latest && (() => {
+          const g = releaseGate(latest.summary);
+          const failed = g.lines.filter((l) => !l.ok);
+          return (
+            <p data-testid="gate-banner" className={`border-t border-line px-4 py-3 text-[13px] md:px-5 ${g.pass ? "bg-fight-soft text-fight" : "bg-danger-soft text-danger"}`}>
+              <b>Release gate: {g.pass ? "pass" : "fail"}.</b> {g.pass ? "No measure is below its launch bar." : `Below the launch bar: ${failed.map((l) => `${l.label} (${l.value === null ? "no data" : Math.round(l.value * 100) + "%"})`).join("; ")}. Nothing was tuned to hide this.`}
+            </p>
+          );
+        })()}
         <div className="space-y-2 border-t border-line px-4 py-4 md:px-5" role="img" aria-label="Agreement with the human answer, as bars">
           {[
             { name: "Fixed checklist", v: agreeCount(only(v1Ids)) / Math.max(1, n(only(v1Ids))), cls: "bg-[#9AA3B5]" },
             { name: "Agent v1 (saved)", v: agreeCount(v1Rows) / Math.max(1, n(v1Rows)), cls: "bg-brand" },
-            ...(latest ? [{ name: `Agent ${latestName} (live)`, v: agreeCount(latest.rows) / Math.max(1, n(latest.rows)), cls: "bg-fight" }] : []),
+            ...(latest ? [{ name: `Agent ${latestName} (latest run)`, v: agreeCount(latest.rows) / Math.max(1, n(latest.rows)), cls: "bg-fight" }] : []),
           ].map((b) => (
             <div key={b.name} className="grid grid-cols-[130px_1fr_44px] items-center gap-3 text-[13px] md:grid-cols-[170px_1fr_48px]">
               <span>{b.name}</span>
