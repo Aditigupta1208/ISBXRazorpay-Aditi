@@ -17,7 +17,7 @@ Locked on 11 Oct 2026 (evening). From here, change these sections only to fix a 
 | 11 Platform behaviour | No-key fallback, provider chain, budget, labelling, robots | `docs/PLATFORM_FEATURES.md` |
 
 ## Checked at the lock
-- 327 unit tests, 26 browser suites (no-key, fake Claude, fake Groq), 12-page sweep at two widths: all pass. Build passes. Lint: 0 errors, 31 hook-dependency warnings left on purpose.
+- 331 unit tests, 26 browser suites (no-key, fake Claude, fake Groq), 12-page sweep at two widths: all pass. Build passes. Lint: 0 errors, 31 hook-dependency warnings left on purpose.
 - Production dependency audit: 0 vulnerabilities. No keys in the repo.
 - Screenshots of every page and dialog at 1280px and 390px were looked at.
 

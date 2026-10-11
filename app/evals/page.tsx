@@ -6,6 +6,8 @@ import labelsFileData from "@/data/labels.json";
 import { THRESHOLDS, answeredByShort, releaseGate, summarize, tier, type EvalRow, type Summary, type Tier } from "@/lib/eval";
 import { claudeEarlyCall, evalLabels, loadLatestRun, savedV1Rows } from "@/lib/evalView";
 import { getCases } from "@/lib/data";
+import { readingRows } from "@/lib/readingVsRules";
+import { ReadingVsRules } from "@/components/ReadingVsRules";
 import { toCall } from "@/lib/data";
 import { PROMPT_VERSION } from "@/lib/prompt";
 import type { Call } from "@/lib/types";
@@ -129,7 +131,7 @@ export default function EvalsPage() {
       </Card>
 
       <nav aria-label="On this page" className="mb-5 flex flex-wrap gap-2 text-[14px] font-semibold">
-        {[["#c15", "The case that matters"], ["#cases", "Each case"], ["#rules-details", "Rules vs unseen cases"], ["#limits", "What the numbers do not show"]].map(([href, label]) => (
+        {[["#c15", "The case that matters"], ["#reading", "Reading vs rules"], ["#cases", "Each case"], ["#rules-details", "Rules vs unseen cases"], ["#limits", "What the numbers do not show"]].map(([href, label]) => (
           <a key={href} href={href} className="inline-flex min-h-10 items-center rounded-full border border-line bg-white px-3.5 text-brand hover:border-brand">{label}</a>
         ))}
       </nav>
@@ -155,6 +157,12 @@ export default function EvalsPage() {
           </div>
         </section>
       )}
+
+      <section className="mb-5 scroll-mt-4" aria-labelledby="reading">
+        <h2 id="reading" className="text-[16px] font-semibold">Where reading beats a checklist, and where it still misses</h2>
+        <p className="mt-1 mb-3 max-w-[760px] text-[14px] text-ink-soft">The same documents, three answers. The checklist only sees which documents are attached; the agent reads what they say. We show the misses too.</p>
+        <ReadingVsRules rows={readingRows(new Map((latest?.rows ?? []).map((r) => [r.id, r.final as Call])))} runName={latest?.run.prompt ?? null} />
+      </section>
 
       <div className="relative mb-5 overflow-x-auto rounded-2xl border border-line bg-white">
         <table className="w-full min-w-[640px] text-left text-[14px]">

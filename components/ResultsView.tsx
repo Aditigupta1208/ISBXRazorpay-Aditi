@@ -8,6 +8,8 @@ import type { Rates } from "@/lib/rates";
 import { Card, Section, Stat } from "@/components/ui";
 import { LearnBox } from "@/components/LearnBox";
 import { RatioTile } from "@/components/RatioTile";
+import { LearningLoop } from "@/components/HowExtras";
+import { InterviewStories } from "@/components/InterviewStories";
 import { compactStats } from "@/lib/assistCore";
 
 const pct = (n: number | null) => (n === null ? "n/a" : `${Math.round(n * 100)}%`);
@@ -147,16 +149,11 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
 
           <LearnBox stats={compactStats(m)} usesSample={withSample && youCount === 0} />
 
-          <details className="mb-6 rounded-2xl border border-line bg-white px-4 py-1 md:px-5">
-            <summary className="min-h-10 cursor-pointer py-2.5 text-[14px] font-semibold">How the loop works</summary>
-            <ol className="mb-3 list-decimal space-y-1 pl-5 text-[14px] text-ink-soft">
-              <li>You act on a dispute and mark Won or Lost. It is added here.</li>
-              <li>On the next dispute with the same reason, the check shows your own record next to the AI estimate.</li>
-              <li>In the real product these results would also move the estimate and set the launch thresholds on the Evals page. In this prototype nothing is trained.</li>
-            </ol>
-          </details>
         </>
       )}
+
+      <LearningLoop />
+      <InterviewStories />
 
       <RatioTile />
     </div>

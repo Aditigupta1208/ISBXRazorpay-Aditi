@@ -5,6 +5,11 @@ import { SOURCES } from "@/lib/evidenceChecklist";
 import { ODDS_PRIOR_WEIGHT } from "@/lib/results";
 import { THRESHOLDS } from "@/lib/eval";
 import { getCases } from "@/lib/data";
+import { loadLatestRun } from "@/lib/evalView";
+import { readingRows } from "@/lib/readingVsRules";
+import { ReadingVsRules } from "@/components/ReadingVsRules";
+import { FailuresSection, MerchantsContent, MetricsSection, PositionSection, SourcesContent, TiersSection, WhyAiSection } from "@/components/HowExtras";
+import type { Call } from "@/lib/types";
 
 export const metadata = { title: "How it works | Dispute Advisor (concept prototype)" };
 
@@ -62,15 +67,17 @@ const RULE_CHECK = [
 
 const ANSWERS = [
   ["What data or signal does it use?", "Razorpay's dispute record plus the documents you add.", "Your own terms are read too, but only as your claim, never as proof.", "docs"],
-  ["Why AI and not a fixed rule?", "A checklist only sees which documents are attached. The AI reads what they say.", "It spots contradictions, weighs the money and knows when to stop. On our 15 scored test cases it matched the human answer on 15 and a checklist on 8 (saved v1 run; see Evals).", "scale"],
+  ["Why AI and not a fixed rule?", "A checklist only sees which documents are attached. The AI reads what they say.", "It spots contradictions, weighs the money and knows when to stop. On our 15 scored test cases it matched the human answer on 15 and a checklist on 8 (saved v1 run; see Evals). The fuller argument is below.", "scale"],
   ["What action does it take?", "It recommends Fight, Fold or Escalate and drafts a response that cites a document in every sentence.", "It maps documents to Razorpay's evidence slots and can test the draft against a practice bank reviewer. With 24 hours left it can nudge you with the response already drafted (set on Alerts). Nothing is sent from this prototype.", "flag"],
   ["What does the merchant control?", "Everything that matters.", "Every submit and fold needs approval. You can edit the draft, override the call (your reason goes in the audit trail), or turn the agent off.", "hand"],
   ["How does it learn?", "In a real product, outcomes would sharpen the advice. Here, your record adjusts the odds.", "The outcome is stored in your browser and shown back to you. No model is trained.", "loop"],
   ["How is accuracy and trust protected?", "Nine safety rules, a saved result when the live check fails, and an audit trail.", "Evidence is treated as data, never as instructions. The Evals page shows where it is still weak.", "shield"],
-  ["What business result does it aim at?", "More money recovered per rupee disputed.", "More disputes answered before the deadline, less time per dispute, and fewer repeat disputes after prevention fixes.", "chart"],
+  ["What business result does it aim at?", "More money recovered per rupee disputed.", "More disputes answered before the deadline, less time per dispute, and fewer repeat disputes after prevention fixes. The full list of measures is below.", "chart"],
 ];
 
 export default function HowItWorksPage() {
+  const latest = loadLatestRun();
+  const reading = readingRows(new Map((latest?.rows ?? []).map((r) => [r.id, r.final as Call])));
   const product = (
     <>
       <Hero />
@@ -80,6 +87,8 @@ export default function HowItWorksPage() {
         <p className="mb-3 text-[13px] text-helper">A customer in Ireland disputes a $480 subscription charge. They say: &ldquo;I cancelled this.&rdquo; Each step opens the real screen.</p>
         <FlowCards steps={FLOW} />
       </section>
+
+      <TiersSection />
 
       <Section id="rules" title="The nine safety rules" note="They run in code after every answer, and you can see each result on the dispute page. The bank test has four more of its own (RB1 to RB4), shown under its result.">
         <RuleGroups groups={RULE_GROUPS} />
@@ -119,6 +128,8 @@ export default function HowItWorksPage() {
         </Card>
       </Section>
 
+      <PositionSection />
+
       <Section id="next" title="Where it could go next (not built)" note="Ideas that follow from the same check. None is in this prototype.">
         <div className="grid gap-4 md:grid-cols-3">
           {NEXT.map(([t, d, c, icon]) => (
@@ -152,6 +163,10 @@ export default function HowItWorksPage() {
           </dl>
         </Section>
 
+        <WhyAiSection><ReadingVsRules rows={reading} runName={latest?.run.prompt ?? null} /></WhyAiSection>
+        <MetricsSection />
+        <FailuresSection />
+
         <div className="grid gap-x-4 md:grid-cols-2">
           <Section title="One assumption to confirm">
             <Card><p className="text-[14px] text-ink-soft">
@@ -168,8 +183,10 @@ export default function HowItWorksPage() {
 
     </>
   );
+  const merchants = <MerchantsContent />;
   const trust = (
     <>
+        <SourcesContent />
         <Section title="Where the rules come from" note="Checked on 6 Oct 2026 against the published sources. The five rules were written first from public guides, then compared with these.">
           <ul className="mb-3 list-disc space-y-1 pl-5 text-[14px] text-ink-soft">
             <li><a className="text-brand underline" href={SOURCES.visa.url} target="_blank" rel="noreferrer">{SOURCES.visa.label}</a>: the rules for each reason code.</li>
@@ -237,6 +254,7 @@ export default function HowItWorksPage() {
         tabs={[
           { id: "product", label: "The product", note: "What happens to one dispute, the checks that run on every answer, and how it learns.", content: product },
           { id: "answers", label: "Brief answers", note: "The challenge brief's seven questions, what we assumed, and what we left out.", content: answers },
+          { id: "merchants", label: "Merchants", note: "What three merchants told us and what it changed in the product.", content: merchants },
           { id: "trust", label: "Sources and limits", note: "Where the rules come from, what the demo counts, and where this prototype is weak.", content: trust },
         ]}
       />

@@ -469,3 +469,14 @@ From a full product audit (tech, data flow, visuals). No model calls added.
 - **After a Fold:** the learning line names documents in plain words ("Order confirmation or receipt") instead of internal ids.
 - **Alerts on phones:** the preview and tiles come first, the rules after. **Agent setup:** the two cards no longer stretch to equal height. **Disputes list on phones:** Download CSV sits at the right of its row.
 
+
+## F36 · Evidence-for-judges additions (11 Oct, night)
+Built to answer the brief's questions more directly. No model, prompt or eval changes.
+- **Why AI, not a fixed rule** (How it works, Brief answers): five reasons, what AI does versus code versus the merchant, and a worked example, "Same documents, different call" (C14, C05, C12, C15). The calls are read from the latest eval run and the human key, never typed. The misses (C12, C15 in the 11 Oct run) are shown. The same block is on the Evals page.
+- **Metric tree**, **What can go wrong and what stops it** (each row points to R1 to R9 or the fallback), **Features by tier** (Core, Supporting, Convenience), **Where it sits** next to Chargeback Shield and Razorpay's Dispute Responder (not confirmed with Razorpay).
+- **Merchants tab**: what three merchants said, what it changed, status (Built, Built as a preview, Not built, Rejected on evidence), and what the conversations do not show. Paraphrased; no verbatim quotes until each person agrees.
+- **Sources and limits**: external tools and data, assumptions with how each would be checked, and a shadow-mode paragraph for real-data validation.
+- **Results**: a six-step learning loop that says who acts at each step (you, automatic, builder), and "From the interviews": seven recalled disputes, kept out of every number. The old "How the loop works" fold was removed because it repeated this.
+- Phone: tables on these pages become stacked cards.
+- Fix found on the way: with the review open, the response card showed two "Copy response" buttons; the one before the review now hides.
+- Tests: 331 unit tests; browser suites updated where wording or counts changed on purpose (4 tabs, jump links, Copy response, request text).

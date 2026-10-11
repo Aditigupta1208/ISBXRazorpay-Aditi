@@ -846,7 +846,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             />
           )}
 
-          {!acted && draft.trim() && (
+          {!acted && !showResponse && draft.trim() && (
             <div className="mt-2">
               <button type="button" className={ghost} onClick={() => copy("draft-pre", draft)}>
                 {copied === "draft-pre" ? "Copied" : "Copy response"}
