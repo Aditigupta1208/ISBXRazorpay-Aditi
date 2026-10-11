@@ -1,4 +1,4 @@
-/** The guided tour. One stop for where it sits, seven in the order a merchant asks questions, then two for reviewers. Plain words, no jargon. */
+/** The guided tour. One stop for where it sits, the merchant's questions in order, then three for reviewers. Plain words, no jargon. */
 export interface TourStep {
   href: string;
   title: string;
@@ -63,34 +63,46 @@ export const TOUR_STEPS: TourStep[] = [
     target: "#get-first",
   },
   {
+    href: "/disputes/C06/packet",
+    title: "8. The evidence packet is built for you",
+    text: "Two merchants said they build the same exhibit pack by hand every time. Here it is: a cover summary, contents and numbered exhibits, ready to print or save as PDF.",
+    target: '[data-tour="packet-cover"]',
+  },
+  {
+    href: "/alerts",
+    title: "9. It comes to you in time",
+    text: "Merchants told us nobody clicks tabs. Pick Slack, WhatsApp or email and set rules by amount and reason. Each alert has the response already drafted. A preview: nothing is sent.",
+    target: '[data-testid="alert-item"]',
+  },
+  {
     href: "/results",
-    title: "8. Did the advice turn out right?",
+    title: "10. Did the advice turn out right?",
     text: "After you act, mark the dispute Won or Lost. Results compare the advisor's odds with what really happened, and your record shifts the next estimate. The past disputes here are made up.",
     target: "#advisor-right",
   },
   {
     href: "/agent-studio",
-    title: "9. Teach it your own terms",
+    title: "11. Teach it your own terms",
     text: "A business adds its refund and cancellation terms once. The panel shows exactly what the advisor is told. Your terms count as your claim, never as proof.",
     target: "#advisor-told",
   },
   {
     href: "/disputes/C06",
-    title: "10. Live or saved, you always know",
+    title: "12. Live or saved, you always know",
     text: "Run live check (or Re-run check) makes a real call to a free AI model. If it is busy or slow, you get the saved result from an earlier test run, and this label says which one you are looking at.",
     target: '[data-tour="source-label"]',
     audience: "reviewers",
   },
   {
     href: "/evals",
-    title: "11. Can you trust it? The test",
+    title: "13. Can you trust it? The test",
     text: "Before an AI is allowed near money decisions, it is tested. This page scores the advisor on practice disputes against a person's answer, and shows where it is weak.",
     target: "#why-evals",
     audience: "reviewers",
   },
   {
     href: "/how-it-works",
-    title: "12. How it works, at a glance",
+    title: "14. How it works, at a glance",
     text: "The whole argument on one screen: three things to look at, what backs it up, and the brief's seven questions in a line each. The other tabs hold every detail. That is the tour. Open any dispute to try it yourself.",
     target: "#glance-core",
     audience: "reviewers",

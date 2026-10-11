@@ -70,7 +70,7 @@ Why AI rather than a fixed rule: the same reason code can need opposite calls de
 
 **H. For reviewers**
 - *Evals page.* 40 practice disputes (including 10 held-out cases labelled after the prompt was fixed), the agent against a fixed checklist, wrong-Fold and wrong-Fight counts, citation pass rate, injection resistance, and a release gate with launch bars.
-- *How it works, tour and Under the hood.* A 9-stop tour, a pipeline view, and a drawer with model, prompt version, tokens, time, cost and raw JSON.
+- *How it works, tour and Under the hood.* A 14-stop tour, a pipeline view, and a drawer with model, prompt version, tokens, time, cost and raw JSON.
 
 ### 1.7 What we deliberately did not build
 Fraud disputes (Shield covers them); physical-goods disputes; sending anything to Razorpay or the customer; accounts and a database (anonymous judges would see each other's outcomes); team features (assignment, internal notes); a pre-dispute checkout proof pack (changes scope, only a mock); time-budget triage (a merchant does not get enough disputes for it); Razorpay's logo.

@@ -66,7 +66,7 @@ export const TIERS: { tier: string; note: string; items: [string, string][] }[] 
       ["Evidence packet, copy summary, policy patch", "A printable packet, a summary to forward, and a suggested terms change after a loss."],
       ["Shorten for me", "Brings a long draft under 1,000 characters without adding anything."],
       ["Dispute ratio tile", "Type your numbers to see the ratio against published bands."],
-      ["Guided tour", "Nine stops for a first visit."],
+      ["Guided tour", "Fourteen stops, merchant questions first, for a first visit."],
     ],
   },
 ];

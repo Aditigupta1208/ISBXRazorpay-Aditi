@@ -483,3 +483,6 @@ Built to answer the brief's questions more directly. No model, prompt or eval ch
 
 ## F37 · How it works: At a glance (11 Oct, night)
 A new first tab, "At a glance": the one-line proposition, the three core features, four evidence tiles (first test, latest run, release gate, merchants) read from the latest run, and the brief's seven questions in a line each with "In depth" links into the other tabs, which keep every detail. Tour step 12 now points at it. Two repeated hedges trimmed (the list note now reads "Demo data: 16 made-up disputes from 14 businesses"; "a rough estimate" became "estimate"). The rate source label on "At stake" stays on purpose.
+
+## F38 · Tour: packet and alerts stops (11 Oct, night)
+The tour now has 14 stops: two new merchant stops, "The evidence packet is built for you" (on the C06 packet) and "It comes to you in time" (Alerts), then the three reviewer stops. The policy patch and the figure check appear only after an action or inside the review, so they are not tour stops.

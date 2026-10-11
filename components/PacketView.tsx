@@ -33,7 +33,7 @@ export function PacketView({ c, view: savedView }: { c: CaseData; view: CheckVie
       <section className="rounded-2xl border border-line bg-white p-6 print:border-0 print:p-0">
         <p className="text-[12px] font-semibold tracking-[.6px] text-helper uppercase">Evidence packet · cover summary</p>
         <h1 className="mt-1 text-[26px] leading-8 font-semibold">Dispute {d.id}</h1>
-        <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
+        <dl data-tour="packet-cover" className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1">
           <dt className="text-helper">Merchant and customer</dt><dd>{c.merchant}</dd>
           <dt className="text-helper">Network and reason</dt><dd>{d.network} {d.reason_code} {d.reason_description}</dd>
           <dt className="text-helper">Amount disputed</dt><dd>{formatOriginal(d.amount, d.currency)}</dd>
