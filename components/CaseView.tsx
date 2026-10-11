@@ -659,6 +659,14 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     {view.defensibleAmount !== null && (
                       <p className="text-[#555]">Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).</p>
                     )}
+                    <p>
+                      {d.respond_by_hours_left < 6
+                        ? "No time to gather more: choose Fight or Fold."
+                        : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
+                    </p>
+                    <details data-testid="escalate-more" className="rounded-xl bg-white/60 px-3 py-1">
+                      <summary className="min-h-10 cursor-pointer py-2 font-semibold text-escalate">What it is worth, and what if you get it</summary>
+                      <div className="space-y-3 pb-2">
                     {(() => {
                       const ceiling = worthFindingCeiling(money.contestInr, oddsAdj.odds);
                       return (
@@ -676,11 +684,6 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                         </div>
                       );
                     })()}
-                    <p>
-                      {d.respond_by_hours_left < 6
-                        ? "No time to gather more: choose Fight or Fold."
-                        : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
-                    </p>
                     <div data-testid="what-if" className="rounded-xl bg-white p-3">
                       <p className="font-semibold">What if you get it?</p>
                       <label htmlFor="wait" className="mt-1 block text-[13px] text-helper">How long would it take to get this document?</label>
@@ -702,6 +705,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                         );
                       })()}
                     </div>
+                      </div>
+                    </details>
                     {view.draft && <p className="text-[13px] text-helper">A draft contest is ready from what you have now. Find it under Fight anyway.</p>}
                   </div>
                 </div>

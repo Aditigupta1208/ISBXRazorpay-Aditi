@@ -20,6 +20,7 @@ with sync_playwright() as p:
     check('packet has the disclaimer', 'concept prototype' in t.lower())
     check('exhibits start on new pages', pg.locator('[data-testid=packet] section').count()>=3)
     pg.goto(B+'/disputes/C15'); pg.wait_for_timeout(500)
+    pg.get_by_test_id('escalate-more').locator('summary').first.click(); pg.wait_for_timeout(200)
     wi=pg.get_by_test_id('what-if'); check('what-if shows on escalate', wi.is_visible())
     check('default says ask now', 'Ask now' in pg.get_by_test_id('deadline-verdict').inner_text())
     pg.locator('#wait').select_option('two'); pg.wait_for_timeout(150)

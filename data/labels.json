@@ -191,7 +191,7 @@
       "decision": "Accept",
       "deciding_evidence": "E2 (host waited, no attendee) + E3 (customer could not open the link, no reply from the merchant)",
       "case_type": "Unseen",
-      "label_status": "proposed by the builder's AI assistant, not yet confirmed by the builder",
+      "label_status": "confirmed by the builder on 11 Oct 2026 after reading each case; first proposed by an AI assistant, builder agreed",
       "checklist_decision": "Accept",
       "checklist_reason": "No delivery or usage proof."
     },

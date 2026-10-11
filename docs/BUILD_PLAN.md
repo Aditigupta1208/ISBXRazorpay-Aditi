@@ -102,7 +102,7 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 - [x] Sections 1 to 11 audited and locked (`docs/FEATURE_LOCK.md`); keyless `npm run eval:gate`
 - [x] Why-AI argument with worked example, metric tree, risk table, tiers, positioning, Merchants tab, sources and assumptions, At a glance tab, 14-stop tour
 - [x] Browser suites committed under `e2e/`
-- [ ] Builder: confirm the C21 to C30 labels (`docs/LABEL_CHECK_C21_C30.md`)
+- [x] Builder: confirm the C21 to C30 labels (`docs/LABEL_CHECK_C21_C30.md`)
 
 ## M6: Note, video, submit (11 to 13 Oct)
 

@@ -33,11 +33,13 @@ with sync_playwright() as p:
 
     # ---- worth finding on Escalate
     pg.goto(B + '/disputes/C15'); pg.wait_for_timeout(600)
+    pg.get_by_test_id('escalate-more').locator('summary').first.click(); pg.wait_for_timeout(200)
     wf = pg.get_by_test_id('worth-finding')
     check('C15 shows Worth finding', wf.is_visible() and 'Worth asking' in wf.inner_text())
     wf.locator('summary').click(); t = wf.inner_text()
     check('it is a ceiling, in rupees, with odds and the effort cost', 'Up to ₹' in t and '% odds' in t and 'effort cost' in t and 'A ceiling, not a forecast.' in t)
     pg.goto(B + '/disputes/C02'); pg.wait_for_timeout(500)
+    pg.get_by_test_id('escalate-more').locator('summary').first.click(); pg.wait_for_timeout(200)
     check('C02 shows it too', pg.get_by_test_id('worth-finding').is_visible())
     for cid in ['C06', 'C14', 'C16']:
         pg.goto(B + f'/disputes/{cid}'); pg.wait_for_timeout(400)
