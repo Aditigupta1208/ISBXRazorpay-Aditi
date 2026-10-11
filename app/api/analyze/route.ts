@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { analyze, MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS, type AddedEvidence, type Deps } from "@/lib/agent";
+import { analyze, validateAdded, validatePolicy, MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS, type AddedEvidence, type Deps } from "@/lib/agent";
 import { ACCEPTANCE_OPTIONS, MAX_POLICY_CHARS, type Policy } from "@/lib/limits";
 import { getLlm } from "@/lib/llm";
 import { getCase, getCheckView } from "@/lib/data";
@@ -15,14 +15,6 @@ const cache: NonNullable<Deps["cache"]> = new Map();
 export async function POST(req: Request) {
   // Server only: the key is read here and never sent to the browser.
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
-  const limit = allow(ip);
-  if (!limit.ok) {
-    return NextResponse.json(
-      { status: "unavailable", reason: "rate_limited", message: "That's a lot of checks. Try again in a while." },
-      { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
-    );
-  }
-
   let body: unknown;
   try {
     const text = await req.text();
@@ -34,8 +26,11 @@ export async function POST(req: Request) {
 
   const b = body as { caseId?: unknown; added?: unknown; policy?: { text?: unknown; acceptance?: unknown } };
   const c = typeof b.caseId === "string" ? getCase(b.caseId) : undefined;
-  if (!c || !Array.isArray(b.added) || b.added.length > MAX_ADDED) {
+  if (!c || !Array.isArray(b.added)) {
     return NextResponse.json({ status: "rejected", code: "empty", message: "That request was not valid." }, { status: 400 });
+  }
+  if (b.added.length > MAX_ADDED) {
+    return NextResponse.json({ status: "rejected", code: "too_many", message: `Add at most ${MAX_ADDED} documents.` }, { status: 400 });
   }
 
   // Added IDs are assigned here, never trusted from the browser.
@@ -51,6 +46,18 @@ export async function POST(req: Request) {
   if (b.policy && typeof b.policy.text === "string" && b.policy.text.trim()) {
     const acc = ACCEPTANCE_OPTIONS.find((o) => o.value === b.policy?.acceptance)?.value ?? "unsure";
     policy = { text: b.policy.text.slice(0, MAX_POLICY_CHARS + 1), acceptance: acc };
+  }
+
+  // Bad requests are turned away before they use any of the hourly allowance.
+  const invalid = validateAdded(added) ?? validatePolicy(policy);
+  if (invalid) return NextResponse.json(invalid, { status: 400 });
+
+  const limit = allow(ip);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { status: "unavailable", reason: "rate_limited", message: "That's a lot of checks. Try again in a while." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
+    );
   }
 
   let deps: Deps;

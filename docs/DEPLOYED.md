@@ -165,3 +165,9 @@ Full feature descriptions: `docs/FEATURES.md`.
 - [x] 40 cases (C31 to C40 held-out, labels are AI-drafted notes the builder agreed with); injection metric records each instruction's target
 - [ ] Open: Claude as the live model (no Anthropic key); saved results still ChatGPT v1
 
+## 16. Known limits (stated, not fixed)
+- **Rate limit and result cache live in each server instance's memory** on Vercel, so "20 checks per IP per hour" is best effort. The real cap on spend is the spend limit set with the model provider.
+- **`/api/llm-status` is public.** It shows the provider, the model, whether a key is set (never the key), and the deployment's branch and commit. No secret is in it.
+- **Saved results for C01 to C16 were made on prompt v1** by another model. They are labelled that way and now carry a note saying so. Live checks use prompt v2.3.
+- Security headers added 11 Oct (see `docs/FEATURES.md`, F31).
+

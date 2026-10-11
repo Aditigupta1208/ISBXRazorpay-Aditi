@@ -424,3 +424,14 @@ Built after three merchant conversations. All code or copy, no extra model calls
 - **How it works** (10 Oct): one picture first, four stages, five flow cards with small visuals, the nine rules grouped by what they do, a learning loop, launch bars, and "Not built" cards.
 - **Tab order** (10 Oct): Disputes, Results, Alerts, Agent setup.
 
+## F31 · Audit fixes and small additions (11 Oct)
+From a full product audit (tech, data flow, visuals). No model calls added.
+- **Evals copy matches its tiles.** The intro says the run covers 40 cases, that the 2 fraud cases go to Chargeback Shield without a model call, and that 38 are scored.
+- **Phone first screen.** The sticky action bar now starts with one line, "<amount> at stake · <time> left", so the stake and deadline are never hidden behind the buttons.
+- **"Why not Fold" line on Fight calls,** next to "Decided by" or "Missing". Built from counts the app already has (key documents in place, conflicts), by `whyNotFold` in `lib/namedGap.ts`. It is not shown for Fold, Escalate or Shield.
+- **Saved-result note.** A saved result now says "Prepared before the current prompt. Run live check to see what the latest version says." (not shown for fraud disputes, which are routed by a rule).
+- **"See it as an alert"** on a dispute opens `/alerts?focus=C10`: the alert is highlighted, or a note says it would wait for the digest or stay in the app under your rules. Preview only; nothing is sent.
+- **Security headers:** Content-Security-Policy, X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy; `X-Powered-By` removed. The app loads nothing from other sites, so the policy is tight; Next.js inline scripts need `'unsafe-inline'`.
+- **Rate limit after validation.** A badly formed or too-large request to `/api/analyze` is turned away before it uses any of the 20 checks per hour. Six added documents now says "Add at most 5 documents."
+- **Lint:** `npm run lint` (Biome, since ESLint's TypeScript plugin does not yet support TypeScript 7). Unused code removed; 29 hook-dependency warnings in `CaseView` are reviewed and left as they are.
+

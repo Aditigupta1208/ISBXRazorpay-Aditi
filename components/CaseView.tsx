@@ -22,7 +22,7 @@ import { VERDICT_LABEL, sameDraft } from "@/lib/rebuttalCore";
 import { checklistFor, SLOT_INFO } from "@/lib/evidenceChecklist";
 import { customerHistory } from "@/lib/customerHistory";
 import { checkFigures, recordText } from "@/lib/factCheck";
-import { namedGap } from "@/lib/namedGap";
+import { namedGap, whyNotFold } from "@/lib/namedGap";
 import { buildSummary } from "@/lib/summary";
 import { PolicyPatch } from "@/components/PolicyPatch";
 import { WAIT_OPTIONS, deadlineVerdict, whatItChanges, type WaitKey } from "@/lib/whatIf";
@@ -414,7 +414,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
   // "How can I help you next?" Each option does something real on this dispute. Fewer than three is fine.
   const goTo = (id: string) => setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" }), 140);
-  const openReview = () => {
+  const _openReview = () => {
     update((s) => ({ ...s, reviewOpen: true }));
     goTo("response");
   };
@@ -431,7 +431,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     shield: "Fraud dispute: Chargeback Shield handles it",
   };
   const EDGE: Record<typeof finalCall, string> = { fight: "border-l-fight", fold: "border-l-fold", escalate: "border-l-escalate", shield: "border-l-shield" };
-  const passed = g.lines.filter((l) => l.status === "pass").length;
+  const _passed = g.lines.filter((l) => l.status === "pass").length;
   const keyDocs = finalCall !== "shield" ? checklistFor(d.reason_code, documentsBySlot) : null;
   const gap = namedGap({
     call: finalCall,
@@ -440,6 +440,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     uncoveredKeyNeeds: (keyDocs?.key ?? []).filter((r) => !r.covered).map((r) => r.need),
     decidingEvidence: view.decidingEvidence,
   });
+  const notFold = whyNotFold({ call: finalCall, reasonCode: d.reason_code, keyCovered: keyDocs?.keyCovered ?? 0, keyTotal: keyDocs?.keyTotal ?? 0, contradictions: view.contradictions.length });
   const history = customerHistory(c.razorpay_facts);
 
   return (
@@ -481,6 +482,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         <button type="button" onClick={() => window.print()} className="mb-2.5 mr-3 min-h-10 text-[13px] font-semibold text-helper underline print:hidden md:min-h-0">
           Print or save as PDF
         </button>
+        {finalCall !== "shield" && (
+          <Link href={`/alerts?focus=${c.id}`} data-testid="see-alert" className="mb-2.5 mr-3 inline-flex min-h-10 items-center text-[13px] font-semibold text-helper underline print:hidden md:min-h-0">
+            See it as an alert
+          </Link>
+        )}
         {(state.action || state.audit.length > 0 || state.draft !== undefined) && (
           <button onClick={reset} className="mb-2.5 text-[13px] font-semibold text-helper underline">
             Reset this demo
@@ -580,6 +586,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {gap && (
                 <p data-testid="named-gap" className="mt-3 rounded-[10px] bg-[#F4F6FA] px-3 py-2 text-[15px]">
                   <span className="font-semibold">{gap.label}:</span> {gap.text}
+                </p>
+              )}
+              {notFold && (
+                <p data-testid="why-not-fold" className="mt-2 rounded-[10px] bg-[#F4F6FA] px-3 py-2 text-[15px]">
+                  <span className="font-semibold">Why not Fold:</span> {notFold}
                 </p>
               )}
               <p className="mt-2 text-[16px] leading-7 text-[#222]">{view.reason}</p>
@@ -701,6 +712,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
               {!acted && (
                 <div id="primary-action" className="sticky bottom-0 z-10 -mx-1 mt-5 flex flex-wrap items-center gap-2.5 border-t border-line bg-white/95 px-1 py-3 backdrop-blur max-md:shadow-[0_-6px_12px_rgba(0,0,0,.05)] md:static md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
+                  <p data-testid="sticky-summary" className="w-full text-[13px] font-semibold text-ink md:hidden">{formatInrFull(money.atStakeInr)} at stake · {t.text} left</p>
                   {finalCall === "fight" && (
                     <>
                       <button className={primary} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>Review response</button>
@@ -755,6 +767,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <span data-tour="source-label" className="flex flex-wrap items-center gap-2">
               {!view.source.live && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">Prepared in advance</span>}
               {view.source.label}
+              {!view.source.live && view.source.model !== "none" && finalCall !== "shield" && (
+                <span data-testid="saved-note" className="basis-full text-[12px] text-helper">Prepared before the current prompt. Run live check to see what the latest version says.</span>
+              )}
             </span>
             <span className="ml-auto flex flex-wrap items-center justify-end gap-2">
               <span>Was this call useful?</span>

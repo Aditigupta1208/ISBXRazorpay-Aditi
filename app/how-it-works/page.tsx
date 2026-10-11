@@ -1,7 +1,6 @@
 import { Card, PageTitle, Section } from "@/components/ui";
 import { FlowCards, Hero, Ico, LearnLoop, Pipeline, RuleGroups } from "@/components/HowVisuals";
 import { HowTabs } from "@/components/HowTabs";
-import { PROMPT_VERSION } from "@/lib/prompt";
 import { SOURCES } from "@/lib/evidenceChecklist";
 import { ODDS_PRIOR_WEIGHT } from "@/lib/results";
 import { THRESHOLDS } from "@/lib/eval";

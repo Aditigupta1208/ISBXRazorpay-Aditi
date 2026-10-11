@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { customerHistory } from "./customerHistory.ts";
-import { namedGap } from "./namedGap.ts";
+import { namedGap, whyNotFold } from "./namedGap.ts";
 
 test("customer history reads only what the facts say", () => {
   assert.deepEqual(customerHistory("Payment captured; first payment from this customer; no earlier disputes."), { payments: "First payment from this customer", disputes: "No earlier disputes", known: true });
@@ -28,4 +28,12 @@ test("named gap leads with what is missing, else what decides", () => {
   assert.deepEqual(namedGap({ call: "fight", missingEvidence: [], uncoveredKeyNeeds: ["When and how they cancelled"], decidingEvidence: ["E3"] }), { label: "Missing", text: "When and how they cancelled" });
   assert.deepEqual(namedGap({ call: "fight", missingEvidence: [], uncoveredKeyNeeds: [], decidingEvidence: ["E3", "Razorpay"] }), { label: "Decided by", text: "E3 and Razorpay's record" });
   assert.equal(namedGap({ call: "shield", missingEvidence: [], uncoveredKeyNeeds: [], decidingEvidence: [] }), null);
+});
+
+test("whyNotFold: only on a Fight call, built from counts", () => {
+  assert.equal(whyNotFold({ call: "fold", reasonCode: "13.2", keyCovered: 3, keyTotal: 3, contradictions: 0 }), null);
+  assert.equal(whyNotFold({ call: "fight", reasonCode: "13.2", keyCovered: 0, keyTotal: 0, contradictions: 0 }), null);
+  assert.equal(whyNotFold({ call: "fight", reasonCode: "13.2", keyCovered: 3, keyTotal: 3, contradictions: 0 }), "All 3 key documents for 13.2 are in place, and nothing in your evidence contradicts them.");
+  assert.match(whyNotFold({ call: "fight", reasonCode: "13.7", keyCovered: 2, keyTotal: 3, contradictions: 0 }) ?? "", /^2 of 3 key documents for 13\.7 are in place, and nothing/);
+  assert.match(whyNotFold({ call: "fight", reasonCode: "13.2", keyCovered: 3, keyTotal: 3, contradictions: 2 }) ?? "", /2 documents conflict/);
 });

@@ -40,7 +40,7 @@ export default function EvalsPage() {
   const v1Ids = new Set(v1Rows.map((r) => r.id));
   const latestIds = new Set(latest?.rows.map((r) => r.id) ?? []);
   const checklistV1 = summarize(only(v1Ids));
-  const checklistLatest = latest ? summarize(only(latestIds)) : null;
+  const _checklistLatest = latest ? summarize(only(latestIds)) : null;
   const v1 = summarize(v1Rows);
   const newerIds = new Set(checklistRows.filter((r) => !v1Ids.has(r.id)).map((r) => r.id));
   const checklistNewer = scored(only(newerIds));
@@ -115,7 +115,7 @@ export default function EvalsPage() {
           <p className="text-[13px] text-helper">Share of cases where the call matched the human answer. The three runs cover different case sets, so compare each with its checklist, not with each other.</p>
         </div>
         <p className="border-t border-line px-4 py-3 text-[13px] text-helper md:px-5">
-          The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases; C31 to C40: held-out cases, labelled after the prompt was fixed) {latest ? `were not in the old saved run; the newer run below covers ${latest.rows.length} of ${labels.length} cases` : "have no saved agent run"}. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
+          The {newerIds.size} newer cases (C17 to C20: messy evidence and hidden instructions; C21 to C30: unseen test cases; C31 to C40: held-out cases, labelled after the prompt was fixed) {latest ? `were not in the old saved run; the newer run below covers ${latest.rows.length} of ${labels.length} cases; ${latest.rows.length - n(latest.rows)} fraud ${latest.rows.length - n(latest.rows) === 1 ? "case is" : "cases are"} sent to Chargeback Shield without a model call, so ${n(latest.rows)} are scored` : "have no saved agent run"}. The checklist gets {agreeCount(checklistNewer)} of {n(checklistNewer)} of them right.
           {!latest && <> Run <code className="text-[12px]">npm run eval</code> to score the agent on all of them.</>}
         </p>
       </Card>

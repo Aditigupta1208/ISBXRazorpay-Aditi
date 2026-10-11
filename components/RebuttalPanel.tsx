@@ -6,7 +6,7 @@ import { TOUR_BANK_EVENT } from "@/lib/tourSteps";
 import { readProfile } from "@/lib/useProfile";
 
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
-const ghost = `${btn} border border-[#D6D6D6] bg-white text-[#111]`;
+const _ghost = `${btn} border border-[#D6D6D6] bg-white text-[#111]`;
 const ghostBrand = `${btn} border border-brand bg-white text-brand`;
 
 const VERDICT_CHIP: Record<Verdict, string> = {

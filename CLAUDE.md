@@ -42,6 +42,7 @@ An Agent Studio-style agent ("Dispute Advisor") for Indian businesses that sell 
 
 - `npm run dev`: local dev server
 - `npm run build`: production build (must pass before every push)
+- `npm run lint`: Biome lint (errors must be zero; some hook-dependency warnings are known)
 - `npm run eval`: run all cases through the agent and write results to `eval/results/` (milestone 4)
 
 ## How to work each session

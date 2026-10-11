@@ -1,0 +1,16 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "files": { "includes": ["app/**", "components/**", "lib/**", "scripts/**", "*.ts", "*.mjs", "!**/.next", "!**/*.css", "!**/node_modules"] },
+  "formatter": { "enabled": false },
+  "assist": { "enabled": false },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "correctness": { "noUnusedVariables": "warn", "noUnusedImports": "warn", "noUndeclaredVariables": "error", "useExhaustiveDependencies": "warn", "useHookAtTopLevel": "error", "noUnreachable": "error" },
+      "suspicious": { "noDebugger": "error", "noDoubleEquals": "error", "noDuplicateObjectKeys": "error", "noDuplicateCase": "error", "noSelfCompare": "error" },
+      "security": { "noDangerouslySetInnerHtml": "error" },
+      "a11y": { "useAltText": "error", "useButtonType": "off", "noPositiveTabindex": "error" }
+    }
+  }
+}

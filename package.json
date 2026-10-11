@@ -8,7 +8,8 @@
     "start": "next start",
     "test": "tsx --test lib/*.test.ts",
     "eval": "tsx --env-file-if-exists=.env.local scripts/eval.ts",
-    "eval:add": "tsx scripts/eval-add.ts"
+    "eval:add": "tsx scripts/eval-add.ts",
+    "lint": "biome lint"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
@@ -20,6 +21,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.15",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",

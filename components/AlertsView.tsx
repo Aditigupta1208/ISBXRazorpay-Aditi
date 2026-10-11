@@ -37,6 +37,16 @@ function Tile({ label, value, tone }: { label: string; value: number; tone: stri
 export function AlertsView({ rows }: { rows: AlertRow[] }) {
   const [rules, setRules] = useState<AlertRules>(DEFAULT_RULES);
   const [tab, setTab] = useState<"now" | "digest">("now");
+  // "See this as an alert" on a dispute page links here with ?focus=C06.
+  const [focusId, setFocusId] = useState<string | null>(null);
+  useEffect(() => {
+    try {
+      const f = new URLSearchParams(window.location.search).get("focus");
+      if (f && /^C\d{2}$/.test(f)) setFocusId(f);
+    } catch {
+      /* no search string: nothing to focus */
+    }
+  }, []);
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(KEY);
@@ -62,6 +72,12 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
   const inApp = decided.filter((x) => x.d.route === "app").length;
   const ch = CHANNEL_LABEL[rules.channel];
   const showDigest = tab === "digest" && rules.digest;
+  const focusRoute = focusId ? decided.find((x) => x.r.id === focusId)?.d.route ?? null : null;
+  useEffect(() => {
+    if (!focusId || !focusRoute) return;
+    setTab(focusRoute === "digest" && rules.digest ? "digest" : "now");
+    if (focusRoute === "alert") window.setTimeout(() => document.getElementById(`alert-${focusId}`)?.scrollIntoView({ block: "center", behavior: "smooth" }), 150);
+  }, [focusId, focusRoute, rules.digest]);
 
   return (
     <>
@@ -178,6 +194,15 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
               </div>
               <span className="ml-auto rounded-full bg-white/20 px-2.5 py-0.5 text-[12px] font-semibold">{ch}</span>
             </div>
+            {focusId && focusRoute && (
+              <p data-testid="focus-note" className="border-b border-line bg-brand-soft px-4 py-2 text-[13px] font-semibold text-brand">
+                {focusRoute === "alert"
+                  ? `Showing how ${focusId} would reach you.`
+                  : focusRoute === "digest"
+                    ? `${focusId} would wait for the morning digest under your rules.`
+                    : `${focusId} would stay in the app under your rules (it is below your alert limits).`}
+              </p>
+            )}
             <div role="tablist" aria-label="What you would get" className="flex border-b border-line bg-white">
               {(["now", "digest"] as const).map((k) => (
                 <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)} className={`min-h-11 flex-1 text-[14px] font-semibold ${tab === k ? "text-brand shadow-[inset_0_-3px_0_#2F63C8]" : "text-helper hover:text-ink"}`}>
@@ -190,7 +215,7 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
               {!showDigest && (
                 <ul className="space-y-3" aria-label="Alerts">
                   {alerts.map(({ r, d }) => (
-                    <li key={r.id} data-testid="alert-item" className={`max-w-[520px] rounded-2xl p-3.5 text-[14px] leading-5 shadow-[0_1px_1px_rgba(0,0,0,.08)] ${rules.channel === "whatsapp" ? "rounded-tl-sm bg-white" : rules.channel === "slack" ? "border-l-4 border-l-[#4A154B] bg-white" : "border border-line bg-white"}`}>
+                    <li key={r.id} id={`alert-${r.id}`} data-testid="alert-item" className={`${focusId === r.id ? "ring-2 ring-brand " : ""}max-w-[520px] rounded-2xl p-3.5 text-[14px] leading-5 shadow-[0_1px_1px_rgba(0,0,0,.08)] ${rules.channel === "whatsapp" ? "rounded-tl-sm bg-white" : rules.channel === "slack" ? "border-l-4 border-l-[#4A154B] bg-white" : "border border-line bg-white"}`}>
                       <div className="mb-1.5 flex flex-wrap items-center gap-2">
                         <span className="text-[13px] font-bold">{r.disputeId}</span>
                         {r.call && <CallChip call={r.call} />}

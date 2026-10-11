@@ -7,7 +7,7 @@ import { useProfile } from "@/lib/useProfile";
 import { policyBlock } from "@/lib/policyBlock";
 import { Card } from "@/components/ui";
 
-const CODES = ["13.1", "13.2", "13.3", "13.6", "13.7"];
+const _CODES = ["13.1", "13.2", "13.3", "13.6", "13.7"];
 const REASONS: [string, string][] = [
   ["13.1", "Service not provided"],
   ["13.2", "Cancelled subscription"],

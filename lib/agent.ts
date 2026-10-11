@@ -7,7 +7,7 @@ import { PROMPT_VERSION } from "./prompt";
 import { decisionSchema, type DecisionOutput } from "./schema";
 import type { CaseData, Call, CheckView } from "./types";
 
-import { ACCEPTANCE_OPTIONS, MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_POLICY_CHARS, MAX_TITLE_CHARS, type Policy } from "./limits";
+import { MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_POLICY_CHARS, MAX_TITLE_CHARS, type Policy } from "./limits";
 
 export { MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS };
 export const MAX_TOKENS = 2000;
