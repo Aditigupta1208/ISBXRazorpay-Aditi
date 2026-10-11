@@ -95,7 +95,7 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
         {/* Rules */}
-        <div className="space-y-4 lg:sticky lg:top-4">
+        <div className="order-2 space-y-4 lg:sticky lg:top-4 lg:order-1">
           <section aria-label="Channel" className="rounded-2xl border border-line bg-white p-4 md:p-5">
             <h2 className="text-[16px] font-semibold">Where should alerts go?</h2>
             <div role="radiogroup" aria-label="Channel" className="mt-3 grid grid-cols-3 gap-2">
@@ -175,7 +175,7 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
         </div>
 
         {/* Preview */}
-        <div>
+        <div className="order-1 lg:order-2">
           <div className="mb-3 grid grid-cols-3 gap-2 md:gap-3" data-testid="alerts-summary-tiles">
             <Tile label="Alerts now" value={alerts.length} tone="text-brand" />
             <Tile label="In the morning digest" value={rules.digest ? digest.length : 0} tone="text-ink" />

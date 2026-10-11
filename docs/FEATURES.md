@@ -433,7 +433,7 @@ From a full product audit (tech, data flow, visuals). No model calls added.
 - **"See it as an alert"** on a dispute opens `/alerts?focus=C10`: the alert is highlighted, or a note says it would wait for the digest or stay in the app under your rules. Preview only; nothing is sent.
 - **Security headers:** Content-Security-Policy, X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy; `X-Powered-By` removed. The app loads nothing from other sites, so the policy is tight; Next.js inline scripts need `'unsafe-inline'`.
 - **Rate limit after validation.** A badly formed or too-large request to `/api/analyze` is turned away before it uses any of the 20 checks per hour. Six added documents now says "Add at most 5 documents."
-- **Lint:** `npm run lint` (Biome, since ESLint's TypeScript plugin does not yet support TypeScript 7). Unused code removed; 29 hook-dependency warnings in `CaseView` are reviewed and left as they are.
+- **Lint:** `npm run lint` (Biome, since ESLint's TypeScript plugin does not yet support TypeScript 7). Unused code removed; 31 hook-dependency warnings in `CaseView` are reviewed and left as they are.
 
 ## F32 · Evidence audit fixes (11 Oct)
 - **Upload:** the help text says PDFs with selectable text are read here and photos or scans need the live Claude model; a rejected file no longer uses the 10-per-hour upload allowance.
@@ -461,3 +461,11 @@ From a full product audit (tech, data flow, visuals). No model calls added.
 - **Agent setup:** unusable terms (card number, too long) are never sent (`usablePolicy`) and the preview and check notice say so; damaged saved setup is repaired field by field; unused code removed.
 - **Reset the demo** now clears alert rules and ratio numbers too (their keys moved to the `da:v1:` family) and keeps the Agent setup.
 - Tests: `lib/audit678.test.ts` (5). Browser: `e2e_s678.py`.
+
+## F35 · Visual pass and lock (11 Oct)
+
+- Looked at screenshots of every page at 1280px and 390px (list, dispute for Fight, Fold, Escalate and Fraud, submit and fold dialogs, after-Fold state, packet, Results, Alerts, Agent setup).
+- **Phone dispute page:** the sticky action bar is shorter (Review and Fold share one row, 200px down to about 150px; 115px down to about 100px for a Fold call), so the decision text is no longer hidden on first load.
+- **After a Fold:** the learning line names documents in plain words ("Order confirmation or receipt") instead of internal ids.
+- **Alerts on phones:** the preview and tiles come first, the rules after. **Agent setup:** the two cards no longer stretch to equal height. **Disputes list on phones:** Download CSV sits at the right of its row.
+

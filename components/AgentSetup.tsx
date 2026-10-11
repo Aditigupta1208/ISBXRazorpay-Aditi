@@ -129,7 +129,7 @@ export function AgentSetup() {
                 <p className="text-[13px] text-helper">Its limits are fixed. Every submit and fold needs your approval, always.</p>
               </div>
             </div>
-            <div className="grid gap-3 text-[14px] md:grid-cols-2">
+            <div className="grid items-start gap-3 text-[14px] md:grid-cols-2">
               <div className="rounded-xl bg-fight-soft p-3.5">
                 <h3 className="mb-2 font-semibold text-fight">It will</h3>
                 <ul className="space-y-2 text-[#1F3A2E]">

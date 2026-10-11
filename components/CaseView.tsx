@@ -719,17 +719,17 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <p data-testid="sticky-summary" className="w-full text-[13px] font-semibold text-ink md:hidden">{formatInrFull(money.atStakeInr)} at stake · {t.text} left</p>
                   {finalCall === "fight" && (
                     <>
-                      <button className={primary} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>Review response</button>
-                      <button className={ghost} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
-                      <button type="button" data-testid="test-bank-link" className="min-h-11 px-2 text-sm font-semibold text-brand hover:underline" onClick={() => { update((s) => ({ ...s, reviewOpen: true })); goToBankTest(); }}>
+                      <button className={`${primary} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>Review response</button>
+                      <button className={`${ghost} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
+                      <button type="button" data-testid="test-bank-link" className="min-h-11 px-2 text-sm font-semibold text-brand hover:underline max-md:w-full max-md:min-h-10" onClick={() => { update((s) => ({ ...s, reviewOpen: true })); goToBankTest(); }}>
                         Test it on the bank first
                       </button>
                     </>
                   )}
                   {finalCall === "fold" && (
                     <>
-                      <button className={primary} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
-                      <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>Fight instead</button>
+                      <button className={`${primary} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
+                      <button className={`${ghost} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>Fight instead</button>
                     </>
                   )}
                   {finalCall === "escalate" && (
@@ -1076,7 +1076,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               <H3>What the agent learns</H3>
               <p className="text-[14px]">
                 Reason {d.reason_code}
-                {documentsBySlot.size > 0 && <> with {[...documentsBySlot.keys()].join(" + ")}</>}: <b>{acted?.type === "fold" ? "accepted" : state.outcome}</b>. In the real product this feeds the odds for the next dispute like this one.
+                {documentsBySlot.size > 0 && <> with {[...documentsBySlot.keys()].map(slotLabel).join(" + ")}</>}: <b>{acted?.type === "fold" ? "accepted" : state.outcome}</b>. In the real product this feeds the odds for the next dispute like this one.
               </p>
               {miss && (
                 <div className="mt-3 rounded-xl border border-line bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="miss-case">

@@ -110,7 +110,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
             </button>
           ))}
         </div>
-        <button onClick={download} className="min-h-10 rounded-[10px] border border-[#D6D6D6] px-3.5 text-[12px] font-semibold">
+        <button onClick={download} className="ml-auto min-h-10 md:ml-0 rounded-[10px] border border-[#D6D6D6] px-3.5 text-[12px] font-semibold">
           Download CSV
         </button>
       </div>
