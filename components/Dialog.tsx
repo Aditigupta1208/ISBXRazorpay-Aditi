@@ -15,7 +15,7 @@ export function Dialog({ open, onClose, title, children }: { open: boolean; onCl
       ref={ref}
       onClose={onClose}
       aria-labelledby="dlg-title"
-      className="m-auto w-[calc(100%-32px)] max-w-[480px] rounded-2xl border border-line bg-white p-6 shadow-xl backdrop:bg-black/40"
+      className="m-auto max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-[480px] overflow-y-auto rounded-2xl border border-line bg-white p-6 shadow-xl backdrop:bg-black/40"
     >
       <h2 id="dlg-title" className="mb-3 text-lg font-semibold">
         {title}

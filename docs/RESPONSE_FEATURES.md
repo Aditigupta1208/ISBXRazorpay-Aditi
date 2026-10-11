@@ -4,10 +4,10 @@
 - **Shorten for me:** AI shortens a draft over 1,000 characters, or code trims it if the AI can't.
 - **Check these before you approve:** each amount, date, time, percentage and count (digits or words like "three times") in the draft with the document it came from. Numeric dates such as 07/08/2026 are one figure and match either reading. A card number in the draft blocks Submit.
 - **Bank's rebuttal (practice run):** the bank's strongest objection, a verdict, the weak sentence (Before) beside a suggested rewrite (After), and an "add a document" suggestion.
-- **Approve and submit:** a confirm step, then the exact contest request, labelled "Simulated: not sent to Razorpay".
+- **Approve and submit:** a confirm step that shows the exact request first, then the exact contest request, labelled "Simulated: not sent to Razorpay".
 - **Fold flow:** a dialog with ₹ amount and reasons, then the accept request, also simulated.
 - **Override:** choosing against the call asks "Why?" (optional) and logs it.
-- **Copy a summary** for a colleague.
+- **Copy a summary** for a colleague (email addresses are masked) and **Copy response** under the draft.
 - **Evidence packet:** a print-ready page at `/disputes/<id>/packet` with a cover summary, contents and numbered exhibits.
 - **Print or save as PDF** on a dispute.
 - **After you act:**

@@ -44,7 +44,10 @@ interface Dt {
   alt?: Dt; // a numeric date such as 07/08/2026 can be day-first or month-first
 }
 const mon = (s: string) => MONTHS.indexOf(s.slice(0, 3).toLowerCase());
-const num = (s: string) => s.replace(/,/g, "").replace(/\.0+$/, "");
+const num = (s: string) => {
+  const t = s.replace(/,/g, "");
+  return t.includes(".") ? t.replace(/0+$/, "").replace(/\.$/, "") : t;
+};
 
 function datesIn(text: string): { raw: string; dt: Dt }[] {
   const out: { raw: string; dt: Dt }[] = [];

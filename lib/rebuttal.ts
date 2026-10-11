@@ -76,13 +76,21 @@ const today = () => new Date().toISOString().slice(0, 10);
  * One practice run. Same order as the main check: reject bad input, skip fraud, use the cache,
  * call the model (retry once on an invalid answer), then fall back to the saved example if the draft is unchanged.
  */
-export async function analyzeRebuttal(c: CaseData, added: AddedEvidence[], draft: string, deps: RebuttalDeps, policy?: Policy): Promise<RebuttalResult> {
+/** The checks that need no model and no case: used by the route before it counts a request against the hourly allowance. */
+export function rebuttalRejection(added: AddedEvidence[], draft: string, policy?: Policy): Extract<RebuttalResult, { status: "rejected" }> | null {
   const bad = validateAdded(added) ?? validatePolicy(policy);
   if (bad && bad.status === "rejected") return bad;
   const text = draft.trim();
   if (!text) return { status: "rejected", code: "empty", message: "Write a response first, then test it.", field: "draft" };
   if (text.length > MAX_REBUTTAL_DRAFT_CHARS) return { status: "rejected", code: "too_long", message: "Shorten the response to 1,000 characters first.", field: "draft" };
   if (containsCardNumber(text)) return { status: "rejected", code: "card_number", message: "Remove the card number from the response.", field: "draft" };
+  return null;
+}
+
+export async function analyzeRebuttal(c: CaseData, added: AddedEvidence[], draft: string, deps: RebuttalDeps, policy?: Policy): Promise<RebuttalResult> {
+  const rejected = rebuttalRejection(added, draft, policy);
+  if (rejected) return rejected;
+  const text = draft.trim();
   if (isFraudCode(c.dispute.reason_code)) return { status: "unavailable", reason: "fraud", message: "Fraud disputes go to Chargeback Shield. There is no response to test." };
 
   const evidenceIds = [...c.evidence.map((e) => e.id), ...added.map((a) => a.id)];

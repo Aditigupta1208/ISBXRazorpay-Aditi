@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS, type AddedEvidence } from "@/lib/agent";
-import { readKeyFacts, shortenDraft, suggestChange, type AssistDeps, type SavedLearning } from "@/lib/assist";
+import { MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS, validateAdded, validatePolicy, type AddedEvidence } from "@/lib/agent";
+import { readKeyFacts, shortenDraft, shortenRejection, suggestChange, type AssistDeps, type SavedLearning } from "@/lib/assist";
 import { getSavedKeyFacts } from "@/lib/assistData";
 import { learnStatsSchema } from "@/lib/assistCore";
 import { getCase } from "@/lib/data";
@@ -17,10 +17,11 @@ const cache: NonNullable<AssistDeps["cache"]> = new Map();
 /** Three small helpers behind one route: shorten a draft, read key facts, suggest a change. Same server-only key and per-IP limit as the main check, counted separately. */
 export async function POST(req: Request) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
-  const limit = allow(`assist:${ip}`);
-  if (!limit.ok) {
-    return NextResponse.json({ status: "unavailable", message: "That's a lot of requests. Try again in a while." }, { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } });
-  }
+  // The hourly allowance is counted only for requests that pass the cheap checks, so a rejected request costs nothing.
+  const limited = () => {
+    const limit = allow(`assist:${ip}`);
+    return limit.ok ? null : NextResponse.json({ status: "unavailable", message: "That's a lot of requests. Try again in a while." }, { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } });
+  };
   let b: { kind?: unknown; caseId?: unknown; added?: unknown; draft?: unknown; policy?: { text?: unknown; acceptance?: unknown }; stats?: unknown; policyText?: unknown };
   try {
     const text = await req.text();
@@ -38,6 +39,8 @@ export async function POST(req: Request) {
     if (!stats.success) return NextResponse.json({ status: "rejected", message: "That request was not valid." }, { status: 400 });
     const policyText = typeof b.policyText === "string" ? b.policyText.slice(0, MAX_POLICY_CHARS + 1) : "";
     if (policyText.length > MAX_POLICY_CHARS) return NextResponse.json({ status: "rejected", message: `Keep your terms under ${MAX_POLICY_CHARS.toLocaleString()} characters.` }, { status: 400 });
+    const blocked = limited();
+    if (blocked) return blocked;
     const result = await suggestChange(stats.data, policyText, deps, getSavedLearning() as SavedLearning | undefined);
     return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });
   }
@@ -53,17 +56,26 @@ export async function POST(req: Request) {
     content: typeof a?.content === "string" ? a.content.slice(0, MAX_EVIDENCE_CHARS + 1) : "",
   }));
 
-  if (b.kind === "keyfacts") {
-    const result = await readKeyFacts(c, added, deps, getSavedKeyFacts);
-    return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });
-  }
-
-  if (typeof b.draft !== "string") return NextResponse.json({ status: "rejected", message: "That request was not valid." }, { status: 400 });
   let policy: Policy | undefined;
   if (b.policy && typeof b.policy.text === "string" && b.policy.text.trim()) {
     const acc = ACCEPTANCE_OPTIONS.find((o) => o.value === b.policy?.acceptance)?.value ?? "unsure";
     policy = { text: b.policy.text.slice(0, MAX_POLICY_CHARS + 1), acceptance: acc };
   }
+
+  if (b.kind === "keyfacts") {
+    const bad = validateAdded(added) ?? validatePolicy(policy);
+    if (bad && bad.status === "rejected") return NextResponse.json({ status: "rejected", message: bad.message }, { status: 400 });
+    const blocked = limited();
+    if (blocked) return blocked;
+    const result = await readKeyFacts(c, added, deps, getSavedKeyFacts);
+    return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });
+  }
+
+  if (typeof b.draft !== "string") return NextResponse.json({ status: "rejected", message: "That request was not valid." }, { status: 400 });
+  const rejected = shortenRejection(added, b.draft.slice(0, 2001), policy);
+  if (rejected) return NextResponse.json(rejected, { status: 400 });
+  const blocked = limited();
+  if (blocked) return blocked;
   const result = await shortenDraft(c, added, b.draft.slice(0, 2001), deps, policy);
   return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });
 }

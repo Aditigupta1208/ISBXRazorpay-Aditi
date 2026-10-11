@@ -79,3 +79,27 @@ test("CSV cells are quoted and cannot run as formulas", () => {
   assert.equal(csvCell(-5), `"-5"`);
   assert.equal(csvCell("Ledgerly"), `"Ledgerly"`);
 });
+
+test("an address with St. and No. stays one sentence, and 1,200.50 matches 1,200.5", () => {
+  assert.equal(splitSentences("The studio is at No. 5 Main St. Dublin. [E1]").length, 1);
+  assert.equal(shortDocName({ content: "Email from greta@lindstudio.se: hello" }, 60), "Email from greta@lindstudio.se");
+  assert.equal(checkFigures("They paid USD 1,200.50 [E1].", [{ id: "E1", content: "Paid 1,200.5" }], "")[0].supported, true);
+  assert.equal(checkFigures("They paid $480.00 [E1].", [{ id: "E1", content: "Paid 480" }], "")[0].supported, true);
+  assert.equal(checkFigures("They paid $480.10 [E1].", [{ id: "E1", content: "Paid 480" }], "")[0].supported, false);
+});
+
+test("emails in a colleague summary show only their first letter", async () => {
+  const { maskEmails } = await import("./summary.ts");
+  assert.equal(maskEmails("Email from greta@lindstudio.se and a.b@x.co.uk"), "Email from g***@lindstudio.se and a***@x.co.uk");
+});
+
+test("the pre-checks for shorten and the bank test reject bad input without a model or a case", async () => {
+  const { shortenRejection } = await import("./assist.ts");
+  const { rebuttalRejection } = await import("./rebuttal.ts");
+  assert.match(shortenRejection([], "")!.message, /Write a response/);
+  assert.match(shortenRejection([], "x ".repeat(100))!.message, /already fits/);
+  assert.match(shortenRejection([], "pay 4111 1111 1111 1111 " + "x ".repeat(600))!.message, /card number/);
+  assert.equal(shortenRejection([], "word ".repeat(300)), null);
+  assert.equal(rebuttalRejection([], "")!.code, "empty");
+  assert.equal(rebuttalRejection([], "ok [E1].")!, null);
+});

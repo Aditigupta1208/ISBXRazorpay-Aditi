@@ -450,5 +450,7 @@ From a full product audit (tech, data flow, visuals). No model calls added.
 - **Sentences:** "Rs.", "Prof.", "St." and "No. 3" no longer end a sentence, so a valid draft is not blocked. When a source is written in the wrong form ("(see E1)", "[e1]") the message says how to write it.
 - **Figure check:** numeric dates, times, percentages and spelled-out counts are one figure each; a trailing full stop is no longer part of a date; "rupees" amounts are read. Document names keep "v2.1" and "10:30" whole in the packet and chips.
 - **Disputes list:** tiles drop disputes you have contested or folded; the "16 disputes from N businesses" line is worked out from the data; the alerts link is a normal in-app link with a 40px target; the CSV has a dated name, a byte-order mark, a time-left column, CRLF lines and formula-safe cells.
-- Tests: `lib/safetyFixes.test.ts` (9). Browser: `e2e_s345.py`.
+- **Response section, second pass (from the builder's own list):** the packet after a Fold says "This dispute was accepted. No response was submitted." and shows no contested amount; the learning line says "accepted" after a Fold; amounts match across "1,200.50" and "1,200.5"; the draft counter reads "/ 1,000" and stays on one line on phones; shorten and bank-test requests are checked before they use the hourly allowance; the colleague summary shows emails as `g***@domain`.
+- **Small additions:** the submit and fold dialogs show the exact request before you confirm (and scroll on small screens); a "Copy response" button sits under the draft before you act; a note appears when a Fight draft cites only one document although three or more decided the call.
+- Tests: `lib/safetyFixes.test.ts` (12). Browser: `e2e_s345.py`, `e2e_s3.py`.
 

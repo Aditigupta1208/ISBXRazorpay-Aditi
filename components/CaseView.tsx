@@ -828,10 +828,10 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] leading-[1.6] focus:border-brand-focus focus:outline-none"
             aria-describedby="draft-help"
           />
-          <div id="draft-help" className="mt-1 flex justify-between text-[12px]">
+          <div id="draft-help" className="mt-1 flex justify-between gap-3 text-[12px]">
             <span className="text-helper">Use [E1] style tags to cite a document, or [Razorpay] for Razorpay's records.</span>
-            <span className={draft.trim().length > DRAFT_LIMIT ? "font-semibold text-danger" : "text-helper"}>
-              {draft.trim().length} / {DRAFT_LIMIT}
+            <span className={`shrink-0 whitespace-nowrap ${draft.trim().length > DRAFT_LIMIT ? "font-semibold text-danger" : "text-helper"}`}>
+              {draft.trim().length} / {DRAFT_LIMIT.toLocaleString("en-US")}
             </span>
           </div>
           {draft.trim().length > DRAFT_LIMIT && !acted && (
@@ -844,6 +844,19 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 log("You", how === "ai" ? "Used the AI's shorter version of the draft" : "Used a shorter version made by dropping the last sentences");
               }}
             />
+          )}
+
+          {!acted && draft.trim() && (
+            <div className="mt-2">
+              <button type="button" className={ghost} onClick={() => copy("draft-pre", draft)}>
+                {copied === "draft-pre" ? "Copied" : "Copy response"}
+              </button>
+            </div>
+          )}
+          {!acted && finalCall === "fight" && view.decidingEvidence.length >= 3 && draft.trim() && new Set(citedIds(draft).filter((i) => i !== "Razorpay")).size === 1 && (
+            <p className="mt-3 rounded-xl bg-[#FFF8E6] px-3 py-2 text-[13px] text-fold" data-testid="narrow-cites">
+              Your draft cites only {[...new Set(citedIds(draft).filter((i) => i !== "Razorpay"))][0]}, but {view.decidingEvidence.join(", ")} decided this call. Citing more of them makes the case stronger.
+            </p>
           )}
 
           {sentences.length > 0 && (
@@ -1063,7 +1076,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               <H3>What the agent learns</H3>
               <p className="text-[14px]">
                 Reason {d.reason_code}
-                {documentsBySlot.size > 0 && <> with {[...documentsBySlot.keys()].join(" + ")}</>}: <b>{state.outcome}</b>. In the real product this feeds the odds for the next dispute like this one.
+                {documentsBySlot.size > 0 && <> with {[...documentsBySlot.keys()].join(" + ")}</>}: <b>{acted?.type === "fold" ? "accepted" : state.outcome}</b>. In the real product this feeds the odds for the next dispute like this one.
               </p>
               {miss && (
                 <div className="mt-3 rounded-xl border border-line bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="miss-case">
@@ -1384,6 +1397,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         </p>
         <p className="mt-2 text-[14px] text-helper">Why the advisor says {finalCall}: {view.reason}</p>
         <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[12px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
+        <RequestPreview text={foldRequest()} />
         {finalCall === "fight" && <OverrideWhy why={why} setWhy={setWhy} />}
         <DialogButtons onCancel={() => setDialog(null)} onYes={confirmAction} yes="Yes, fold" />
       </Dialog>
@@ -1393,6 +1407,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
         <p className="mt-2 text-[14px] text-helper">
           Contesting {formatOriginal(contestSubunits, d.currency)} of {formatOriginal(d.amount, d.currency)}.
         </p>
+        <RequestPreview text={contestRequest()} />
         {finalCall !== "fight" && <OverrideWhy why={why} setWhy={setWhy} />}
         <DialogButtons onCancel={() => setDialog(null)} onYes={confirmAction} yes="Yes, submit" />
       </Dialog>
@@ -1516,5 +1531,15 @@ function Row({ id, title, summary, open, onToggle, children, badge }: { id: stri
       </button>
       {open && <div id={`row-${id}`} className="px-5 pb-5">{children}</div>}
     </div>
+  );
+}
+
+/** The exact request the real app would send, shown before the merchant confirms. */
+function RequestPreview({ text }: { text: string }) {
+  return (
+    <details className="mt-2 text-[13px]" data-testid="request-preview">
+      <summary className="cursor-pointer font-semibold text-brand">See the exact request that would be sent</summary>
+      <pre className="mt-1 max-h-40 overflow-auto rounded-lg bg-[#F4F5F7] p-2 font-mono text-[12px] break-words whitespace-pre-wrap">{text}</pre>
+    </details>
   );
 }

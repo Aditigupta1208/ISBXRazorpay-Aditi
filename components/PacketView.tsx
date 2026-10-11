@@ -19,6 +19,7 @@ export function PacketView({ c, view: savedView }: { c: CaseData; view: CheckVie
   const left = all.filter((e) => !slotOf.has(e.id));
   const map = exhibitMap(included.map((e) => e.id));
   const draft = state.draft ?? view.draft;
+  const folded = state.action?.type === "fold";
   const contest = Math.min(state.contestAmount ?? view.defensibleAmount ?? d.amount, d.amount);
 
   return (
@@ -36,14 +37,14 @@ export function PacketView({ c, view: savedView }: { c: CaseData; view: CheckVie
           <dt className="text-helper">Merchant and customer</dt><dd>{c.merchant}</dd>
           <dt className="text-helper">Network and reason</dt><dd>{d.network} {d.reason_code} {d.reason_description}</dd>
           <dt className="text-helper">Amount disputed</dt><dd>{formatOriginal(d.amount, d.currency)}</dd>
-          <dt className="text-helper">Amount contested</dt><dd>{formatOriginal(contest, d.currency)}</dd>
+          <dt className="text-helper">Amount contested</dt><dd>{folded ? "None: this dispute was accepted" : formatOriginal(contest, d.currency)}</dd>
           <dt className="text-helper">Dispute raised</dt><dd>{d.raised_on}</dd>
           <dt className="text-helper">Customer says</dt><dd>“{c.customer_claim}”</dd>
           <dt className="text-helper">Razorpay record</dt><dd>{c.razorpay_facts}</dd>
         </dl>
 
         <h2 className="mt-6 text-[16px] font-semibold">Response</h2>
-        {draft.trim() ? <p className="mt-1 whitespace-pre-wrap">{responseWithExhibits(draft, map)}</p> : <p className="mt-1 text-helper">No response has been written yet.</p>}
+        {folded ? <p className="mt-1">This dispute was accepted. No response was submitted.</p> : draft.trim() ? <p className="mt-1 whitespace-pre-wrap">{responseWithExhibits(draft, map)}</p> : <p className="mt-1 text-helper">No response has been written yet.</p>}
 
         <h2 className="mt-6 text-[16px] font-semibold">Contents</h2>
         <ol className="mt-1 list-none space-y-0.5">

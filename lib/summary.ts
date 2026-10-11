@@ -37,5 +37,10 @@ export function buildSummary(i: SummaryInput): string {
   }
   if (i.actionTaken) lines.push("", `Status: ${i.actionTaken}`);
   lines.push("", "Prepared by Dispute Advisor (a concept prototype, not a Razorpay product). It is a recommendation: nothing has been sent, and the merchant decides.");
-  return lines.join("\n");
+  return maskEmails(lines.join("\n"));
+}
+
+/** A summary may be pasted into Slack or an email, so an address shows its first letter only: g***@lindstudio.se. */
+export function maskEmails(text: string): string {
+  return text.replace(/([A-Za-z0-9])[A-Za-z0-9._%+-]*@([A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,})/g, "$1***@$2");
 }

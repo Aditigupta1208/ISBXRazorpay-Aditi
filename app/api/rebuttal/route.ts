@@ -5,7 +5,7 @@ import { getCase, getRuleText } from "@/lib/data";
 import { ACCEPTANCE_OPTIONS, MAX_POLICY_CHARS, type Policy } from "@/lib/limits";
 import { loadRebuttalPrompt } from "@/lib/prompt";
 import { allow } from "@/lib/ratelimit";
-import { analyzeRebuttal, MAX_REBUTTAL_DRAFT_CHARS, type RebuttalDeps } from "@/lib/rebuttal";
+import { analyzeRebuttal, rebuttalRejection, MAX_REBUTTAL_DRAFT_CHARS, type RebuttalDeps } from "@/lib/rebuttal";
 import { getSavedRebuttal } from "@/lib/rebuttalData";
 import { getRates } from "@/lib/fx";
 
@@ -17,14 +17,6 @@ const cache: NonNullable<RebuttalDeps["cache"]> = new Map();
 export async function POST(req: Request) {
   // Server only: the key is read here and never sent to the browser. Same per-IP limit as the main check, counted separately.
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
-  const limit = allow(`rebuttal:${ip}`);
-  if (!limit.ok) {
-    return NextResponse.json(
-      { status: "unavailable", reason: "rate_limited", message: "That's a lot of checks. Try again in a while." },
-      { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
-    );
-  }
-
   let body: unknown;
   try {
     const text = await req.text();
@@ -73,6 +65,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ status: "unavailable", reason: "prompt_missing", message: "The practice run is off in this demo." });
   }
 
+  const rejected = rebuttalRejection(added, b.draft.slice(0, MAX_REBUTTAL_DRAFT_CHARS + 1), policy);
+  if (rejected) return NextResponse.json(rejected, { status: 400 });
+  const limit = allow(`rebuttal:${ip}`);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { status: "unavailable", reason: "rate_limited", message: "That's a lot of checks. Try again in a while." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } },
+    );
+  }
   const result = await analyzeRebuttal(c, added, b.draft.slice(0, MAX_REBUTTAL_DRAFT_CHARS + 1), deps, policy);
   return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });
 }

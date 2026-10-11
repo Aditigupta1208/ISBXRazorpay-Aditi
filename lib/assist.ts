@@ -96,7 +96,8 @@ const cacheSet = (deps: AssistDeps, key: string, value: unknown) => {
 
 // ---------------------------------------------------------------- shorten
 
-export async function shortenDraft(c: CaseData, added: AddedEvidence[], draft: string, deps: AssistDeps, policy?: Policy): Promise<ShortenResult> {
+/** The checks that need no model and no case: used by the route before it counts a request against the hourly allowance. */
+export function shortenRejection(added: AddedEvidence[], draft: string, policy?: Policy): { status: "rejected"; message: string } | null {
   const bad = validateAdded(added) ?? validatePolicy(policy);
   if (bad && bad.status === "rejected") return { status: "rejected", message: bad.message };
   const text = draft.trim();
@@ -104,6 +105,13 @@ export async function shortenDraft(c: CaseData, added: AddedEvidence[], draft: s
   if (text.length > MAX_SHORTEN_INPUT_CHARS) return { status: "rejected", message: "Cut it to under 2,000 characters first, then try again." };
   if (text.length <= DRAFT_LIMIT) return { status: "rejected", message: "This response already fits in 1,000 characters." };
   if (containsCardNumber(text)) return { status: "rejected", message: "Remove the card number from the response." };
+  return null;
+}
+
+export async function shortenDraft(c: CaseData, added: AddedEvidence[], draft: string, deps: AssistDeps, policy?: Policy): Promise<ShortenResult> {
+  const rejected = shortenRejection(added, draft, policy);
+  if (rejected) return rejected;
+  const text = draft.trim();
   if (isFraudCode(c.dispute.reason_code)) return { status: "unavailable", message: "Fraud disputes go to Chargeback Shield. There is no response to shorten." };
 
   const trim = (message: string): ShortenResult => {
