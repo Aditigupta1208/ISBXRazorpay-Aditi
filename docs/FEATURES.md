@@ -102,7 +102,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 **Not built**
 - 🟡 **PDF and image upload (built, not yet proven on the real model).** In the Add evidence form, pick a PDF, PNG, JPEG or WebP up to 3 MB. The server checks the type and the file's own first bytes, sends it to the model once with a forced tool (`record_document_text`), and fills the title and text for the merchant to check and edit. Then it is ordinary pasted evidence: same 4,000-character cap, card-number block, injection wrapper and re-run. Nothing is stored, so there is no file to leak. A full card number read from the file is refused. Over 4,000 characters is cut with a note. Reading a file costs one extra model call and has its own rate limit (10 an hour). With no key, or on Groq (which cannot read files), a PDF with selectable text is read by code on the server (`lib/pdfText.ts`, the `unpdf` library, no AI, no cost); a scanned PDF or an image asks for a paste. Claude and Gemini still read files themselves.
-- ⬜ **Extracted key facts** (2 to 3 lines per document): not built. The slot tags and the cited draft already show how each document is used.
+- ✅ **Extracted key facts** (2 to 3 lines per document): built on 7 Oct as F24. Each fact needs a word-for-word quote from its document.
 
 ---
 

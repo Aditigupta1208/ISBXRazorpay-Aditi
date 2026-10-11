@@ -97,6 +97,13 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 - [x] Docs refreshed (`PRODUCT.md`, `FEATURES.md`, `DEPLOYED.md`, `PRODUCT_EVAL.md`, `HELDOUT_TEST.md`)
 - [ ] Builder checks: Safari, iPhone, Firefox, one cold tester; pin the exchange rate; tag `submission`
 
+## M6c: Audits, lock and evidence for judges (11 Oct)
+
+- [x] Sections 1 to 11 audited and locked (`docs/FEATURE_LOCK.md`); keyless `npm run eval:gate`
+- [x] Why-AI argument with worked example, metric tree, risk table, tiers, positioning, Merchants tab, sources and assumptions, At a glance tab, 14-stop tour
+- [x] Browser suites committed under `e2e/`
+- [ ] Builder: confirm the C21 to C30 labels (`docs/LABEL_CHECK_C21_C30.md`)
+
 ## M6: Note, video, submit (11 to 13 Oct)
 
 - [ ] 11 Oct: one-page product note (problem, merchant, what was left out, how AI was used, Track 2 answers, metrics)

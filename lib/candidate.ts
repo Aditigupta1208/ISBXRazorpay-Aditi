@@ -81,8 +81,7 @@ export function promote(c: Candidate, conf: Confirmation) {
       status: "open",
       raised_on: today,
       respond_by_hours_left: conf.hoursLeft ?? 48,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any,
+    },
     merchant: "Names removed (from a recorded outcome).",
     customer_claim: c.case.customer_claim,
     dispute_summary: `Amount: USD ${usd.toLocaleString("en-US")}${conf.amountUsd ? "" : " (placeholder)"}. Customer claim: '${c.case.customer_claim}'`,

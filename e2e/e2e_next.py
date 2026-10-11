@@ -1,0 +1,35 @@
+from playwright.sync_api import sync_playwright
+ok=True
+def check(n,c):
+    global ok; print(('PASS ' if c else 'FAIL ')+n); ok=ok and bool(c)
+B='http://localhost:3111'
+with sync_playwright() as p:
+    b=p.chromium.launch(); ctx=b.new_context(viewport={'width':1280,'height':900},permissions=['clipboard-read','clipboard-write']); pg=ctx.new_page()
+    acts=lambda: pg.locator('#primary-action button')
+    pg.goto(B+'/disputes/C04'); pg.wait_for_timeout(500)
+    check('C04 (Fight): Review response is the main button, Fold second', acts().count()==3 and acts().nth(0).inner_text()=='Review response' and acts().nth(1).inner_text()=='Accept dispute (Fold)' and acts().nth(2).inner_text()=='Test it on the bank first')
+    check('the main button is on the first screen', acts().first.bounding_box()['y']+acts().first.bounding_box()['height']<900)
+    check('response form is closed until asked', pg.locator('#draft').count()==0)
+    acts().first.click(); pg.wait_for_timeout(300)
+    check('Review response opens the form', pg.locator('#draft').is_visible())
+    chip=pg.locator('#decision button[aria-label^="Show E"]').first; eid=chip.get_attribute('aria-label').split()[-1]; chip.click(); pg.wait_for_timeout(400)
+    check('"Based on" chip opens evidence and highlights it', pg.locator(f'#ev-{eid}.border-brand').count()==1)
+    pg.get_by_role('button',name='Add evidence').first.click(); pg.wait_for_timeout(200)
+    check('add form opens', pg.locator('#ev-title').is_visible())
+    pg.goto(B+'/disputes/C14'); pg.wait_for_timeout(500)
+    check('C14 (Fold): Fold is the main button', acts().first.inner_text()=='Accept dispute (Fold)')
+    acts().first.click(); check('fold dialog opens', pg.get_by_role('dialog').is_visible()); pg.keyboard.press('Escape')
+    pg.goto(B+'/disputes/C15'); pg.wait_for_timeout(500)
+    check('C15 (Escalate): Copy the message is the main button', acts().first.inner_text()=='Copy the message')
+    check('C15 offers Add the document, Fight anyway and Fold', [acts().nth(i).inner_text() for i in range(1,4)]==['Add the document','Fight anyway','Accept dispute (Fold)'])
+    acts().first.click(); pg.wait_for_timeout(300)
+    check('copy confirmed', acts().first.inner_text()=='Copied')
+    check('Get this first block is on the first screen', pg.locator('#get-first').bounding_box()['y']<900)
+    pg.goto(B+'/disputes/C16'); pg.wait_for_timeout(500)
+    check('C16 (Shield) has no action buttons', pg.locator('#primary-action').count()==0)
+    check('C16 says Chargeback Shield handles it', pg.get_by_text('Chargeback Shield handles it').first.is_visible())
+    for path in ['/disputes/C04','/disputes/C15']:
+        ph=ctx.new_page(); ph.set_viewport_size({'width':360,'height':800}); ph.goto(B+path); ph.wait_for_timeout(300)
+        check('no sideways scroll at 360px '+path, not ph.evaluate('document.documentElement.scrollWidth>innerWidth')); ph.close()
+    b.close()
+print('ALL OK' if ok else 'SOME FAILED')

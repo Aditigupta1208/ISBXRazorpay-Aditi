@@ -1,0 +1,50 @@
+from playwright.sync_api import sync_playwright
+ok=True
+def check(n,c):
+    global ok; print(('PASS ' if c else 'FAIL ')+n); ok=ok and bool(c)
+B='http://localhost:3111'
+with sync_playwright() as p:
+    b=p.chromium.launch(); ctx=b.new_context(viewport={'width':1280,'height':900}, permissions=['clipboard-read','clipboard-write']); pg=ctx.new_page()
+    # ratio
+    pg.goto(B+'/results'); pg.wait_for_timeout(500)
+    check('ratio tile present', pg.locator('#ratio').is_visible())
+    check('ratio empty shows dash', pg.get_by_test_id('ratio-value').inner_text().strip()=='–')
+    pg.get_by_label('Card payments this month').fill('2000'); pg.get_by_label('Disputes raised this month').fill('9'); pg.wait_for_timeout(200)
+    check('0.45% computed', pg.get_by_test_id('ratio-value').inner_text().strip()=='0.45%')
+    check('says under 0.5', 'Under the 0.5%' in pg.get_by_test_id('ratio-note').inner_text())
+    check('attributes Razorpay blog and says a win may count', 'Razorpay does not say whether one you win is removed' in pg.locator('#ratio').inner_text() and pg.locator('#ratio a').get_attribute('href').startswith('https://razorpay.com/blog'))
+    pg.reload(); pg.wait_for_timeout(500)
+    check('ratio remembered', pg.get_by_label('Card payments this month').input_value()=='2000')
+    # alerts
+    pg.goto(B+'/alerts'); pg.wait_for_timeout(600)
+    check('preview disclaimer', 'Nothing is sent' in pg.get_by_test_id('alerts-disclaimer').inner_text())
+    n0=pg.get_by_test_id('alert-item').count(); check('some alerts under defaults', n0>0)
+    s0=pg.get_by_test_id('alerts-summary').inner_text()
+    pg.get_by_label('Alert amount in rupees').fill('1000000'); pg.wait_for_timeout(200)
+    n1=pg.get_by_test_id('alert-item').count(); check('raising the amount reduces alerts or keeps urgent ones', n1<=n0)
+    pg.get_by_label('Urgent hours').select_option('off'); pg.wait_for_timeout(200)
+    check('urgent off and big threshold: fewer alerts', pg.get_by_test_id('alert-item').count()<n1 or n1==0)
+    pg.get_by_role('tab',name='Morning digest').click(); pg.wait_for_timeout(150); check('digest tab shows the digest', pg.get_by_test_id('digest').is_visible())
+    pg.locator('label',has_text='Slack').first.click(); pg.wait_for_timeout(200)
+    check('channel shown in preview', 'Slack' in pg.get_by_role('tab',name='Alerts now').locator('xpath=ancestor::div[contains(@class,"overflow-hidden")]').inner_text())
+    pg.reload(); pg.wait_for_timeout(500)
+    check('rules remembered', pg.get_by_role('radio',name='Slack').is_checked())
+    pg.get_by_label('Alert amount in rupees').fill('0'); pg.wait_for_timeout(200); check('fraud dispute never alerts, even at zero threshold', 'Chargeback Shield' not in ' '.join(pg.get_by_test_id('alert-item').all_inner_texts()) and 'C16' not in ' '.join(pg.get_by_test_id('alert-item').all_inner_texts()))
+    ph=ctx.new_page(); ph.set_viewport_size({'width':390,'height':844}); ph.goto(B+'/alerts'); ph.wait_for_timeout(500)
+    check('phone: no sideways scroll on alerts', ph.evaluate('document.documentElement.scrollWidth<=window.innerWidth'))
+    ph.goto(B+'/results'); ph.wait_for_timeout(500)
+    check('phone: no sideways scroll on results', ph.evaluate('document.documentElement.scrollWidth<=window.innerWidth'))
+    # policy patch after folding
+    pg.goto(B+'/disputes/C14'); pg.wait_for_timeout(500)
+    pg.get_by_role('button',name='Accept dispute (Fold)',exact=True).first.click(); pg.get_by_role('button',name='Yes, fold').click(); pg.wait_for_timeout(500)
+    pp=pg.get_by_test_id('policy-patch'); check('policy patch shown after acting', pp.is_visible())
+    pp.locator('summary').click(); pg.wait_for_timeout(200)
+    check('patch has checkout wording and a record to keep', 'checkout wording' in pp.inner_text().lower() and 'keep this record' in pp.inner_text().lower())
+    pp.get_by_role('button',name='Copy this wording').first.click(); pg.wait_for_timeout(200)
+    check('copied wording has blanks', '[' in pg.evaluate('navigator.clipboard.readText()'))
+    # will never
+    pg.goto(B+'/agent-studio'); pg.wait_for_timeout(500)
+    check('will-never lists refund and fold', 'Refund your customer, or accept (Fold) a dispute for you' in pg.inner_text('body'))
+    pg.goto(B+'/disputes'); pg.wait_for_timeout(400)
+    check('alerts link on disputes page', pg.get_by_role('link',name='Choose Slack, WhatsApp or email and set your alert rules').is_visible())
+print('ALL OK' if ok else 'SOME FAILED')

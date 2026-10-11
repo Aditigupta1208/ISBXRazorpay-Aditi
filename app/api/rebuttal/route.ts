@@ -10,7 +10,7 @@ import { getSavedRebuttal } from "@/lib/rebuttalData";
 import { getRates } from "@/lib/fx";
 
 export const runtime = "nodejs";
-export const maxDuration = 60; // confirm Vercel's current limit for the plan
+export const maxDuration = 60; // seconds; a live check can take up to a minute on a busy free model
 
 const cache: NonNullable<RebuttalDeps["cache"]> = new Map();
 
