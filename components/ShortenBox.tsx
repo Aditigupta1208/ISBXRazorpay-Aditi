@@ -2,7 +2,7 @@
 import { useState } from "react";
 import type { ShortenResult } from "@/lib/assistCore";
 import { DRAFT_LIMIT } from "@/lib/guardrails";
-import { readProfile } from "@/lib/useProfile";
+import { policyProblem, readProfile, usablePolicy } from "@/lib/useProfile";
 
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
 
@@ -35,7 +35,7 @@ export function ShortenBox({
       const res = await fetch("/api/assist", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ kind: "shorten", caseId, added, draft, policy: profile.policy.trim() ? { text: profile.policy, acceptance: profile.acceptance } : undefined }),
+        body: JSON.stringify({ kind: "shorten", caseId, added, draft, policy: usablePolicy(profile) }),
       });
       const r = (await res.json()) as ShortenResult;
       if (r.status === "ok") setResult({ r, forDraft: draft });

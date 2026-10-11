@@ -22,7 +22,17 @@ export interface RatioResult {
   note: string;
 }
 
+/** Whole number typed by a person: "1,200" and " 1200 " are fine; "1e3", "6.5", "-5" and words are not. Empty is null. */
+export function parseCount(text: string): number | null | "bad" {
+  const t = text.replace(/[,\s]/g, "");
+  if (t === "") return null;
+  return /^\d{1,9}$/.test(t) ? Number(t) : "bad";
+}
+
 export function dispRatio(transactions: number, disputes: number): RatioResult {
+  if (Number.isFinite(transactions) && Number.isFinite(disputes) && transactions > 0 && disputes > transactions) {
+    return { ratioPct: null, band: null, room: [], note: "Disputes cannot be more than card payments. Check the two numbers." };
+  }
   if (!Number.isFinite(transactions) || !Number.isFinite(disputes) || transactions <= 0 || disputes < 0) {
     return { ratioPct: null, band: null, room: [], note: "Type in both numbers to see your ratio." };
   }

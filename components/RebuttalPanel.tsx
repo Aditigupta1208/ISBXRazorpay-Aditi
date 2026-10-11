@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { RebuttalResult } from "@/lib/rebuttal";
 import { VERDICT_LABEL, applyFix, sameDraft, type RebuttalView, type Verdict } from "@/lib/rebuttalCore";
 import { TOUR_BANK_EVENT } from "@/lib/tourSteps";
-import { readProfile } from "@/lib/useProfile";
+import { policyProblem, readProfile, usablePolicy } from "@/lib/useProfile";
 
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
 const _ghost = `${btn} border border-[#D6D6D6] bg-white text-[#111]`;
@@ -79,7 +79,7 @@ export function RebuttalPanel({
           added,
           draft,
           demo: demo || undefined,
-          policy: profile.policy.trim() ? { text: profile.policy, acceptance: profile.acceptance } : undefined,
+          policy: usablePolicy(profile),
         }),
       });
       const r = (await res.json()) as RebuttalResult;

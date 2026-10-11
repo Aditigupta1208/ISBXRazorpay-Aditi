@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { RATIO_MARKS, RATIO_SOURCE, dispRatio } from "@/lib/ratio";
+import { RATIO_MARKS, RATIO_SOURCE, dispRatio, parseCount } from "@/lib/ratio";
 import { Card } from "@/components/ui";
 
-const KEY = "da:ratio:v1";
+const KEY = "da:v1:ratio";
 
 /** Dispute ratio from two numbers the merchant types in. Kept in this browser only. */
 export function RatioTile() {
@@ -28,7 +28,9 @@ export function RatioTile() {
       /* ignore */
     }
   };
-  const r = dispRatio(Number(tx), Number(ds));
+  const pt = parseCount(tx);
+  const pd = parseCount(ds);
+  const r = pt === "bad" || pd === "bad" ? { ...dispRatio(NaN, NaN), note: "Type whole numbers only, like 1200 or 1,200." } : dispRatio(pt ?? NaN, pd ?? NaN);
   const tone = r.band === "under" ? "text-green-ink" : r.band === "watch" ? "text-warn" : r.band ? "text-danger" : "text-ink";
 
   return (

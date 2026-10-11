@@ -7,7 +7,6 @@ import { useProfile } from "@/lib/useProfile";
 import { policyBlock } from "@/lib/policyBlock";
 import { Card } from "@/components/ui";
 
-const _CODES = ["13.1", "13.2", "13.3", "13.6", "13.7"];
 const REASONS: [string, string][] = [
   ["13.1", "Service not provided"],
   ["13.2", "Cancelled subscription"],
@@ -39,7 +38,8 @@ export function AgentSetup() {
     set("policy", v);
   };
 
-  const told = policyBlock({ text: profile.policy, acceptance: profile.acceptance }).length > 0;
+  const told = !over && !error && !containsCardNumber(profile.policy) && policyBlock({ text: profile.policy, acceptance: profile.acceptance }).length > 0;
+  const notSent = profile.policy.trim().length > 0 && !told;
 
   return (
     <div className={ready ? "" : "opacity-60"} aria-busy={!ready}>
@@ -178,7 +178,9 @@ export function AgentSetup() {
             <h2 className="text-[16px] font-semibold">What the advisor is told</h2>
             <p className="mb-3 text-[13px] text-helper">Added to every live check, beside the dispute record and the documents.</p>
             {!told ? (
-              <p className="rounded-xl bg-white p-3 text-[14px] text-ink-soft">No terms yet. The advisor will rely on the documents alone.</p>
+              <p className="rounded-xl bg-white p-3 text-[14px] text-ink-soft" data-testid="terms-not-sent">
+                {notSent ? "Your terms are not sent yet: remove the card number or shorten them. Until then the advisor relies on the documents alone." : "No terms yet. The advisor will rely on the documents alone."}
+              </p>
             ) : (
               <div className="rounded-xl bg-white p-3 text-[14px] leading-5">
                 <p className="font-semibold">Your terms (your claim, not proof)</p>

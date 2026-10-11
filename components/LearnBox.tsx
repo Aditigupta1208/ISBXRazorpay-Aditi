@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { KIND_LABEL, smallSample, type LearnResult, type LearnStats } from "@/lib/assistCore";
-import { readProfile } from "@/lib/useProfile";
+import { readProfile, usablePolicy } from "@/lib/useProfile";
 import { Card } from "@/components/ui";
 
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
@@ -21,7 +21,7 @@ export function LearnBox({ stats, usesSample }: { stats: LearnStats; usesSample:
     setRunning(true);
     setError("");
     try {
-      const res = await fetch("/api/assist", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind: "learn", stats, policyText: readProfile().policy }) });
+      const res = await fetch("/api/assist", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind: "learn", stats, policyText: usablePolicy(readProfile())?.text ?? "" }) });
       const r = (await res.json()) as LearnResult;
       if (r.status === "live" || r.status === "saved") setShown({ r, sig });
       else setError(r.message);

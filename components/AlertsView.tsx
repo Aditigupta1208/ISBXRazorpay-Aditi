@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { CallChip } from "@/components/CallChip";
-import { CHANNEL_LABEL, DEFAULT_RULES, alertBody, decide, digestText, type AlertRow, type AlertRules, type Channel } from "@/lib/alertRules";
+import { CHANNEL_LABEL, DEFAULT_RULES, MAX_MIN_INR, alertBody, decide, digestText, sanitizeRules, type AlertRow, type AlertRules, type Channel } from "@/lib/alertRules";
 
-const KEY = "da:alerts:v1";
+const KEY = "da:v1:alerts";
 const REASONS: { code: string; label: string }[] = [
   { code: "13.1", label: "Service not received" },
   { code: "13.2", label: "Cancelled subscription" },
@@ -50,7 +50,7 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(KEY);
-      if (raw) setRules({ ...DEFAULT_RULES, ...JSON.parse(raw) });
+      if (raw) setRules(sanitizeRules(JSON.parse(raw)));
     } catch {
       /* storage unavailable: use the defaults */
     }
@@ -70,6 +70,7 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
   const alerts = decided.filter((x) => x.d.route === "alert");
   const digest = decided.filter((x) => x.d.route === "digest").map((x) => x.r);
   const inApp = decided.filter((x) => x.d.route === "app").length;
+  const notCovered = decided.filter((x) => x.d.route === "not_covered").length;
   const ch = CHANNEL_LABEL[rules.channel];
   const showDigest = tab === "digest" && rules.digest;
   const focusRoute = focusId ? decided.find((x) => x.r.id === focusId)?.d.route ?? null : null;
@@ -119,17 +120,17 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
                 <input
                   inputMode="numeric"
                   value={rules.minInr.toLocaleString("en-IN")}
-                  onChange={(e) => set("minInr", Math.max(0, Number(e.target.value.replace(/\D/g, "")) || 0))}
+                  onChange={(e) => set("minInr", Math.min(MAX_MIN_INR, Math.max(0, Number(e.target.value.replace(/\D/g, "").slice(0, 12)) || 0)))}
                   aria-label="Alert amount in rupees"
                   className="min-h-10 w-28 rounded-[10px] bg-transparent px-2 text-right text-[15px] font-semibold focus:outline-none"
                 />
               </div>
             </RuleRow>
-            <RuleRow title={<>Alert me when time left is under</>}>
+            <RuleRow title={<>Alert me when time left is</>}>
               <select aria-label="Urgent hours" value={rules.urgentHours ?? "off"} onChange={(e) => set("urgentHours", e.target.value === "off" ? null : Number(e.target.value))} className={SELECT}>
-                <option value="12">12 hours</option>
-                <option value="24">24 hours</option>
-                <option value="48">48 hours</option>
+                <option value="12">12 hours or less</option>
+                <option value="24">24 hours or less</option>
+                <option value="48">48 hours or less</option>
                 <option value="off">Never</option>
               </select>
             </RuleRow>
@@ -180,6 +181,11 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
             <Tile label="In the morning digest" value={rules.digest ? digest.length : 0} tone="text-ink" />
             <Tile label="Waiting in the app" value={inApp} tone="text-helper" />
           </div>
+          {notCovered > 0 && (
+            <p className="mb-3 text-[13px] text-helper" data-testid="not-covered">
+              {notCovered} fraud {notCovered === 1 ? "dispute is" : "disputes are"} not counted here: Chargeback Shield handles {notCovered === 1 ? "it" : "them"}.
+            </p>
+          )}
           <h2 className="sr-only">What you would get on {ch}</h2>
           <p className="sr-only" data-testid="alerts-summary">
             {alerts.length} alert{alerts.length === 1 ? "" : "s"} now{rules.digest ? `, ${digest.length} in the morning digest` : ""}{inApp ? `, ${inApp} waiting in the app` : ""}.

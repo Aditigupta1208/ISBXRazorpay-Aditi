@@ -29,7 +29,7 @@ import { ClampText } from "@/components/ClampText";
 import { buildSummary } from "@/lib/summary";
 import { PolicyPatch } from "@/components/PolicyPatch";
 import { WAIT_OPTIONS, deadlineVerdict, whatItChanges, type WaitKey } from "@/lib/whatIf";
-import { readProfile } from "@/lib/useProfile";
+import { policyProblem, readProfile, usablePolicy } from "@/lib/useProfile";
 import { now, useCaseState } from "@/lib/useCaseState";
 import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
 import { track } from "@/lib/track";
@@ -341,13 +341,13 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     }
     setRunning(true);
     setStep(0);
-    setNotice(null);
+    setNotice(policyProblem(profile) ? { kind: "info", text: "Your terms in Agent setup have a problem (a card number or too long), so this check ran without them." } : null);
     const timer = setInterval(() => setStep((n) => Math.min(n + 1, 2)), 3500);
     try {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ caseId: c.id, added: sendAdded.map((a) => ({ title: a.title, content: a.content })), policy: profile.policy.trim() ? { text: profile.policy, acceptance: profile.acceptance } : undefined }),
+        body: JSON.stringify({ caseId: c.id, added: sendAdded.map((a) => ({ title: a.title, content: a.content })), policy: usablePolicy(profile) }),
       });
       const r = (await res.json()) as AnalyzeResult;
       if (r.status === "live") {

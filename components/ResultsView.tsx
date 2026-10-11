@@ -56,7 +56,7 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
               <Stat label="Answered on time" value={pct(m.onTimeRate)} note={`${Math.round((m.onTimeRate ?? 0) * m.settled)} of ${m.settled}`} />
             </div>
             <p className="border-t border-line px-4 py-3 text-[13px] text-helper md:px-5">
-              {formatInr(m.lostInr)} was lost or accepted. Recovered counts only the part you contested and won. Arbitration fees are not included in this demo.
+              {formatInr(m.lostInr)} was lost or accepted. Recovered counts only the part you contested and won. Arbitration fees are not included in this demo.{youCount > 0 && " Disputes you acted on here count as answered on time."}
             </p>
           </Card>
 

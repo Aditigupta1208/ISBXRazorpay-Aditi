@@ -15,6 +15,25 @@ export interface AlertRules {
 
 export const DEFAULT_RULES: AlertRules = { channel: "whatsapp", minInr: 50000, alwaysReasons: [], urgentHours: 12, digest: true, foldBelowPct: 20 };
 
+export const MAX_MIN_INR = 100_000_000; // ₹10 crore
+
+/** Rules read back from storage: anything of the wrong type falls back to the default for that rule, so a damaged value cannot break the page. */
+export function sanitizeRules(raw: unknown): AlertRules {
+  const o = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const d = DEFAULT_RULES;
+  const num = (v: unknown, dflt: number, max: number) => (typeof v === "number" && Number.isFinite(v) && v >= 0 ? Math.min(v, max) : dflt);
+  const hours = [12, 24, 48];
+  const fold = [20, 30, 40];
+  return {
+    channel: o.channel === "slack" || o.channel === "whatsapp" || o.channel === "email" ? o.channel : d.channel,
+    minInr: num(o.minInr, d.minInr, MAX_MIN_INR),
+    alwaysReasons: Array.isArray(o.alwaysReasons) ? o.alwaysReasons.filter((x): x is string => typeof x === "string" && /^13\.\d$/.test(x)) : d.alwaysReasons,
+    urgentHours: o.urgentHours === null ? null : typeof o.urgentHours === "number" && hours.includes(o.urgentHours) ? o.urgentHours : d.urgentHours,
+    digest: typeof o.digest === "boolean" ? o.digest : d.digest,
+    foldBelowPct: o.foldBelowPct === null ? null : typeof o.foldBelowPct === "number" && fold.includes(o.foldBelowPct) ? o.foldBelowPct : d.foldBelowPct,
+  };
+}
+
 export const CHANNEL_LABEL: Record<Channel, string> = { slack: "Slack", whatsapp: "WhatsApp", email: "Email" };
 
 export interface AlertRow {
@@ -43,7 +62,7 @@ export interface Decision {
 export function decide(r: AlertRow, rules: AlertRules): Decision {
   if (r.call === "shield") return { route: "not_covered", why: "A fraud reason: Chargeback Shield handles it, so no alert from here.", suggestFold: false };
   const suggestFold = r.call === "fold" || (rules.foldBelowPct !== null && r.odds !== null && r.odds * 100 < rules.foldBelowPct);
-  if (rules.urgentHours !== null && r.hours <= rules.urgentHours) return { route: "alert", why: `Under ${rules.urgentHours} hours left.`, suggestFold };
+  if (rules.urgentHours !== null && r.hours <= rules.urgentHours) return { route: "alert", why: `${rules.urgentHours} hours or less left.`, suggestFold };
   if (rules.alwaysReasons.includes(r.reasonCode)) return { route: "alert", why: `You always want alerts for ${r.reasonCode}.`, suggestFold };
   if (r.inr >= rules.minInr) return { route: "alert", why: `At least ${rules.minInr.toLocaleString("en-IN")} rupees at stake.`, suggestFold };
   if (rules.digest) return { route: "digest", why: "Below your alert rules, so it goes in the daily digest.", suggestFold };

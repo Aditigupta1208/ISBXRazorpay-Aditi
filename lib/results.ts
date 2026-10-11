@@ -101,7 +101,7 @@ export function summarize(recs: Rec[]): Summary {
   const esc = settled.filter((r) => r.call === "escalate");
   const byConfidence = (["High", "Medium", "Low"] as Conf[])
     .map((c) => {
-      const rows = fightCalls.filter((r) => r.confidence === c);
+      const rows = fightCalls.filter((r) => r.confidence === c && r.action === "fight"); // a Fight call you folded was never tested
       return { confidence: c, n: rows.length, won: rows.filter((r) => r.outcome === "won").length, estimate: ODDS_BY_CONFIDENCE[c] };
     })
     .filter((r) => r.n > 0);

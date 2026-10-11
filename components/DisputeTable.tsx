@@ -48,7 +48,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
   const resetAll = () => {
     if (!confirmReset) return setConfirmReset(true);
     try {
-      Object.keys(localStorage).filter((k) => k.startsWith("da:v1:") && k !== "da:v1:tips-hidden" && k !== "da:v1:tips-seen").forEach((k) => localStorage.removeItem(k));
+      Object.keys(localStorage).filter((k) => k.startsWith("da:v1:") && !["da:v1:tips-hidden", "da:v1:tips-seen", "da:v1:profile"].includes(k)).forEach((k) => localStorage.removeItem(k));
     } catch { /* storage blocked: nothing was saved anyway */ }
     window.location.reload();
   };
@@ -199,7 +199,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
       </div>
       <p className="px-[18px] py-3.5 text-[13px] text-helper">
         These calls were prepared in advance. Open a dispute to run a live check. {rateNote}{" "}
-        <button type="button" onClick={resetAll} className="-my-3 min-h-10 py-3 font-semibold text-helper underline md:min-h-0">{confirmReset ? "Click again to clear everything you did in this browser" : "Reset the demo"}</button>
+        <button type="button" onClick={resetAll} className="-my-3 min-h-10 py-3 font-semibold text-helper underline md:min-h-0">{confirmReset ? "Click again to clear everything you did here (your Agent setup stays)" : "Reset the demo"}</button>
       </p>
     </div>
   );

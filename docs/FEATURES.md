@@ -454,3 +454,10 @@ From a full product audit (tech, data flow, visuals). No model calls added.
 - **Small additions:** the submit and fold dialogs show the exact request before you confirm (and scroll on small screens); a "Copy response" button sits under the draft before you act; a note appears when a Fight draft cites only one document although three or more decided the call.
 - Tests: `lib/safetyFixes.test.ts` (12). Browser: `e2e_s345.py`, `e2e_s3.py`.
 
+## F34 · Results, alerts and setup audit fixes (11 Oct)
+
+- **Results:** ratio tile accepts "1,200", refuses "1e3"/decimals/negatives with a message and flags disputes above payments; the expected-versus-won bars count only Fight calls actually fought; a note says your own actions count as on time.
+- **Alerts:** damaged saved rules can no longer crash the page (`sanitizeRules`); amount capped at ₹10 crore; wording "12 hours or less"; a line for fraud disputes not counted.
+- **Agent setup:** unusable terms (card number, too long) are never sent (`usablePolicy`) and the preview and check notice say so; damaged saved setup is repaired field by field; unused code removed.
+- **Reset the demo** now clears alert rules and ratio numbers too (their keys moved to the `da:v1:` family) and keeps the Agent setup.
+- Tests: `lib/audit678.test.ts` (5). Browser: `e2e_s678.py`.
