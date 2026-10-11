@@ -24,7 +24,7 @@ Gaps, by severity:
 
 | # | Severity | Gap | Why it matters | Suggested fix |
 |---|---|---|---|---|
-| F1 | High | Live headline numbers miss the product's own bars: wrong Fight 7% (bar 5%), first-try citation 77% (bar 90%), Escalate 2 of 4, mixed free models, one run per prompt | A judge will read the red badges first; the story "AI proposes, code checks" carries it, but the claim "ready to trust" is not earned | Keep the disclosure. Say in the pitch that the gate blocks launch and what the next step is. Optional: one more run after the key-facts fix. Do not tune on C15/C18/C23 |
+| F1 | High | Live headline numbers miss two of the product's own bars. Latest complete run (11 Oct, 40 cases, prompt v2.3): agreement 87% (bar 85%, met), needs-judgment 75% (bar 80%, below), first-try citation 83% (bar 90%, below), wrong Fight 3% (met). Escalate 3 of 5, and C15 was called Fight. Mixed free models, one run per prompt. Earlier 30-case figures (86%, wrong Fight 7%, citation 77%) are superseded | A judge will read the red badges first; the story "AI proposes, code checks" carries it, but the claim "ready to trust" is not earned | Keep the disclosure. Say in the pitch that the gate blocks launch and what the next step is. Optional: one more run after the key-facts fix. Do not tune on C15/C18/C23 |
 | F2 | High | With no working key, adding a document shows "We couldn't run the check. Decide manually." beside the old Fight marked "Out of date" (probed on C13) | The signature interaction looks broken. If Groq is rate-limited when a reviewer arrives, they see this | Separate the two cases: "Live check is not switched on in this demo. The call above is a saved result" versus a real failure. Verify `/api/llm-status` on production before submission |
 | F3 | Medium | Odds, recovered amounts and the 24 past disputes are sample or model estimates; outcomes are stored in the browser only | Cannot show a measured result; the page labels it correctly | Keep labels. Say clearly that the mechanism is built and the data is not |
 | F4 | Medium | C14 shows 80% chance to win with a Fold call, and a "numbers say fighting could pay" note | Looks self-contradicting without the reason | Add one line on why the call is Fold despite the odds (what blocks the fight) |
@@ -54,7 +54,7 @@ Gaps:
 | Brief item | Where the product shows it | Strength |
 |---|---|---|
 | Data and signal used | Razorpay's dispute record (reason code, amount, deadline) plus merchant documents (contracts, logs, emails) and the merchant's terms | Strong; documents are synthetic |
-| Why AI, not a fixed rule | Per-dispute checklist line; Evals: checklist 8 of 15, agent 15 of 15 on the saved run, 25 of 29 on the live run vs checklist 16 of 29; tuned rules 6 of 10 on unseen cases | Strong, with honest limits |
+| Why AI, not a fixed rule | Per-dispute checklist line; Evals: checklist 8 of 15, agent 15 of 15 on the saved run, 33 of 38 on the latest live run (11 Oct) vs checklist 23 of 38; tuned rules 6 of 10 on unseen cases | Strong, with honest limits |
 | Recommendation or action | Fight / Fold / Escalate, cited draft, message to send, bank test, Worth asking | Strong |
 | What the merchant can review, change, approve, stop | Edit draft, override call, confirm dialogs, agent on/off, "will never" list, nothing sent without a click | Strong |
 | How it learns from the outcome | Mark Won or Lost; odds shift on your record; calibration table; suggested change; download of misses as candidate eval cases | Good in mechanism; no real outcomes; browser-local |

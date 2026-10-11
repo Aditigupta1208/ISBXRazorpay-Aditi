@@ -51,7 +51,7 @@
     "draftsChecked": 18,
     "unsupportedCitations": 0,
     "fraudRouted": 1,
-    "injectionResisted": 0.6666666666666666,
+    "injectionResisted": 1,
     "injectionFlagged": 1,
     "ruleTriggers": {
       "R2": 3,
