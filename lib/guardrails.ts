@@ -38,7 +38,9 @@ const CITE = "\\[(?:E\\d+|Razorpay)(?:\\s*,\\s*(?:E\\d+|Razorpay))*\\]";
 const ENDS_WITH_CITE = new RegExp(`(?:${CITE}\\s*)+[.!?]?\\s*$`);
 const ANY_CITE = new RegExp(CITE, "g");
 
-const ABBREV = /(?:^|[\s(])(?:dr|mr|mrs|ms|vs|inc|ltd|approx|e\.g|i\.e)\.$/i;
+const ABBREV = /(?:^|[\s(])(?:dr|mr|mrs|ms|vs|inc|ltd|approx|e\.g|i\.e|rs|prof|jr|sr|co|corp|st|fig|est|dept)\.$/i;
+/** "No. 3" and "Nos. 3 and 4" only continue the sentence when a number follows. */
+const NO_ABBREV = /(?:^|[\s(])nos?\.$/i;
 
 /**
  * Split a draft into sentences; citations after the full stop stay with their sentence.
@@ -49,10 +51,11 @@ export function splitSentences(draft: string): string[] {
   const raw = draft.match(/(?:[^.!?]|[.!?](?![\s\[]|$))+(?:[.!?]+(?:\s*\[[^\]]+\])*)?/g) ?? [];
   const merged: string[] = [];
   let carry = "";
-  for (const part of raw) {
+  for (const [idx, part] of raw.entries()) {
     const text = (carry ? `${carry} ${part.trim()}` : part.trim()).trim();
     const bare = text.replace(/\s*\[[^\]]*\]\s*$/, "");
-    if (ABBREV.test(bare) && !/\[[^\]]*\]\s*$/.test(text)) {
+    const nextStartsWithDigit = /^\s*\d/.test(raw[idx + 1] ?? "");
+    if ((ABBREV.test(bare) || (NO_ABBREV.test(bare) && nextStartsWithDigit)) && !/\[[^\]]*\]\s*$/.test(text)) {
       carry = text;
       continue;
     }
@@ -107,12 +110,26 @@ export function luhn(digits: string): boolean {
   return sum % 10 === 0;
 }
 
-/** True when the text holds a 13 to 19 digit number (spaces or dashes allowed) that passes the Luhn check. */
+/**
+ * Text with the tricks used to hide a card number undone: full-width digits become plain digits, and non-breaking spaces,
+ * zero-width characters and soft hyphens (common when text is pasted from a PDF) are cleaned up.
+ */
+export function cleanForScan(text: string): string {
+  return text.normalize("NFKC").replace(/[\u200b-\u200f\u2060\ufeff\u00ad]/g, "").replace(/[\u00a0\u2007\u202f\u2011-\u2015]/g, (m) => (m === "\u00a0" || m === "\u2007" || m === "\u202f" ? " " : "-"));
+}
+
+/** Card numbers start with 2 to 6 (Visa, Mastercard, Amex, Discover, Diners, JCB, RuPay) or 8 (RuPay, UnionPay). Order numbers starting 1, 7 or 9 are left alone. */
+const CARD_START = /^[2-68]/;
+
+/**
+ * True when the text holds a 13 to 19 digit number that passes the Luhn check and starts like a card.
+ * Digits may be split by one or two spaces, dashes, dots, underscores or slashes, and may touch letters ("card4111...").
+ */
 export function containsCardNumber(text: string): boolean {
-  const matches = text.match(/\b(?:\d[ -]?){13,19}\b/g) ?? [];
+  const matches = cleanForScan(text).match(/\d(?:[\s\-_./]{0,2}\d)*/g) ?? []; // whole runs of digits, so a longer number is never cut into a card-sized piece
   return matches.some((m) => {
     const d = m.replace(/\D/g, "");
-    return d.length >= 13 && d.length <= 19 && luhn(d);
+    return d.length >= 13 && d.length <= 19 && CARD_START.test(d) && luhn(d);
   });
 }
 
@@ -180,7 +197,9 @@ export function evaluateGuardrails(i: GuardrailInput): GuardrailResult {
       const parts: string[] = [];
       if (uncited.length > 0) parts.push(`${uncited.length} sentence${uncited.length > 1 ? "s" : ""} without a source`);
       if (missingIds.length > 0) parts.push(`cites ${[...new Set(missingIds)].join(", ")}, which is not in this dispute`);
-      lines.push({ id: "R2", rule: "Every draft sentence cites a document", status: "blocked", message: parts.join("; ") + ". Edit the draft to submit." });
+      const nearMiss = uncited.some((x) => /\[\s*e\d+\s*\]|\(\s*(?:see\s+)?E\d+\s*\)|\bE\d+\b/i.test(x) && !sentenceHasSource(x));
+      const hint = nearMiss ? " Write each source in square brackets at the end, like [E1]." : "";
+      lines.push({ id: "R2", rule: "Every draft sentence cites a document", status: "blocked", message: parts.join("; ") + ". Edit the draft to submit." + hint });
       blockers.push("Every sentence needs a source");
     } else {
       lines.push({ id: "R2", rule: "Every draft sentence cites a document", status: "pass", message: `${sents.length} sentence${sents.length > 1 ? "s" : ""}, all cited.` });
@@ -226,10 +245,13 @@ export function evaluateGuardrails(i: GuardrailInput): GuardrailResult {
     lines.push({ id: "R6", rule: "Draft is 1,000 characters or less", status: trimmed ? "pass" : "na", message: trimmed ? `${trimmed.length} of ${DRAFT_LIMIT} characters.` : "No draft yet." });
   }
 
-  // R7 card numbers
-  if (i.evidenceTexts.some(containsCardNumber)) {
-    lines.push({ id: "R7", rule: "No full card numbers", status: "blocked", message: "A full card number is in the evidence. Remove it and try again." });
-    blockers.push("Remove the card number from the evidence");
+  // R7 card numbers: in the evidence and in the response draft
+  const cardInEvidence = i.evidenceTexts.some(containsCardNumber);
+  const cardInDraft = containsCardNumber(i.draft);
+  if (cardInEvidence || cardInDraft) {
+    const where = cardInEvidence && cardInDraft ? "the evidence and the response" : cardInDraft ? "the response" : "the evidence";
+    lines.push({ id: "R7", rule: "No full card numbers", status: "blocked", message: `A full card number is in ${where}. Remove it${cardInDraft && !cardInEvidence ? " from the draft" : ""} and try again.` });
+    blockers.push(cardInDraft && !cardInEvidence ? "Remove the card number from the response" : "Remove the card number from the evidence");
   } else {
     lines.push({ id: "R7", rule: "No full card numbers", status: "pass", message: "No card numbers found." });
   }

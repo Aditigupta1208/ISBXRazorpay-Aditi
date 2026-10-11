@@ -1,3 +1,4 @@
+import { escapeEvidence } from "./escape";
 import { createHash } from "node:crypto";
 import { buildUserMessage, validateAdded, validatePolicy, type AddedEvidence, type ModelParams, type ModelReply } from "./agent";
 import { containsCardNumber, isFraudCode } from "./guardrails";
@@ -50,7 +51,7 @@ export type RebuttalResult =
 
 /** The draft is data too. Neutralise anything that could close or open our wrapper tag. */
 export function escapeDraft(text: string): string {
-  return text.replace(/<\s*(\/?)\s*draft/gi, "&lt;$1draft");
+  return escapeEvidence(text);
 }
 
 export function buildRebuttalMessage(c: CaseData, added: AddedEvidence[], policy: Policy | undefined, draft: string, ruleText?: string): string {

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CallChip } from "@/components/CallChip";
 import type { Call } from "@/lib/types";
+import { csvCell } from "@/lib/csv";
 import { bySort, type SortKey } from "@/lib/list";
 import { readAction } from "@/lib/useCaseState";
 
@@ -68,14 +69,15 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
     .sort((a, b) => order({ hours: a.hours, inr: a.inrNumber, shield: a.call === "shield" }, { hours: b.hours, inr: b.inrNumber, shield: b.call === "shield" }));
 
   const download = () => {
-    const head = ["dispute_id", "merchant", "amount", "amount_inr", "reason_code", "reason", "hours_left", "call", "status"];
-    const esc = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
-    const lines = shown.map((r) => [r.disputeId, r.merchant, r.amount, Math.round(r.inrNumber), r.reasonCode, r.reason, r.hours, r.call ?? "", actions[r.id] ?? "Open"].map(esc).join(","));
-    const blob = new Blob([[head.join(","), ...lines].join("\n")], { type: "text/csv" });
+    const head = ["dispute_id", "merchant", "amount", "amount_inr", "reason_code", "reason", "time_left", "hours_left", "call", "status"];
+    const esc = csvCell;
+    const lines = shown.map((r) => [r.disputeId, r.merchant, r.amount, Math.round(r.inrNumber), r.reasonCode, r.reason, r.timeText, r.hours, r.call ?? "", actions[r.id] ?? "Open"].map(esc).join(","));
+    // The byte-order mark makes Excel read the file as UTF-8, so names and symbols are not garbled.
+    const blob = new Blob(["\uFEFF" + [head.join(","), ...lines].join("\r\n") + "\r\n"], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "disputes-demo.csv";
+    a.download = `disputes-demo-${new Date().toLocaleDateString("en-CA")}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };

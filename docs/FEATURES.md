@@ -443,3 +443,12 @@ From a full product audit (tech, data flow, visuals). No model calls added.
 - **Why not Fold** wording when a key document is missing: "The key documents you hold still support fighting... What is missing is listed above."
 - **Remove then re-run fails:** the old result's citations, slots, flags and draft are renumbered with the documents (`lib/evidenceIds.ts`, 5 tests).
 
+## F33 · Response, safety and list audit fixes (11 Oct)
+
+- **Card numbers (R7)** are now also checked in the response draft, and the check sees through dots, slashes, underscores, double spaces, non-breaking spaces, full-width digits and letters touching the number. A number must start like a card and pass the check digit, so order numbers are left alone.
+- **Wrapper tags** cannot be disguised with zero-width characters or full-width brackets, and `system`/`tool_use`-style tags are escaped too (`lib/escape.ts`, shared by evidence, policy and draft).
+- **Sentences:** "Rs.", "Prof.", "St." and "No. 3" no longer end a sentence, so a valid draft is not blocked. When a source is written in the wrong form ("(see E1)", "[e1]") the message says how to write it.
+- **Figure check:** numeric dates, times, percentages and spelled-out counts are one figure each; a trailing full stop is no longer part of a date; "rupees" amounts are read. Document names keep "v2.1" and "10:30" whole in the packet and chips.
+- **Disputes list:** tiles drop disputes you have contested or folded; the "16 disputes from N businesses" line is worked out from the data; the alerts link is a normal in-app link with a 40px target; the CSV has a dated name, a byte-order mark, a time-left column, CRLF lines and formula-safe cells.
+- Tests: `lib/safetyFixes.test.ts` (9). Browser: `e2e_s345.py`.
+

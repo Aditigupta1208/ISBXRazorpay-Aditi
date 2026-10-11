@@ -71,10 +71,8 @@ export type AnalyzeResult =
   | { status: "unavailable"; reason: string; message: string }
   | { status: "rejected"; code: "card_number" | "too_long" | "empty" | "too_many"; message: string; field?: string };
 
-/** Evidence is data. Neutralise anything that could close or open our wrapper tags. */
-export function escapeEvidence(text: string): string {
-  return text.replace(/<\s*(\/?)\s*(evidence|merchant_policy|draft)/gi, (_m, slash: string, tag: string) => `&lt;${slash}${tag.toLowerCase()}`);
-}
+import { escapeEvidence } from "./escape";
+export { escapeEvidence };
 
 export { policyBlock, escapePolicy } from "./policyBlock";
 import { policyBlock } from "./policyBlock";

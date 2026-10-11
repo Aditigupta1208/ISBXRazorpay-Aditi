@@ -1,3 +1,4 @@
+import { escapeEvidence } from "./escape";
 import { ACCEPTANCE_OPTIONS, type Policy } from "./limits";
 
 /** The merchant's own terms are their claim, not proof. Wrapped as data like evidence. */
@@ -10,5 +11,5 @@ export function policyBlock(policy?: Policy): string[] {
   ];
 }
 export function escapePolicy(text: string): string {
-  return text.replace(/<\s*(\/?)\s*(merchant_policy|evidence)/gi, "&lt;$1$2");
+  return escapeEvidence(text);
 }

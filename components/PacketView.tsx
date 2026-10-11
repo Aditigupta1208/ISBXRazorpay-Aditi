@@ -2,15 +2,11 @@
 import Link from "next/link";
 import { SLOT_INFO } from "@/lib/evidenceChecklist";
 import { formatOriginal } from "@/lib/format";
-import { exhibitMap, responseWithExhibits } from "@/lib/packet";
+import { exhibitMap, responseWithExhibits, shortDocName } from "@/lib/packet";
 import type { CaseData, CheckView } from "@/lib/types";
 import { useCaseState } from "@/lib/useCaseState";
 
-const name = (e: { title?: string; content: string }) => {
-  const first = e.content.split(/[:.]/)[0].trim();
-  const n = e.title || first;
-  return n.length > 60 ? n.slice(0, 57).trimEnd() + "…" : n;
-};
+const name = (e: { title?: string; content: string }) => shortDocName(e, 60);
 
 /** A print-ready evidence packet: cover, contents, the response, and each document as a numbered exhibit. Nothing is sent anywhere. */
 export function PacketView({ c, view: savedView }: { c: CaseData; view: CheckView }) {

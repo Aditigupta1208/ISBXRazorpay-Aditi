@@ -14,3 +14,13 @@ export function responseWithExhibits(draft: string, map: Map<string, number>): s
     return `[Exhibit${nums.length > 1 ? "s" : ""} ${[...nums, ...record].join(", ")}]`;
   });
 }
+
+/**
+ * A short name for a document: the title the merchant gave it, or the first phrase of its text.
+ * A phrase ends at a colon or full stop followed by a space or the end of a line, so "Terms v2.1" and "10:30" stay whole.
+ */
+export function shortDocName(e: { title?: string; content: string }, max: number): string {
+  const first = (e.content.split(/[:.](?:\s|$)|\n/)[0] ?? "").trim();
+  const n = e.title?.trim() || first;
+  return n.length > max ? n.slice(0, max - 3).trimEnd() + "…" : n;
+}

@@ -1,4 +1,5 @@
 "use client";
+import { shortDocName } from "@/lib/packet";
 import Link from "next/link";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { CallChip } from "@/components/CallChip";
@@ -218,10 +219,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const docName = (id: string) => {
     const e = allEvidence.find((x) => x.id === id);
     if (!e) return "";
-    const title = "title" in e ? (e as { title: string }).title : "";
-    const first = e.content.split(/[:.]/)[0].trim();
-    const name = title || first;
-    return name.length > 48 ? name.slice(0, 45).trimEnd() + "…" : name;
+    return shortDocName(e as { title?: string; content: string }, 48);
   };
   const focusEvidence = (ids: string[]) => {
     setHighlight(ids);

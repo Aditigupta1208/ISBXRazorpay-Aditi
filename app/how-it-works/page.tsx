@@ -47,7 +47,7 @@ const RULE_GROUPS = [
       ["R2", "Every sentence of the draft cites a document, and the document exists."],
       ["R9", "Every amount, date and count in the draft is in a cited document or Razorpay's record. If not, you check it by hand before you can submit."],
       ["R6", "The draft is 1,000 characters or less."],
-      ["R7", "Full card numbers are rejected."],
+      ["R7", "Full card numbers are rejected, in your evidence and in the response."],
     ],
   },
 ] as { title: string; note: string; icon: string; ink: string; tone: string; rules: [string, string][] }[];
