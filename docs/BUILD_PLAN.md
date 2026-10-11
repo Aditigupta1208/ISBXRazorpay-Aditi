@@ -90,6 +90,13 @@ Done when: `/evals` shows the v1 manual results and one automated v2.1 run side 
 - [x] `/api/llm-status` diagnostics (deployment, key variable, thinking level, backups; `?probe=1`, `?models=1`)
 - [ ] Not proven: Claude as a provider; regenerating the saved results (still ChatGPT v1)
 
+## M6b: Product freeze (9 to 11 Oct)
+
+- [x] Merchant-driven features, R8 and R9, five page redesigns, tab order
+- [x] First complete 40-case live run (11 Oct); results read and disclosed, nothing tuned
+- [x] Docs refreshed (`PRODUCT.md`, `FEATURES.md`, `DEPLOYED.md`, `PRODUCT_EVAL.md`, `HELDOUT_TEST.md`)
+- [ ] Builder checks: Safari, iPhone, Firefox, one cold tester; pin the exchange rate; tag `submission`
+
 ## M6: Note, video, submit (11 to 13 Oct)
 
 - [ ] 11 Oct: one-page product note (problem, merchant, what was left out, how AI was used, Track 2 answers, metrics)

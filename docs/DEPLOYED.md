@@ -43,7 +43,7 @@ Last updated: 9 Oct 2026, after the live model on Groq and the three AI helpers 
 - [x] Deciding-evidence chips: click scrolls to the document and highlights it
 - [x] Missing evidence and contradictions lines (missing evidence is the model's own text from the saved result)
 - [x] Money block: at stake, taken back if you lose, fees at risk (Visa arbitration USD 600), AI estimate of odds, "Fighting is worth it" or "Check the money" (C10 shows it); partial contest note (C15)
-- [x] Safety checks R1 to R7 as pass / changed / blocked lines, collapsed with a count; unit-tested
+- [x] Safety checks R1 to R9 as pass / changed / blocked lines, collapsed with a count; unit-tested
 - [x] Fraud (C16): shows the Chargeback Shield card, no actions
 - [x] Escalate (C02, C15): "Get this first", a message to send with Copy, deadline line, and "No time to gather more" under 6 hours
 - [x] Thumbs up or down on the call
@@ -142,11 +142,11 @@ The counter stores only counts per fixed event name and per demo dispute ID, no 
 - [x] `npm run eval` runs one case at a time with a pause on Groq or Gemini, and records the model that really answered (a mixed-model run says so). **Not run on a real model yet**
 
 ## Not deployed yet
-- [ ] A real v2.2 run of `npm run eval` on all 30 cases (run on your own machine, after the daily allowance resets)
+- [x] A complete 40-case run on prompt v2.3 (GitHub Action, 11 Oct): 87% vs checklist 61%, gate fails on needs-judgment and first-try citation (`docs/HELDOUT_TEST.md`)
 - [ ] Claude as the live model (needs an Anthropic key and about $5 to $10 of credit)
 - [ ] Saved results regenerated from the live model (they are still ChatGPT v1)
 - [ ] M6: product note, video, final public build log
-- [ ] Safari and Firefox, a real iPhone, the Supabase usage table
+- [ ] Safari and Firefox, a real iPhone (builder's check), the Supabase usage table (optional)
 
 ## Known gaps against the spec (`docs/pm/04-screens.md`)
 - Saved results are from the ChatGPT v1 kill test; odds on them come from confidence. They show whenever the live model is unavailable; regenerating them from the live model with prompt v2.2 is optional
@@ -156,3 +156,12 @@ The counter stores only counts per fixed event name and per demo dispute ID, no 
 - The Results sample history is made up and labelled so
 
 Full feature descriptions: `docs/FEATURES.md`.
+
+## 15. 9 to 11 Oct additions
+- [x] Merchant-driven features (named gap, customer history, figure check and R9, summary, evidence packet, what-if, ratio tile, policy patch, Alerts preview); R8 thin-evidence rule
+- [x] Redesigns: Alerts, Results, bank test, Agent setup, How it works; tab order Disputes, Results, Alerts, Agent setup
+- [x] Safari row-click fix (whole-row link replaced by a row click plus a real Details link); tested in Chromium only
+- [x] Eval runner retries unanswered cases and never writes an incomplete run; attempt 1 kept in `eval/incomplete/`
+- [x] 40 cases (C31 to C40 held-out, labels are AI-drafted notes the builder agreed with); injection metric records each instruction's target
+- [ ] Open: Claude as the live model (no Anthropic key); saved results still ChatGPT v1
+

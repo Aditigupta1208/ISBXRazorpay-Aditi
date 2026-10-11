@@ -60,7 +60,12 @@ Layout follows Razorpay's Agentic Dashboard: black top bar, white sub-tabs (Tran
    - **Under the hood** drawer: saved result or live call, model, prompt version, input and output tokens, response time, cost for this dispute (USD and INR), and the raw JSON.
 3. **Outcome and next steps**: mark the dispute Won or Lost (demo). Show what the agent learns ("reason 13.2 with cancellation_proof + access_activity_log: won"), 2 to 3 next steps ("ask your accountant about...", never tax advice as fact) and one prevention tip.
 4. **Evals** (includes 2 prompt-injection cases): the kill-test results. AI vs a fixed checklist vs the human answer key, per case and in total, plus later automated runs of prompt v2. Highlight case C15 (see below). State the limits honestly.
-5. **How it works**: a simple flow diagram, the brief's seven Track 2 questions answered, what is out of scope, and limitations.
+5. **How it works** (three tabs): the idea in one picture (a dispute in; Fight, Fold or Escalate out; you decide), the four stages, one dispute start to finish, the nine safety rules grouped by what they do, the learning loop and release gate, what is not built; then the brief's seven Track 2 questions answered; then sources and limits.
+6. **Results**: what happened after the merchant acted: recovered per rupee disputed, win rate, on-time rate, whether the advisor's expected win chance matched what happened (labelled bars), Fold and Escalate calls, by reason, one suggested change, and the dispute ratio tile.
+7. **Alerts** (preview only): channel (Slack, WhatsApp or email), rules, and what the message would look like. Nothing is sent.
+8. **Agent setup**: the merchant's terms (read as a claim, never as proof), the on/off switch, what the agent will and never will do, and a live preview of what the advisor is told.
+
+Tab order in the top bar: Disputes, Results, Alerts, Agent setup; reviewer pages (Evals, How it works) sit to the right.
 
 ## Guardrails (run in code after every model answer)
 
@@ -71,6 +76,8 @@ Layout follows Razorpay's Agentic Dashboard: black top bar, white sub-tabs (Tran
 5. **Scope rule**: any fraud reason code (10.x) is forced to "Route to fraud cover" before any model call.
 6. **Length**: the draft must be 1,000 characters or less.
 7. **Card numbers**: a full card number (Luhn check) in pasted evidence is rejected.
+8. **Key document (R8)**: a Fight must cite at least one key document for its reason code (for example the accepted terms for 13.7). Otherwise it becomes Escalate.
+9. **Figures (R9)**: every amount, date and count in the draft must appear in a document it cites or in Razorpay's record. If not, Submit is blocked until the merchant fixes the draft or ticks the figure as checked. It never changes the call.
 
 Show each check as a pass, changed or blocked line in the check panel (rule numbers R1 to R9 match `docs/pm/05-data-and-stack.md`).
 
@@ -131,3 +138,23 @@ Fraud disputes (Chargeback Shield covers them), pre-dispute network alerts (such
 - Dispute ratio tile on Results from two typed numbers, with Razorpay's blog figures attributed (0.5% recommended, 0.75% emergency controls, Visa 1.5% from April 2026) and the point that a won dispute may still count.
 - Policy patch after a dispute is acted on: checkout wording, emails and records to keep, by reason code (a fixed template).
 - Alerts (preview only): choose Slack, WhatsApp or email and set rules (amount, always-alert reasons, urgent hours, morning digest, Fold suggestion). Nothing is sent and no channel is connected.
+
+## What production would need (not built)
+
+The prototype shows requests and sends none. A real version would need only narrow access, and the design keeps the line between reading, drafting and acting:
+
+| Capability | Access it would need | In the prototype |
+|---|---|---|
+| Read the dispute and payment facts | Read access to disputes and payments for that merchant | Saved dispute records |
+| Read the merchant's documents | Read access to documents the merchant connects or uploads (contracts, logs, emails) | Pasted or uploaded text |
+| Save a draft response | Write access to a dispute draft (`action=draft` on the contest call) | Not sent |
+| Submit a contest | Only on the merchant's explicit approval click (`action=submit`) | Simulated, labelled "not sent" |
+| Accept (Fold) a dispute | Only on the merchant's explicit click | Simulated |
+| Refund a customer, contact a customer | None. Never granted | Not built |
+
+Also in production: an audit trail of every check and action (Razorpay's Agent Studio terms state a 12 month minimum, and longer for dispute and chargeback actions), per-merchant storage of outcomes, and calibration of the win estimate from Razorpay's own cross-merchant outcome data. These are assumptions for the write-up, not claims about how Razorpay would build it.
+
+## Evaluation status (11 Oct 2026)
+
+First complete 40-case live run on prompt v2.3 (free, mixed-model chain, one run): agreement 87% against 61% for a fixed checklist; held-out 7 of 8; Escalate 3 of 5 (C15 was called Fight); needs-judgment 75% and first-try citation 83% are below the product's own launch bars, so the release gate fails. Details and caveats: `docs/HELDOUT_TEST.md`.
+

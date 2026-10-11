@@ -18,6 +18,11 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | F23 | Shorten for me (AI shortens a draft over 1,000 characters; code trims if the AI cannot) | ✅ tested on a stand-in model; not yet on the real model | Dispute detail, under the draft |
 | F24 | Key facts per document (up to 3 lines each, each backed by a word-for-word quote) | ✅ saved examples for C01, C06, C15; live tested on a stand-in model | Dispute detail, Your evidence |
 | F25 | What to change next (one suggestion from the counts on Results) | ✅ saved example for the sample history; live tested on a stand-in model | `/results` |
+| F26 | Named gap, customer history, smaller "Chance to win" | ✅ | Dispute detail, call card |
+| F27 | "Check these before you approve" (figure check, R9) | ✅ | Dispute detail, review step |
+| F28 | Copy a summary, evidence packet, what-if evidence, policy patch | ✅ | Dispute detail, `/disputes/<id>/packet` |
+| F29 | Dispute ratio tile | ✅ typed numbers, attributed figures | `/results` |
+| F30 | Alerts (Slack, WhatsApp or email preview with rules) | ✅ preview; nothing sent | `/alerts` |
 | F6 | Priority inbox | ✅ | `/disputes` |
 | F7 | Clear-win fast lane | ✅ | Dispute detail, top of the right column |
 | F8 | Outcome, next steps and prevention tip | ✅ | Dispute detail, after an action |
@@ -157,7 +162,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 
 ## F5 · Safety checks ✅
 
-Seven rules run in code on every result, in the browser as well as the server, and are unit-tested (`lib/guardrails.ts`). Each shows as a line: ✓ passed, ↻ changed the call, ✕ blocked, – not needed.
+Nine rules (R1 to R9) run in code on every result, in the browser as well as the server, and are unit-tested (`lib/guardrails.ts`). Each shows as a line: ✓ passed, ↻ changed the call, ✕ blocked, – not needed.
 
 | Rule | Check | Effect |
 |---|---|---|
@@ -168,6 +173,8 @@ Seven rules run in code on every result, in the browser as well as the server, a
 | R5 | A fraud reason code (10.x) | Routed to Chargeback Shield before any model call |
 | R6 | Draft at most 1,000 characters | Submit blocked with "Shorten it by N" |
 | R7 | No full card number in evidence | Item rejected |
+| R8 | A Fight cites a key document for its reason code | Otherwise becomes Escalate |
+| R9 | Every amount, date and count in the draft is in a cited document or Razorpay's record | Submit blocked until fixed or ticked by the merchant; never changes the call |
 
 The server also caps input (4,000 characters, 5 documents, 60 KB request), rate-limits, and never sends the API key to the browser.
 
@@ -402,3 +409,18 @@ All three use `POST /api/assist` (server only, same key and per-IP limit as the 
 **Changed-call banner (9 Oct).** After a re-run the page scrolls to the top, the banner shows the old call (faded) → the new call as chips, the answer card glows once, and the document that decided it is tagged "Decided the call" in Your evidence.
 
 **Section B (9 Oct).** Merchant-driven features from the three conversations, all code or copy. Named gap and customer history on every call (`lib/namedGap.ts`, `lib/customerHistory.ts`); number-and-date check R9 and the "Check these before you approve" list (`lib/factCheck.ts`); "Copy a summary for a colleague" (`lib/summary.ts`); evidence packet page (`/disputes/<id>/packet`, `lib/packet.ts`); what-if evidence with a deadline check (`lib/whatIf.ts`); ratio tile on Results (`lib/ratio.ts`); policy patch (`lib/policyPatch.ts`); Alerts preview with rules (`lib/alertRules.ts`, `/alerts`). The tour's step 3 now points at `#decision-top` because the decision card grew. Tests: `npm test` (302), `e2e_figures.py`, `e2e_b1.py`, `e2e_b2.py` in the scratchpad.
+
+## F26 to F30 · Merchant-driven features (9 Oct) and the redesigns (10 Oct)
+
+Built after three merchant conversations. All code or copy, no extra model calls.
+- **Named gap and customer history.** Every call leads with "Missing: ..." or "Decided by: ...". "Chance to win" is smaller and labelled a rough estimate. Earlier disputes for the customer are shown only when Razorpay's record holds them.
+- **Check these before you approve.** Each amount, date and count in the draft, with the document it came from. Rule R9 blocks Submit until an unmatched figure is fixed or ticked.
+- **Copy a summary** for a colleague; **evidence packet** at `/disputes/<id>/packet` (cover summary, contents, numbered exhibits, print-ready); **what-if evidence** on Escalate with a deadline check; **policy patch** (fixed templates by reason code) after a dispute is acted on.
+- **Dispute ratio tile** on Results from two typed numbers, with Razorpay's blog figures attributed (0.5% recommended, 0.75% emergency controls, Visa 1.5% from April 2026), and the note that a won dispute may still count.
+- **Alerts** (`/alerts`): three channel cards, rules written as sentences (amount, always-alert reasons, urgent hours, digest, Fold suggestion), summary tiles, and a channel-styled preview with Now and Digest tabs. An urgent Fight alert has "Review and approve", which opens the response for review without submitting. Nothing is sent. Notifications live only here (Agent setup links to it).
+- **Results** (10 Oct): "Was the advisor right?" now has labelled Expected and Won bars with a verdict chip (within 10 points counts as about as expected), separate Fold and Escalate cards, by-reason bars, one suggested change, then the ratio tile.
+- **Bank test** (10 Oct): Practice run header, a three-step explainer, a coloured verdict band, the objection in its own card, and the weak sentence (Before) beside the suggested rewrite (After).
+- **Agent setup** (10 Oct): framed as step 1 of 3 (you brief it, it checks each dispute, you decide); agent card with a real on/off switch; terms; "It will" and "What it will never do" cards; the five reasons covered; a live preview of what the advisor is told.
+- **How it works** (10 Oct): one picture first, four stages, five flow cards with small visuals, the nine rules grouped by what they do, a learning loop, launch bars, and "Not built" cards.
+- **Tab order** (10 Oct): Disputes, Results, Alerts, Agent setup.
+

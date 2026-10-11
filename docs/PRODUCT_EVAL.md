@@ -8,11 +8,33 @@ A tightly built decision product, not a chatbot or an explaining dashboard. It m
 
 Scores (my judgement, 1 to 5): substance 4.5, function 4, usability 4.5, merchant convenience 4, novelty 4, visual polish 4, professional look 4.
 
+## Update, 11 Oct 2026 (product frozen for submission)
+
+What changed since this evaluation was written on 9 Oct: the gaps F2, F4, F5, F6, V1, V3 and V5 were fixed on 9 Oct (see the session log); on 9 to 11 Oct the merchant-driven features were built (named gap and customer history, "Check these before you approve" with rule R9, thin-evidence rule R8, copy a summary, evidence packet, what-if evidence, dispute ratio tile, policy patch, Alerts page); Results, Alerts, the bank test, Agent setup and How it works were redesigned; the tab order is now Disputes, Results, Alerts, Agent setup.
+
+| Gap | Status on 11 Oct |
+|---|---|
+| F1 live numbers vs own bars | **Open, and now measured.** First complete 40-case run: agreement 87% (bar 85%, met); needs-judgment 75% (bar 80%, below); first-try citation 83% (bar 90%, below); wrong Fight 3% (met); Escalate 3 of 5; C15 called Fight. The release gate fails on two measures. Not tuned. See `docs/HELDOUT_TEST.md` |
+| F2 no-key add-evidence message | Fixed 9 Oct |
+| F3 sample and model estimates | Open by design, labelled |
+| F4 C14 reason line | Fixed 9 Oct |
+| F5 repeated sentences | Fixed 9 Oct |
+| F6 C06 wording | Fixed 9 Oct |
+| F7 simulated actions | Open by design, labelled. Alerts are previews: nothing is sent |
+| F8 permissions | Open: described, not enforced. Production scopes are stated in `docs/PRODUCT.md` ("What production would need") |
+| F9 synthetic cases | Open, stated on Evals. C21 to C40 were drafted by the builder's AI assistant; C31 to C40 labels are AI-drafted notes the builder agreed with |
+| V1 Evals and How it works density | Evals folded earlier; How it works rebuilt on 10 Oct around one picture, grouped rules and a learning loop |
+| V4 FX rate | Open: pin `FX_RATE_INR_PER_USD` before recording |
+| V5 Escalate colour | Fixed 9 Oct (indigo) |
+| V6 real devices | Open: your check |
+
+Scores after the changes (my judgement, 1 to 5): substance 4.5, function 4, usability 4.5, merchant convenience 4.5, novelty 4, visual polish 4.5, professional look 4.5. Function stays at 4 because live accuracy is below two of its own bars and a free mixed-model chain is the only live path; the product says so on Evals.
+
 ## 1. Substance, function, usability, convenience, novelty
 
 What works (verified):
 - Decision first. Each dispute opens on one call, one sentence, three numbers (at stake in rupees, chance to win, time left) and two buttons. The call chip is visible without scrolling on a phone.
-- Fold and Escalate are first-class, not fall-throughs. C15 (accepted policy meant only half was owed) is the proof case and the saved and v2.3 runs both Escalate it.
+- Fold and Escalate are first-class, not fall-throughs. C15 (accepted policy meant only half was owed) is the proof case. The saved run and the two earlier Qwen runs Escalate it; the 11 Oct complete run called it Fight (answered by the backup model), which is the weakest point in the live numbers.
 - Every draft sentence cites a document; nine checks run in code (R1 to R9; R3, R4, R5 and R8 change the call); results are shown and reviewer material sits apart from merchant material.
 - Merchant control: nothing is sent without a click; Accept (Fold) and Submit have confirmation dialogs that say the action is simulated; terms the merchant writes are read as a claim, never as proof.
 - Add or remove evidence re-runs the check, scrolls to the new answer and shows a "call changed" banner. Card numbers are refused, text is capped at 4,000 characters, hidden instructions were resisted in all eval cases.
@@ -58,12 +80,12 @@ Gaps:
 | Recommendation or action | Fight / Fold / Escalate, cited draft, message to send, bank test, Worth asking | Strong |
 | What the merchant can review, change, approve, stop | Edit draft, override call, confirm dialogs, agent on/off, "will never" list, nothing sent without a click | Strong |
 | How it learns from the outcome | Mark Won or Lost; odds shift on your record; calibration table; suggested change; download of misses as candidate eval cases | Good in mechanism; no real outcomes; browser-local |
-| Accuracy, permissions, trust, failure handling | Seven code checks, injection and card-number blocks, saved-result fallback with label, eval gate, rate limit | Strong on trust and failure; accuracy is below own bars; permissions are described, not enforced |
+| Accuracy, permissions, trust, failure handling | Nine code checks (R1 to R9), injection and card-number blocks, saved-result fallback with label, eval gate, rate limit | Strong on trust and failure; accuracy is below own bars; permissions are described, not enforced |
 | Business outcome measured | Recovered per rupee disputed, win rate, on-time rate | Mechanism built, sample data only |
 
 Rubric items 1 to 3 (product side):
 1. Importance and clarity of the problem: clear. Non-fraud card disputes on international sales are not covered by Chargeback Shield; the money at stake is shown in rupees. Gap: no measured size in the product.
-2. Depth of merchant understanding and current behaviour: shown in the product by the evidence slots per reason code, the terms box, the point that merchants decide on deadlines, and "Deadline rescue". Gap: no merchant conversations (n=0), which the product cannot show.
+2. Depth of merchant understanding and current behaviour: shown in the product by the evidence slots per reason code, the terms box, the point that merchants decide on deadlines, and "Deadline rescue". Gap: three merchant conversations (n=3, all won their disputes, one outside the target segment; see `docs/MERCHANT_FINDINGS.md`), which changed what was built on 9 Oct.
 3. Product judgment and prioritisation, including what was left out: strong. Scope is explicit (no fraud, no real submission, no accounts, no pre-dispute alerts), Escalate is a real call, the rebuttal test is optional, and "Where it could go next" is labelled not built. Gap: the star features are only as credible as the live accuracy (F1).
 
 Guidance check ("not a generic chatbot or an explaining dashboard"): passes. It decides, drafts and gates; the only explanation is on reviewer pages.

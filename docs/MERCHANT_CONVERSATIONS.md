@@ -79,3 +79,20 @@ Ask 1 (about the last time a customer asked for a refund or questioned a charge)
 ## Quote rules
 
 Write down exact words. Ask before you use a quote. Remove names and business names unless they say yes. Use at most one quote per product choice, and say "one of N merchants" in the pitch, never "merchants say".
+
+## Round 3 (asked 9 Oct): how they would use it
+
+A short follow-up with the same three merchants, after the first two rounds. The exact wording was typed in chat and not saved, so this lists the topics, not the questions word for word. What they answered is in `docs/MERCHANT_FINDINGS.md`, "Round 3".
+
+| Topic | What it was meant to test |
+|---|---|
+| How you would want to hear about a new dispute, and which ones you would want to hear about | Whether the way in is an alert or a dashboard, and what rules decide it |
+| What you check before approving a drafted response | Which facts a merchant verifies by hand (amounts, dates, counts, scope, logs) |
+| What would make you stop trusting it | The trust-breakers: one wrong fact, slowness, long text, an unasked refund |
+| What you would want it to never do for you | Whether "never send, never refund, never accept for me" matches their own limits |
+| What you would do if it said Fold, and what you would want to see | Whether a Fold must name the missing document or the rule, and how they read percentages |
+| What you do when the missing document cannot arrive in time | Submit what you have, ask the customer or client, or fold |
+| Why you fight, and when you do not | Protecting a record or ratio, precedent, or personal amount thresholds |
+| Whether you can see your dispute ratio today | Whether a ratio number would be used |
+| Who sees a draft before you approve it | Whether a "copy a summary" step is needed |
+
