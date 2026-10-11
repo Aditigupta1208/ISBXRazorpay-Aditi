@@ -286,7 +286,7 @@ export default function EvalsPage() {
       <h2 id="limits" className="mb-2 scroll-mt-4 text-[16px] font-semibold">What these numbers do not show</h2>
       <ul className="mb-1 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
         <li>The answer key was written by the builder from Visa&apos;s rules. A second AI flagged disagreements, but the builder decided them.</li>
-        <li>The {labels.length} cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases. C21 to C30 were drafted by the builder&apos;s AI assistant for the unseen-rules test, and their answers are proposed, not yet confirmed. C31 to C40 are the held-out set: drafted by the same assistant, labelled by the builder (who agreed with an AI-written first draft of the labels) before any run, and reported on their own.</li>
+        <li>The {labels.length} cases are short and written for this test. Real disputes are messier. C17 to C20 are the first attempt at messy and tricked cases. C21 to C30 were drafted by the builder&apos;s AI assistant for the unseen-rules test. The builder confirmed nine of the ten answers on 11 Oct; C22 is still open because the builder and the draft key disagree on it. C31 to C40 are the held-out set: drafted by the same assistant, labelled by the builder (who agreed with an AI-written first draft of the labels) before any run, and reported on their own.</li>
         <li>Nothing here is a real win rate. It shows the agent applies the rules to written evidence and knows when to stop.</li>
       </ul>
       <details className="mb-6 max-w-[760px]" data-testid="limits-more">

@@ -25,6 +25,6 @@ test("unseen cases C21 to C30 were scored once with the frozen rules: simple 7 o
   assert.equal(s.unseen.tunedMisses.find((m) => m.id === "C22")!.rule, "T2", "a rule written for C02 broke C22");
 });
 
-test("the labels for the unseen cases are marked as not yet confirmed", () => {
-  assert.equal(scoreRules(cases, key).unseen.unconfirmed, 10);
+test("the one unseen label the builder has not yet confirmed (C22) is marked as such", () => {
+  assert.equal(scoreRules(cases, key).unseen.unconfirmed, 1);
 });

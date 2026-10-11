@@ -12,7 +12,7 @@ with sync_playwright() as p:
     check('unseen: 6 of 10 vs simple 7 of 10, fewer than', '6 of 10' in st and '7 of 10' in st and 'fewer than' in st)
     check('names the misses with the rule that misfired', 'C22 (rule T2 fired wrongly)' in st and 'C23' in st and 'C24' in st and 'C30' in st)
     check('says frozen before cases', 'frozen and committed before' in st)
-    check('says proposed not confirmed', '10 of the 10 answers are still proposed' in st)
+    check('says proposed not confirmed', '1 of the 10 answer is still proposed' in st)
     check('agent not run on unseen', 'Not run' in st)
     check('does not claim agent is better', 'one run on free models' in st)
     body=pg.inner_text('body'); check('newer cases line updated', 'C21 to C30: unseen test cases' in body)

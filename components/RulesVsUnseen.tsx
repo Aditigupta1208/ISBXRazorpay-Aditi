@@ -49,7 +49,7 @@ export function RulesVsUnseen({ s, agentKnown, agentLive }: { s: Scoreboard; age
         </table>
       </div>
       <ul className="mt-3 max-w-[760px] list-disc space-y-1.5 pl-5 text-[14px] text-ink-soft">
-        <li>Be careful with this result: {u.n} cases is small (one case moves a score by 10 points), and the cases were drafted by the builder&apos;s AI assistant. {u.unconfirmed} of the {u.n} answers are still proposed, not confirmed by the builder.</li>
+        <li>Be careful with this result: {u.n} cases is small (one case moves a score by 10 points), and the cases were drafted by the builder&apos;s AI assistant. {u.unconfirmed} of the {u.n} {u.unconfirmed === 1 ? "answer is" : "answers are"} still proposed, not confirmed by the builder.</li>
         <li>It shows that fixed rules do not simply get better with more rules.{agentLive ? ` The live agent is shown for comparison, but it is one run on free models, and some of these cases were read while its prompt was revised, so treat it as a rough guide.` : " It does not show that the agent does better: the agent has not been run on these cases yet."}</li>
       </ul>
       <details className="mt-1 max-w-[760px]" data-testid="rules-more">
