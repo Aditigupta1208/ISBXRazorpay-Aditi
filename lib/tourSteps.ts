@@ -90,9 +90,9 @@ export const TOUR_STEPS: TourStep[] = [
   },
   {
     href: "/how-it-works",
-    title: "12. How it works, in one example",
-    text: "One dispute followed from start to finish in plain words, then the safety rules and how the system learns. That is the tour. Open any dispute to try it yourself.",
-    target: "#one-minute",
+    title: "12. How it works, at a glance",
+    text: "The whole argument on one screen: three things to look at, what backs it up, and the brief's seven questions in a line each. The other tabs hold every detail. That is the tour. Open any dispute to try it yourself.",
+    target: "#glance-core",
     audience: "reviewers",
   },
 ];

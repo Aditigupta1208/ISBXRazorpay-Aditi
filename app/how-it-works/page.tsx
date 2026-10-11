@@ -10,6 +10,8 @@ import { readingRows } from "@/lib/readingVsRules";
 import { ReadingVsRules } from "@/components/ReadingVsRules";
 import { FailuresSection, MerchantsContent, MetricsSection, PositionSection, SourcesContent, TiersSection, WhyAiSection } from "@/components/HowExtras";
 import type { Call } from "@/lib/types";
+import { HowGlance } from "@/components/HowGlance";
+import { releaseGate } from "@/lib/eval";
 
 export const metadata = { title: "How it works | Dispute Advisor (concept prototype)" };
 
@@ -78,6 +80,18 @@ const ANSWERS = [
 export default function HowItWorksPage() {
   const latest = loadLatestRun();
   const reading = readingRows(new Map((latest?.rows ?? []).map((r) => [r.id, r.final as Call])));
+  const gate = latest ? releaseGate(latest.summary) : null;
+  const scoredRows = (latest?.rows ?? []).filter((r) => r.label !== "shield");
+  const glance = (
+    <HowGlance
+      facts={{
+        agreement: scoredRows.length ? scoredRows.filter((r) => r.final === r.label).length / scoredRows.length : null,
+        scored: scoredRows.length,
+        gatePass: gate ? gate.pass : null,
+        failedMeasures: gate ? gate.lines.filter((l) => !l.ok).map((l) => l.label) : [],
+      }}
+    />
+  );
   const product = (
     <>
       <Hero />
@@ -252,6 +266,7 @@ export default function HowItWorksPage() {
       </PageTitle>
       <HowTabs
         tabs={[
+          { id: "glance", label: "At a glance", note: "The whole argument on one screen. The other tabs hold every detail.", content: glance },
           { id: "product", label: "The product", note: "What happens to one dispute, the checks that run on every answer, and how it learns.", content: product },
           { id: "answers", label: "Brief answers", note: "The challenge brief's seven questions, what we assumed, and what we left out.", content: answers },
           { id: "merchants", label: "Merchants", note: "What three merchants told us and what it changed in the product.", content: merchants },

@@ -27,7 +27,7 @@ export default async function DisputesPage() {
         </span>
       </Link>
       <ListStats rows={tableRows} rateLabel={rateWord(rates)} />
-      <p className="mb-2 hidden text-[13px] text-helper md:block">{`Demo data: ${tableRows.length} disputes from ${businesses} different businesses, so the names change from row to row.`} Soonest deadline first; change the order with Sort. <a href="#patterns" className="font-semibold text-brand hover:underline">What is causing them ↓</a></p>
+      <p className="mb-2 hidden text-[13px] text-helper md:block">{`Demo data: ${tableRows.length} made-up disputes from ${businesses} businesses.`} Soonest deadline first; change the order with Sort. <a href="#patterns" className="font-semibold text-brand hover:underline">What is causing them ↓</a></p>
       <DisputeTable rows={tableRows} rateNote={rateNote(rates)} />
       <Patterns
         patterns={patterns}

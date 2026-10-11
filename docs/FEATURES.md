@@ -480,3 +480,6 @@ Built to answer the brief's questions more directly. No model, prompt or eval ch
 - Phone: tables on these pages become stacked cards.
 - Fix found on the way: with the review open, the response card showed two "Copy response" buttons; the one before the review now hides.
 - Tests: 331 unit tests; browser suites updated where wording or counts changed on purpose (4 tabs, jump links, Copy response, request text).
+
+## F37 · How it works: At a glance (11 Oct, night)
+A new first tab, "At a glance": the one-line proposition, the three core features, four evidence tiles (first test, latest run, release gate, merchants) read from the latest run, and the brief's seven questions in a line each with "In depth" links into the other tabs, which keep every detail. Tour step 12 now points at it. Two repeated hedges trimmed (the list note now reads "Demo data: 16 made-up disputes from 14 businesses"; "a rough estimate" became "estimate"). The rate source label on "At stake" stays on purpose.

@@ -608,7 +608,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 <div>
                   <dt className="text-[13px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
                   <dd className="text-[16px] font-medium text-[#555]">{Math.round(oddsAdj.odds * 100)}%</dd>
-                  <dd className="text-[13px] text-helper">a rough estimate</dd>
+                  <dd className="text-[13px] text-helper">estimate</dd>
                 </div>
                 <div>
                   <dt className="text-[13px] text-helper">Time left</dt>
