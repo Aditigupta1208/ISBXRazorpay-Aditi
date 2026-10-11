@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getLlm } from "@/lib/llm";
-import { extractDocument } from "@/lib/extract";
+import { checkFile, extractDocument } from "@/lib/extract";
 import { allow } from "@/lib/ratelimit";
 import { pdfToText } from "@/lib/pdfText";
 
@@ -10,10 +10,6 @@ export const maxDuration = 60; // confirm Vercel's current limit for the plan
 export async function POST(req: Request) {
   // Server only: the key is read here and never sent to the browser.
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
-  const limit = allow(`x:${ip}`, Date.now(), 10); // reading a file costs more than a check, so a smaller budget
-  if (!limit.ok) {
-    return NextResponse.json({ status: "unavailable", message: "That's a lot of uploads. Try again in a while." }, { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } });
-  }
   let body: { name?: unknown; mediaType?: unknown; data?: unknown };
   try {
     const text = await req.text();
@@ -25,9 +21,17 @@ export async function POST(req: Request) {
   if (typeof body.mediaType !== "string" || typeof body.data !== "string") {
     return NextResponse.json({ status: "rejected", message: "That request was not valid." }, { status: 400 });
   }
+  const file = { name: typeof body.name === "string" ? body.name : "Uploaded file", mediaType: body.mediaType, data: body.data };
+  // A file that is the wrong type, too big or not what it claims is turned away before it uses any of the hourly allowance.
+  const notAcceptable = checkFile(file);
+  if (notAcceptable) return NextResponse.json({ status: "rejected", message: notAcceptable }, { status: 400 });
+  const limit = allow(`x:${ip}`, Date.now(), 10); // reading a file costs more than a check, so a smaller budget
+  if (!limit.ok) {
+    return NextResponse.json({ status: "unavailable", message: "That's a lot of uploads. Try again in a while." }, { status: 429, headers: { "Retry-After": String(limit.retryAfterSec) } });
+  }
   const llm = getLlm();
   const result = await extractDocument(
-    { name: typeof body.name === "string" ? body.name : "Uploaded file", mediaType: body.mediaType, data: body.data },
+    file,
     { callModel: llm.callModel, model: llm.model, textOnly: llm.provider === "groq", readPdfText: pdfToText },
   );
   return NextResponse.json(result, { status: result.status === "rejected" ? 400 : 200 });

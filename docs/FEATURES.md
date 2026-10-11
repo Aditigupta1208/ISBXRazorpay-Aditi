@@ -7,7 +7,7 @@ Status key: ✅ built and tested · 🟡 partly built · ⬜ not built yet. "Sim
 | # | Feature | Status | Where |
 |---|---|---|---|
 | ⭐ | Fold-or-Fight check (the star feature) | ✅ (live call tested against a stand-in model only) | Dispute detail, right column |
-| F1 | Evidence locker | ✅ paste; 🟡 file upload built, proven on a stand-in model only | Dispute detail, left column |
+| F1 | Evidence locker | ✅ paste; ✅ PDFs with selectable text (read by code, no AI, tested on real PDFs); 🟡 photos and scans need the live Claude model (tested on a stand-in model only) | Dispute detail, left column |
 | F2 | Policy profile | ✅ (terms are sent as the merchant's claim, not proof; tested on a stand-in model) | `/agent-studio` |
 | F3 | Cited response draft | ✅ | Dispute detail, "Review your response" |
 | F4 | Merchant controls | ✅ | Dispute detail |
@@ -434,4 +434,12 @@ From a full product audit (tech, data flow, visuals). No model calls added.
 - **Security headers:** Content-Security-Policy, X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy; `X-Powered-By` removed. The app loads nothing from other sites, so the policy is tight; Next.js inline scripts need `'unsafe-inline'`.
 - **Rate limit after validation.** A badly formed or too-large request to `/api/analyze` is turned away before it uses any of the 20 checks per hour. Six added documents now says "Add at most 5 documents."
 - **Lint:** `npm run lint` (Biome, since ESLint's TypeScript plugin does not yet support TypeScript 7). Unused code removed; 29 hook-dependency warnings in `CaseView` are reviewed and left as they are.
+
+## F32 · Evidence audit fixes (11 Oct)
+- **Upload:** the help text says PDFs with selectable text are read here and photos or scans need the live Claude model; a rejected file no longer uses the 10-per-hour upload allowance.
+- **Add form:** the Add button is disabled at 5 with "5 of 5 added. Remove one to add another."; an "n of 5 added" count shows from the first; the character counter no longer wraps on phones.
+- **Flags** have a visible one-line explanation (instructions were ignored; could not read; conflicts with another document, naming the conflict).
+- **Evidence cards:** a "Deciding document" label; long text collapses with Show more.
+- **Why not Fold** wording when a key document is missing: "The key documents you hold still support fighting... What is missing is listed above."
+- **Remove then re-run fails:** the old result's citations, slots, flags and draft are renumbered with the documents (`lib/evidenceIds.ts`, 5 tests).
 

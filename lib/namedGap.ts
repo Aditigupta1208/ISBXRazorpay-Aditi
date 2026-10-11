@@ -35,6 +35,6 @@ export function whyNotFold(i: WhyNotFoldInput): string | null {
   if (i.contradictions > 0) {
     return `${docs}, but ${i.contradictions} ${i.contradictions === 1 ? "document conflicts" : "documents conflict"} with them. Check that before you submit.`;
   }
-  if (i.keyCovered < i.keyTotal) return `${docs}, and nothing in your evidence contradicts them.`;
+  if (i.keyCovered < i.keyTotal) return `The key documents you hold still support fighting, and nothing in your evidence contradicts them. What is missing is listed above.`;
   return `All ${i.keyTotal} key documents for ${i.reasonCode} are in place, and nothing in your evidence contradicts them.`;
 }

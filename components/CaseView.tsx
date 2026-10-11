@@ -5,7 +5,7 @@ import { CallChip } from "@/components/CallChip";
 import { Dialog } from "@/components/Dialog";
 import { Drawer } from "@/components/Drawer";
 import type { AnalyzeResult } from "@/lib/agent";
-import { MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS } from "@/lib/limits";
+import { MAX_ADDED, MAX_EVIDENCE_CHARS, MAX_TITLE_CHARS } from "@/lib/limits";
 import { DRAFT_LIMIT, citedIds, containsCardNumber, checksBadge, checksSummary, evaluateGuardrails, sentenceHasSource, splitSentences, type Status } from "@/lib/guardrails";
 import { formatInrFull, formatOriginal, timeLeft } from "@/lib/format";
 import { DEFAULT_EFFORT_COST_INR, VISA_ARBITRATION_FEE_USD, moneyCheck, rateFor, worthFindingCeiling } from "@/lib/money";
@@ -23,6 +23,8 @@ import { checklistFor, SLOT_INFO } from "@/lib/evidenceChecklist";
 import { customerHistory } from "@/lib/customerHistory";
 import { checkFigures, recordText } from "@/lib/factCheck";
 import { namedGap, whyNotFold } from "@/lib/namedGap";
+import { remapText, remapView, renumberMap } from "@/lib/evidenceIds";
+import { ClampText } from "@/components/ClampText";
 import { buildSummary } from "@/lib/summary";
 import { PolicyPatch } from "@/components/PolicyPatch";
 import { WAIT_OPTIONS, deadlineVerdict, whatItChanges, type WaitKey } from "@/lib/whatIf";
@@ -315,10 +317,14 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   };
   const removeEvidence = (id: string) => {
     const next = (state.added ?? []).filter((a) => a.id !== id).map((a, i) => ({ ...a, id: `E${c.evidence.length + i + 1}` }));
+    const idMap = renumberMap(c.evidence.length, (state.added ?? []).map((a) => a.id), id);
     update((s) => ({
       ...s,
       // Re-number so IDs stay E1...En in order; the server numbers them the same way.
       added: (s.added ?? []).filter((a) => a.id !== id).map((a, i) => ({ ...a, id: `E${c.evidence.length + i + 1}` })),
+      // The result and draft already on screen cite the old numbers: move them to the new ones so none points at the wrong document.
+      check: s.check ? { ...s.check, view: remapView(s.check.view, idMap) } : s.check,
+      draft: s.draft === undefined ? undefined : remapText(s.draft, idMap),
       dirty: true,
       rebuttal: undefined,
       audit: [...s.audit, { at: now(), actor: "You", text: `Removed evidence ${id}` }],
@@ -1129,17 +1135,29 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                         {state.prevCall && state.prevCall !== finalCall && view.decidingEvidence.includes(e.id) && <span className="ml-2 rounded-full bg-brand-soft px-2 py-0.5 text-brand">Decided the call</span>}
                       </p>
                     )}
-                    <p className="text-sm text-[#555]">{e.content}</p>
+                    <ClampText text={e.content} className="text-sm text-[#555]" />
                     {keyFactsShown && <KeyFactLines docs={keyFactsShown.docs} id={e.id} />}
                     {slots.map((s) => (
                       <span key={s.slot} title={s.slot} className="mt-1.5 mr-1 inline-block rounded-md bg-[#F6F6F6] px-[7px] py-0.5 text-[12px] text-[#555]">
                         {slotLabel(s.slot)}
                       </span>
                     ))}
+                    {finalCall !== "shield" && view.decidingEvidence.includes(e.id) && !(addedItem && state.prevCall && state.prevCall !== finalCall) && (
+                      <span data-testid="deciding-badge" className="mt-1.5 mr-1 inline-block rounded-full bg-brand-soft px-2 py-0.5 text-[12px] font-semibold text-brand">Deciding document</span>
+                    )}
                     {flags.map((f) => (
                       <span key={f.flag} className="mt-1.5 mr-1 inline-block rounded-md bg-fold-soft px-[7px] py-0.5 text-[12px] font-semibold text-fold">
                         {f.flag === "instruction_like" ? "⚠ Looks like instructions" : f.flag === "unreadable" ? "⚠ Couldn't read" : "⚠ Contradiction"}
                       </span>
+                    ))}
+                    {flags.map((f) => (
+                      <p key={`${f.flag}-why`} data-testid="flag-why" className="mt-1 text-[12px] text-helper">
+                        {f.flag === "instruction_like"
+                          ? "This text reads like orders to the advisor. It was treated as a document, and the orders were ignored."
+                          : f.flag === "unreadable"
+                            ? "The advisor could not read this properly, so it was not relied on. Paste the text to be sure."
+                            : `This conflicts with another document${view.contradictions.length ? `: ${view.contradictions[0]}` : ". See Contradictions above"}.`}
+                      </p>
                     ))}
                     {addedItem && !acted && (
                       <button onClick={() => removeEvidence(e.id)} className="relative after:absolute after:-inset-2 after:content-['']  mt-1.5 block min-h-6 text-[12px] font-semibold text-danger underline">
@@ -1166,9 +1184,16 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               />
             )}
             {!acted && !adding && finalCall !== "shield" && (
-              <button className={`${ghost} mt-3 !border-brand !text-brand`} onClick={() => setAdding(true)}>
-                + Add evidence
-              </button>
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <button className={`${ghost} !border-brand !text-brand disabled:cursor-not-allowed disabled:opacity-50`} onClick={() => setAdding(true)} disabled={(state.added ?? []).length >= MAX_ADDED}>
+                  + Add evidence
+                </button>
+                {(state.added ?? []).length > 0 && (
+                  <span data-testid="added-count" className="text-[13px] text-helper">
+                    {(state.added ?? []).length} of {MAX_ADDED} added{(state.added ?? []).length >= MAX_ADDED ? ". Remove one to add another." : ""}
+                  </span>
+                )}
+              </div>
             )}
             {state.dirty && !acted && !adding && (
               <div className="mt-3 rounded-xl border border-brand bg-[#F4F8FF] p-3" role="status">
@@ -1196,10 +1221,10 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   </div>
                 )}
                 <input id="ev-file" type="file" accept="application/pdf,image/png,image/jpeg,image/webp" disabled={reading} onChange={(e) => { void readFile(e.target.files?.[0]); e.target.value = ""; }} className="peer sr-only" aria-describedby="ev-file-help" />
-                <label htmlFor="ev-file" className={`${ghost} cursor-pointer !border-brand !text-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand peer-disabled:opacity-50`}>
+                <div className="flex"><label htmlFor="ev-file" className={`${ghost} cursor-pointer !border-brand !text-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand peer-disabled:opacity-50`}>
                   {reading ? "Reading…" : "Upload a PDF or image"}
-                </label>
-                <p id="ev-file-help" className="mt-1 text-[13px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. We read it into text for you to check. Or paste the text below."}</p>
+                </label></div>
+                <p id="ev-file-help" className="mt-2 text-[13px] text-helper" role="status">{reading ? "Reading the file…" : readNote || "Up to 3 MB. PDFs with selectable text are read here. For photos and scans, paste the text below (reading pictures needs the live Claude model). You check the text before it is added."}</p>
                 <label htmlFor="ev-title" className="mt-3 block text-sm font-semibold">
                   Title
                 </label>
@@ -1208,9 +1233,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   What it says
                 </label>
                 <textarea id="ev-text" rows={4} value={newText} onChange={(e) => setNewText(e.target.value)} placeholder="Paste the text of the document." className="mt-1 w-full rounded-xl border border-line p-3 text-[14px] focus:border-brand-focus focus:outline-none" aria-describedby="ev-help" />
-                <div id="ev-help" className="mt-1 flex justify-between text-[12px]">
+                <div id="ev-help" className="mt-1 flex justify-between gap-3 text-[12px]">
                   <span className="text-helper">Made-up or masked text only. No card numbers.</span>
-                  <span className={newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-danger" : "text-helper"}>
+                  <span className={`whitespace-nowrap ${newText.length > MAX_EVIDENCE_CHARS ? "font-semibold text-danger" : "text-helper"}`}>
                     {newText.length} / {MAX_EVIDENCE_CHARS.toLocaleString()}
                   </span>
                 </div>
