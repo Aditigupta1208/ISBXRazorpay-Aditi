@@ -41,7 +41,7 @@ export function ReviewerNav() {
   const path = usePathname() ?? "";
   return (
     <nav aria-label="For reviewers" className="flex items-center gap-1 text-[13px]">
-      <span className="mr-1 hidden text-[#8B919C] lg:inline">For reviewers</span>
+      <span className="mr-1 hidden text-[11px] tracking-[.5px] text-[#7A808B] uppercase lg:inline">For reviewers</span>
       {REVIEWER.map((t) => {
         const on = path === t.href;
         return (
@@ -49,7 +49,7 @@ export function ReviewerNav() {
             key={t.label}
             href={t.href}
             aria-current={on ? "page" : undefined}
-            className={`inline-flex min-h-10 items-center rounded-lg px-3 font-semibold ${on ? "bg-white/15 text-white" : "text-[#C9CED6] hover:bg-white/10 hover:text-white"}`}
+            className={`inline-flex min-h-10 items-center rounded-lg px-2.5 text-[12.5px] font-medium ${on ? "bg-white/15 text-white" : "text-[#9AA0AB] hover:bg-white/10 hover:text-white"}`}
           >
             {t.label}
           </Link>

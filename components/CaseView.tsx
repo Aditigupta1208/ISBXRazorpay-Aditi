@@ -587,15 +587,30 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <p className="mt-2 text-[16px] leading-7 text-[#333]">Reason code {d.reason_code} is a fraud code. Dispute Advisor only covers non-fraud disputes, so no check was run and there is nothing to submit here.</p>
           ) : (
             <>
-              {gap && (
-                <p data-testid="named-gap" className="mt-3 rounded-[10px] bg-[#F4F6FA] px-3 py-2 text-[15px]">
-                  <span className="font-semibold">{gap.label}:</span> {gap.text}
-                </p>
-              )}
-              {notFold && (
-                <p data-testid="why-not-fold" className="mt-2 rounded-[10px] bg-[#F4F6FA] px-3 py-2 text-[15px]">
-                  <span className="font-semibold">Why not Fold:</span> {notFold}
-                </p>
+              {(gap || notFold) && (
+                <div className="mt-3 space-y-1.5 rounded-[10px] bg-[#F4F6FA] px-3 py-2.5 text-[15px]">
+                  {gap && (
+                    <p data-testid="named-gap">
+                      <span className="font-semibold">{gap.label}:</span>{" "}
+                      {gap.label === "Decided by" ? (
+                        <>
+                          {view.decidingEvidence.filter((e) => e !== "Razorpay").map((e) => (
+                            <button key={e} type="button" onClick={() => focusEvidence([e])} className="relative mr-2.5 inline-flex min-h-6 items-center gap-1.5 rounded-md text-left hover:underline after:absolute after:-inset-2 after:content-['']" aria-label={`Show ${e}`}>
+                              <span className="rounded bg-brand-soft px-1.5 text-[12px] font-semibold text-[#2B5BC8]">{e}</span>
+                              <span>{docName(e)}</span>
+                            </button>
+                          ))}
+                          {view.decidingEvidence.includes("Razorpay") && <span>and Razorpay&apos;s record</span>}
+                        </>
+                      ) : gap.text}
+                    </p>
+                  )}
+                  {notFold && (
+                    <p data-testid="why-not-fold">
+                      <span className="font-semibold">Why not Fold:</span> {notFold}
+                    </p>
+                  )}
+                </div>
               )}
               <p className="mt-2 text-[16px] leading-7 text-[#222]">{view.reason}</p>
 
@@ -621,28 +636,6 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           </div>
           {finalCall !== "shield" && (
             <>
-              {history.known && (
-                <p data-testid="customer-history" className="mt-3 text-[14px] text-[#444]">
-                  <span className="font-semibold">Customer history:</span> {history.payments}. {history.disputes}.{" "}
-                  <span className="text-helper">From Razorpay&apos;s record.</span>
-                </p>
-              )}
-                {finalCall === "fight" || finalCall === "fold" ? (
-                  (() => {
-                    const agrees = finalCall === "fight" ? money.worthFighting : !money.worthFighting;
-                    const text =
-                      finalCall === "fight"
-                        ? money.worthFighting
-                          ? "✓ Fighting is worth it"
-                          : "⚠ Check the money: the fees at risk are high for this amount"
-                        : money.worthFighting
-                          ? "⚠ Check the money: the numbers say fighting could pay"
-                          : "✓ The numbers agree: fighting is not worth it here";
-                    return <p className={`mt-4 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
-                  })()
-                ) : null}
-                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.{finalCall === "fold" ? " The reason above is what decides it: the evidence does not support a win." : ""}</p>}
-
               {(view.missingEvidence.length > 0 || view.contradictions.length > 0) && finalCall !== "escalate" && (
                 <p className="mt-3 text-[14px]">
                   {view.missingEvidence.length > 0 && (<><span className="text-helper">Missing: </span>{view.missingEvidence.join("; ")} </>)}
@@ -721,9 +714,6 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     <>
                       <button className={`${primary} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>Review response</button>
                       <button className={`${ghost} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
-                      <button type="button" data-testid="test-bank-link" className="min-h-11 px-2 text-sm font-semibold text-brand hover:underline max-md:w-full max-md:min-h-10" onClick={() => { update((s) => ({ ...s, reviewOpen: true })); goToBankTest(); }}>
-                        Test it on the bank first
-                      </button>
                     </>
                   )}
                   {finalCall === "fold" && (
@@ -747,7 +737,29 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 </div>
               )}
 
-              {view.decidingEvidence.length > 0 && (
+              {history.known && (
+                <p data-testid="customer-history" className="mt-4 text-[14px] text-[#444]">
+                  <span className="font-semibold">Customer history:</span> {history.payments}. {history.disputes}.{" "}
+                  <span className="text-helper">From Razorpay&apos;s record.</span>
+                </p>
+              )}
+                {finalCall === "fight" || finalCall === "fold" ? (
+                  (() => {
+                    const agrees = finalCall === "fight" ? money.worthFighting : !money.worthFighting;
+                    const text =
+                      finalCall === "fight"
+                        ? money.worthFighting
+                          ? "✓ Fighting is worth it"
+                          : "⚠ Check the money: the fees at risk are high for this amount"
+                        : money.worthFighting
+                          ? "⚠ Check the money: the numbers say fighting could pay"
+                          : "✓ The numbers agree: fighting is not worth it here";
+                    return <p className={`mt-4 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
+                  })()
+                ) : null}
+                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.{finalCall === "fold" ? " The reason above is what decides it: the evidence does not support a win." : ""}</p>}
+
+              {view.decidingEvidence.length > 0 && gap?.label !== "Decided by" && (
                 <p className="mt-5 text-[14px] text-[#555]">
                   <span className="text-helper">Based on </span>
                   {view.decidingEvidence.map((e) => (
@@ -999,7 +1011,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             return (
               <p className="mt-4 rounded-[10px] bg-[#F4F8FF] px-3 py-2 text-[14px]" data-testid="rebuttal-hint">
                 {!rb ? (
-                  <>Not tested on the bank yet. <button type="button" className="font-semibold text-brand hover:underline" onClick={goToBankTest}>Test it first</button></>
+                  <>Not tested on the bank yet (optional). <button type="button" className="font-semibold text-brand hover:underline" onClick={goToBankTest}>Test it first</button></>
                 ) : fresh ? (
                   <>Tested on the bank: <b>{VERDICT_LABEL[rb.verdict]}</b>.</>
                 ) : (
@@ -1307,7 +1319,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             </Row>
           )}
           {finalCall !== "shield" && (
-            <Row id="money" title="The money" summary={`If you lose: ${formatInrFull(money.atStakeInr)} back, plus a possible fee of ${formatInrFull(money.feesAtRiskInr)}`} open={!!openRows.money} onToggle={() => toggleRow("money")}>
+            <Row id="money" title="The money" summary={`If you lose: ${formatInrFull(money.atStakeInr)} back. Rare extra: ${formatInrFull(money.feesAtRiskInr)} only if the bank escalates to Visa arbitration`} open={!!openRows.money} onToggle={() => toggleRow("money")}>
               <div className="mt-1">
                 <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
                   <Stat label="At stake" value={formatInrFull(money.atStakeInr)} sub={`${formatOriginal(d.amount, d.currency)} · ${rateWord(rates)} ₹${rateFor(d.currency, rates).toFixed(2)}`} />

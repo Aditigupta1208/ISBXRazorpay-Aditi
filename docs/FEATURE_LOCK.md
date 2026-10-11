@@ -28,5 +28,8 @@ Locked on 11 Oct 2026 (evening). From here, change these sections only to fix a 
 - The eval holds one injection case (C19).
 - Demo actions live in this browser only.
 
+## Presentation changes after the lock (11 Oct)
+Case-screen layout only: gap and why-not-fold share one box, history and money note sit below the buttons, the bank-test link lives in Review, the fee row is reworded, reviewer nav is quieter. No behaviour, data or guardrail changed.
+
 ## Still the builder's to do
 Device checks (Safari row clicks, iPhone, Firefox, a first-time tester), pin `FX_RATE_INR_PER_USD`, prototype tests with merchants, then the one-pager and 90-second video, and the `submission` tag after a final look. Deadline 13 Oct, 11:59 PM IST.

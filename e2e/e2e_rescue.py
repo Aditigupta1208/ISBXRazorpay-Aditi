@@ -19,7 +19,7 @@ with sync_playwright() as p:
     card = pg.get_by_role('region', name='Guided tour')
     for i in range(5):
         card.get_by_role('button', name='Next').click(); pg.wait_for_timeout(1100)
-    check('tour is on step 6, the bank test', '6 of 12' in card.inner_text().lower() and 'bank' in card.inner_text().lower())
+    check('tour is on step 6, the bank test', '6 of 14' in card.inner_text().lower() and 'bank' in card.inner_text().lower())
     pg.wait_for_timeout(1200)
     check('step 6 shows a result, not an empty panel', pg.get_by_test_id('rebuttal-result').is_visible())
     check('result is the saved example, labelled', pg.get_by_test_id('rebuttal-result').get_by_text('Saved example, written by the builder. Not a live check.').is_visible())

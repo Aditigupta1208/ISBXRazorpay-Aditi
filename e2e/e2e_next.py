@@ -7,7 +7,7 @@ with sync_playwright() as p:
     b=p.chromium.launch(); ctx=b.new_context(viewport={'width':1280,'height':900},permissions=['clipboard-read','clipboard-write']); pg=ctx.new_page()
     acts=lambda: pg.locator('#primary-action button')
     pg.goto(B+'/disputes/C04'); pg.wait_for_timeout(500)
-    check('C04 (Fight): Review response is the main button, Fold second', acts().count()==3 and acts().nth(0).inner_text()=='Review response' and acts().nth(1).inner_text()=='Accept dispute (Fold)' and acts().nth(2).inner_text()=='Test it on the bank first')
+    check('C04 (Fight): Review response is the main button, Fold second', acts().count()==2 and acts().nth(0).inner_text()=='Review response' and acts().nth(1).inner_text()=='Accept dispute (Fold)')
     check('the main button is on the first screen', acts().first.bounding_box()['y']+acts().first.bounding_box()['height']<900)
     check('response form is closed until asked', pg.locator('#draft').count()==0)
     acts().first.click(); pg.wait_for_timeout(300)
