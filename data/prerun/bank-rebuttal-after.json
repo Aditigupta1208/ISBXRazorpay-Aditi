@@ -1,0 +1,16 @@
+{
+  "_note": "Saved examples for what the bank test says AFTER the merchant uses the suggested rewrite. Written by the builder, not produced by a model run. Each fits one rewritten draft and is shown only when the draft on screen is exactly that rewrite. They go through the same code checks (RB1 to RB4) as a live answer.",
+  "label": "Saved example, written by the builder for the rewritten draft. Not a live check.",
+  "cases": {
+    "C06": {
+      "verdict": "holds_up",
+      "strongest_objection": "A reviewer would likely accept this. The one thing they might still ask is whether the customer was told the renewal date was coming, since the response leans on the accepted terms and the billing audit log.",
+      "objection_evidence_ids": ["E1", "E4"],
+      "weakest_sentence": null,
+      "why_weak": null,
+      "fix_type": "none",
+      "rewritten_sentence": null,
+      "document_needed": null
+    }
+  }
+}

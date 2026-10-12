@@ -291,3 +291,27 @@ test("a quote that is part of one sentence of the draft is found; a short or inv
   assert.equal(findSentence(draft, "audit log"), null);
   assert.equal(findSentence(draft, "The customer cancelled by phone on 2 Aug and we ignored it"), null);
 });
+
+test("the real C06: after the saved rewrite is applied, the retest shows the saved after example even with a live model on", async () => {
+  const { getSavedRebuttalAfter } = await import("./rebuttalData.ts");
+  const real = getCase("C06")!;
+  const saved = getSavedRebuttal("C06")!;
+  const evIds = real.evidence.map((e) => e.id);
+  const first = checkRebuttal(saved.output, { draft: saved.forDraft, evidenceIds: evIds, source: SRC });
+  const rewritten = applyFix(saved.forDraft, first)!;
+  assert.ok(rewritten && rewritten !== saved.forDraft);
+  const calls = { n: 0 };
+  const d: RebuttalDeps = { ...deps(calls, [async () => reply(base)]), getSaved: getSavedRebuttal, getSavedAfter: getSavedRebuttalAfter };
+  const r = await analyzeRebuttal(real, [], rewritten, d);
+  assert.equal(r.status, "saved");
+  assert.equal(calls.n, 0, "no model call for the saved rewrite");
+  if (r.status === "saved") {
+    assert.equal(r.view.verdict, "holds_up");
+    assert.equal(r.view.weakSentence, null);
+    assert.match(r.view.source.label, /Saved example/);
+    assert.equal(r.view.source.live, false);
+  }
+  // any other edit still goes to the model (or to the usual message)
+  const other = await analyzeRebuttal(real, [], rewritten + " Extra.", d);
+  assert.equal(other.status === "saved", false);
+});

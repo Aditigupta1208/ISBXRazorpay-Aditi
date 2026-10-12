@@ -25,6 +25,8 @@ export interface RebuttalDeps {
   system: string;
   toolSchema: Record<string, unknown>;
   getSaved: (caseId: string) => SavedRebuttal | undefined;
+  /** What the test says after the merchant uses the saved rewrite. Optional. */
+  getSavedAfter?: (caseId: string) => { output: RebuttalOutput; label: string } | undefined;
   ruleText: (code: string) => string | undefined;
   now?: () => number;
   cache?: Map<string, { at: number; value: RebuttalLive }>;
@@ -94,6 +96,20 @@ export async function analyzeRebuttal(c: CaseData, added: AddedEvidence[], draft
   if (isFraudCode(c.dispute.reason_code)) return { status: "unavailable", reason: "fraud", message: "Fraud disputes go to Chargeback Shield. There is no response to test." };
 
   const evidenceIds = [...c.evidence.map((e) => e.id), ...added.map((a) => a.id)];
+
+  // The draft is exactly the saved rewrite: show the saved "after" example, labelled as saved, so the fix-and-retest step is the same every time.
+  if (added.length === 0) {
+    const s = deps.getSaved(c.id);
+    const after = deps.getSavedAfter?.(c.id);
+    if (s && after) {
+      const before = checkRebuttal(s.output, { draft: s.forDraft, evidenceIds, source: { label: s.label, model: "none", promptVersion: REBUTTAL_PROMPT_VERSION, date: "2026-10-07", live: false } });
+      const rewritten = before.fix?.kind === "reword" ? before.fix.newDraft : null;
+      if (rewritten && sameDraft(rewritten, text)) {
+        const view = checkRebuttal(after.output, { draft: text, evidenceIds, source: { label: after.label, model: "none", promptVersion: REBUTTAL_PROMPT_VERSION, date: "2026-10-13", live: false } });
+        return { status: "saved", view, reason: "saved_after", message: "This is a saved example for the rewritten response, not a live check." };
+      }
+    }
+  }
 
   const fallback = (reason: string, message: string): RebuttalResult => {
     const s = deps.getSaved(c.id);

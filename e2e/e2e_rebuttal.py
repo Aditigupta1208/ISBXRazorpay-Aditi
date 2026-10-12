@@ -66,6 +66,12 @@ with sync_playwright() as p:
         check('apply is disabled on a stale result', pg.get_by_test_id('rebuttal-apply').is_disabled())
         check('button now says Test again', pg.get_by_test_id('rebuttal-run').inner_text().strip() == 'Test again')
         pg.get_by_test_id('rebuttal-run').click(); pg.wait_for_timeout(700)
+        check('retest of the exact saved rewrite shows the saved after example (Holds up)', pg.get_by_test_id('rebuttal-verdict').inner_text().strip() == 'Holds up')
+        check('the after example is labelled as saved, written by the builder', 'Saved example, written by the builder for the rewritten draft' in pg.get_by_test_id('rebuttal-result').inner_text())
+        check('the after example is not marked stale', not pg.get_by_test_id('rebuttal-stale').is_visible())
+        # any other edit still gets the plain message when there is no key
+        set_draft(pg, new + ' Thanks.'); pg.wait_for_timeout(250)
+        pg.get_by_test_id('rebuttal-run').click(); pg.wait_for_timeout(700)
         check('no key and edited draft: plain message, no crash', pg.get_by_text('the saved example only fits the original draft', exact=False).is_visible())
         # persists
         pg.reload(); pg.wait_for_timeout(500); review(pg)

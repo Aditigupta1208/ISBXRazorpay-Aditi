@@ -6,7 +6,7 @@ import { ACCEPTANCE_OPTIONS, MAX_POLICY_CHARS, type Policy } from "@/lib/limits"
 import { loadRebuttalPrompt } from "@/lib/prompt";
 import { allow } from "@/lib/ratelimit";
 import { analyzeRebuttal, rebuttalRejection, MAX_REBUTTAL_DRAFT_CHARS, type RebuttalDeps } from "@/lib/rebuttal";
-import { getSavedRebuttal } from "@/lib/rebuttalData";
+import { getSavedRebuttal, getSavedRebuttalAfter } from "@/lib/rebuttalData";
 import { getRates } from "@/lib/fx";
 
 export const runtime = "nodejs";
@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       system: prompt.system,
       toolSchema: prompt.toolSchema,
       getSaved: getSavedRebuttal,
+      getSavedAfter: getSavedRebuttalAfter,
       ruleText: getRuleText,
       cache,
       inrPerUsd: (await getRates()).usd,
