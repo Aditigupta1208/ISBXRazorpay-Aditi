@@ -87,6 +87,21 @@
       "fix_type": "reword",
       "rewritten_sentence": "The guest ticked 'cancellations within 7 days of departure are non-refundable' on 1 Apr 2026 [E1], cancelled three days before departure [E2], and was offered a free move to a later date [E3].",
       "document_needed": null
+    },
+    "C06": {
+      "verdict": "weak_spot",
+      "strongest_objection": "The customer's last login was 28 Jul 2026, five days before the 3 Aug 2026 renewal, and he had told support he was \"thinking of cancelling\" the day after. A reviewer could argue the customer was unaware the renewal was imminent and had no realistic chance to act in Settings > Billing, so the \"cancel before renewal\" terms may not have been fairly applied.",
+      "objection_evidence_ids": [
+        "E2",
+        "E3"
+      ],
+      "weakest_sentence": "His last login was 28 Jul 2026, and no cancellation was ever recorded.",
+      "why_weak": "Ever recorded",
+      "fix_type": "reword",
+      "rewritten_sentence": "His last login was 28 Jul 2026, and the billing audit log records no cancellation action before the 3 Aug 2026 renewal [E3][E4].",
+      "document_needed": null,
+      "_run": "Live practice run, qwen/qwen3.8-27b, bank prompt v1, 12 Oct 2026, against the stored v2.3 C06 draft. Copied from the page text of the result, not from the raw JSON panel.",
+      "label": "Saved result: qwen/qwen3.8-27b, bank prompt v1, run 12 Oct. Not a live check."
     }
   }
 }

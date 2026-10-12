@@ -11,5 +11,5 @@ export function getSavedRebuttal(caseId: string): SavedRebuttal | undefined {
   const view = getCheckView(caseId);
   if (!entry || !view?.draft) return undefined;
   const parsed = rebuttalSchema.safeParse(entry);
-  return parsed.success ? { output: parsed.data, forDraft: view.draft, label: raw.label } : undefined;
+  return parsed.success ? { output: parsed.data, forDraft: view.draft, label: (entry as { label?: string }).label ?? raw.label } : undefined;
 }

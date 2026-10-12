@@ -22,7 +22,7 @@ with sync_playwright() as p:
     check('tour is on step 6, the bank test', '6 of 14' in card.inner_text().lower() and 'bank' in card.inner_text().lower())
     pg.wait_for_timeout(1200)
     check('step 6 shows a result, not an empty panel', pg.get_by_test_id('rebuttal-result').is_visible())
-    check('result is the saved example, labelled', pg.get_by_test_id('rebuttal-result').get_by_text('Saved example, written by the builder. Not a live check.').is_visible())
+    check('result is the saved example, labelled', pg.get_by_test_id('rebuttal-result').get_by_text('Saved result: qwen/qwen3.8-27b, bank prompt v1, run 12 Oct. Not a live check.').is_visible())
     sp = pg.locator('[data-tour-spot]').bounding_box(); box = card.bounding_box()
     ov = not (sp['x']+sp['width'] <= box['x'] or box['x']+box['width'] <= sp['x'] or sp['y']+sp['height'] <= box['y'] or box['y']+box['height'] <= sp['y'])
     check('card does not cover the result', not ov)

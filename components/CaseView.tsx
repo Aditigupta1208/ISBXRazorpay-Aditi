@@ -800,7 +800,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <span data-tour="source-label" className="flex flex-wrap items-center gap-2">
               {!view.source.live && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">Prepared in advance</span>}
               {view.source.label}
-              {!view.source.live && view.source.model !== "none" && finalCall !== "shield" && (
+              {!view.source.live && view.source.model !== "none" && view.source.promptVersion !== "v2.3" && finalCall !== "shield" && (
                 <span data-testid="saved-note" className="basis-full text-[12px] text-helper">Prepared before the current prompt. Check again with AI to see what the latest version says.</span>
               )}
             </span>

@@ -40,9 +40,9 @@ with sync_playwright() as p:
     if mode == 'none':
         run_test(pg)
         check('verdict chip', pg.get_by_test_id('rebuttal-verdict').inner_text() == 'Has a weak spot')
-        check('saved example is labelled', pg.get_by_test_id('rebuttal-result').get_by_text('Saved example, written by the builder. Not a live check.').is_visible())
+        check('saved example is labelled', pg.get_by_test_id('rebuttal-result').get_by_text('Saved result: qwen/qwen3.8-27b, bank prompt v1, run 12 Oct. Not a live check.').is_visible())
         check('strongest objection shown', pg.get_by_test_id('rebuttal-result').get_by_text("The bank's strongest objection").is_visible() and pg.get_by_test_id('rebuttal-result').get_by_text('thinking of cancelling').first.is_visible())
-        check('weakest sentence quoted from the draft', pg.get_by_test_id('rebuttal-weak').locator('blockquote').inner_text().startswith('The customer was instructed to cancel'))
+        check('weakest sentence quoted from the draft', pg.get_by_test_id('rebuttal-weak').locator('blockquote').inner_text().startswith('His last login was 28 Jul 2026'))
         check('rewrite offered', pg.get_by_test_id('rebuttal-fix').is_visible() and pg.get_by_test_id('rebuttal-apply').is_enabled())
         pg.get_by_test_id('rebuttal-checks').locator('summary').click(); pg.wait_for_timeout(100)
         check('four safety checks listed', pg.get_by_test_id('rebuttal-checks').locator('li').count() == 4)

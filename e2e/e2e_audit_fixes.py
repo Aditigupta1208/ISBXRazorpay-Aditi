@@ -39,7 +39,9 @@ with sync_playwright() as p:
     # why not fold + saved note
     pg.goto(B+'/disputes/C06'); pg.wait_for_timeout(500)
     check('why-not-fold on Fight',pg.get_by_test_id('why-not-fold').count()==1 and 'key documents for 13.2' in pg.get_by_test_id('why-not-fold').inner_text())
-    check('saved note shown',pg.get_by_test_id('saved-note').count()==1)
+    check('v2.3 stored run has no "older prompt" note',pg.get_by_test_id('saved-note').count()==0)
+    pg.goto(B+'/disputes/C01'); pg.wait_for_timeout(500)
+    check('saved note shown on an older stored result',pg.get_by_test_id('saved-note').count()==1)
     pg.goto(B+'/disputes/C15'); pg.wait_for_timeout(500)
     check('no why-not-fold on Escalate',pg.get_by_test_id('why-not-fold').count()==0)
     pg.goto(B+'/disputes/C16'); pg.wait_for_timeout(500)

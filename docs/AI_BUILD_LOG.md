@@ -317,3 +317,6 @@ Facts from the conversation. "Why" lines in my own voice to be added at the end.
 - Not changed, and why: the saved draft wording (it is the first-run model output, not something I should rewrite; a live run replaces it); an owner column, notes, audit trail and a won/lost notification (out of scope, named as next steps); Slack preview (it already switches with the channel); the chargeback ratio (already on Results).
 - My decision: keep the walkthrough findings as they are, including the ones that do not flatter the product (the draft, "Escalate" split two to one).
 - Checks: 331 unit tests, 28 browser suites, lint, build.
+
+### 12 Oct, afternoon: stronger saved drafts for C06 and C15
+Walkthrough merchants said the draft is what they check, and the old saved C06 draft (an early ChatGPT one-sentence version) said the customer was "instructed" to cancel. I replaced the saved C06 and C15 results with live runs of qwen/qwen3.8-27b on prompt v2.3, saved unedited as the first run of each (not picked from several). The same runs exposed two bugs, both fixed: the C15 request message cut off at "J." in "J. Whitfield", and C06 showed "Missing: terms" next to "Clear win" because the policy document did not count as the terms. The C06 bank test is now a live run against the new draft. Known flaw kept: one C06 sentence cites E3 for a fact that sits in E4.
