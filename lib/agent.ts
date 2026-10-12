@@ -275,7 +275,7 @@ export async function analyze(c: CaseData, added: AddedEvidence[], deps: Deps, p
  * ("Obtain (1) ... This determines ..."), so we keep only the ask, drop the leading verb and the explanation, and word it as a request.
  */
 export function requestMessage(disputeId: string, missing: string): string {
-  const ask = missing.trim().split(/(?<=[.!?])\s+(?=[A-Z])/)[0].replace(/^(please\s+)?(obtain|get|collect|request|ask for|send|provide)\s+/i, "").replace(/[.\s]+$/, "");
+  const ask = missing.trim().split(/(?<!\b[A-Z][.!?])(?<=[.!?])\s+(?=[A-Z])/)[0].replace(/^(please\s+)?(obtain|get|collect|request|ask for|send|provide)\s+/i, "").replace(/[.\s]+$/, "");
   return `Hello, we have a card dispute (${disputeId}) and need one thing from you to answer it. Could you send us: ${ask}. Thank you.`;
 }
 

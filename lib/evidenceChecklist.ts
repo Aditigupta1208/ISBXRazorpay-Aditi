@@ -48,7 +48,7 @@ export const CHECKLISTS: Record<string, CodeChecklist> = {
   },
   "13.2": {
     key: [
-      { need: "The terms they agreed to, including renewal", slots: ["term_and_conditions"], why: "Shows what they signed up for and when it renews." },
+      { need: "The terms they agreed to, including renewal", slots: ["term_and_conditions", "refund_cancellation_policy"], why: "Shows what they signed up for and when it renews." },
       { need: "When and how they cancelled", slots: ["cancellation_proof"], why: "The dates decide whether the charge came before or after the cancel." },
       { need: "They kept using it after cancelling", slots: ["access_activity_log", "proof_of_service"], why: "Visa lets you answer with proof the customer used the service after withdrawing permission.", src: "visa" },
     ],

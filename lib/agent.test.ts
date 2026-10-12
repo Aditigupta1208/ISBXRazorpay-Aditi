@@ -298,3 +298,10 @@ test("the user message states the order of dates, so a model cannot call 1 Aug a
   assert.ok(m.indexOf("Dates, oldest first") < m.indexOf("Evidence:"));
   assert.ok(!buildUserMessage({ ...c, razorpay_facts: "Payment captured.", evidence: [{ id: "E1", content: "no dates" }], dispute: { ...c.dispute, raised_on: "soon" } }, [], undefined).includes("Dates, oldest first"));
 });
+
+test("requestMessage does not cut the ask at an initial like J.", async () => {
+  const { requestMessage } = await import("./agent");
+  const m = requestMessage("disp_demoC15", "Confirmation that J. Whitfield (j.whitfield@gmail.com) was authorised to cancel the booking. This determines whether the refund is due.");
+  assert.match(m, /J\. Whitfield/);
+  assert.doesNotMatch(m, /determines/);
+});
