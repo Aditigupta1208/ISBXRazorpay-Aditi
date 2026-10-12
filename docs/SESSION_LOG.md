@@ -118,3 +118,4 @@ One line per build session: date, milestone, what was built, anything decided or
 | 11 Oct | Label confirmation | Builder confirmed C21, C23-C30 (9 of 10). C22 left open: builder says Escalate, draft key says Fold (Accept). Evals wording and tests updated. |
 | 11 Oct | Final pass | C22 confirmed Fold; all ten C21-C30 labels confirmed. Escalate screen: worth/what-if folded into one expandable row so Copy the message is closer to the top. 331 tests, 27 browser suites, sweep, lint, build pass. |
 | 12 Oct | Build log | Merged the update into one full build log (docs/AI_BUILD_LOG.md and the Project's build-log): tools table, prompt history, section 5 rewritten, examples H to K, 8 to 12 Oct entries. Removed the separate update file. |
+| 12 Oct | Welcome card | The 2-minute-tour card collapsed after one look at the list. It now collapses only after a dispute is opened (or Hide); Show the welcome brings it back. 331 tests, 27 suites pass. |

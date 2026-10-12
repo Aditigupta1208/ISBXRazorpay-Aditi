@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { CaseView } from "@/components/CaseView";
+import { MarkSeen } from "@/components/StartHere";
 import { getCase, getDemoCases, getCheckView } from "@/lib/data";
 import { getRates } from "@/lib/fx";
 import { listOrder, neighbours } from "@/lib/order";
@@ -21,5 +22,10 @@ export default async function DisputeDetail({ params }: { params: Promise<{ id: 
   const view = getCheckView(id);
   if (!c || !view) notFound();
   const { prev, next } = neighbours(listOrder(await getRates()), id);
-  return <CaseView c={c} view={view} prev={prev} next={next} />;
+  return (
+    <>
+      <MarkSeen />
+      <CaseView c={c} view={view} prev={prev} next={next} />
+    </>
+  );
 }

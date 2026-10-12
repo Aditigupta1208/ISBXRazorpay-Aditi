@@ -4,8 +4,16 @@ import { useEffect, useState } from "react";
 import { TourLink } from "./TourLink";
 
 const KEY = "da:v1:tips-hidden";
-/** Set after the first visit, so a returning merchant sees the queue first and the welcome as one short line. */
+/** Set once the merchant has opened a dispute (see MarkSeen), so a returning merchant sees the queue first and the welcome as one short line. */
 const SEEN = "da:v1:tips-seen";
+
+/** Rendered on a dispute page: opening a case is what counts as having seen the welcome. */
+export function MarkSeen() {
+  useEffect(() => {
+    try { localStorage.setItem(SEEN, "1"); } catch { /* storage may be blocked */ }
+  }, []);
+  return null;
+}
 
 const EXAMPLES = [
   { id: "C06", label: "a Fight call" },
@@ -21,7 +29,6 @@ export function StartHere() {
     try {
       setHidden(localStorage.getItem(KEY) === "1");
       setReturning(localStorage.getItem(SEEN) === "1");
-      localStorage.setItem(SEEN, "1");
     } catch { /* storage may be blocked */ }
   }, []);
   const set = (v: boolean) => {
