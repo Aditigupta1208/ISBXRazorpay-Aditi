@@ -14,7 +14,7 @@ with sync_playwright() as p:
     # ---- tour step 6 shows a saved example result, with no model call
     if mode == 'live': open(LOG, 'w').write('')
     pg.goto(B + '/disputes/C06'); pg.wait_for_timeout(500)
-    pg.get_by_role('button', name='Take the 2-minute tour').first.click() if pg.get_by_role('button', name='Take the 2-minute tour').count() else pg.get_by_role('link', name='Take the 2-minute tour').first.click()
+    pg.get_by_role('button', name='Take the tour').first.click() if pg.get_by_role('button', name='Take the tour').count() else pg.get_by_role('link', name='Take the tour').first.click()
     pg.wait_for_url(B + '/'); pg.wait_for_timeout(700)
     card = pg.get_by_role('region', name='Guided tour')
     for i in range(5):

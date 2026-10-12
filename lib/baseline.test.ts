@@ -47,3 +47,10 @@ test("where the checklist matches the human answer, by case type (the honest sco
   assert.ok(by["Needs judgment"].ok < by["Needs judgment"].n);
   assert.equal(by["Messy"].ok, 0);
 });
+
+test("the checklist track record on screen matches the answer key", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { checklistTrackRecord, CHECKLIST_TRACK_RECORD } = await import("./vsChecklist");
+  const labels = (JSON.parse(readFileSync("data/labels.json", "utf8")) as { labels: { decision: string; checklist_decision: string | null }[] }).labels;
+  assert.deepEqual(checklistTrackRecord(labels), CHECKLIST_TRACK_RECORD);
+});

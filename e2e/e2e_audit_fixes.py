@@ -34,7 +34,7 @@ with sync_playwright() as p:
     check('no console/CSP errors across pages',errs==[]); 
     if errs: print(errs[:4])
     # evals sentence
-    pg.goto(B+'/evals'); t=pg.inner_text('body')
+    pg.goto(B+'/evals'); pg.wait_for_timeout(800); t=pg.inner_text('body')
     check('evals explains fraud cases not scored','2 fraud cases are sent to Chargeback Shield without a model call, so 38 are scored' in t)
     # why not fold + saved note
     pg.goto(B+'/disputes/C06'); pg.wait_for_timeout(500)

@@ -35,7 +35,8 @@ import { now, useCaseState } from "@/lib/useCaseState";
 import { removeLedger, upsertLedger, useLedger } from "@/lib/ledger";
 import { track } from "@/lib/track";
 import { ODDS_PRIOR_WEIGHT, oddsForCall, fromAction, historyFor, sampleRecords } from "@/lib/results";
-import { compareWithChecklist } from "@/lib/vsChecklist";
+import { DEFAULT_RULES, sanitizeRules } from "@/lib/alertRules";
+import { CHECKLIST_TRACK_RECORD, compareWithChecklist } from "@/lib/vsChecklist";
 import { buildMissCase, missKind } from "@/lib/missCase";
 import { buildTimeline, daysBetween } from "@/lib/timeline";
 
@@ -144,6 +145,15 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const { recs: myRecs } = useLedger();
   const pool = useMemo(() => [...sampleRecords(rates), ...myRecs.filter((r) => r.id !== c.id)], [rates, myRecs, c.id]);
   const record = useMemo(() => historyFor(pool, d.reason_code), [pool, d.reason_code]);
+  const [lowLine, setLowLine] = useState<number | null>(DEFAULT_RULES.foldBelowPct);
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("da:v1:alerts");
+      if (raw) setLowLine(sanitizeRules(JSON.parse(raw)).foldBelowPct);
+    } catch {
+      /* storage unavailable: use the default line */
+    }
+  }, []);
   const oddsAdj = useMemo(() => oddsForCall(finalCall, view.odds, view.confidence, pool), [view.odds, view.confidence, pool]);
   // Until the merchant has outcomes of their own, the adjustment comes from the made-up sample history, and the label says so.
   const ownOdds = useMemo(() => oddsForCall(finalCall, view.odds, view.confidence, myRecs.filter((r) => r.id !== c.id)), [finalCall, view.odds, view.confidence, myRecs, c.id]);
@@ -615,6 +625,11 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                           {view.decidingEvidence.includes("Razorpay") && <span>and Razorpay&apos;s record</span>}
                         </>
                       ) : gap.text}
+                    </p>
+                  )}
+                  {lowLine !== null && finalCall === "fight" && oddsAdj.odds * 100 < lowLine && (
+                    <p data-testid="low-odds-note">
+                      <span className="font-semibold">Below your line:</span> the chance to win is {Math.round(oddsAdj.odds * 100)}%{oddsAdj.adjusted ? ` (${recordWord})` : ""}, under the {lowLine}% you set on Alerts. Think about accepting. It is still your call.
                     </p>
                   )}
                   {notFold && (
@@ -1394,6 +1409,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                       </>
                     )}
                   </div>
+              <p className="mt-3 text-[13px] text-helper" data-testid="checklist-record">
+                Across the {CHECKLIST_TRACK_RECORD.scored} scored practice cases, a fixed checklist matched the builder&apos;s answer on {CHECKLIST_TRACK_RECORD.matched} ({Math.round((CHECKLIST_TRACK_RECORD.matched / CHECKLIST_TRACK_RECORD.scored) * 100)}%). It can only say Fight or Accept, so it can never say Get a document.
+              </p>
             </Row>
           )}
           {finalCall !== "shield" && (

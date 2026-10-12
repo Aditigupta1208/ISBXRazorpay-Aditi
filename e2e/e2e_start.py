@@ -25,7 +25,7 @@ with sync_playwright() as p:
     check('says tips are not model output', pt.get_by_text('not model output').is_visible())
     sh.locator('a:visible').first.click(); pg.wait_for_url('**/disputes/C06'); check('start link opens C06', True)
     ph=b.new_context(viewport={'width':390,'height':800}).new_page(); ph.goto(B+'/disputes'); ph.wait_for_timeout(300)
-    check('phone: tour button is visible on the first screen', ph.locator('section[aria-labelledby=start-here]').get_by_role('button',name='Take the 2-minute tour').bounding_box()['y']<600)
+    check('phone: tour button is visible on the first screen', ph.locator('section[aria-labelledby=start-here]').get_by_role('button',name='Take the tour').bounding_box()['y']<600)
     ph.reload(); ph.wait_for_timeout(300)
     check('phone: stat tiles visible on first screen', ph.locator('div.grid.grid-cols-3 > div').first.bounding_box()['y']<760)
     check('phone: no sideways scroll', not ph.evaluate('document.documentElement.scrollWidth>innerWidth'))

@@ -327,7 +327,7 @@ Four additions that answer two questions in the challenge brief: "why AI, not a 
 - Already there, so not rebuilt: a confirm step before Fold, a banner when a re-run changes the call, evidence chips that scroll to and highlight the document, a Results reset and an empty state.
 
 ## F14 · Guided tour for reviewers ✅ (6 Oct)
-A "Take the 2-minute tour" link sits in the banner on every page (and "Or take the guided tour" in the starter box on Disputes). It opens a small card at the bottom of the screen and walks through 10 stops: the list, a Fight call (C06), the checklist box, the timeline, approval, an Escalate call (C15), Results, Evals, Agent setup, How it works. Each stop opens the right page and outlines the part it talks about.
+A "Take the tour" link sits in the banner on every page (and "Or take the guided tour" in the starter box on Disputes). It opens a small card at the bottom of the screen and walks through 10 stops: the list, a Fight call (C06), the checklist box, the timeline, approval, an Escalate call (C15), Results, Evals, Agent setup, How it works. Each stop opens the right page and outlines the part it talks about.
 - Nothing shows until the reviewer asks for it, so it never covers the app by surprise.
 - Back, Next, Close, Escape and Finish all work; it picks up where it left off after a reload (this tab only).
 - Steps live in `lib/tourSteps.ts` (tested: real pages, numbered, short, no jargon). Browser test: `e2e_tour` (desktop and 390px phone).

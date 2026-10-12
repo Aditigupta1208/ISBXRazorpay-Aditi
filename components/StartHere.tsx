@@ -39,7 +39,7 @@ export function StartHere() {
   if (hidden || returning) {
     return (
       <p className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-helper">
-        <TourLink className="inline-block min-h-10 py-2 font-semibold text-brand hover:underline" label="Take the 2-minute tour" />
+        <TourLink className="inline-block min-h-10 py-2 font-semibold text-brand hover:underline" label="Take the tour" />
         <button type="button" onClick={() => set(false)} className="min-h-10 py-2 font-semibold text-brand hover:underline">Show the welcome</button>
       </p>
     );
@@ -57,7 +57,7 @@ export function StartHere() {
         <button type="button" onClick={() => set(true)} className="-mt-2 -mr-2 min-h-10 shrink-0 px-2 text-[12px] font-semibold text-[#3a4663] underline">Hide</button>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 md:mt-4">
-        <TourLink className="min-h-11 rounded-[10px] bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-focus" label="Take the 2-minute tour" />
+        <TourLink className="min-h-11 rounded-[10px] bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-focus" label="Take the tour" />
         <p className="text-[13px] text-[#3a4663] md:text-[12px]">
           or open an example:{" "}
           {EXAMPLES.map((e, i) => (
