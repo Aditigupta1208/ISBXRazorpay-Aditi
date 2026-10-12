@@ -1,16 +1,16 @@
 # AI Build Log: Razorpay AI x PM Build Challenge (Track 2)
 
-Status: updated 12 Oct 2026, ready for submission review. This file is public. No API keys, no personal data, no confidential material.
+Status: updated 13 Oct 2026, ready for submission review. This file is public. No API keys, no personal data, no confidential material.
 
 The submission form asks for a publicly viewable markdown file covering the five sections below. A dated running log follows them.
 
 ## Summary
 
 - **Tools:** Claude (claude.ai chats and Claude Code) for research, planning, review and building; ChatGPT for the clean kill-test run; free Groq models (Qwen, gpt-oss-120b) for the live check inside the app.
-- **What AI did:** read the brief, mapped what Razorpay ships, wrote the first PRD and the code (about 11,000 lines, 331 unit tests, 27 browser suites), ran audits section by section, and drafted cases and documents.
+- **What AI did:** read the brief, mapped what Razorpay ships, wrote the first PRD and the code (about 11,000 lines, 334 unit tests, 29 browser suites), helped draft the one-page note and checked it against the brief, ran audits section by section, and drafted cases and documents.
 - **What I decided:** the track and the segment; which ideas to kill; the final labels on the kill test, the held-out set and C21 to C30; Fold and Escalate as first-class calls; no database or accounts; what to cut; what to say and not say about accuracy.
 - **Where AI was wrong and I caught it:** a rule-only prompt that would have refunded USD 1,600 too much on C15; a kill test run in a chat that already knew the test design; an overstated "gap" in held-settlement; "UPI is practically free"; POST instead of PATCH on the contest call; a metric that counted a correct answer as obeying a hidden instruction.
-- **Honest limits:** no paid Claude key, so live checks run on free Groq models; all disputes are synthetic; the eval release gate fails on two measures and nothing was tuned; three merchant conversations and no walkthrough of the product yet.
+- **Honest limits:** no paid Claude key, so live checks run on free Groq models; all disputes are synthetic; the eval release gate fails on two measures and nothing was tuned; three merchants, interviewed and then walked through the product (n=3, about the screens and not about real outcomes), and no real Razorpay data.
 
 ## 1. AI tools and models used
 
@@ -104,10 +104,12 @@ Facts from the conversation. "Why" lines in my own voice to be added at the end.
 | Wrote the live-check code, nine safety checks and the eval harness; ran 40 cases | Chose not to tune anything after the gate failed; kept the failing numbers on the page |
 | Drafted held-out cases C31 to C40 and the proposed labels for C21 to C30 | Labelled them myself; confirmed C31 to C40 on 9 Oct and C21 to C30 on 11 Oct, changing C22 after discussion |
 | Ran a product-intuitiveness review of the merchant flow from an unbiased view | Chose which of six findings to fix, and to make the reviewer links quieter rather than build a dropdown |
+| Drafted the one-page note from my findings, read public pages on Razorpay, Stripe, Chargeflow and Justt, and scored the note against the brief | Locked the problem statement and the scope wording; set the order (data and signal, features, why AI, how it learns, accuracy, decisions, metrics); rejected drafts that answered a different question or were too wordy; chose the three trade-offs and the north-star, leading, lagging and guardrail structure; decided what to cut and restore to fit one page |
+| Built the Word file and rendered it to check the page count | Chose A4, 10pt, narrow margins, justified text and the heading style |
 
 ## 5. Known limitations, risks, verification steps
 
-- **Evidence limits:** review-site data is self-selected. There is no access to real Razorpay merchant data. Three merchants were interviewed (one outside the target segment), with follow-ups on a dispute each had accepted or lost. They answered about a described message, not the product. A product walkthrough has not yet happened.
+- **Evidence limits:** review-site data is self-selected. There is no access to real Razorpay merchant data. Three merchants were interviewed (one outside the target segment), with follow-ups on a dispute each had accepted or lost. In the first round they answered about a described message, not the product; on 12 Oct the same three walked through the live product (n=3, about the screens, not about real outcomes).
 - **Synthetic data:** all 40 practice disputes were written by me and the AI, patterned on public cases (Visa's dispute guidelines, Razorpay blogs, Karbon, Winvesta and Shopify community posts). The merchants, customers and documents are invented. The exchange rate is labelled (live, fixed or demo). The odds of winning are an AI estimate, not a measured rate.
 - **Labels:** the answer key is my reading of Visa's rules. C21 to C30 were first proposed by the AI assistant; I confirmed all ten on 11 Oct after reading each case, and changed C22. C31 to C40 were confirmed on 9 Oct, before any run.
 - **Verification:** every factual claim about Razorpay (contest API, deadlines, Chargeback Shield terms, clawback rate) was traced to a public source and corrected where the AI was wrong (see section 3F). A reply from Razorpay support (unsigned, no ticket number) and an informal answer from a Razorpay colleague are treated as indicative only. Tax and FEMA points are marked secondary-source.
@@ -115,8 +117,16 @@ Facts from the conversation. "Why" lines in my own voice to be added at the end.
 - **Why AI, not rules:** nine extra rules reached 20 of 20 on known cases and scored 6 of 10 on ten unseen cases, against 7 of 10 for the plain checklist.
 - **Limits of the tests:** the cases are short and cleanly written, and the model was given Visa's rules. They show the AI applies rules to written evidence and knows when to escalate; they do not prove real-world win rates.
 - **Not proven:** Claude as the live model; saved results for C01 to C16 are still from ChatGPT prompt v1.
-- **Checks on the build:** 331 unit tests, 27 browser suites (desktop and phone), a 12-page sweep, lint with zero errors, a secret scan and a dependency audit. Hook-dependency lint warnings (31) are deliberate.
+- **Checks on the build:** 334 unit tests, 29 browser suites (desktop and phone), a 12-page sweep, lint with zero errors, a secret scan and a dependency audit. Hook-dependency lint warnings (31) are deliberate.
 - **Risks and how the product handles them:** wrong AI answer (nine code checks can downgrade a Fight or stop a draft; every sentence cites a document; a figure check compares every number and date with the documents); prompt injection in evidence (wrapped and escaped, one forced tool, one test case); privacy (full card numbers blocked in evidence and draft, nothing stored on a server); budget abuse (rate limit, input caps); AI unavailable (labelled saved result, works with no key); overlap with Razorpay's Dispute Responder (stated as an assumption, not confirmed).
+
+**L. Facts the AI got wrong while drafting the one-page note (12 to 13 Oct).**
+- In the first Problem draft the AI described the agency's USD 2,400 dispute as lost; it was won. It used the SaaS founder's missed-deadline story as evidence for the non-fraud decision, but that dispute was fraud-type (unauthorized), which the product routes to Chargeback Shield. It added a detail about a support ticket at a cloud host that was not in my notes. It offered two outside statistics (a per-dispute cost and a 54% figure) that I could not trace to a source for Indian merchants, said nobody offers a pre-submission review (then retracted it), and described all three merchants as in my target segment when one is not.
+- **What I did:** dropped every figure and detail I could not source and kept only what traces to my own merchant notes or to public pages I could read (Razorpay's international page and blog, Stripe's and Chargeflow's pages, with Chargeflow's figures labelled vendor-reported). I chose the scope wording "merchants selling abroad" because the third merchant faces the same problem on a different gateway.
+
+**M. AI scoring of my own note that I pushed back on (13 Oct).**
+- The AI first marked the note down for having only three merchants and no sizing, and for being dense. I pointed out that every submission works without Razorpay's data and with a small sample, and that the brief names clarity, not density, as the criterion; it removed those deductions. I also asked it to judge the quality of each answer against the brief, not only whether a section was covered. A second AI's review said the note ran to two or three pages; I measured one A4 page and ignored that point, and took the valid ones (an undefined "line" in the learning paragraph, no Agent Studio signal, an overstated "only AI" claim, a thin validation plan).
+
 
 ---
 
@@ -323,3 +333,10 @@ Walkthrough merchants said the draft is what they check, and the old saved C06 d
 
 ### 12 Oct, evening: final evaluation against the brief, then lock
 I checked the product against the seven things the brief says a submission must make clear and the five judging criteria. Two points needed work: the learning loop changed the odds but the case screen never said when it should change the advice, and the "why AI" panel did not state how a fixed checklist performs. I added both (a line when a Fight call's adjusted odds fall under the merchant's own Accept line, and the checklist's 23-of-38 record against my answer key), renamed the 14-stop tour, and froze the product. I decided to freeze it myself; the AI assistant had been listing new fixes each time I asked for an evaluation.
+
+### 12 to 13 Oct, night: the one-page product note
+- Tool: Claude (Claude Code session attached to a claude.ai project). Goal: write the one-page note (problem, solution, decisions, success metrics) and check it against the brief and judging criteria.
+- Used: the AI proposed the structure, drafted blocks from my merchant findings, read public pages on Razorpay, Stripe, Chargeflow and Justt, generated the Word file and rendered it to check that it fits one A4 page. The merchant facts come from my own conversations.
+- Rejected or reworked: a problem draft with no clear statement (I asked for what merchants are asked to decide and have no means to decide); a "why AI" answer that explained how a checklist fails and not what AI does better; a controls paragraph that used terms the reader had not met (the controls now sit inside each feature); a long business-outcome sentence (now a short north star with leading, lagging and guardrail metrics); and "baseline", which read as something the merchant sets (now defined as their recovery rate on past disputes). Wrong facts the AI introduced are in section 3L, and scoring I pushed back on is in 3M.
+- Decided myself: the problem wording and scope, the three trade-offs, to leave learning as one honest loop and build nothing more because the product is locked, and which lines to cut and restore to reach one page (for example restoring the agency's use of a Google Sheet because merchant behaviour is a judged criterion).
+- Checks: rendered to PDF to confirm one A4 page; no code changed, so 334 unit tests and 29 browser suites are as before. The final text is saved in the project as `product-note-final.md`.
