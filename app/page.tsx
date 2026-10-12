@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CallChip } from "@/components/CallChip";
 import { PageTitle } from "@/components/ui";
+import { StartHere } from "@/components/StartHere";
 import { getDisputeRows } from "@/lib/disputeRows";
 import { getRates } from "@/lib/fx";
 import { formatInr } from "@/lib/format";
@@ -35,6 +36,7 @@ export default async function DashboardEntry() {
 
   return (
     <>
+      <StartHere />
       <PageTitle eyebrow="Where it sits" title="Dispute Advisor inside the Razorpay Dashboard">
         A concept view of how a merchant reaches it. The path is the one they already use for disputes. The advisor adds a call to each dispute.
       </PageTitle>

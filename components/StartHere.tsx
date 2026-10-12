@@ -58,7 +58,7 @@ export function StartHere() {
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 md:mt-4">
         <TourLink className="min-h-11 rounded-[10px] bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-focus" label="Take the 2-minute tour" />
-        <p className="hidden text-[12px] text-[#3a4663] md:block">
+        <p className="text-[13px] text-[#3a4663] md:text-[12px]">
           or open an example:{" "}
           {EXAMPLES.map((e, i) => (
             <span key={e.id}>
