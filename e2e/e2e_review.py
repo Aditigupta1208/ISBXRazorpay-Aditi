@@ -24,9 +24,9 @@ with sync_playwright() as p:
     check('request shows after opening', pg.get_by_text('PATCH /v1/disputes/disp_demoC04/contest').locator('visible=true').count()>=1)
     # fold
     pg.goto(B+'/disputes/C14'); pg.wait_for_timeout(400)
-    pg.get_by_role('button',name='Accept dispute (Fold)',exact=True).first.click()
+    pg.get_by_role('button',name='Accept dispute',exact=True).first.click()
     check('fold dialog says simulated', pg.get_by_role('dialog').get_by_text('Simulated: nothing leaves this demo.').is_visible())
-    pg.get_by_role('button',name='Yes, fold').click(); pg.wait_for_timeout(400)
+    pg.get_by_role('button',name='Yes, accept').click(); pg.wait_for_timeout(400)
     check('fold confirmation plain', pg.get_by_text('You accepted the dispute.').is_visible())
     ph=b.new_context(viewport={'width':360,'height':800}).new_page(); ph.set_viewport_size({'width':360,'height':800}); ph.goto(B+'/disputes/C04'); ph.wait_for_timeout(400)
     review(ph)

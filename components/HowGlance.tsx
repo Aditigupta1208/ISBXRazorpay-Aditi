@@ -14,8 +14,8 @@ export interface GlanceFacts {
 const SEVEN: { q: string; a: string; href: string; icon: string }[] = [
   { q: "What signals the opportunity?", a: "A card dispute on a service or subscription payment, plus the documents the merchant holds. Razorpay's own tool does not cover these.", href: "#tools", icon: "docs" },
   { q: "Why AI and not a fixed rule?", a: "A rule sees that a document exists. Only reading shows what it says, and that two of them disagree.", href: "#why-ai", icon: "scale" },
-  { q: "What does it recommend?", a: "Fight, Fold or Escalate, priced in rupees, with a draft that cites a document in every sentence.", href: "#tiers", icon: "flag" },
-  { q: "What does the merchant control?", a: "Everything. Edit, approve, fold, escalate or switch it off. Nothing is sent without a click.", href: "#failures", icon: "hand" },
+  { q: "What does it recommend?", a: "Fight, Accept or Get a document, priced in rupees, with a draft that cites a document in every sentence.", href: "#tiers", icon: "flag" },
+  { q: "What does the merchant control?", a: "Everything. Edit, approve, accept or switch it off. Nothing is sent without a click.", href: "#failures", icon: "hand" },
   { q: "How does it learn?", a: "It calibrates on your outcomes and turns misses into tests. It does not retrain a model.", href: "/results#loop", icon: "loop" },
   { q: "How is trust protected?", a: "Nine code checks, a labelled fallback when the AI fails, and an eval with a release gate that we show failing.", href: "#failures", icon: "shield" },
   { q: "What outcome is measured?", a: "Net dispute value recovered, answered on time, win rate, with wrong-call rates as guardrails.", href: "#metrics", icon: "chart" },
@@ -30,6 +30,8 @@ export function HowGlance({ facts }: { facts: GlanceFacts }) {
         <p className="text-[18px] leading-7 font-semibold">Other tools help you fight. Dispute Advisor tells you whether you should, and shows you why.</p>
         <p className="mt-1 max-w-[760px] text-[14px] text-ink-soft">For Indian businesses that sell services, subscriptions or digital goods to customers abroad. When the dispute is not fraud, the merchant gets a priced call and a response they can trace to their own documents, before a 3-day clock runs out.</p>
       </div>
+
+      <p data-testid="glossary" className="mb-6 text-[13px] text-helper">Words: the model's output says fight, fold or escalate. Merchants see <b className="font-semibold text-ink">Fight</b>, <b className="font-semibold text-ink">Accept</b> (fold) and <b className="font-semibold text-ink">Get a document</b> (escalate).</p>
 
       <Section id="glance-core" title="Three things to look at">
         <div className="grid gap-3 md:grid-cols-3">

@@ -24,6 +24,7 @@ import { checklistFor, SLOT_INFO } from "@/lib/evidenceChecklist";
 import { customerHistory } from "@/lib/customerHistory";
 import { checkFigures, recordText } from "@/lib/factCheck";
 import { namedGap, whyNotFold } from "@/lib/namedGap";
+import { plainReason } from "@/lib/reasonWords";
 import { remapText, remapView, renumberMap } from "@/lib/evidenceIds";
 import { ClampText } from "@/components/ClampText";
 import { buildSummary } from "@/lib/summary";
@@ -47,7 +48,7 @@ const H3 = ({ children }: { children: ReactNode }) => (
   <h3 className="mt-4 mb-1.5 text-[13px] font-semibold tracking-[.6px] text-helper uppercase first:mt-0">{children}</h3>
 );
 const btn = "min-h-11 rounded-[10px] px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50";
-const CALL_NAME = { fight: "Fight", fold: "Fold", escalate: "Escalate", shield: "Chargeback Shield" } as const;
+const CALL_NAME = { fight: "Fight", fold: "Accept", escalate: "Get a document", shield: "Chargeback Shield" } as const;
 const primary = `${btn} bg-brand text-white`;
 const ghost = `${btn} border border-[#D6D6D6] bg-white text-[#111]`;
 
@@ -144,6 +145,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const pool = useMemo(() => [...sampleRecords(rates), ...myRecs.filter((r) => r.id !== c.id)], [rates, myRecs, c.id]);
   const record = useMemo(() => historyFor(pool, d.reason_code), [pool, d.reason_code]);
   const oddsAdj = useMemo(() => oddsForCall(finalCall, view.odds, view.confidence, pool), [view.odds, view.confidence, pool]);
+  // Until the merchant has outcomes of their own, the adjustment comes from the made-up sample history, and the label says so.
+  const ownOdds = useMemo(() => oddsForCall(finalCall, view.odds, view.confidence, myRecs.filter((r) => r.id !== c.id)), [finalCall, view.odds, view.confidence, myRecs, c.id]);
+  const recordWord = ownOdds.adjusted ? "your record" : "sample history";
   const money = moneyCheck({ amountSubunits: d.amount, currency: d.currency, contestSubunits, odds: oddsAdj.odds }, rates);
   const miss = useMemo(() => {
     const input = { call: finalCall, action: state.action?.type, outcome: state.outcome };
@@ -170,7 +174,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
   const acted = state.action;
   const checkTheMoney = finalCall === "fight" && !money.worthFighting;
 
-  // Keep the Results page in step with what the merchant did here (Fold is final; a submit waits for Won or Lost).
+  // Keep the Results page in step with what the merchant did here (Accept is final; a submit waits for Won or Lost).
   useEffect(() => {
     if (!ready) return;
     const a = state.action;
@@ -394,8 +398,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
       outcome: type === "fold" ? "lost" : s.outcome,
       audit: [
         ...s.audit,
-        ...(override ? [{ at: now(), actor: "You" as const, text: `Overrode the call (${finalCall}) and chose ${type === "submit" ? "Fight" : "Fold"}${why.trim() ? `. Reason: ${why.trim()}` : ""}` }] : []),
-        { at: now(), actor: "You" as const, text: type === "submit" ? "Approved and submitted the response (simulated)" : "Folded: accepted the dispute (simulated)" },
+        ...(override ? [{ at: now(), actor: "You" as const, text: `Overrode the call (${CALL_NAME[finalCall]}) and chose ${type === "submit" ? "Fight" : "Accept"}${why.trim() ? `. Reason: ${why.trim()}` : ""}` }] : []),
+        { at: now(), actor: "You" as const, text: type === "submit" ? "Approved and submitted the response (simulated)" : "Accepted the dispute (simulated)" },
       ],
     }));
     track(type === "submit" ? "submit" : "fold");
@@ -430,7 +434,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
   const HEAD: Record<typeof finalCall, string> = {
     fight: "Fight this dispute",
-    fold: "Fold: accept this dispute",
+    fold: "Accept this dispute",
     escalate: "Get one document before you decide",
     shield: "Fraud dispute: Chargeback Shield handles it",
   };
@@ -475,7 +479,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 gap,
                 history: history.known ? `${history.payments}. ${history.disputes}.` : null,
                 documents: allEvidence.map((e) => ({ id: e.id, name: docName(e.id) })),
-                actionTaken: acted ? (acted.type === "submit" ? "Submitted (simulated)" : "Folded (simulated)") : undefined,
+                actionTaken: acted ? (acted.type === "submit" ? "Submitted (simulated)" : "Accepted (simulated)") : undefined,
               }),
             )
           }
@@ -503,7 +507,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           <p className="text-[13px] text-helper">{c.merchant}</p>
           <div className="mt-1 flex flex-wrap items-start justify-between gap-x-6 gap-y-1">
             <h1 className="text-2xl leading-8 font-semibold">
-              {formatOriginal(d.amount, d.currency)} · {d.network} {d.reason_code} {d.reason_description}
+              {formatOriginal(d.amount, d.currency)} · {plainReason(d.reason_code, d.reason_description)}
             </h1>
             {finalCall === "shield" && (
               <p className={`text-[14px] font-semibold ${t.warn ? "text-warn" : "text-ink-soft"}`}>
@@ -515,7 +519,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           <p className="mt-1 text-[14px] text-[#444]">
             The customer says: &ldquo;{c.customer_claim}&rdquo; <span className="font-mono text-[13px] text-helper">{d.id}</span>
           </p>
-          {acted && <p className="mt-1 text-[12px] font-semibold text-green-ink">{acted.type === "submit" ? "Contested (simulated)" : "Folded (simulated)"}</p>}
+          <p className="text-[13px] text-helper">Visa reason code {d.reason_code}: {d.reason_description}</p>
+          {acted && <p className="mt-1 text-[12px] font-semibold text-green-ink">{acted.type === "submit" ? "Contested (simulated)" : "Accepted (simulated)"}</p>}
           {d.respond_by_hours_left < 6 && !acted && (
             <p className="mt-3 rounded-[10px] bg-danger-soft px-3 py-2 font-semibold text-danger">Respond now. Less than 6 hours left.</p>
           )}
@@ -576,7 +581,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <CallChip call={finalCall} size="lg" />
             {finalCall !== "shield" && <span className="text-[14px] font-semibold text-[#555]">{view.confidence} confidence</span>}
             {state.dirty && !acted && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">⚠ Out of date: re-run the check</span>}
-            {finalCall !== "shield" && <span className="ml-auto hidden text-[13px] font-semibold tracking-[.6px] text-helper uppercase sm:inline">Fold-or-Fight check</span>}
+            {finalCall !== "shield" && <span className="ml-auto hidden text-[13px] font-semibold tracking-[.6px] text-helper uppercase sm:inline">Fight-or-Accept check</span>}
           </div>
           <h2 className="mt-3 text-2xl leading-8 font-semibold md:text-[28px] md:leading-9">{HEAD[finalCall]}</h2>
           {g.changedReason && finalCall !== "shield" && (
@@ -607,7 +612,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   )}
                   {notFold && (
                     <p data-testid="why-not-fold">
-                      <span className="font-semibold">Why not Fold:</span> {notFold}
+                      <span className="font-semibold">Why not just accept:</span> {notFold}
                     </p>
                   )}
                 </div>
@@ -621,7 +626,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <dd className="text-[13px] text-helper">{formatOriginal(d.amount, d.currency)}</dd>
                 </div>
                 <div>
-                  <dt className="text-[13px] text-helper">{oddsAdj.adjusted ? "Chance to win (your record)" : "Chance to win"}</dt>
+                  <dt className="text-[13px] text-helper">{oddsAdj.adjusted ? `Chance to win (${recordWord})` : "Chance to win"}</dt>
                   <dd className="text-[16px] font-medium text-[#555]">{Math.round(oddsAdj.odds * 100)}%</dd>
                   <dd className="text-[13px] text-helper">estimate</dd>
                 </div>
@@ -661,8 +666,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     )}
                     <p>
                       {d.respond_by_hours_left < 6
-                        ? "No time to gather more: choose Fight or Fold."
-                        : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Fold.`}
+                        ? "No time to gather more: choose Fight or Accept."
+                        : `You have ${t.text}. If you can't get it, choose Fight${view.defensibleAmount !== null ? " for the part worth contesting" : ""} or Accept.`}
                     </p>
                     <details data-testid="escalate-more" className="rounded-xl bg-white/60 px-3 py-1">
                       <summary className="min-h-10 cursor-pointer py-2 font-semibold text-escalate">What it is worth, and what if you get it</summary>
@@ -718,12 +723,12 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   {finalCall === "fight" && (
                     <>
                       <button className={`${primary} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => update((s) => ({ ...s, reviewOpen: true }))} aria-expanded={showResponse}>Review response</button>
-                      <button className={`${ghost} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
+                      <button className={`${ghost} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => setDialog("fold")}>Accept dispute</button>
                     </>
                   )}
                   {finalCall === "fold" && (
                     <>
-                      <button className={`${primary} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
+                      <button className={`${primary} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => setDialog("fold")}>Accept dispute</button>
                       <button className={`${ghost} max-md:min-w-0 max-md:flex-1 max-md:px-1.5 max-md:text-[13px]`} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>Fight instead</button>
                     </>
                   )}
@@ -736,7 +741,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                       )}
                       {view.requestText && <button className={ghost} onClick={openAdd}>Add the document</button>}
                       <button className={ghost} onClick={() => update((s) => ({ ...s, reviewOpen: true }))}>Fight anyway</button>
-                      <button className={ghost} onClick={() => setDialog("fold")}>Accept dispute (Fold)</button>
+                      <button className={ghost} onClick={() => setDialog("fold")}>Accept dispute</button>
                     </>
                   )}
                 </div>
@@ -762,7 +767,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                     return <p className={`mt-4 inline-block rounded-[10px] px-3 py-2 font-semibold ${agrees ? "bg-fight-soft text-green-ink" : "bg-fold-soft text-fold"}`}>{text}</p>;
                   })()
                 ) : null}
-                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Fold"}. This is a note, not a change.{finalCall === "fold" ? " The reason above is what decides it: the evidence does not support a win." : ""}</p>}
+                {(checkTheMoney || (finalCall === "fold" && money.worthFighting)) && <p className="mt-1 text-[13px] text-helper">The call stays {finalCall === "fight" ? "Fight" : "Accept"}. This is a note, not a change.{finalCall === "fold" ? " The reason above is what decides it: the evidence does not support a win." : ""}</p>}
 
               {view.decidingEvidence.length > 0 && gap?.label !== "Decided by" && (
                 <p className="mt-5 text-[14px] text-[#555]">
@@ -789,7 +794,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               {!view.source.live && <span className="rounded-full bg-fold-soft px-2.5 py-0.5 text-[12px] font-semibold text-fold">Prepared in advance</span>}
               {view.source.label}
               {!view.source.live && view.source.model !== "none" && finalCall !== "shield" && (
-                <span data-testid="saved-note" className="basis-full text-[12px] text-helper">Prepared before the current prompt. Run live check to see what the latest version says.</span>
+                <span data-testid="saved-note" className="basis-full text-[12px] text-helper">Prepared before the current prompt. Check again with AI to see what the latest version says.</span>
               )}
             </span>
             <span className="ml-auto flex flex-wrap items-center justify-end gap-2">
@@ -807,7 +812,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 onClick={() => { update((s) => ({ ...s, thumbs: "down" })); log("You", "Marked the call not useful"); }}
               ><svg aria-hidden width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto"><path d="M17 13V4h3v9h-3zm0 0-4 8a2 2 0 0 1-2-2v-4H5.5a2 2 0 0 1-2-2.3l1.2-7A2 2 0 0 1 6.700 3H17" /></svg></button>
               {finalCall !== "shield" && !acted && (
-                <button className={`${view.source.live ? ghost : primary} whitespace-nowrap`} onClick={() => void rerun()} disabled={running}>{view.source.live ? "Re-run check" : "Run live check"}</button>
+                <button className={`${view.source.live ? ghost : primary} whitespace-nowrap`} onClick={() => void rerun()} disabled={running}>{view.source.live ? "Re-run check" : "Check again with AI"}</button>
               )}
               <button onClick={() => setDrawer(true)} className="relative font-semibold text-brand after:absolute after:-inset-y-3 after:-inset-x-2 after:content-['']">Under the hood ›</button>
             </span>
@@ -1046,7 +1051,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
 
         {acted && (
         <Card>
-          <h2 className="mb-1 text-[16px] font-semibold">{acted.type === "submit" ? "Response submitted (simulated)" : "Dispute folded (simulated)"}</h2>
+          <h2 className="mb-1 text-[16px] font-semibold">{acted.type === "submit" ? "Response submitted (simulated)" : "Dispute accepted (simulated)"}</h2>
           <p className="mb-2 text-[13px] font-semibold text-helper">Simulated: nothing was sent to Razorpay.</p>
           <p className="text-[14px]">
             {acted.type === "submit"
@@ -1097,7 +1102,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
               </p>
               {miss && (
                 <div className="mt-3 rounded-xl border border-line bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="miss-case">
-                  <b>{miss.kind === "wrong_fight" ? "The advisor said Fight and it was lost." : "The advisor said Fold and you won."}</b> That is the kind of case an eval set needs.
+                  <b>{miss.kind === "wrong_fight" ? "The advisor said Fight and it was lost." : "The advisor said Accept and you won."}</b> That is the kind of case an eval set needs.
                   In the real product it would be queued for review. Here you can download it as a candidate case: names, emails and long numbers are masked, and the proposed answer ({miss.file.proposed_label}) must be confirmed by a person before it is added.
                   <div className="mt-2">
                     <button
@@ -1331,7 +1336,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   <Stat label="Taken back if you lose" value={formatInrFull(money.atStakeInr)} sub={`at today's ${rateWord(rates)}`} />
                   <Stat label="Possible fee if you fight and lose" value={formatInrFull(money.feesAtRiskInr)} sub={`Visa arbitration, USD ${VISA_ARBITRATION_FEE_USD}. Only if the bank escalates.`} />
                   <Stat
-                    label={oddsAdj.adjusted ? "Odds, adjusted by your record" : "AI estimate of odds"}
+                    label={oddsAdj.adjusted ? `Odds, adjusted by ${recordWord}` : "AI estimate of odds"}
                     value={`${Math.round(oddsAdj.odds * 100)}%`}
                     sub={oddsAdj.adjusted ? `AI said ${Math.round(oddsAdj.ai * 100)}%. Estimate, not a promise.` : "estimate, not a promise"}
                   />
@@ -1344,7 +1349,7 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                 <p className="mt-2 text-[13px] text-helper">{view.oddsNote}</p>
                 {oddsAdj.adjusted && (
                   <p className="mt-1 text-[13px] text-helper" data-testid="odds-adjusted">
-                    Adjusted by your record: {oddsAdj.won} of {oddsAdj.n} fights the advisor called Fight at {view.confidence} confidence were won. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check uses this number.
+                    Adjusted by {recordWord === "your record" ? "your record" : "the sample history (made-up past disputes, as on the Results page; your own outcomes replace it)"}: {oddsAdj.won} of {oddsAdj.n} fights the advisor called Fight at {view.confidence} confidence were won. The AI&apos;s estimate counts as {ODDS_PRIOR_WEIGHT} past fights, so a few results move it a little and many take over. The money check uses this number.
                   </p>
                 )}
                 {record.fights > 0 && (
@@ -1368,17 +1373,17 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             <p className="mb-2 text-[13px] font-semibold tracking-[.6px] text-helper uppercase">For reviewers: how this answer was checked</p>
             <div className="mb-5 overflow-hidden rounded-2xl border border-line bg-white" aria-label="How this answer was checked">
           {vsChecklist && (
-            <Row id="checklist" title="Why AI, not a fixed checklist?" summary={`A checklist would say ${vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}${vsChecklist.agree ? ", the same" : ", which differs"}`} open={!!openRows.checklist} onToggle={() => toggleRow("checklist")}
+            <Row id="checklist" title="Why AI, not a fixed checklist?" summary={`A checklist would say ${vsChecklist.checklist === "Fight" ? "Fight" : "Accept"}${vsChecklist.agree ? ", the same" : ", which differs"}`} open={!!openRows.checklist} onToggle={() => toggleRow("checklist")}
               badge={vsChecklist.agree ? { text: "Same call", tone: "ok" } : { text: "Differs", tone: "info" }}>
               <div className="rounded-xl bg-[#F7F8FA] px-3.5 py-3 text-[14px]" data-testid="vs-checklist">
                     
                     {vsChecklist.agree ? (
                       <>
-                        A fixed checklist would also say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}</b> here ({vsChecklist.basis.toLowerCase()}) The agent adds the reasons, the money check and the cited draft.
+                        A fixed checklist would also say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Accept"}</b> here ({vsChecklist.basis.toLowerCase()}) The agent adds the reasons, the money check and the cited draft.
                       </>
                     ) : (
                       <>
-                        A fixed checklist would say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Fold"}</b> ({vsChecklist.basis.toLowerCase()}) It only sees which documents are attached. The agent read what they say and says <b>{vsChecklist.agentWord}</b>.
+                        A fixed checklist would say <b>{vsChecklist.checklist === "Fight" ? "Fight" : "Accept"}</b> ({vsChecklist.basis.toLowerCase()}) It only sees which documents are attached. The agent read what they say and says <b>{vsChecklist.agentWord}</b>.
                       </>
                     )}
                   </div>
@@ -1408,15 +1413,15 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
       )}
       </div>
 
-      <Dialog open={dialog === "fold"} onClose={() => setDialog(null)} title="Fold this dispute?">
+      <Dialog open={dialog === "fold"} onClose={() => setDialog(null)} title="Accept this dispute?">
         <p className="text-[14px]">
           {formatInrFull(money.atStakeInr)} will be taken from your balance ({formatOriginal(d.amount, d.currency)} at the {rateWord(rates)} of ₹{rateFor(d.currency, rates).toFixed(2)}; the real rate is the one on the day the dispute was created). You can&apos;t undo this.
         </p>
-        <p className="mt-2 text-[14px] text-helper">Why the advisor says {finalCall}: {view.reason}</p>
+        <p className="mt-2 text-[14px] text-helper">Why the advisor says {CALL_NAME[finalCall].toLowerCase()}: {view.reason}</p>
         <p className="mt-2 rounded-lg bg-shield-soft px-3 py-2 text-[12px] font-semibold text-shield">Simulated: nothing leaves this demo.</p>
         <RequestPreview text={foldRequest()} />
         {finalCall === "fight" && <OverrideWhy why={why} setWhy={setWhy} />}
-        <DialogButtons onCancel={() => setDialog(null)} onYes={confirmAction} yes="Yes, fold" />
+        <DialogButtons onCancel={() => setDialog(null)} onYes={confirmAction} yes="Yes, accept" />
       </Dialog>
       <Dialog open={dialog === "submit"} onClose={() => setDialog(null)} title="Submit your response?">
         <p className="text-[14px]">In the real app, this sends your response to the customer&apos;s bank and you can&apos;t edit it afterwards.</p>

@@ -28,7 +28,7 @@ with sync_playwright() as p:
     check('phone: no sideways scroll', not ph.evaluate('document.documentElement.scrollWidth>innerWidth'))
     tiles=ph.locator('div.grid.grid-cols-3 > div').all(); ys={round(t.bounding_box()['y']) for t in tiles}
     check('phone: 3 summary tiles in one row', len(tiles)==3 and len(ys)==1)
-    ph.get_by_role('button',name='Fold',exact=True).click(); ph.wait_for_timeout(200)
+    ph.get_by_role('button',name='Accept',exact=True).click(); ph.wait_for_timeout(200)
     check('phone: filter works on cards', ph.locator('ul[aria-label=Disputes] li').count()==5)
     ph.locator('ul[aria-label=Disputes] li a').first.click(); ph.wait_for_url('**/disputes/C**')
     check('phone: card opens the dispute', '/disputes/C' in ph.url)

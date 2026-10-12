@@ -69,7 +69,7 @@ export function decide(r: AlertRow, rules: AlertRules): Decision {
   return { route: "app", why: "Below your alert rules and the digest is off, so it waits in the app.", suggestFold };
 }
 
-const CALL_WORD = { fight: "Fight", fold: "Fold", escalate: "Get one document first", shield: "Chargeback Shield" } as const;
+const CALL_WORD = { fight: "Fight", fold: "Accept", escalate: "Get one document first", shield: "Chargeback Shield" } as const;
 
 /** The text of one alert, the same for every channel; the preview wraps it in a Slack, WhatsApp or email frame. */
 export function alertText(r: AlertRow, d: Decision): string {
@@ -79,7 +79,7 @@ export function alertText(r: AlertRow, d: Decision): string {
     `Advisor's call: ${r.call ? CALL_WORD[r.call] : "not checked yet"}. ${r.timeText} left to respond.`,
   ];
   if (r.gap) lines.push(r.gap);
-  if (d.suggestFold) lines.push("The advisor suggests Fold. You decide: nothing is accepted for you.");
+  if (d.suggestFold) lines.push("The advisor suggests Accept. You decide: nothing is accepted for you.");
   lines.push("Open it to review. Nothing is sent without your approval.");
   return lines.join("\n");
 }
@@ -88,7 +88,7 @@ export function alertText(r: AlertRow, d: Decision): string {
 export function alertBody(r: AlertRow, d: Decision): string {
   const lines = [`${r.amountText} (${r.inrText}) · Visa ${r.reasonCode} ${r.reason}`, r.merchant];
   if (r.gap) lines.push(r.gap);
-  if (d.suggestFold) lines.push("The advisor suggests Fold. You decide: nothing is accepted for you.");
+  if (d.suggestFold) lines.push("The advisor suggests Accept. You decide: nothing is accepted for you.");
   return lines.join("\n");
 }
 

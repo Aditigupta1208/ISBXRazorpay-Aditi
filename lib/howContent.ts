@@ -41,7 +41,7 @@ export const TIERS: { tier: string; note: string; items: [string, string][] }[] 
     tier: "Core",
     note: "If you only look at three things.",
     items: [
-      ["Fold-or-Fight check", "Fight, Fold or Escalate, priced in rupees, with the reason and the deciding documents."],
+      ["Fight-or-Accept check", "Fight, Accept or Get a document, priced in rupees, with the reason and the deciding documents."],
       ["Cited response and figure check", "A draft in which every sentence names a document, and a list of every number and date with its source."],
       ["Merchant control and safety rules", "Nothing is sent without a click. Nine code checks run after every answer."],
     ],
@@ -74,7 +74,7 @@ export const TIERS: { tier: string; note: string; items: [string, string][] }[] 
 export const POSITION: { name: string; covers: string; who: string; gap: string; ours?: boolean }[] = [
   { name: "Chargeback Shield (Razorpay)", covers: "Fraud-coded disputes on international payments.", who: "Razorpay handles it for the merchant.", gap: "Its terms exclude disputes about the quality, delivery or description of goods or services." },
   { name: "Razorpay's Dispute Responder", covers: "Helps a merchant respond to a dispute from the evidence they provide.", who: "The merchant, with help.", gap: "We assume it does not tell the merchant whether to fight or fold on their own evidence. Not confirmed with Razorpay." },
-  { name: "Dispute Advisor (this prototype)", covers: "Non-fraud disputes: service not provided, cancelled, not as described, refund not processed.", who: "The merchant approves every step.", gap: "Adds the call (Fight, Fold or Escalate), the money maths, a draft in which every sentence cites a document, and a test against a practice bank reviewer.", ours: true },
+  { name: "Dispute Advisor (this prototype)", covers: "Non-fraud disputes: service not provided, cancelled, not as described, refund not processed.", who: "The merchant approves every step.", gap: "Adds the call (Fight, Accept or Get a document), the money maths, a draft in which every sentence cites a document, and a test against a practice bank reviewer.", ours: true },
 ];
 
 export const HEARD: { heard: string; who: string; built: string; status: string }[] = [
@@ -102,10 +102,10 @@ export const MERCHANT_LIMITS = [
 
 export const INTERVIEW_STORIES: { who: string; what: string; outcome: string; lesson: string; inSegment: string }[] = [
   { who: "Merchant A, one-person software app", what: "\"Service not received\", USD 149. 47 logins in three months; the proof sat in the cloud host.", outcome: "Fought and won, about 25 days. About 18 hours of work over two days.", lesson: "The evidence existed; assembling it was the cost.", inSegment: "Yes" },
-  { who: "Merchant A", what: "Renewal dispute, USD 12. No logins in 60 days and no reminder sent before renewing.", outcome: "Accepted without fighting.", lesson: "Fold on a small, unused dispute is what he already does by hand. A renewal reminder would prevent it.", inSegment: "Yes" },
+  { who: "Merchant A", what: "Renewal dispute, USD 12. No logins in 60 days and no reminder sent before renewing.", outcome: "Accepted without fighting.", lesson: "Accepting a small, unused dispute is what he already does by hand. A renewal reminder would prevent it.", inSegment: "Yes" },
   { who: "Merchant A", what: "\"Unauthorized\" dispute, USD 99. He had 3-D Secure and login logs but was travelling.", outcome: "Missed the 3-day deadline. Closed as a loss.", lesson: "Lost to the clock, not to the evidence. This is a fraud-type reason, so the prototype would route it to Chargeback Shield; the lesson is about the deadline.", inSegment: "Reason is outside our scope" },
   { who: "Merchant C, six-person agency", what: "\"Services not rendered\", USD 2,400. Four months of approved work; proof in an ad account and a chat.", outcome: "Fought and won, about 25 days.", lesson: "Approval emails and access history won it.", inSegment: "Yes" },
-  { who: "Merchant C", what: "\"Services not rendered\", USD 450. A staff member left and two weeks of work were missed.", outcome: "Accepted, because the agency had failed. The client left.", lesson: "Fold is right when your own record admits the problem. Access logs alone are not enough.", inSegment: "Yes" },
+  { who: "Merchant C", what: "\"Services not rendered\", USD 450. A staff member left and two weeks of work were missed.", outcome: "Accepted, because the agency had failed. The client left.", lesson: "Accepting is right when your own record admits the problem. Access logs alone are not enough.", inSegment: "Yes" },
   { who: "Merchant B, skincare brand", what: "\"Merchandise not received\", USD 85. Delivered with a signature.", outcome: "Fought and won, about 30 days.", lesson: "Proof captured before the dispute wins.", inSegment: "No (physical goods)" },
   { who: "Merchant B", what: "Goods dispute, USD 120. \"Delivered to reception\" with no name or signature.", outcome: "Lost.", lesson: "Thin evidence loses. She now requires a signature and photographs every box.", inSegment: "No (physical goods)" },
 ];

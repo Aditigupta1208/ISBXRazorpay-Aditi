@@ -3,8 +3,8 @@
  * Examples of the line: "first payment from this customer; no earlier disputes", "two earlier annual payments (May 2024, May 2025) with no disputes".
  */
 export interface CustomerHistory {
-  payments: string; // "First payment from this customer", "2 earlier payments (May 2024, May 2025)" or "Earlier payments: not stated"
-  disputes: string; // "No earlier disputes" or "Earlier disputes: not stated"
+  payments: string; // "First payment from this customer", "2 earlier payments (May 2024, May 2025)" or "Earlier payments: not in the demo data"
+  disputes: string; // "No earlier disputes" or "Earlier disputes: not in the demo data"
   known: boolean; // false when the facts say nothing about history at all
 }
 
@@ -12,7 +12,7 @@ const WORDS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4, five:
 
 export function customerHistory(facts: string): CustomerHistory {
   const f = facts.toLowerCase();
-  let payments = "Earlier payments: not stated";
+  let payments = "Earlier payments: not in the demo data";
   let paymentsKnown = true;
   const earlier = f.match(/\b(one|two|three|four|five|\d+) earlier (?:annual |monthly )?payments?(?: from the same card)?(?: in (\d{4}))?(?: \(([^)]+)\))?/);
   if (/first payment from this customer|no earlier payments/.test(f)) payments = "First payment from this customer";
@@ -26,6 +26,6 @@ export function customerHistory(facts: string): CustomerHistory {
     else paymentsKnown = false;
   }
   const noDispute = /no earlier disputes?|with no disputes?|no earlier payments or disputes/.test(f);
-  const disputes = noDispute ? "No earlier disputes" : "Earlier disputes: not stated";
+  const disputes = noDispute ? "No earlier disputes" : "Earlier disputes: not in the demo data";
   return { payments, disputes, known: paymentsKnown || noDispute };
 }

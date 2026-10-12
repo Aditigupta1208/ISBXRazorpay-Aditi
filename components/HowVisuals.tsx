@@ -67,7 +67,7 @@ export function Hero() {
 
 const STAGES = [
   { icon: "box", title: "What goes in", text: "Razorpay's dispute record, your documents, and your own terms (read as your claim, never as proof)." },
-  { icon: "scale", title: "The Fold-or-Fight check", text: "The AI applies Visa's rule for that reason, names the deciding documents and works out the money." },
+  { icon: "scale", title: "The Fight-or-Accept check", text: "The AI applies Visa's rule for that reason, names the deciding documents and works out the money." },
   { icon: "shield", title: "Nine checks in code", text: "Plain code, not the AI, can downgrade a Fight to Escalate and stop any sentence with no source." },
   { icon: "hand", title: "What you get", text: "A call, a drafted response, and a practice run against the bank. You approve.", hi: true },
 ];

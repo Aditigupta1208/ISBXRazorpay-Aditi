@@ -36,7 +36,7 @@ with sync_playwright() as p:
     check('phone: no sideways scroll on results', ph.evaluate('document.documentElement.scrollWidth<=window.innerWidth'))
     # policy patch after folding
     pg.goto(B+'/disputes/C14'); pg.wait_for_timeout(500)
-    pg.get_by_role('button',name='Accept dispute (Fold)',exact=True).first.click(); pg.get_by_role('button',name='Yes, fold').click(); pg.wait_for_timeout(500)
+    pg.get_by_role('button',name='Accept dispute',exact=True).first.click(); pg.get_by_role('button',name='Yes, accept').click(); pg.wait_for_timeout(500)
     pp=pg.get_by_test_id('policy-patch'); check('policy patch shown after acting', pp.is_visible())
     pp.locator('summary').click(); pg.wait_for_timeout(200)
     check('patch has checkout wording and a record to keep', 'checkout wording' in pp.inner_text().lower() and 'keep this record' in pp.inner_text().lower())
@@ -44,7 +44,7 @@ with sync_playwright() as p:
     check('copied wording has blanks', '[' in pg.evaluate('navigator.clipboard.readText()'))
     # will never
     pg.goto(B+'/agent-studio'); pg.wait_for_timeout(500)
-    check('will-never lists refund and fold', 'Refund your customer, or accept (Fold) a dispute for you' in pg.inner_text('body'))
+    check('will-never lists refund and accept', 'Refund your customer, or accept a dispute for you' in pg.inner_text('body'))
     pg.goto(B+'/disputes'); pg.wait_for_timeout(400)
     check('alerts link on disputes page', pg.get_by_role('link',name='Choose Slack, WhatsApp or email and set your alert rules').is_visible())
 print('ALL OK' if ok else 'SOME FAILED')

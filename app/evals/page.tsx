@@ -84,6 +84,7 @@ export default function EvalsPage() {
       <PageTitle eyebrow="For reviewers" title="Evals: can you trust the advisor?">
         We test the advisor the way you would test a new hire: practice disputes where a person already knows the right answer, and count how often it agrees.
       </PageTitle>
+      <p className="-mt-2 mb-4 text-[13px] text-helper">Words: this page uses the model&apos;s own terms. Fold is shown to merchants as Accept, and Escalate as Get a document.</p>
 
       <Card id="why-evals" className="mb-4 scroll-mt-4 !p-0">
         <div className="px-4 py-4 md:px-5">

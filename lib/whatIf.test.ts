@@ -15,5 +15,5 @@ test("what-if text names the missing document and never promises a result", () =
   const w = whatItChanges("Proof the booking reached the supplier.");
   assert.match(w.supports, /proof the booking reached the supplier in your favour/);
   assert.match(w.supports, /would likely/);
-  assert.match(w.against, /would likely move to Fold/);
+  assert.match(w.against, /would likely move to Accept/);
 });

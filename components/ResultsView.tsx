@@ -100,13 +100,13 @@ export function ResultsView({ rates, tips, reasonNames }: { rates: Rates; tips: 
             </Card>
             <div className="mt-3 grid gap-3 md:grid-cols-2">
               <Card>
-                <p className="text-[13px] text-helper">When the advisor said <b className="font-semibold text-ink">Fold</b> · {m.foldCalls.n} cases</p>
+                <p className="text-[13px] text-helper">When the advisor said <b className="font-semibold text-ink">Accept</b> · {m.foldCalls.n} cases</p>
                 <p className="mt-1 text-[15px]">
-                  {m.foldCalls.n - m.foldCalls.wrong} were right to fold. <b className="font-semibold">{m.foldCalls.wrong} would have won</b> (you fought anyway).
+                  {m.foldCalls.n - m.foldCalls.wrong} were right to accept. <b className="font-semibold">{m.foldCalls.wrong} would have won</b> (you fought anyway).
                 </p>
               </Card>
               <Card>
-                <p className="text-[13px] text-helper">When the advisor said <b className="font-semibold text-ink">Escalate</b> · {m.escalated.n} cases</p>
+                <p className="text-[13px] text-helper">When the advisor said <b className="font-semibold text-ink">Get a document</b> · {m.escalated.n} cases</p>
                 <p className="mt-1 text-[15px]">
                   {m.escalated.fought} fought later, <b className="font-semibold">{m.escalated.won} won</b>.
                 </p>

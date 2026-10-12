@@ -24,7 +24,7 @@ test("they differ when the agent folds where the checklist fights (C14: terms pa
   const r = compareWithChecklist(inp("C14"), "fold")!;
   assert.equal(r.agree, false);
   assert.equal(r.checklist, "Fight");
-  assert.equal(r.agentWord, "Fold");
+  assert.equal(r.agentWord, "Accept");
 });
 
 test("Escalate is never the same as the checklist's answer", () => {

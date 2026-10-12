@@ -302,3 +302,11 @@ Facts from the conversation. "Why" lines in my own voice to be added at the end.
 ## 12 Oct: build log brought up to date
 - Tool: Claude. Replaced the stale "n=0 merchants" line and the "labels not yet confirmed" note, added the tools table, prompt history, the 8 to 12 Oct entries and four more examples of AI output I corrected or kept honest.
 
+
+## 12 Oct: product walkthrough notes from three merchants
+- Tool: Claude (Claude Code). Input: the builder's notes from walking three people through the live product (a solo SaaS founder, a D2C skincare seller and an agency owner), each asked about their last dispute and then what they would click first. n=3, about the screens, not about real outcomes.
+- What they liked: the "why not just accept" sentence (named by two of three), Accept being its own button so nothing happens by itself, rupees beside dollars, the deadline column, and the queue shape of the list. One used "Copy a summary for a colleague" without being asked.
+- What they flagged, and what I changed the same day: "Fold" is a poker word (all three) and became **Accept**; "Escalate" assumes a team (one of three) and became **Get a document**; the feature is now called the Fight-or-Accept check; Visa codes like 13.6 now come after plain words ("Refund not received"); the "(your record)" odds label was based on made-up sample history, so it now says "sample history" until the merchant has outcomes of their own; "Run live check" became "Check again with AI"; "Earlier disputes: not stated" became "not in the demo data".
+- Not built, and why: an owner column and notes for a team (out of scope; named as a next step), and a WhatsApp approval flow (the Alerts preview already shows it).
+- Biggest open finding: all three went straight to the draft and said they would judge the product by it. The saved C06 draft is one sentence from the first run (prompt v1); the live check writes a fuller one. Until the saved results are replaced with live output, the first draft a merchant sees is the weakest part. Decision pending.
+- Checks: 331 unit tests, 27 browser suites, lint and build pass.

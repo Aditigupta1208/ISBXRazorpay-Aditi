@@ -20,7 +20,7 @@ with sync_playwright() as p:
     check('under the hood has the rate note', exp[2] in pg.get_by_role('dialog').inner_text())
     pg.keyboard.press('Escape')
     pg.goto(B+'/disputes/C04'); pg.wait_for_timeout(300)
-    pg.get_by_role('button',name='Accept dispute (Fold)',exact=True).first.click(); pg.wait_for_timeout(200)
+    pg.get_by_role('button',name='Accept dispute',exact=True).first.click(); pg.wait_for_timeout(200)
     d=pg.get_by_role('dialog').inner_text(); check('fold dialog names '+exp[1], exp[1] in d and ('₹'+exp[0]) in d)
     b.close()
 print('ALL OK' if ok else 'SOME FAILED')

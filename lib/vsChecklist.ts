@@ -10,7 +10,7 @@ export interface Comparison {
   basis: string;
 }
 
-const word = (c: AgentCall) => (c === "fight" ? "Fight" : c === "fold" ? "Fold" : "Escalate");
+const word = (c: AgentCall) => (c === "fight" ? "Fight" : c === "fold" ? "Accept" : "Get a document");
 
 /** Null for reason codes outside the five non-fraud ones: there is no checklist to compare with. */
 export function compareWithChecklist(input: BaselineInput, agentCall: AgentCall): (Comparison & { agentWord: string }) | null {

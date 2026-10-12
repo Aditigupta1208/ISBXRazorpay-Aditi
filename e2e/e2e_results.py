@@ -35,7 +35,7 @@ with sync_playwright() as p:
     open_row(pg,'money'); check('C06 own record includes C04: fought 6, won 5 (83%)', 'fought 6, won 5 (83%)' in pg.get_by_test_id('own-record').inner_text())
     # fold C14
     pg.goto(B+'/disputes/C14'); pg.wait_for_timeout(400)
-    pg.get_by_role('button',name='Accept dispute (Fold)',exact=True).first.click(); pg.get_by_role('button',name='Yes, fold').click(); pg.wait_for_timeout(400)
+    pg.get_by_role('button',name='Accept dispute',exact=True).first.click(); pg.get_by_role('button',name='Yes, accept').click(); pg.wait_for_timeout(400)
     pg.goto(B+'/results'); pg.wait_for_timeout(500); t=pg.inner_text('body').replace('\n',' ')
     check('fold counted as lost: 13.7 now 4 disputes, 2 you acted on', '4 disputes · 2 fought, 1 won' in t and 'Plus 2 you acted on' in t)
     # reset removes

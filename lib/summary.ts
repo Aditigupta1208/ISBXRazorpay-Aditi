@@ -17,7 +17,7 @@ export interface SummaryInput {
   actionTaken?: string; // "Submitted (simulated)"
 }
 
-const CALL: Record<SummaryInput["call"], string> = { fight: "Fight", fold: "Fold (accept)", escalate: "Escalate (get one document first)", shield: "Fraud: Chargeback Shield handles it" };
+const CALL: Record<SummaryInput["call"], string> = { fight: "Fight", fold: "Accept", escalate: "Get one document first", shield: "Fraud: Chargeback Shield handles it" };
 
 export function buildSummary(i: SummaryInput): string {
   const lines = [

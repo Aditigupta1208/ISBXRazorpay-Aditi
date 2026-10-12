@@ -2,8 +2,8 @@ import type { Call } from "@/lib/types";
 
 const META: Record<Call, { label: string; icon: string; cls: string }> = {
   fight: { label: "Fight", icon: "✓", cls: "bg-fight text-white" },
-  fold: { label: "Fold", icon: "↩", cls: "bg-fold text-white" },
-  escalate: { label: "Escalate", icon: "↗", cls: "bg-escalate text-white" },
+  fold: { label: "Accept", icon: "↩", cls: "bg-fold text-white" },
+  escalate: { label: "Get a document", icon: "↗", cls: "bg-escalate text-white" },
   shield: { label: "Chargeback Shield", icon: "🛡", cls: "bg-shield text-white" },
 };
 

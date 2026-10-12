@@ -10,7 +10,7 @@ export const metadata = { title: "Where it sits | Dispute Advisor (concept proto
 
 const STEPS = [
   ["1", "Open Disputes, as you do today", "Transactions, then Disputes. Razorpay lists each dispute with its reason, amount and deadline."],
-  ["2", "See the advisor's call on each", "A new column says Fight, Fold or Escalate, worked out from your evidence and Visa's rule for that reason."],
+  ["2", "See the advisor's call on each", "A new column says Fight, Accept or Get a document, worked out from your evidence and Visa's rule for that reason."],
   ["3", "Review it, then you decide", "Open a dispute to see why, the money and a draft that cites your documents. Nothing is sent until you approve."],
 ];
 

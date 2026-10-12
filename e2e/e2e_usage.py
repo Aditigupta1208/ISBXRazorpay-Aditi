@@ -25,7 +25,7 @@ with sync_playwright() as p:
     pg.goto(B+'/disputes/C06'); pg.wait_for_timeout(600)
     check('dispute opened per case id', total().get('dispute_opened:C06')==1)
     pg.goto(B+'/disputes/C14'); pg.wait_for_timeout(400)
-    pg.get_by_role('button',name='Accept dispute (Fold)',exact=True).first.click(); pg.get_by_role('button',name='Yes, fold').click(); pg.wait_for_timeout(600)
+    pg.get_by_role('button',name='Accept dispute',exact=True).first.click(); pg.get_by_role('button',name='Yes, accept').click(); pg.wait_for_timeout(600)
     check('fold counted', total().get('fold')==1)
     pg.goto(B+'/disputes/C04'); pg.wait_for_timeout(400)
     review(pg)

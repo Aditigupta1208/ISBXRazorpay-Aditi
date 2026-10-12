@@ -70,8 +70,8 @@ const RULE_CHECK = [
 const ANSWERS = [
   ["What data or signal does it use?", "Razorpay's dispute record plus the documents you add.", "Your own terms are read too, but only as your claim, never as proof.", "docs"],
   ["Why AI and not a fixed rule?", "A checklist only sees which documents are attached. The AI reads what they say.", "It spots contradictions, weighs the money and knows when to stop. On our 15 scored test cases it matched the human answer on 15 and a checklist on 8 (saved v1 run; see Evals). The fuller argument is below.", "scale"],
-  ["What action does it take?", "It recommends Fight, Fold or Escalate and drafts a response that cites a document in every sentence.", "It maps documents to Razorpay's evidence slots and can test the draft against a practice bank reviewer. With 24 hours left it can nudge you with the response already drafted (set on Alerts). Nothing is sent from this prototype.", "flag"],
-  ["What does the merchant control?", "Everything that matters.", "Every submit and fold needs approval. You can edit the draft, override the call (your reason goes in the audit trail), or turn the agent off.", "hand"],
+  ["What action does it take?", "It recommends Fight, Accept or Get a document and drafts a response that cites a document in every sentence.", "It maps documents to Razorpay's evidence slots and can test the draft against a practice bank reviewer. With 24 hours left it can nudge you with the response already drafted (set on Alerts). Nothing is sent from this prototype.", "flag"],
+  ["What does the merchant control?", "Everything that matters.", "Every submit and accept needs approval. You can edit the draft, override the call (your reason goes in the audit trail), or turn the agent off.", "hand"],
   ["How does it learn?", "In a real product, outcomes would sharpen the advice. Here, your record adjusts the odds.", "The outcome is stored in your browser and shown back to you. No model is trained.", "loop"],
   ["How is accuracy and trust protected?", "Nine safety rules, a saved result when the live check fails, and an audit trail.", "Evidence is treated as data, never as instructions. The Evals page shows where it is still weak.", "shield"],
   ["What business result does it aim at?", "More money recovered per rupee disputed.", "More disputes answered before the deadline, less time per dispute, and fewer repeat disputes after prevention fixes. The full list of measures is below.", "chart"],
@@ -262,7 +262,7 @@ export default function HowItWorksPage() {
   return (
     <>
       <PageTitle eyebrow="For reviewers" title="How it works">
-        For businesses that sell services, subscriptions, travel or digital goods abroad. When a customer disputes a card payment and it is not fraud, Dispute Advisor tells you whether to fight, fold or escalate, and why.
+        For businesses that sell services, subscriptions, travel or digital goods abroad. When a customer disputes a card payment and it is not fraud, Dispute Advisor tells you whether to fight or accept, or what one document to get first, and why.
       </PageTitle>
       <HowTabs
         tabs={[

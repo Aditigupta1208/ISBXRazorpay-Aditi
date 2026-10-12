@@ -16,7 +16,7 @@ const REASONS: [string, string][] = [
 ];
 const STEPS: [string, string, string][] = [
   ["1", "You brief it", "Add your terms once, on this page."],
-  ["2", "It checks each dispute", "Reads the record and your documents, applies Visa's rules, recommends Fight, Fold or Escalate and drafts the response."],
+  ["2", "It checks each dispute", "Reads the record and your documents, applies Visa's rules, recommends Fight, Accept or Get a document, and drafts the response."],
   ["3", "You decide", "Edit, override, approve. Nothing is sent without your click."],
 ];
 const STEP_BADGE = "grid h-7 w-7 shrink-0 place-items-center rounded-full text-[13px] font-semibold";
@@ -126,14 +126,14 @@ export function AgentSetup() {
               <span className={`${STEP_BADGE} bg-[#EEF2F6] text-shield`} aria-hidden><svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg></span>
               <div>
                 <h2 className="text-[16px] font-semibold">What the agent does</h2>
-                <p className="text-[13px] text-helper">Its limits are fixed. Every submit and fold needs your approval, always.</p>
+                <p className="text-[13px] text-helper">Its limits are fixed. Every submit and accept needs your approval, always.</p>
               </div>
             </div>
             <div className="grid items-start gap-3 text-[14px] md:grid-cols-2">
               <div className="rounded-xl bg-fight-soft p-3.5">
                 <h3 className="mb-2 font-semibold text-fight">It will</h3>
                 <ul className="space-y-2 text-[#1F3A2E]">
-                  {["Read the dispute record and the documents you add.", "Draft a response and recommend Fight, Fold or Escalate. You can edit or override both."].map((t) => (
+                  {["Read the dispute record and the documents you add.", "Draft a response and recommend Fight, Accept or Get a document. You can edit or override both."].map((t) => (
                     <li key={t} className="flex gap-2"><span className="font-bold text-fight" aria-hidden>✓</span><span>{t}</span></li>
                   ))}
                 </ul>
@@ -143,7 +143,7 @@ export function AgentSetup() {
                 <ul className="space-y-2 text-[#4A1A15]">
                   {[
                     "Send anything to Razorpay, Visa or your customer without your click.",
-                    "Refund your customer, or accept (Fold) a dispute for you. A Fold is always your click.",
+                    "Refund your customer, or accept a dispute for you. Accepting is always your click.",
                     "Treat your own terms as proof.",
                     "Handle fraud disputes. Those go to Chargeback Shield.",
                   ].map((t) => (

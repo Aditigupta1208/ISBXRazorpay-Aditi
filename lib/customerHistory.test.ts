@@ -10,7 +10,7 @@ test("customer history reads only what the facts say", () => {
   assert.equal(c4.payments, "2 earlier payments (May 2024, May 2025)");
   assert.equal(c4.disputes, "No earlier disputes");
   assert.equal(customerHistory("Payment captured; 3-D Secure authenticated; no refunds.").known, false);
-  assert.equal(customerHistory("Payment captured; 3-D Secure authenticated; no refunds.").disputes, "Earlier disputes: not stated");
+  assert.equal(customerHistory("Payment captured; 3-D Secure authenticated; no refunds.").disputes, "Earlier disputes: not in the demo data");
   assert.equal(customerHistory("one earlier payment from the same card in 2025 with no dispute.").payments, "1 earlier payment (2025)");
   assert.equal(customerHistory("earlier annual payment on 31 Jul 2025 with no dispute.").payments, "1 earlier payment (31 Jul 2025)");
 });

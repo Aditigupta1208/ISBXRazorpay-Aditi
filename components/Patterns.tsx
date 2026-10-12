@@ -13,8 +13,8 @@ export function Patterns({ patterns, tips }: { patterns: Pattern[]; tips: Record
         {patterns.map((p) => {
           const parts = [
             p.calls.fight ? `${p.calls.fight} fight` : null,
-            p.calls.fold ? `${p.calls.fold} fold` : null,
-            p.calls.escalate ? `${p.calls.escalate} escalate` : null,
+            p.calls.fold ? `${p.calls.fold} accept` : null,
+            p.calls.escalate ? `${p.calls.escalate} get a document` : null,
           ].filter(Boolean);
           return (
             <li key={p.code} className="rounded-2xl border border-line bg-white p-4">

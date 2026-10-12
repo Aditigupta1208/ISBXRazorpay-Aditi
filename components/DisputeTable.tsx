@@ -1,4 +1,5 @@
 "use client";
+import { plainReason } from "@/lib/reasonWords";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,8 +27,8 @@ export interface Row {
 const FILTERS: { key: "all" | Call; label: string }[] = [
   { key: "all", label: "All" },
   { key: "fight", label: "Fight" },
-  { key: "fold", label: "Fold" },
-  { key: "escalate", label: "Escalate" },
+  { key: "fold", label: "Accept" },
+  { key: "escalate", label: "Get a document" },
   { key: "shield", label: "Chargeback Shield" },
 ];
 
@@ -58,7 +59,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
     const a: Record<string, string> = {};
     for (const r of rows) {
       const x = readAction(r.id);
-      if (x) a[r.id] = x.type === "submit" ? "Contested (simulated)" : "Folded (simulated)";
+      if (x) a[r.id] = x.type === "submit" ? "Contested (simulated)" : "Accepted (simulated)";
     }
     setActions(a);
   }, [rows]);
@@ -129,7 +130,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
                 </span>
               </div>
               <div className="mt-0.5 text-[12px] text-[#555]">
-                <span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-[12px] text-[#344]">{r.reasonCode}</span> {r.reason}
+                {plainReason(r.reasonCode, r.reason)} <span title={r.reason} className="ml-1 rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-[12px] text-[#344]">{r.reasonCode}</span>
               </div>
               <div className="mt-2 flex items-center justify-between gap-3">
                 {r.call ? <CallChip call={r.call} /> : <span className="text-helper">Not checked</span>}
@@ -176,7 +177,7 @@ export function DisputeTable({ rows, rateNote }: { rows: Row[]; rateNote: string
                   <span className="font-normal text-helper"> · {r.inr}</span>
                 </td>
                 <td className="px-[18px] py-4">
-                  <span className="rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-[12px] text-[#344]">{r.reasonCode}</span> {r.reason}
+                  {plainReason(r.reasonCode, r.reason)} <span title={r.reason} className="ml-1 rounded-md bg-[#F1F4FB] px-1.5 py-px font-mono text-[12px] text-[#344]">{r.reasonCode}</span>
                 </td>
                 <td className={`px-[18px] py-4 font-semibold ${r.warn ? "text-warn" : ""}`}>
                   {r.warn && <span aria-hidden>⚠ </span>}

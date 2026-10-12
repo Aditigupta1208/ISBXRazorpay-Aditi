@@ -26,7 +26,7 @@ export const TOUR_STEPS: TourStep[] = [
   {
     href: "/disputes",
     title: "2. Your disputes, most urgent first",
-    text: "Each row is a card dispute. The advisor has already made a call on each: Fight, Fold or Escalate. Fraud disputes go to Chargeback Shield instead.",
+    text: "Each row is a card dispute. The advisor has already made a call on each: Fight, Accept or Get a document. Fraud disputes go to Chargeback Shield instead.",
     target: "tbody tr, ul[aria-label=Disputes] li",
   },
   {
@@ -89,7 +89,7 @@ export const TOUR_STEPS: TourStep[] = [
   {
     href: "/disputes/C06",
     title: "12. Live or saved, you always know",
-    text: "Run live check (or Re-run check) makes a real call to a free AI model. If it is busy or slow, you get the saved result from an earlier test run, and this label says which one you are looking at.",
+    text: "Check again with AI (or Re-run check) makes a real call to a free AI model. If it is busy or slow, you get the saved result from an earlier test run, and this label says which one you are looking at.",
     target: '[data-tour="source-label"]',
     audience: "reviewers",
   },

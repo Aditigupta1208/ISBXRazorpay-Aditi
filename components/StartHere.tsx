@@ -17,7 +17,7 @@ export function MarkSeen() {
 
 const EXAMPLES = [
   { id: "C06", label: "a Fight call" },
-  { id: "C15", label: "an Escalate call" },
+  { id: "C15", label: "a Get-a-document call" },
   { id: "C10", label: "a clear win" },
 ];
 
@@ -49,9 +49,9 @@ export function StartHere() {
       <div className="flex items-start justify-between gap-3">
         <div>
           <h2 id="start-here" className="text-xl font-semibold text-[#0f1c3d] md:text-[22px]">Should you fight this dispute?</h2>
-          <p className="mt-1 text-[14px] leading-5 text-[#3a4663] md:hidden">Its Fold-or-Fight check tells you whether to fight, fold or escalate each card dispute. You approve everything.</p>
+          <p className="mt-1 text-[14px] leading-5 text-[#3a4663] md:hidden">Its Fight-or-Accept check tells you whether to fight or accept each card dispute, or what one document to get first. You approve everything.</p>
           <p className="mt-1 hidden max-w-[640px] text-[14px] leading-6 text-[#3a4663] md:block">
-            When a customer disputes a card payment, Dispute Advisor&apos;s <b className="font-semibold text-[#0f1c3d]">Fold-or-Fight check</b> reads your evidence and Visa&apos;s rule and tells you whether to fight, fold or escalate, with the money worked out and a response that cites every document. You approve everything.
+            When a customer disputes a card payment, Dispute Advisor&apos;s <b className="font-semibold text-[#0f1c3d]">Fight-or-Accept check</b> reads your evidence and Visa&apos;s rule and tells you whether to fight or accept, or what one document to get first, with the money worked out and a response that cites every document. You approve everything.
           </p>
         </div>
         <button type="button" onClick={() => set(true)} className="-mt-2 -mr-2 min-h-10 shrink-0 px-2 text-[12px] font-semibold text-[#3a4663] underline">Hide</button>

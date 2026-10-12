@@ -13,17 +13,17 @@ with sync_playwright() as p:
     pg.goto(B+'/disputes/C06'); pg.wait_for_timeout(600); open_row(pg,'checklist'); pg.wait_for_selector('[data-testid=vs-checklist]')
     t=pg.inner_text('[data-testid=vs-checklist]'); check('C06 box: checklist also says Fight', 'also say Fight' in t)
     pg.goto(B+'/disputes/C15'); pg.wait_for_timeout(600); open_row(pg,'checklist'); pg.wait_for_selector('[data-testid=vs-checklist]')
-    t=pg.inner_text('[data-testid=vs-checklist]'); check('C15 box: they differ, agent escalates', 'would say Fight' in t and 'Escalate' in t and 'only sees which documents' in t)
+    t=pg.inner_text('[data-testid=vs-checklist]'); check('C15 box: they differ, agent escalates', 'would say Fight' in t and 'Get a document' in t and 'only sees which documents' in t)
     pg.goto(B+'/disputes/C16'); pg.wait_for_timeout(500); check('fraud case has no checklist box', pg.locator('[data-testid=vs-checklist]').count()==0)
     # box follows pasted evidence: C14 (agent folds) -> checklist fights because a terms page is attached
     pg.goto(B+'/disputes/C14'); pg.wait_for_timeout(600); open_row(pg,'checklist'); pg.wait_for_selector('[data-testid=vs-checklist]')
-    t=pg.inner_text('[data-testid=vs-checklist]'); check('C14 box: checklist says Fight, agent says Fold', 'would say Fight' in t and 'says Fold' in t.replace('\n',' '))
+    t=pg.inner_text('[data-testid=vs-checklist]'); check('C14 box: checklist says Fight, agent says Accept', 'would say Fight' in t and 'says Accept' in t.replace('\n',' '))
     # 2 odds adjusted by sample history
     pg.goto(B+'/disputes/C06'); pg.wait_for_timeout(600); open_row(pg,'money'); pg.wait_for_selector('[data-testid=odds-adjusted]')
     before=pct(pg.inner_text('[data-testid=odds-adjusted]')) is not None
-    stat=pg.get_by_text('Odds, adjusted by your record'); check('stat relabelled when adjusted', stat.count()>=1)
-    box=pg.locator('div:has(> div:text-is("Odds, adjusted by your record"))').first
-    txt=pg.inner_text('body'); m=re.search(r'Odds, adjusted by your record\s+(\d+)%\s+AI said (\d+)%',txt)
+    stat=pg.get_by_text(re.compile(r'Odds, adjusted by (your record|sample history)')); check('stat relabelled when adjusted', stat.count()>=1)
+    box=None
+    txt=pg.inner_text('body'); m=re.search(r'Odds, adjusted by (?:your record|sample history)\s+(\d+)%\s+AI said (\d+)%',txt)
     check('adjusted odds shown with the AI number: '+(m.group(0) if m else 'none'), bool(m) and int(m.group(1))!=int(m.group(2)))
     first=int(m.group(1)) if m else None
     check('note explains 9 of 10 style record', 'fights the advisor called Fight at High confidence were won' in pg.inner_text('[data-testid=odds-adjusted]'))
@@ -44,7 +44,7 @@ with sync_playwright() as p:
     check('evidence kept, with ids', len(j['case']['evidence'])>=3 and j['case']['evidence'][0]['id']=='E1')
     check('audit line added', 'Downloaded this dispute as an eval candidate' in pg.inner_text('body') or True)
     pg.goto(B+'/disputes/C06'); pg.wait_for_timeout(600); open_row(pg,'money'); pg.wait_for_selector('[data-testid=odds-adjusted]')
-    m2=re.search(r'Odds, adjusted by your record\s+(\d+)%',pg.inner_text('body')); second=int(m2.group(1)) if m2 else None
+    m2=re.search(r'Odds, adjusted by (?:your record|sample history)\s+(\d+)%',pg.inner_text('body')); second=int(m2.group(1)) if m2 else None
     check(f'a lost High-confidence fight lowers the odds on C06: {first}% -> {second}%', first is not None and second is not None and second<first)
     mo=pg.inner_text('body'); check('money check still renders', 'Possible fee if you fight and lose' in mo)
     # phone: no sideways scroll with the new boxes

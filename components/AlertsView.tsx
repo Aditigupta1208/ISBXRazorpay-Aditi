@@ -159,12 +159,12 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
             <RuleRow
               title={
                 <>
-                  Suggest Fold when the chance to win is under
+                  Suggest Accept when the chance to win is under
                   <span className="block text-[12px] text-helper">A suggestion only. It never accepts a dispute for you.</span>
                 </>
               }
             >
-              <select aria-label="Fold suggestion" value={rules.foldBelowPct ?? "off"} onChange={(e) => set("foldBelowPct", e.target.value === "off" ? null : Number(e.target.value))} className={SELECT}>
+              <select aria-label="Accept suggestion" value={rules.foldBelowPct ?? "off"} onChange={(e) => set("foldBelowPct", e.target.value === "off" ? null : Number(e.target.value))} className={SELECT}>
                 <option value="20">20%</option>
                 <option value="30">30%</option>
                 <option value="40">40%</option>
