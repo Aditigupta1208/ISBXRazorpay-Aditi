@@ -68,7 +68,8 @@ export async function POST(req: Request) {
 
   const rejected = rebuttalRejection(added, b.draft.slice(0, MAX_REBUTTAL_DRAFT_CHARS + 1), policy);
   if (rejected) return NextResponse.json(rejected, { status: 400 });
-  const limit = allow(`rebuttal:${ip}`);
+  // A demo request never calls the model, so it costs nothing and does not use up the hourly allowance.
+  const limit = b.demo === true ? { ok: true as const, retryAfterSec: 0 } : allow(`rebuttal:${ip}`);
   if (!limit.ok) {
     return NextResponse.json(
       { status: "unavailable", reason: "rate_limited", message: "That's a lot of checks. Try again in a while." },
