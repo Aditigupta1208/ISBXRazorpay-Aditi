@@ -315,3 +315,12 @@ test("the real C06: after the saved rewrite is applied, the retest shows the sav
   const other = await analyzeRebuttal(real, [], rewritten + " Extra.", d);
   assert.equal(other.status === "saved", false);
 });
+
+test("every demo-preview case has a saved before and after example", async () => {
+  const { BANK_DEMO_CASES } = await import("./rebuttalDemo");
+  const { getSavedRebuttal, getSavedRebuttalAfter } = await import("./rebuttalData");
+  for (const id of BANK_DEMO_CASES) {
+    assert.ok(getSavedRebuttal(id), `${id} saved before`);
+    assert.ok(getSavedRebuttalAfter(id), `${id} saved after`);
+  }
+});

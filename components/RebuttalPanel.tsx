@@ -1,4 +1,5 @@
 "use client";
+import { BANK_DEMO_CASES } from "@/lib/rebuttalDemo";
 import { useEffect, useRef, useState } from "react";
 import type { RebuttalResult } from "@/lib/rebuttal";
 import { VERDICT_LABEL, applyFix, sameDraft, type RebuttalView, type Verdict } from "@/lib/rebuttalCore";
@@ -128,6 +129,17 @@ export function RebuttalPanel({
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
           {!hasDraft && <span className="text-[13px] text-helper">Write a response first.</span>}
+          {BANK_DEMO_CASES.includes(caseId) && (
+            <button
+              className={`${btn} border border-[#C9D7F5] bg-white text-[#2B5BC8]`}
+              onClick={() => run(true)}
+              disabled={running || !hasDraft}
+              title="Always shows the saved example for this dispute. Never calls the AI model."
+              data-testid="rebuttal-demo"
+            >
+              Demo preview
+            </button>
+          )}
           <button className={`${btn} bg-brand text-white`} onClick={() => run()} disabled={running || !hasDraft} data-testid="rebuttal-run">
             {running ? "Testing…" : result ? "Test again" : "Test this response"}
           </button>

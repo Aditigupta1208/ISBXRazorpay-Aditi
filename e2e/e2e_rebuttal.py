@@ -76,6 +76,13 @@ with sync_playwright() as p:
         # persists
         pg.reload(); pg.wait_for_timeout(500); review(pg)
         check('result survives a reload (marked stale)', pg.get_by_test_id('rebuttal-result').is_visible() and pg.get_by_test_id('rebuttal-stale').is_visible())
+        # Demo preview: always the saved example, never the model
+        set_draft(pg, draft0); pg.wait_for_timeout(250)
+        pg.get_by_test_id('rebuttal-demo').click(); pg.wait_for_timeout(700)
+        check('demo preview shows the weak spot', pg.get_by_test_id('rebuttal-verdict').inner_text().strip() == 'Has a weak spot')
+        pg.get_by_test_id('rebuttal-apply').click(); pg.wait_for_timeout(250)
+        pg.get_by_test_id('rebuttal-demo').click(); pg.wait_for_timeout(700)
+        check('demo preview after the rewrite shows Holds up', pg.get_by_test_id('rebuttal-verdict').inner_text().strip() == 'Holds up')
         # clearing the draft disables the button
         set_draft(pg, '   ')
         check('empty draft disables the test', pg.get_by_test_id('rebuttal-run').is_disabled() and pg.get_by_text('Write a response first.').is_visible())
