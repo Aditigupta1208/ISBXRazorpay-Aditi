@@ -1,0 +1,82 @@
+{
+  "_note": "Unedited live outputs from qwen/qwen3.8-27b with prompt v2.3, run on 12 Oct 2026, pasted from the app's Under the hood panel. First run of each; none chosen from several.",
+  "model": "qwen/qwen3.8-27b",
+  "promptVersion": "v2.3",
+  "date": "2026-10-12",
+  "cases": {
+    "C06": {
+      "decision": "fight",
+      "confidence": "high",
+      "deciding_evidence": [
+        "E4",
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "missing_evidence": null,
+      "reasoning_summary": "The customer says he cancelled, but the billing audit log shows no cancellation action was ever recorded, and his only contact was a statement that he was 'thinking of cancelling.' Under Visa 13.2, the merchant wins because no cancellation preceded the 3 Aug 2026 charge.",
+      "rule_applied": "Under Visa 13.2, the merchant wins if the customer did not cancel before the charge.",
+      "contradictions": [],
+      "economics_note": "Full USD 480 is defensible; no partial-delivery issue. Contesting is worth it given the clear audit trail.",
+      "win_probability_estimate": 0.85,
+      "defensible_amount": null,
+      "evidence_flags": [],
+      "evidence_slots": [
+        {
+          "evidence_id": "E1",
+          "slot": "refund_cancellation_policy"
+        },
+        {
+          "evidence_id": "E2",
+          "slot": "customer_communication"
+        },
+        {
+          "evidence_id": "E3",
+          "slot": "access_activity_log"
+        },
+        {
+          "evidence_id": "E4",
+          "slot": "cancellation_proof"
+        }
+      ],
+      "draft_response": "Snapcast Studio sold Liam Byrne an annual video-editing subscription, renewed on 3 Aug 2026 for USD 480 [Razorpay]. The customer disputes this as a cancelled recurring transaction, claiming 'I cancelled this.' [Razorpay] Our billing audit log records no cancellation action before the renewal [E4]. The customer's only contact on 29 Jul 2026 was a statement that he was 'thinking of cancelling,' to which our agent replied he could cancel from Settings > Billing [E2]. His last login was 28 Jul 2026, and no cancellation was ever recorded [E3]. The terms, accepted 3 Aug 2025, state the subscription renews annually and must be cancelled in Settings > Billing before the renewal date [E1]. Under Visa 13.2, a merchant prevails where the customer did not cancel before the charge, and no cancellation preceded the 3 Aug 2026 renewal [E4]. Attached: terms acceptance record, support chat, login log, and billing audit log [E1][E2][E3][E4].",
+      "prevention_tip": "When a customer says they are 'thinking of cancelling,' send a confirmation email with a one-click cancel link and a reminder of the next renewal date, so intent is captured in writing."
+    },
+    "C15": {
+      "decision": "escalate",
+      "confidence": "medium",
+      "deciding_evidence": [
+        "E1",
+        "E2",
+        "E3"
+      ],
+      "missing_evidence": "Confirmation that J. Whitfield (j.whitfield@gmail.com) was authorised by Acme Holdings Ltd to cancel the booking made by priya.s@acmeholdings.co.uk — e.g. an email from the booker's address (priya.s@acmeholdings.co.uk) confirming the cancellation, or a written authorisation from Acme Holdings Ltd. This determines whether the 1 Mar cancellation is valid and whether a 50% refund (USD 1,600) is due.",
+      "reasoning_summary": "The cancellation policy was properly disclosed and accepted at checkout, but the cancellation email came from a different person than the booker, and the merchant itself said it only accepts cancellations from the booker. We need to confirm who had authority to cancel before deciding whether a refund is due.",
+      "rule_applied": "Under 13.7 the merchant wins only if the cancellation policy was properly disclosed and agreed at the time of sale and the customer cancelled outside it; here the policy was agreed, but it is unclear whether the person who cancelled had authority, so the call cannot be made yet.",
+      "contradictions": [
+        "The cancellation email (E2) came from j.whitfield@gmail.com, not from the booker's address priya.s@acmeholdings.co.uk that accepted the terms (E1).",
+        "The merchant's own reply (E3) states it only accepts cancellations from the booker, so the 1 Mar cancellation was not validly processed."
+      ],
+      "economics_note": "If the cancellation is confirmed as valid, the policy (E1) allows a 50% refund for a cancellation 10 days before departure, so only USD 1,600 is defensible and USD 1,600 is owed. If the cancellation is not confirmed as valid, the full USD 3,200 is defensible. A lost dispute is clawed back at the dispute-date FX rate and arbitration adds network fees, so confirm authority before contesting.",
+      "win_probability_estimate": 0.5,
+      "defensible_amount": 1600,
+      "evidence_flags": [],
+      "evidence_slots": [
+        {
+          "evidence_id": "E1",
+          "slot": "refund_cancellation_policy"
+        },
+        {
+          "evidence_id": "E2",
+          "slot": "customer_communication"
+        },
+        {
+          "evidence_id": "E3",
+          "slot": "customer_communication"
+        }
+      ],
+      "draft_response": null,
+      "prevention_tip": "Require cancellations to come from the same email address that booked, or add a step where the booker confirms any cancellation request from a different address before it is processed."
+    }
+  }
+}

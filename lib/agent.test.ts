@@ -305,3 +305,16 @@ test("requestMessage does not cut the ask at an initial like J.", async () => {
   assert.match(m, /J\. Whitfield/);
   assert.doesNotMatch(m, /determines/);
 });
+
+test("stored v2.3 runs for C06 and C15 load as saved, valid and consistent", async () => {
+  const { getCheckView } = await import("./data");
+  const a = getCheckView("C06")!, b = getCheckView("C15")!;
+  assert.equal(a.source.live, false);
+  assert.match(a.source.label, /^Saved result: qwen\/qwen3\.8-27b, prompt v2\.3/);
+  assert.equal(a.call, "fight");
+  assert.doesNotMatch(a.draft, /instructed/);
+  assert.equal(b.call, "escalate");
+  assert.equal(b.defensibleAmount, 160000);
+  assert.match(b.requestText ?? "", /J\. Whitfield/);
+  assert.doesNotMatch(b.requestText ?? "", /that J\. Thank/);
+});

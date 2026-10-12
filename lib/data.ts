@@ -1,6 +1,9 @@
 import casesFile from "@/data/cases.json";
 import labelsFile from "@/data/labels.json";
 import chatgpt from "@/data/prerun/kill-test-v1-chatgpt.json";
+import liveSaved from "@/data/prerun/live-v2.3-qwen.json";
+import { toCheckView } from "./agent";
+import { decisionSchema } from "./schema";
 import supplements from "@/data/prerun/demo-supplements.json";
 import type { CaseData, Call, CheckView, SavedResult } from "./types";
 
@@ -113,11 +116,24 @@ export function savedOdds(call: string, confidence: string): number {
   return SUPP.odds_from_confidence[confidence] ?? 0.5;
 }
 
+/** A stored live run (prompt v2.3) beats the older kill-test result for the same case. Shown as saved, never as live. */
+function liveSavedView(caseId: string): CheckView | undefined {
+  const c = getCase(caseId);
+  const entry = (liveSaved.cases as Record<string, unknown>)[caseId];
+  if (!c || !entry) return undefined;
+  const parsed = decisionSchema.safeParse(entry);
+  if (!parsed.success) return undefined;
+  const v = toCheckView(parsed.data, c, { model: liveSaved.model, promptVersion: liveSaved.promptVersion } as never);
+  return { ...v, source: { label: `Saved result: ${liveSaved.model}, prompt ${liveSaved.promptVersion}, run 12 Oct`, model: liveSaved.model, promptVersion: liveSaved.promptVersion, date: liveSaved.date, live: false } };
+}
+
 export function getCheckView(caseId: string): CheckView | undefined {
   const c = getCase(caseId);
   const s = saved.get(caseId);
   const raw = rawById.get(caseId);
   if (!c || !s || !raw) return undefined;
+  const live = liveSavedView(caseId);
+  if (live) return live;
   const sup = SUPP.cases[caseId] ?? {};
   const confidence = s.confidence ?? "Medium";
   return {
