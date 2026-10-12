@@ -449,6 +449,24 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
     decidingEvidence: view.decidingEvidence,
   });
   const notFold = whyNotFold({ call: finalCall, reasonCode: d.reason_code, keyCovered: keyDocs?.keyCovered ?? 0, keyTotal: keyDocs?.keyTotal ?? 0, contradictions: view.contradictions.length });
+  const summaryText = () =>
+    buildSummary({
+                  disputeId: d.id,
+                  merchant: c.merchant,
+                  amountOriginal: formatOriginal(d.amount, d.currency),
+                  amountInr: formatInrFull(money.atStakeInr),
+                  reasonCode: d.reason_code,
+                  reasonDescription: d.reason_description,
+                  customerClaim: c.customer_claim,
+                  timeLeft: t.text,
+                  call: finalCall,
+                  confidence: view.confidence,
+                  reasonLine: view.reason,
+                  gap,
+                  history: history.known ? `${history.payments}. ${history.disputes}.` : null,
+                  documents: allEvidence.map((e) => ({ id: e.id, name: docName(e.id) })),
+                  actionTaken: acted ? (acted.type === "submit" ? "Submitted (simulated)" : "Accepted (simulated)") : undefined,
+                });
   const history = customerHistory(c.razorpay_facts);
 
   return (
@@ -462,30 +480,19 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
           type="button"
           data-testid="copy-summary"
           onClick={() =>
-            copy(
-              "summary",
-              buildSummary({
-                disputeId: d.id,
-                merchant: c.merchant,
-                amountOriginal: formatOriginal(d.amount, d.currency),
-                amountInr: formatInrFull(money.atStakeInr),
-                reasonCode: d.reason_code,
-                reasonDescription: d.reason_description,
-                customerClaim: c.customer_claim,
-                timeLeft: t.text,
-                call: finalCall,
-                confidence: view.confidence,
-                reasonLine: view.reason,
-                gap,
-                history: history.known ? `${history.payments}. ${history.disputes}.` : null,
-                documents: allEvidence.map((e) => ({ id: e.id, name: docName(e.id) })),
-                actionTaken: acted ? (acted.type === "submit" ? "Submitted (simulated)" : "Accepted (simulated)") : undefined,
-              }),
-            )
+            copy("summary", summaryText())
           }
           className="mb-2.5 ml-auto mr-3 min-h-10 text-[13px] font-semibold text-brand underline print:hidden md:min-h-0"
         >
           {copied === "summary" ? "Copied" : "Copy a summary for a colleague"}
+        </button>
+        <button
+          type="button"
+          data-testid="share-whatsapp"
+          onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(summaryText())}`, "_blank", "noopener,noreferrer")}
+          className="mb-2.5 mr-3 min-h-10 text-[13px] font-semibold text-brand underline print:hidden md:min-h-0"
+        >
+          Send on WhatsApp
         </button>
         <button type="button" onClick={() => window.print()} className="mb-2.5 mr-3 min-h-10 text-[13px] font-semibold text-helper underline print:hidden md:min-h-0">
           Print or save as PDF
@@ -1074,8 +1081,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
             </li>
           </ol>
           {acted.type === "submit" && (
-            <div className="mt-3 flex flex-wrap items-center gap-2.5">
-              <span className="text-[13px] text-helper">Demo: set the outcome</span>
+            <div className="mt-3 flex flex-wrap items-center gap-2.5 rounded-xl border border-dashed border-line bg-[#FAFAFA] px-3 py-2.5" data-testid="demo-outcome">
+              <span className="basis-full text-[13px] text-helper"><b className="font-semibold text-ink">Demo only.</b> In the real product the bank decides and you are told. Pick an outcome to see how Results learns from it.</span>
               {(["won", "lost"] as const).map((o) => (
                 <button
                   key={o}

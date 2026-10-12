@@ -13,7 +13,7 @@ export interface AlertRules {
   foldBelowPct: number | null; // suggest Fold when the chance to win is under this; null turns it off
 }
 
-export const DEFAULT_RULES: AlertRules = { channel: "whatsapp", minInr: 50000, alwaysReasons: [], urgentHours: 12, digest: true, foldBelowPct: 20 };
+export const DEFAULT_RULES: AlertRules = { channel: "whatsapp", minInr: 10000, alwaysReasons: [], urgentHours: 24, digest: true, foldBelowPct: 20 };
 
 export const MAX_MIN_INR = 100_000_000; // ₹10 crore
 
@@ -22,7 +22,7 @@ export function sanitizeRules(raw: unknown): AlertRules {
   const o = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
   const d = DEFAULT_RULES;
   const num = (v: unknown, dflt: number, max: number) => (typeof v === "number" && Number.isFinite(v) && v >= 0 ? Math.min(v, max) : dflt);
-  const hours = [12, 24, 48];
+  const hours = [12, 24, 36, 48];
   const fold = [20, 30, 40];
   return {
     channel: o.channel === "slack" || o.channel === "whatsapp" || o.channel === "email" ? o.channel : d.channel,

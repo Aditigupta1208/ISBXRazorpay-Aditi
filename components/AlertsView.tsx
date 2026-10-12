@@ -88,7 +88,7 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
         <p className="mt-3 inline-flex max-w-full items-start gap-2 rounded-xl bg-brand-soft px-3 py-2 text-[13px] leading-5 text-[#1F3F86]" data-testid="alerts-disclaimer">
           <span aria-hidden className="mt-0.5 font-bold">i</span>
           <span>
-            <b>Preview only.</b> Nothing is sent to Slack, WhatsApp or email, and no channel is connected. This shows what you would get under your rules. Folding is always your click.
+            <b>Preview only.</b> Nothing is sent to Slack, WhatsApp or email, and no channel is connected. This shows what you would get under your rules. Accepting is always your click.
           </span>
         </p>
       </div>
@@ -110,10 +110,14 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
                 );
               })}
             </div>
+            {rules.channel !== "email" && (
+              <p className="mt-3 text-[12px] text-helper" data-testid="connect-note">Preview only: nothing is connected. In a real version you would connect {CHANNEL_LABEL[rules.channel]} on this page, once, without leaving it.</p>
+            )}
           </section>
 
           <section aria-label="Your rules" className="rounded-2xl border border-line bg-white p-4 md:p-5">
-            <h2 className="mb-3 text-[16px] font-semibold">Your rules</h2>
+            <h2 className="text-[16px] font-semibold">Your rules</h2>
+            <p className="mb-3 mt-1 text-[13px] text-helper" data-testid="rules-combine">You get an alert if any one of these is true. Everything else waits for the morning digest.</p>
             <RuleRow title={<>Alert me when the amount is at least</>}>
               <div className="flex items-center rounded-[10px] border border-line bg-white focus-within:border-brand-focus">
                 <span className="pl-3 text-[15px] text-helper" aria-hidden>₹</span>
@@ -130,6 +134,7 @@ export function AlertsView({ rows }: { rows: AlertRow[] }) {
               <select aria-label="Urgent hours" value={rules.urgentHours ?? "off"} onChange={(e) => set("urgentHours", e.target.value === "off" ? null : Number(e.target.value))} className={SELECT}>
                 <option value="12">12 hours or less</option>
                 <option value="24">24 hours or less</option>
+                <option value="36">36 hours or less</option>
                 <option value="48">48 hours or less</option>
                 <option value="off">Never</option>
               </select>
