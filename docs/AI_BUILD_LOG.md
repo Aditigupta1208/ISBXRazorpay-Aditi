@@ -8,6 +8,7 @@ The submission form asks for a publicly viewable markdown file covering the five
 
 - **Tools:** Claude (claude.ai chats and Claude Code) for research, planning, review and building; ChatGPT for the clean kill-test run; free Groq models (Qwen, gpt-oss-120b) for the live check inside the app.
 - **What AI did:** read the brief, mapped what Razorpay ships, wrote the first PRD and the code (about 11,000 lines, 334 unit tests, 29 browser suites), helped draft the one-page note and checked it against the brief, ran audits section by section, and drafted cases and documents.
+- **How AI sped up the work:** working alone at about two hours a day, I went from the brief to a deployed prototype (about 11,000 lines of code, over 330 unit tests, 29 browser suites), a labelled evaluation set and the one-page note in under three weeks. AI did the drafting, coding and checking; I made the decisions on scope, labels and what to claim.
 - **What I decided:** the track and the segment; which ideas to kill; the final labels on the kill test, the held-out set and C21 to C30; Fold and Escalate as first-class calls; no database or accounts; what to cut; what to say and not say about accuracy.
 - **Where AI was wrong and I caught it:** a rule-only prompt that would have refunded USD 1,600 too much on C15; a kill test run in a chat that already knew the test design; an overstated "gap" in held-settlement; "UPI is practically free"; POST instead of PATCH on the contest call; a metric that counted a correct answer as obeying a hidden instruction.
 - **Honest limits:** no paid Claude key, so live checks run on free Groq models; all disputes are synthetic; the eval release gate fails on two measures and nothing was tuned; three merchants, interviewed and then walked through the product (n=3, about the screens and not about real outcomes), and no real Razorpay data.
@@ -22,6 +23,14 @@ The submission form asks for a publicly viewable markdown file covering the five
 | Groq (free plan) | qwen/qwen3.8-27b, then openai/gpt-oss-120b | The live check inside the prototype; saved results are the fallback |
 | Gemini (free tier) | gemini-3.8-flash and fallbacks | An experiment on branch `wip/gemini`; slow and often overloaded, so Groq became the live provider |
 | Claude API | Set by `ANTHROPIC_MODEL` | Built and tested only against a stand-in server; never run on a real key |
+
+**External services, APIs and data used by the prototype (not AI tools):**
+
+- **Groq** (free plan): the live AI check, model `qwen/qwen3.8-27b`. Saved results are the fallback when no key is set or a call fails.
+- **frankfurter.dev** (ECB reference rates, no key): the live USD to INR rate, cached 12 hours, with a demo-rate fallback. The page labels it live, pinned or demo.
+- **Vercel** (free tier): hosting for the live prototype.
+- **Supabase** (free plan, optional): anonymous usage counts only (day, event name, count). No IPs, cookies or personal data.
+- **Data:** all disputes, merchants, customers, documents and the 24 past disputes on the Results page are made up by me and the AI, patterned on public cases and Visa's public guidelines. Nothing comes from Razorpay's systems.
 
 ## 2. Key prompts, workflows, agent setup
 
