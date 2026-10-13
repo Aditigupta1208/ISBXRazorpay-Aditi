@@ -1,6 +1,6 @@
 {
   "_note": "Saved examples for what the bank test says AFTER the merchant uses the suggested rewrite. Written by the builder, not produced by a model run. Each fits one rewritten draft and is shown only when the draft on screen is exactly that rewrite. They go through the same code checks (RB1 to RB4) as a live answer.",
-  "label": "Saved example for the rewritten draft. Not a live check.",
+  "label": "Saved example, written by the builder for the rewritten draft. Not a live check.",
   "cases": {
     "C06": {
       "verdict": "holds_up",
