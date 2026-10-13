@@ -34,7 +34,7 @@ The submission form asks for a publicly viewable markdown file covering the five
 
 ## 2. Key prompts, workflows, agent setup
 
-Add one short entry per meaningful session (see the running session log at the bottom for raw detail).
+The overview below is short. The dated running session log at the bottom has the raw detail, one entry per session.
 
 - **Workflow overview:** research the brief and what Razorpay already ships -> filter ideas (does Razorpay see the signal, can it act, does it need judgment) -> kill test on 16 public-source cases against a fixed-checklist baseline -> PM docs (discovery, features, PRD, screens, data and stack, design) -> visual mock from Razorpay screenshots -> build in milestones (saved results first, live AI call second, evals third) -> product note, video, build log.
 - **Key prompt 1 (kill test, product prompt):** `prompts/dispute-agent-v1.md` in the repo: applies Visa's rule for the reason code, returns Fight / Accept / Escalate / route to fraud cover, names the deciding evidence, and weighs the economics. Run in a fresh ChatGPT chat on 16 cases.
@@ -53,12 +53,14 @@ Add one short entry per meaningful session (see the running session log at the b
 
 ## 3. One AI output I rejected, corrected or significantly improved
 
-Candidates, strongest first. At the end I pick one for the submission and keep the rest as supporting evidence.
+**The example I am submitting is A, directly below.** B to M are further examples, kept as supporting evidence.
 
 **A. A prompt that looked right but would have cost the merchant money (kill test, 4 Oct).**
 - A second-reviewer prompt that only applied Visa's rules said "Accept" on case C15, a USD 3,200 group-tour dispute. Taken at face value, that refunds USD 1,600 more than the merchant's own accepted policy required.
 - The product prompt, which also weighs the economics, said "Escalate: confirm the canceller's authority; a 50% refund is likely due." I labelled C15 Escalate.
 - **What I did:** added economics and an Escalate call to the product prompt (v2), and made C15 the example on the evals page. **Why it mattered:** a rule-only agent can be right on the rule and wrong for the merchant.
+
+**Further examples**
 
 **B. A test I could not trust, so I re-ran it (4 Oct).**
 - The first kill-test run was done in a Claude chat inside my project. It had seen the test design, so it was not a fair test.
@@ -95,7 +97,7 @@ Candidates, strongest first. At the end I pick one for the submission and keep t
 
 ## 4. What AI did vs what I decided or built myself
 
-Facts from the conversation. "Why" lines in my own voice to be added at the end.
+AI proposed, drafted and built. I decided the problem, the scope, the labels, the autonomy limits and what to claim.
 
 | AI did | I decided / built |
 |---|---|
