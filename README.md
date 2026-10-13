@@ -16,13 +16,13 @@ An Agent Studio-style agent for Indian businesses selling services, subscription
 - Prompts: [`prompts/`](prompts/) (current: v2.3; v2.1 is the baseline)
 - Demo data: [`data/`](data/)
 
-Status: M1 to M5 built (M3 and M4 live parts wait for an API key). Submission 13 Oct 2026.
+Status: submitted for the challenge on 13 Oct 2026. Product locked. The live check runs on a free Groq model (the Anthropic and Gemini paths are built but not tested against the real APIs); with no key, or if a call fails, the app shows saved results and labels them.
 
 ## Run it locally
 
 ```bash
 npm install
-cp .env.example .env.local   # optional: add ANTHROPIC_API_KEY or GEMINI_API_KEY to turn on the live check
+cp .env.example .env.local   # optional: add GROQ_API_KEY, ANTHROPIC_API_KEY or GEMINI_API_KEY to turn on the live check
 npm run dev                  # http://localhost:3000
 npm test                     # unit tests
 npm run build                # production build
@@ -39,5 +39,5 @@ Next.js (App Router) and TypeScript. The agent prompt and its tool schema live i
 
 - `data/cases.json`, `data/labels.json`: 30 cases and the answer key (C17 to C20 are messy and prompt-injection cases; C21 to C30 are unseen test cases for the rules comparison, with answers proposed by the builder's AI assistant and not yet confirmed)
 - `data/prerun/`: saved v1 runs
-- `eval/results/`: automated runs from `npm run eval` (none yet until the key exists)
+- `eval/results/`: automated runs from `npm run eval` (prompt v2.2 and v2.3, qwen3.8-27b on Groq, 9 and 11 Oct 2026)
 - `/evals` in the app shows all of it side by side
