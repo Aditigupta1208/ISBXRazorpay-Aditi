@@ -684,7 +684,9 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   )}
                   <div className="mt-3 space-y-1.5 border-t border-[#DDD3F5] pt-3 text-[14px]">
                     {view.defensibleAmount !== null && (
-                      <p className="text-[#555]">Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).</p>
+                      <p className="rounded-xl border border-[#2F63C8]/30 bg-[#E8F0FE] px-3 py-2.5 text-[15px] font-semibold text-[#1F3F86]" data-testid="contest-part">
+                        Only part is worth contesting: <span className="text-[17px] font-bold">{formatOriginal(view.defensibleAmount, d.currency)}</span> ({formatInrFull(money.contestInr)}).
+                      </p>
                     )}
                     <p>
                       {d.respond_by_hours_left < 6
@@ -1364,8 +1366,8 @@ export function CaseView({ c, view: savedView, prev, next }: { c: CaseData; view
                   />
                 </div>
                 {view.defensibleAmount !== null && (
-                  <p className="mt-2 text-[12px] text-[#555]">
-                    Only part is worth contesting: {formatOriginal(view.defensibleAmount, d.currency)} ({formatInrFull(money.contestInr)}).
+                  <p className="mt-2 rounded-xl border border-[#2F63C8]/30 bg-[#E8F0FE] px-3 py-2.5 text-[14px] font-semibold text-[#1F3F86]">
+                    Only part is worth contesting: <span className="text-[16px] font-bold">{formatOriginal(view.defensibleAmount, d.currency)}</span> ({formatInrFull(money.contestInr)}).
                   </p>
                 )}
                 <p className="mt-2 text-[13px] text-helper">{view.oddsNote}</p>
