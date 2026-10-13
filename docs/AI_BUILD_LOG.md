@@ -95,6 +95,13 @@ The overview below is short. The dated running session log at the bottom has the
 **K. A screen a first-time viewer would misread (11 Oct).**
 - The money row said "possible fee of ₹52,800" on a ₹42,240 dispute, which looks like an error. It is Visa's arbitration fee, charged only if the bank escalates. I reworded the row, moved the evidence names and the bank-test link, and folded the Escalate extras so the main button sits closer to the top. No behaviour or guardrail changed.
 
+**L. Facts the AI got wrong while drafting the one-page note (12 to 13 Oct).**
+- In the first Problem draft the AI described the agency's USD 2,400 dispute as lost; it was won. It used the SaaS founder's missed-deadline story as evidence for the non-fraud decision, but that dispute was fraud-type (unauthorized), which the product routes to Chargeback Shield. It added a detail about a support ticket at a cloud host that was not in my notes. It offered two outside statistics (a per-dispute cost and a 54% figure) that I could not trace to a source for Indian merchants, said nobody offers a pre-submission review (then retracted it), and described all three merchants as in my target segment when one is not.
+- **What I did:** dropped every figure and detail I could not source and kept only what traces to my own merchant notes or to public pages I could read (Razorpay's international page and blog, Stripe's and Chargeflow's pages, with Chargeflow's figures labelled vendor-reported). I chose the scope wording "merchants selling abroad" because the third merchant faces the same problem on a different gateway.
+
+**M. AI scoring of my own note that I pushed back on (13 Oct).**
+- The AI first marked the note down for having only three merchants and no sizing, and for being dense. I pointed out that every submission works without Razorpay's data and with a small sample, and that the brief names clarity, not density, as the criterion; it removed those deductions. I also asked it to judge the quality of each answer against the brief, not only whether a section was covered. A second AI's review said the note ran to two or three pages; I measured one A4 page and ignored that point, and took the valid ones (an undefined "line" in the learning paragraph, no Agent Studio signal, an overstated "only AI" claim, a thin validation plan).
+
 ## 4. What AI did vs what I decided or built myself
 
 AI proposed, drafted and built. I decided the problem, the scope, the labels, the autonomy limits and what to claim.
@@ -131,12 +138,6 @@ AI proposed, drafted and built. I decided the problem, the scope, the labels, th
 - **Checks on the build:** 334 unit tests, 29 browser suites (desktop and phone), a 12-page sweep, lint with zero errors, a secret scan and a dependency audit. Hook-dependency lint warnings (31) are deliberate.
 - **Risks and how the product handles them:** wrong AI answer (nine code checks can downgrade a Fight or stop a draft; every sentence cites a document; a figure check compares every number and date with the documents); prompt injection in evidence (wrapped and escaped, one forced tool, one test case); privacy (full card numbers blocked in evidence and draft, nothing stored on a server); budget abuse (rate limit, input caps); AI unavailable (labelled saved result, works with no key); overlap with Razorpay's Dispute Responder (stated as an assumption, not confirmed).
 
-**L. Facts the AI got wrong while drafting the one-page note (12 to 13 Oct).**
-- In the first Problem draft the AI described the agency's USD 2,400 dispute as lost; it was won. It used the SaaS founder's missed-deadline story as evidence for the non-fraud decision, but that dispute was fraud-type (unauthorized), which the product routes to Chargeback Shield. It added a detail about a support ticket at a cloud host that was not in my notes. It offered two outside statistics (a per-dispute cost and a 54% figure) that I could not trace to a source for Indian merchants, said nobody offers a pre-submission review (then retracted it), and described all three merchants as in my target segment when one is not.
-- **What I did:** dropped every figure and detail I could not source and kept only what traces to my own merchant notes or to public pages I could read (Razorpay's international page and blog, Stripe's and Chargeflow's pages, with Chargeflow's figures labelled vendor-reported). I chose the scope wording "merchants selling abroad" because the third merchant faces the same problem on a different gateway.
-
-**M. AI scoring of my own note that I pushed back on (13 Oct).**
-- The AI first marked the note down for having only three merchants and no sizing, and for being dense. I pointed out that every submission works without Razorpay's data and with a small sample, and that the brief names clarity, not density, as the criterion; it removed those deductions. I also asked it to judge the quality of each answer against the brief, not only whether a section was covered. A second AI's review said the note ran to two or three pages; I measured one A4 page and ignored that point, and took the valid ones (an undefined "line" in the learning paragraph, no Agent Studio signal, an overstated "only AI" claim, a thin validation plan).
 
 
 ---
